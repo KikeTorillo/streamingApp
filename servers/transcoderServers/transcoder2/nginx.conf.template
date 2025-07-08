@@ -1,0 +1,157 @@
+# Configuración nginx-vod-module OPTIMIZADA
+user www-data;
+worker_processes auto;
+worker_rlimit_nofile 8192;
+pid /run/nginx.pid;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    error_log /var/log/nginx/error.log warn;  # Reducir verbosidad
+    access_log /var/log/nginx/access.log;
+    log_not_found off;
+    server_tokens off;
+
+    include /etc/nginx/mime.types;
+
+    # Configuración de autenticación AWS para MinIO
+    aws_auth $aws_token {
+        access_key ${NGINX_MINIO_ACCESS_KEY};
+        secret_key ${NGINX_SECRET_KEY};
+        service s3;
+        region ${NGINX_REGION};
+    }
+
+    # ✅ SOLO UN SERVIDOR - Puerto 80
+    server {
+        listen 80;
+
+        location / {
+            root /nginx-1.26.3/html;
+            index index.html;
+            add_header Cache-Control "no-cache, no-store, must-revalidate"; # Desactiva el almacenamiento en caché del navegador.
+            add_header Pragma "no-cache";
+            add_header Expires 0;
+        }
+
+        # ✅ Endpoint directo a MinIO
+        location /minio/ {
+            add_header Access-Control-Allow-Headers '*';
+            add_header Access-Control-Expose-Headers 'Server,range,Content-Length,Content-Range';
+            add_header Access-Control-Allow-Methods 'GET, HEAD, OPTIONS';
+            proxy_pass http://${NGINX_MINIO_SERVER}/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Amz-Date $aws_auth_date;
+            proxy_set_header X-Amz-Content-SHA256 e3b0c43288fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855;
+            proxy_set_header Authorization $aws_token;
+        }
+
+        # ✅ Storage interno para VOD - DIRECTO a MinIO
+        location ^~ /storage {
+            internal;
+            
+            if ($uri ~ ^/storage/hls/(.*\.mp4)(/.*)?$) {
+                set $file_uri /${NGINX_MINIO_BUCKET}/${NGINX_MINIO_VIDEO_DIR}/$1;
+            }
+            
+            # ✅ DIRECTO a MinIO (sin servidor intermedio)
+            proxy_pass http://${NGINX_MINIO_SERVER}$file_uri;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Amz-Date $aws_auth_date;
+            proxy_set_header X-Amz-Content-SHA256 e3b0c43288fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855;
+            proxy_set_header Authorization $aws_token;
+        }
+
+        # ✅ HLS endpoint con caché optimizado
+        location /hls {
+            vod hls;
+            vod_mode remote;
+            vod_upstream_location /storage;
+            vod_segment_duration 10000;
+            vod_align_segments_to_key_frames on;
+            
+            # ✅ Caché integrado de VOD (mejor que proxy_cache)
+            vod_metadata_cache metadata_cache 512m;
+            vod_response_cache response_cache 512m;
+            vod_last_modified_types *;
+            vod_max_frame_count 20971520;
+            vod_segment_max_frame_count 655360;
+            vod_cache_buffer_size 1000K;
+            vod_multi_uri_suffix ".play";
+            vod_hls_absolute_index_urls off;
+            vod_hls_absolute_master_urls off;
+            vod_hls_absolute_iframe_urls off;
+            vod_hls_output_iframes_playlist off;
+
+            # Headers CORS
+            add_header Access-Control-Allow-Origin * always;
+            add_header Access-Control-Allow-Methods 'GET, HEAD, OPTIONS' always;
+            add_header Access-Control-Allow-Headers 'Range' always;
+            add_header Cache-Control no-cache always;
+
+            gzip on;
+            gzip_disable msie6;
+            gzip_vary on;
+            gzip_types application/vnd.apple.mpegurl video/f4m application/dash+xml text/xml text/vtt;
+        }
+
+        # ✅ Subtítulos
+        location /subs {
+            # Manejar requests OPTIONS (CORS preflight)
+            if ($request_method = 'OPTIONS') {
+                add_header Access-Control-Allow-Origin * always;
+                add_header Access-Control-Allow-Methods "GET, HEAD, OPTIONS" always;
+                add_header Access-Control-Allow-Headers "Range, Content-Type" always;
+                add_header Access-Control-Max-Age 1728000;
+                add_header Content-Type "text/plain; charset=utf-8";
+                add_header Content-Length 0;
+                return 204;
+            }
+            
+            if ($uri ~ ^/subs/(.+\.vtt)$) {
+                set $sub_path $1;
+                set $file_uri /${NGINX_MINIO_BUCKET}/${NGINX_MINIO_SUBS_DIR}/$sub_path;
+            }
+            proxy_pass http://${NGINX_MINIO_SERVER}$file_uri;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Amz-Date $aws_auth_date;
+            proxy_set_header X-Amz-Content-SHA256 e3b0c43288fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855;
+            proxy_set_header Authorization $aws_token;
+
+            # Ocultar headers de MinIO que pueden causar conflictos
+            proxy_hide_header Access-Control-Allow-Origin;
+            proxy_hide_header Access-Control-Allow-Methods;
+            proxy_hide_header Access-Control-Allow-Headers;
+            proxy_hide_header Access-Control-Expose-Headers;
+
+            # Configurar nuestros propios headers CORS
+            add_header Content-Type "text/vtt; charset=utf-8" always;
+            add_header Access-Control-Allow-Origin * always;
+            add_header Access-Control-Allow-Methods "GET, HEAD, OPTIONS" always;
+            add_header Access-Control-Allow-Headers "Range, Content-Type" always;
+            add_header Access-Control-Expose-Headers "Content-Length, Content-Range" always;
+            add_header Cache-Control no-cache always;
+        }
+
+        # ✅ Covers/thumbnails
+        location /covers {
+            if ($uri ~ ^/covers/(.+)$) {
+                set $sub_path $1;
+                set $file_uri /${NGINX_MINIO_BUCKET}/${NGINX_MINIO_COVERS_DIR}/$sub_path;
+            }
+            proxy_pass http://${NGINX_MINIO_SERVER}$file_uri;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Amz-Date $aws_auth_date;
+            proxy_set_header X-Amz-Content-SHA256 e3b0c43288fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855;
+            proxy_set_header Authorization $aws_token;
+            proxy_hide_header Content-Type;
+            add_header Content-Type "image/jpeg" always;
+        }
+    }
+}
