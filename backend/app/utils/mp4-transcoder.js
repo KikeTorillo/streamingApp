@@ -180,8 +180,39 @@ const transcode = async (filePath, fileHash, onProgress) => {
           throw new Error(`Falló copia de ${remotePath}: ${err.message}`);
         }
       } else {
-        console.log(`\x1b[33m⚡ Calidad ${q.h}p: Requiere transcodificación\x1b[0m`);
-        console.log(`   Razón: ${validation ? validation.reason : 'Validación fallida'}`);
+        // Verificar si es la resolución original
+        const isOriginalResolution = (q.w === originalWidth && q.h === originalHeight);
+        
+        // Preparar información del video original para optimización
+        const originalVideoInfo = videoInfo.video ? {
+          codec: videoInfo.video.codec,
+          width: videoInfo.video.width,
+          height: videoInfo.video.height,
+          bitrate: videoInfo.video.bitrate
+        } : null;
+        
+        // Determinar qué necesita procesamiento
+        const needsVideoTranscoding = validation && validation.needsVideoTranscoding;
+        const needsAudioTranscoding = validation && validation.needsAudioTranscoding;
+        const canCopyVideo = validation && validation.canCopyVideo;
+        
+        // Mensaje más claro sobre qué se va a hacer
+        if (canCopyVideo && needsAudioTranscoding && !needsVideoTranscoding) {
+          console.log(`\x1b[36m🎯 Calidad ${q.h}p: Optimización inteligente\x1b[0m`);
+          console.log(`   📹 Video: COPIADO sin pérdida (${Math.round(originalVideoInfo?.bitrate/1000 || 0)}k mantenido)`);
+          console.log(`   🎵 Audio: TRANSCODIFICADO (${validation.audioStream?.codec_name || 'unknown'} → AAC 192k)`);
+        } else if (needsVideoTranscoding && needsAudioTranscoding) {
+          console.log(`\x1b[33m⚡ Calidad ${q.h}p: Transcodificación completa\x1b[0m`);
+          console.log(`   📹 Video: TRANSCODIFICADO (${validation.videoStream?.codec_name || 'unknown'} → h264)`);
+          console.log(`   🎵 Audio: TRANSCODIFICADO (${validation.audioStream?.codec_name || 'unknown'} → AAC 192k)`);
+        } else if (needsVideoTranscoding && !needsAudioTranscoding) {
+          console.log(`\x1b[33m⚡ Calidad ${q.h}p: Transcodificación de video\x1b[0m`);
+          console.log(`   📹 Video: TRANSCODIFICADO (${validation.videoStream?.codec_name || 'unknown'} → h264)`);
+          console.log(`   🎵 Audio: COPIADO sin cambios`);
+        } else {
+          console.log(`\x1b[33m⚡ Calidad ${q.h}p: Requiere procesamiento\x1b[0m`);
+          console.log(`   Razón: ${validation ? validation.reason : 'Validación fallida'}`);
+        }
         
         // Usar generateOutputOptions para obtener las opciones de salida
         const opts = generateOutputOptions(
@@ -190,7 +221,9 @@ const transcode = async (filePath, fileHash, onProgress) => {
           maxQuality,
           primaryVideoIndex,
           audioStreams,
-          subtitleStreams
+          subtitleStreams,
+          originalVideoInfo,
+          isOriginalResolution
         );
 
         await new Promise((resolveTranscode, rejectTranscode) => {
@@ -198,7 +231,19 @@ const transcode = async (filePath, fileHash, onProgress) => {
             .output(outputFile)
             .outputOptions(opts)
             .on('start', (commandLine) => {
-              console.log(`Comando FFmpeg ejecutado: ${commandLine}`);
+              console.log(`\x1b[90m🔧 Comando FFmpeg ejecutado:\x1b[0m`);
+              console.log(`   ${commandLine}`);
+              
+              // Mostrar qué optimizaciones se aplicaron
+              if (commandLine.includes('-c:v copy')) {
+                console.log(`   \x1b[32m✅ Video: Copiado sin pérdida\x1b[0m`);
+              } else {
+                console.log(`   \x1b[33m⚡ Video: Transcodificado\x1b[0m`);
+              }
+              
+              if (commandLine.includes('-c:a aac')) {
+                console.log(`   \x1b[36m🎵 Audio: Convertido a AAC\x1b[0m`);
+              }
             })
             .on('progress', (progress) => {
               // Calcula el progreso global teniendo en cuenta todas las calidades
@@ -206,7 +251,17 @@ const transcode = async (filePath, fileHash, onProgress) => {
               onProgress(Math.round(qualityProgress));
             })
             .on('end', () => {
-              console.log(`${outputFile} procesado correctamente`);
+              console.log(`\x1b[32m✅ ${outputFile} procesado correctamente\x1b[0m`);
+              
+              // Mostrar resumen de optimizaciones aplicadas
+              if (canCopyVideo && needsAudioTranscoding && !needsVideoTranscoding) {
+                console.log(`   \x1b[36m🎯 Resultado: Video sin pérdida + Audio optimizado\x1b[0m`);
+              } else if (needsVideoTranscoding && needsAudioTranscoding) {
+                console.log(`   \x1b[33m⚡ Resultado: Video y Audio transcodificados\x1b[0m`);
+              } else if (needsVideoTranscoding && !needsAudioTranscoding) {
+                console.log(`   \x1b[33m⚡ Resultado: Video transcodificado + Audio copiado\x1b[0m`);
+              }
+              
               resolveTranscode();
             })
             .on('error', (err) => {

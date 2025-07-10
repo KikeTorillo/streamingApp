@@ -119,13 +119,25 @@ const validateVideoForQuality = async (filePath, targetQuality) => {
       validation.checks.audioBitrate = true;
     }
     
-    // Determinar si necesita transcodificación
-    const allChecksPass = Object.values(validation.checks).every(check => check === true);
-    validation.isValid = allChecksPass;
-    validation.needsTranscoding = !allChecksPass;
+    // Separar validación de video y audio
+    const videoChecks = ['videoCodec', 'resolution', 'container', 'videoBitrate'];
+    const audioChecks = ['audioCodec', 'audioBitrate'];
+    
+    const videoValid = videoChecks.every(check => validation.checks[check] === true);
+    const audioValid = audioChecks.every(check => validation.checks[check] === true);
+    
+    validation.videoValid = videoValid;
+    validation.audioValid = audioValid;
+    validation.isValid = videoValid && audioValid;
+    validation.needsTranscoding = !validation.isValid;
+    
+    // Información adicional para optimización
+    validation.canCopyVideo = videoValid && validation.checks.container; // Video válido y contenedor MP4
+    validation.needsAudioTranscoding = !audioValid;
+    validation.needsVideoTranscoding = !videoValid;
     
     // Razón específica si falla con detalles
-    if (!allChecksPass) {
+    if (!validation.isValid) {
       const failedChecks = Object.entries(validation.checks)
         .filter(([_, passed]) => !passed)
         .map(([check, _]) => check);
@@ -139,7 +151,10 @@ const validateVideoForQuality = async (filePath, targetQuality) => {
         bitrate: videoBitrate ? `${Math.round(videoBitrate/1000)}k` : 'no info',
         targetBitrate: `${targetQuality.vbr}k`,
         bitrateRange: videoBitrate ? `${Math.round((Math.min(targetQuality.vbr * 1000 * 0.2, 1000000))/1000)}k-${Math.round((targetQuality.vbr * 1000 * 3.0)/1000)}k` : 'n/a',
-        container: data.format.format_name
+        container: data.format.format_name,
+        canCopyVideo: validation.canCopyVideo,
+        needsAudioTranscoding: validation.needsAudioTranscoding,
+        needsVideoTranscoding: validation.needsVideoTranscoding
       };
       
       validation.reason = `Failed checks: ${failedChecks.join(', ')}. Debug: ${JSON.stringify(debugInfo)}`;

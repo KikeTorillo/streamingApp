@@ -199,6 +199,7 @@ nginx_cache
 
 aws3DataMinio
 temp_downloads
+tempProcessinDir
 uploads
 
 # Logs

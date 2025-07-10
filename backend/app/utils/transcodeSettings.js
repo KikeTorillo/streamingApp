@@ -27,14 +27,33 @@ const calculateResolutions = (originalWidth, originalHeight) => {
     }];
   }
   
-  // Modo 'multiple': comportamiento original
-  return videoConfig.transcode.baseQualities.map((q) => {
-    let newWidth = Math.round(q.h * aspectRatio);
-    if (newWidth % 2 !== 0) {
-      newWidth += 1;
+  // Modo 'multiple': generar resoluciones inferiores + original
+  const resolutions = [];
+  
+  // Agregar resoluciones inferiores solamente
+  videoConfig.transcode.baseQualities.forEach((q) => {
+    if (q.h < originalHeight) {
+      let newWidth = Math.round(q.h * aspectRatio);
+      if (newWidth % 2 !== 0) {
+        newWidth += 1;
+      }
+      resolutions.push({ w: newWidth, h: q.h, vbr: q.vbr, abr: q.abr });
     }
-    return { w: newWidth, h: q.h, vbr: q.vbr, abr: q.abr };
   });
+  
+  // Agregar la resolución original al final (siempre se incluye)
+  const originalQuality = videoConfig.transcode.baseQualities.find(q => q.h === originalHeight) ||
+                          videoConfig.transcode.baseQualities.find(q => q.h >= originalHeight) ||
+                          videoConfig.transcode.baseQualities[videoConfig.transcode.baseQualities.length - 1];
+  
+  resolutions.push({
+    w: originalWidth,
+    h: originalHeight,
+    vbr: originalQuality.vbr,
+    abr: originalQuality.abr
+  });
+  
+  return resolutions;
 };
 
 /**
@@ -49,20 +68,9 @@ const determineMaxQuality = (originalHeight) => {
     return 1;
   }
   
-  // Modo 'multiple': comportamiento original
-  let maxQuality;
-  if (originalHeight >= 2160) {
-    maxQuality = 5;
-  } else if (originalHeight >= 1440) {
-    maxQuality = 4;
-  } else if (originalHeight >= 1080) {
-    maxQuality = 3;
-  } else if (originalHeight >= 720) {
-    maxQuality = 2;
-  } else {
-    maxQuality = 1;
-  }
-  return maxQuality;
+  // Modo 'multiple': contar resoluciones inferiores + original
+  const inferiorQualities = videoConfig.transcode.baseQualities.filter(q => q.h < originalHeight);
+  return inferiorQualities.length + 1; // +1 para la resolución original
 };
 
 /**
