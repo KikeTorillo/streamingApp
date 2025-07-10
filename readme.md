@@ -36,7 +36,7 @@ npm run dev
 ```
 Este comando ejecuta automáticamente:
 - Backend API (puerto 3000)
-- Frontend React+Vite (puerto 5173) 
+- Frontend React+Vite (puerto 8080) 
 - Storybook (puerto 6006)
 - PostgreSQL + pgAdmin
 - MinIO S3 + Panel
@@ -146,7 +146,7 @@ npm run shell:db      # Acceder a PostgreSQL CLI
 
 Una vez ejecutado `npm run dev`, acceder a:
 
-- **Frontend:** http://localhost:5173
+- **Frontend:** http://localhost:8080
 - **Backend API:** http://localhost:3000
 - **Storybook:** http://localhost:6006
 - **pgAdmin:** http://localhost:5050 (admin@gmail.com / root)
@@ -249,7 +249,7 @@ npm run clean    # Limpiar completamente
 npm run dev      # Reiniciar
 
 # Verificar qué proceso usa el puerto
-lsof -i :5173    # Frontend
+lsof -i :8080    # Frontend
 lsof -i :3000    # Backend  
 lsof -i :5432    # PostgreSQL
 ```
@@ -314,7 +314,7 @@ sudo systemctl start docker    # Linux
 # Verificar conexión Backend ↔ Frontend
 curl http://localhost:3000/health  # ¿Responde el backend?
 npm run logs:backend              # Ver logs del backend
-# Verificar CORS en .env: WHITE_LIST debe incluir http://localhost:5173
+# Verificar CORS en .env: WHITE_LIST debe incluir http://localhost:8080
 ```
 
 ## 📦 Gestión de Dependencias
@@ -470,7 +470,7 @@ VIDEO_QUALITY_PROFILE=standard   # 'standard' | 'high'
 ```
 ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
 │  Frontend   │    │ Storybook   │    │   Backend   │
-│   :5173     │    │   :6006     │    │   :3000     │
+│   :8080     │    │   :6006     │    │   :3000     │
 └─────┬───────┘    └─────────────┘    └─────┬───────┘
       │                                      │
       │              ┌─────────────┐        │
