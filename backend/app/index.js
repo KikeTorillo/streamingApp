@@ -14,7 +14,8 @@ const { logErrors, errorHandler, boomErrorHandler } = require('./middleware/erro
 const { config } = require('./config/config');
 
 // Middleware para parsear cuerpos JSON en las peticiones
-app.use(express.json());
+app.use(express.json({ limit: '10gb' }));
+app.use(express.urlencoded({ limit: '10gb', extended: true }));
 
 // Middleware para parsear cookies en las peticiones
 app.use(cookieParser());

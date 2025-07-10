@@ -194,17 +194,27 @@ router.get(
  */
 async function processFile(taskId, fileInfo) {
   try {
+    console.log(`🎬 [${taskId}] Iniciando procesamiento de archivo:`, {
+      title: fileInfo.title,
+      videoPath: fileInfo.video,
+      coverPath: fileInfo.coverImage,
+      fileSize: fileInfo.video ? require('fs').statSync(fileInfo.video).size : 'N/A'
+    });
+
     // Actualizar el progreso inicial
     progressMap[taskId].status = 'transcoding'; // Estado: "transcodificando"
     progressMap[taskId].progress = 0;
 
     await service.create(fileInfo, (progress) => {
+      console.log(`📊 [${taskId}] Progreso: ${progress}%`);
       progressMap[taskId].progress = progress;
     });
 
+    console.log(`✅ [${taskId}] Procesamiento completado exitosamente`);
     progressMap[taskId].status = 'completed';
     progressMap[taskId].progress = 100;
   } catch (error) {
+    console.error(`❌ [${taskId}] Error en procesamiento:`, error.message);
     progressMap[taskId].status = 'failed';
     progressMap[taskId].error = error.message;
   }
@@ -212,6 +222,8 @@ async function processFile(taskId, fileInfo) {
 
 async function completeInfoUser(req, res, next) {
   try {
+    console.log('📥 Iniciando procesamiento de upload...');
+    
     // Extraer datos adicionales del cuerpo de la solicitud
     // Obtener la IP del cliente
     let clientIp = req.socket.remoteAddress || '';
@@ -236,7 +248,12 @@ async function completeInfoUser(req, res, next) {
     // Manejar archivos de video
     if (req.files && req.files['video']) {
       data.video = req.files['video'][0].path;
-      console.log('📹 Video archivo recibido:', data.video);
+      const videoStats = require('fs').statSync(data.video);
+      console.log('📹 Video archivo recibido:', {
+        path: data.video,
+        size: `${(videoStats.size / 1024 / 1024 / 1024).toFixed(2)} GB`,
+        sizeBytes: videoStats.size
+      });
     }
     
     // ✅ NUEVO: Manejar coverImage (archivo O URL)
