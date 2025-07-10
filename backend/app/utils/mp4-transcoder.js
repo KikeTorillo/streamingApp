@@ -223,7 +223,8 @@ const transcode = async (filePath, fileHash, onProgress) => {
           audioStreams,
           subtitleStreams,
           originalVideoInfo,
-          isOriginalResolution
+          isOriginalResolution,
+          needsVideoTranscoding
         );
 
         await new Promise((resolveTranscode, rejectTranscode) => {
@@ -234,11 +235,11 @@ const transcode = async (filePath, fileHash, onProgress) => {
               console.log(`\x1b[90m🔧 Comando FFmpeg ejecutado:\x1b[0m`);
               console.log(`   ${commandLine}`);
               
-              // Mostrar qué optimizaciones se aplicaron
+              // Mostrar qué optimizaciones se aplicaron (basado en el comando real)
               if (commandLine.includes('-c:v copy')) {
-                console.log(`   \x1b[32m✅ Video: Copiado sin pérdida\x1b[0m`);
+                console.log(`   \x1b[32m✅ Video: COPIADO sin cambios\x1b[0m`);
               } else {
-                console.log(`   \x1b[33m⚡ Video: Transcodificado\x1b[0m`);
+                console.log(`   \x1b[33m⚡ Video: TRANSCODIFICADO (h264 → h264)\x1b[0m`);
               }
               
               if (commandLine.includes('-c:a aac')) {
