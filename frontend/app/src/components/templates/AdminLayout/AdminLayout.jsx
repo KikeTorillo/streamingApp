@@ -12,7 +12,6 @@ import { getUsersService } from '../../../services/Users/getUsersService';
 import { getMoviesService } from '../../../services/Movies/getMoviesService';
 import { getSeriesService } from '../../../services/Series/getSeriesService';
 import { getCategoriesService } from '../../../services/Categories/getCategoriesService';
-// ❌ ELIMINADO: import { getEpisodesService } from '../../../services/Episodes/getEpisodesService';
 
 /**
  * AdminLayout - Template base para el panel de administración
@@ -219,35 +218,8 @@ function AdminLayout({
 
       {/* ===== ÁREA PRINCIPAL ===== */}
       <div className="admin-layout__main">
-
         {/* ===== HEADER ===== */}
         <header className="admin-layout__header">
-
-          {/* Breadcrumbs */}
-          {(breadcrumbs.length > 0 || location.pathname !== '/admin') && (
-            <nav className="admin-layout__breadcrumbs">
-              {generateBreadcrumbs().map((crumb, index) => (
-                <span key={index} className="admin-layout__breadcrumb">
-                  {crumb.href ? (
-                    <button
-                      onClick={() => navigate(crumb.href)}
-                      className="admin-layout__breadcrumb-link"
-                    >
-                      {crumb.label}
-                    </button>
-                  ) : (
-                    <span className="admin-layout__breadcrumb-current">
-                      {crumb.label}
-                    </span>
-                  )}
-                  {index < generateBreadcrumbs().length - 1 && (
-                    <span className="admin-layout__breadcrumb-separator">→</span>
-                  )}
-                </span>
-              ))}
-            </nav>
-          )}
-
           {/* Título de página */}
           <div className="admin-layout__header-content">
             <div className="admin-layout__header-text">
@@ -258,22 +230,6 @@ function AdminLayout({
             {/* Acciones del header */}
             <div className="admin-layout__header-actions">
               {headerActions}
-
-              {/* Info de usuario y logout */}
-              <div className="admin-layout__user-menu">
-                <div className="admin-layout__user-info">
-                  <span className="admin-layout__user-email">{user.email}</span>
-                  <span className="admin-layout__user-role">{user.role}</span>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleLogout}
-                  title="Cerrar sesión"
-                >
-                  🚪
-                </Button>
-              </div>
             </div>
           </div>
         </header>

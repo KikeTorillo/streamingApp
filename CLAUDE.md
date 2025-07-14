@@ -207,3 +207,78 @@ This is a **monorepo streaming platform** with the following structure:
 - **Debug issues**: `npm run health`, `npm run ports`, `npm run status`
 - **Code quality**: `npm run lint` and `npm run lint:fix` before commits
 - **Testing**: `npm run test` for frontend, `npm run test:storybook` for components
+
+## Development Rules & Constraints
+
+### Component Usage Rules
+- **MANDATORY**: Only use components that have Storybook stories when building UI
+- **MANDATORY**: Before using any component, verify it exists in Storybook by checking for a `.stories.jsx` file
+- **MANDATORY**: All new components MUST have Storybook stories before they can be used elsewhere
+- **FORBIDDEN**: Using third-party UI libraries or components not documented in Storybook
+- **FORBIDDEN**: Creating custom styled HTML elements instead of using existing components
+
+### Code Quality Enforcement
+- **MANDATORY**: Run `npm run lint` before any commit
+- **MANDATORY**: All components must follow atomic design pattern
+- **MANDATORY**: Use named exports only: `export { ComponentName }`
+- **MANDATORY**: CSS variables must be used: `var(--color-primary)`, `var(--space-md)`
+- **FORBIDDEN**: Inline styles or style objects in JSX
+- **FORBIDDEN**: Default exports
+
+### Component Development Process
+1. Create component in appropriate atomic design folder
+2. Create `.jsx`, `.css`, and `.stories.jsx` files
+3. Add component to Storybook with proper stories
+4. Test component in Storybook before using in pages
+5. Only then use component in other parts of the application
+
+### Pre-Development Checks
+- Always check existing components in `frontend/app/src/components/` before creating new ones
+- Review Storybook at http://localhost:6006 to see available components
+- Verify component has required stories before using it
+
+### Service Layer Rules
+- **MANDATORY**: Organize services by domain in separate folders (Auth, Movies, Users, etc.)
+- **MANDATORY**: Use `actionResourceService.js` naming pattern (e.g., `createMovieService.js`)
+- **MANDATORY**: All services must return structured format: `{ success, data, error, message }`
+- **MANDATORY**: Include proper error handling with user-friendly messages
+- **FORBIDDEN**: Direct API calls from components - always use service layer
+
+### Context & State Management Rules
+- **MANDATORY**: Use custom hooks like `useAuth()`, `useUsers()` with context validation
+- **MANDATORY**: Include loading states for all async operations
+- **MANDATORY**: Separate contexts by domain (UserAuthContext, UsersContext, etc.)
+- **FORBIDDEN**: Using contexts without proper validation hooks
+
+### CSS & Styling Rules
+- **MANDATORY**: Use BEM methodology: `.block__element--modifier`
+- **MANDATORY**: CSS classes must start with component name as prefix
+- **MANDATORY**: Use design system variables for all colors, spacing, and sizes
+- **FORBIDDEN**: Hardcoded values in CSS - use `var(--variable-name)`
+- **FORBIDDEN**: Inline styles or style objects in JSX
+
+### Import/Export Organization
+- **MANDATORY**: Import order: React first → Components by atomic level → CSS last
+- **MANDATORY**: Use function declarations followed by named exports
+- **MANDATORY**: Group imports logically with blank lines between groups
+- **FORBIDDEN**: Default exports anywhere in the project
+
+### File & Folder Structure Rules
+- **MANDATORY**: Component folder structure: `ComponentName/ComponentName.jsx`, `.css`, `.stories.jsx`
+- **MANDATORY**: Use PascalCase for component folders and files
+- **MANDATORY**: Admin pages must end with `Page` suffix (e.g., `UsersListPage`)
+- **MANDATORY**: Use absolute paths starting from project root
+- **FORBIDDEN**: Relative paths for imports
+
+### Backend API Rules
+- **MANDATORY**: Follow RESTful conventions with standard HTTP methods
+- **MANDATORY**: Middleware order: Authentication → Authorization → Validation → Handler
+- **MANDATORY**: All routes must use `authenticateJwt` except public endpoints
+- **MANDATORY**: Use `checkRoles` middleware for admin routes
+- **MANDATORY**: Include JSDoc documentation for all endpoints
+
+### Error Handling Standards
+- **MANDATORY**: Use structured error responses with consistent format
+- **MANDATORY**: Convert technical errors to user-readable messages
+- **MANDATORY**: Handle common HTTP status codes (400, 401, 403, 409, 413, 500)
+- **FORBIDDEN**: Exposing raw error messages to users

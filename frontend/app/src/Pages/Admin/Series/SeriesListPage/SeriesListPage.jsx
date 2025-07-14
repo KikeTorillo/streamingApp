@@ -7,6 +7,7 @@ import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminL
 import { DataTable } from '../../../../components/organism/DataTable/DataTable';
 import { Button } from '../../../../components/atoms/Button/Button';
 import { Badge } from '../../../../components/atoms/Badge/Badge';
+import { ContentImage } from '../../../../components/atoms/ContentImage/ContentImage';
 import './SeriesListPage.css';
 
 // Servicios de series
@@ -38,10 +39,7 @@ function SeriesListPage() {
       header: 'ID',
       size: 60,
       cell: ({ getValue }) => (
-        <span style={{ 
-          fontFamily: 'var(--font-mono)', 
-          fontSize: 'var(--font-size-sm)' 
-        }}>
+        <span>
           #{getValue()}
         </span>
       )
@@ -60,46 +58,15 @@ function SeriesListPage() {
         const imageUrl = coverImage ? `${import.meta.env.VITE_CDN_URL || 'http://localhost:8082'}/covers/${coverImage}/cover.jpg` : null;
         
         return (
-          <div style={{ 
-            width: '60px', 
-            height: '90px', 
-            borderRadius: 'var(--radius-md)', 
-            overflow: 'hidden',
-            backgroundColor: 'var(--bg-muted)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            {imageUrl ? (
-              <img 
-                src={imageUrl} 
-                alt={`Portada de ${title}`}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover'
-                }}
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.nextSibling.style.display = 'flex';
-                }}
-              />
-            ) : null}
-            <div 
-              style={{
-                width: '100%',
-                height: '100%',
-                backgroundColor: 'var(--bg-muted)',
-                display: imageUrl ? 'none' : 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 'var(--font-size-xl)',
-                color: 'var(--text-secondary)'
-              }}
-            >
-              📺
-            </div>
-          </div>
+          <ContentImage
+            src={imageUrl}
+            alt={`Portada de ${title}`}
+            aspectRatio="2/3"
+            contentType="series"
+            placeholder="📺"
+            rounded="md"
+            showFallback={true}
+          />
         );
       }
     },
@@ -107,18 +74,15 @@ function SeriesListPage() {
       id: 'title',
       accessorKey: 'title',
       header: 'Título',
-      size: 250,
+      size: 200,
       cell: ({ getValue }) => {
         const title = getValue();
         
         return (
           <div>
-            <div style={{ 
-              fontWeight: 'var(--font-weight-semibold)',
-              marginBottom: 'var(--space-xs)'
-            }}>
+            <p>
               {title}
-            </div>
+            </p>
             <Badge 
               variant="warning"
               size="xs"
@@ -141,7 +105,7 @@ function SeriesListPage() {
         
         return (
           <Badge 
-            variant="outline"
+            variant="neutral"
             size="sm"
             style="soft"
           >
@@ -156,10 +120,7 @@ function SeriesListPage() {
       header: 'Año',
       size: 100,
       cell: ({ getValue }) => (
-        <span style={{ 
-          color: 'var(--text-secondary)',
-          fontFamily: 'var(--font-mono)'
-        }}>
+        <span>
           {getValue()}
         </span>
       )
@@ -249,11 +210,7 @@ function SeriesListPage() {
             >
               {timeDisplay}
             </Badge>
-            <div style={{ 
-              fontSize: 'var(--font-size-xs)',
-              color: 'var(--text-muted)',
-              marginTop: 'var(--space-xs)'
-            }}>
+            <div>
               {date.toLocaleDateString('es-ES', {
                 day: '2-digit',
                 month: '2-digit', 
@@ -276,11 +233,11 @@ function SeriesListPage() {
       setLoading(true);
       setError(null);
       
+      // ===== USAR DATOS REALES DEL BACKEND =====
       const seriesData = await getSeriesService();
-      
       console.log('📥 Datos recibidos del backend (series):', seriesData);
-      
       setSeries(seriesData || []);
+      
     } catch (err) {
       console.error('Error loading series:', err);
       setError('Error al cargar las series');
@@ -358,10 +315,6 @@ function SeriesListPage() {
     }
   };
 
-  const handleImportFromTMDB = () => {
-    navigate('/admin/series/create');
-  };
-
   // ===== EFECTOS =====
   useEffect(() => {
     loadSeries();
@@ -390,23 +343,8 @@ function SeriesListPage() {
   return (
     <AdminLayout
       title="Gestión de Series"
-      subtitle={(() => {
-        if (loading) return 'Cargando series...';
-        if (error) return 'Error al cargar series';
-        if (stats.total === 0) return 'No hay series registradas';
-        
-        return `${stats.total} series | ${stats.totalEpisodes} episodios | ${stats.thisWeek} nuevas esta semana | ${stats.withEpisodes} con episodios`;
-      })()}
       headerActions={
-        <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleImportFromTMDB}
-            leftIcon="🔍"
-          >
-            Buscar en TMDB
-          </Button>
+        <div className="series-list__header-actions">
           <Button
             variant="primary"
             size="sm"
@@ -418,13 +356,9 @@ function SeriesListPage() {
         </div>
       }
     >
-      <div className="series-list">
+      <div>
         {error && (
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            padding: 'var(--space-lg)' 
-          }}>
+          <div className="series-list__error-container">
             <Badge 
               variant="danger" 
               size="lg"

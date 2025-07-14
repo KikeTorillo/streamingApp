@@ -179,7 +179,6 @@ function CategoryCreatePage() {
       >
         
         {/* Header Actions */}
-        <div className="page-header-actions">
           <Button
             variant="outline"
             size="sm"
@@ -189,8 +188,7 @@ function CategoryCreatePage() {
           >
             Volver a Categorías
           </Button>
-        </div>
-
+  
         {/* Mensaje de Error */}
         {error && (
           <div className="status-message status-message--error">

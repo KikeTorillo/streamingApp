@@ -11,22 +11,27 @@
   font-family: var(--font-family-base);
   color: var(--text-primary);
   text-align: center;
+  width: 50rem;
+  margin: 0 auto;
 }
 
 /* ===== TAMAÑOS ===== */
 .upload-progress--sm {
   padding: var(--space-md);
   gap: var(--space-sm);
+  width: 30rem;
 }
 
 .upload-progress--md {
   padding: var(--space-lg);
   gap: var(--space-md);
+  width: 40rem;
 }
 
 .upload-progress--lg {
   padding: var(--space-xl);
   gap: var(--space-lg);
+  width: 50rem;
 }
 
 /* ===== MENSAJE DE ESTADO ===== */
@@ -36,6 +41,15 @@
   color: var(--text-primary);
   line-height: var(--line-height-normal);
   margin: 0;
+  min-height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .upload-progress--sm .upload-progress__message {
@@ -175,6 +189,15 @@
 }
 
 /* ===== ESTADOS ===== */
+.upload-progress--uploading .upload-progress__bar {
+  background: linear-gradient(
+    90deg,
+    var(--color-primary) 0%,
+    var(--color-primary-light) 50%,
+    var(--color-primary) 100%
+  );
+}
+
 .upload-progress--completed .upload-progress__bar {
   background: linear-gradient(
     90deg,
@@ -191,6 +214,11 @@
     var(--color-danger-light) 50%,
     var(--color-danger) 100%
   );
+}
+
+.upload-progress--uploading .upload-progress__message {
+  color: var(--color-info);
+  font-weight: var(--font-weight-medium);
 }
 
 .upload-progress--completed .upload-progress__message,
@@ -215,16 +243,31 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
+  .upload-progress {
+    width: 90vw !important;
+    max-width: 90vw;
+  }
+  
+  .upload-progress--sm {
+    width: 90vw !important;
+  }
+  
+  .upload-progress--md {
+    width: 90vw !important;
+  }
+  
+  .upload-progress--lg {
+    width: 90vw !important;
+    padding: var(--space-lg);
+  }
+  
   .upload-progress__bar-container {
     max-width: 100%;
   }
   
-  .upload-progress {
-    padding: var(--space-md);
-  }
-  
-  .upload-progress--lg {
-    padding: var(--space-lg);
+  .upload-progress__message {
+    white-space: normal;
+    word-wrap: break-word;
   }
 }
 

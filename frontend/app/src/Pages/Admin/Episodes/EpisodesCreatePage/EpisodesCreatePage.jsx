@@ -343,7 +343,6 @@ function EpisodesCreatePage() {
       >
         
         {/* Header Actions */}
-        <div className="page-header-actions">
           <Button
             variant="outline"
             size="sm"
@@ -353,7 +352,6 @@ function EpisodesCreatePage() {
           >
             Volver a Episodios
           </Button>
-        </div>
 
         {/* Mensaje de Error */}
         {error && (

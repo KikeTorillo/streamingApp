@@ -172,18 +172,15 @@ function UserCreatePage() {
         className={`${loading ? 'user-create--loading' : ''} ${success ? 'user-create--success' : ''}`}
       >
 
-        {/* 🔧 HEADER ACTIONS - SISTEMA DE DISEÑO */}
-        <div className="page-header-actions">
-          <Button
-            variant="outline"
-            size="md"
-            leftIcon="←"
-            onClick={handleGoBack}
-            disabled={loading}
-          >
-            Volver a Usuarios
-          </Button>
-        </div>
+        <Button
+          variant="outline"
+          size="md"
+          leftIcon="←"
+          onClick={handleGoBack}
+          disabled={loading}
+        >
+          Volver a Usuarios
+        </Button>
 
         {/* ❌ MENSAJE DE ERROR - SISTEMA DE DISEÑO */}
         {error && (

@@ -5,7 +5,7 @@ import "./UploadProgress.css";
 const UploadProgress = ({ 
   progress = 0, 
   message = "Procesando...",
-  status = "processing", // 'processing', 'transcoding', 'completed', 'failed'
+  status = "processing", // 'uploading', 'processing', 'transcoding', 'completed', 'failed'
   showPercentage = true,
   size = "md" // 'sm', 'md', 'lg'
 }) => (
@@ -17,7 +17,7 @@ const UploadProgress = ({
     </div>
     
     {/* Animación de puntos */}
-    {(status === 'processing' || status === 'transcoding') && (
+    {(status === 'uploading' || status === 'processing' || status === 'transcoding') && (
       <div className="upload-progress__dots">
         <span className="upload-progress__dot"></span>
         <span className="upload-progress__dot"></span>
@@ -29,7 +29,10 @@ const UploadProgress = ({
     <div className="upload-progress__bar-container">
       <div 
         className="upload-progress__bar" 
-        style={{ width: `${Math.min(progress, 100)}%` }}
+        style={{ 
+          width: `${Math.min(progress, 100)}%`,
+          minWidth: progress > 0 ? '0.8rem' : '0'
+        }}
       >
         {/* Efectos de barras blancas animadas */}
         <div className="upload-progress__shimmer">
@@ -49,6 +52,7 @@ const UploadProgress = ({
     
     {/* Iconos de estado */}
     <div className="upload-progress__icon">
+      {status === 'uploading' && '📤'}
       {status === 'processing' && '⚙️'}
       {status === 'transcoding' && '🎬'}
       {status === 'completed' && '✅'}

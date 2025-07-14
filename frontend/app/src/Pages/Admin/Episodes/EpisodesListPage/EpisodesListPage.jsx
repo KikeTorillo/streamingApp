@@ -7,6 +7,8 @@ import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminL
 import { DataTable } from '../../../../components/organism/DataTable/DataTable';
 import { Button } from '../../../../components/atoms/Button/Button';
 import { Badge } from '../../../../components/atoms/Badge/Badge';
+import { ContentImage } from '../../../../components/atoms/ContentImage/ContentImage';
+import { Select } from '../../../../components/atoms/Select/Select';
 import './EpisodesListPage.css';
 
 // Servicios de episodios y series
@@ -31,7 +33,7 @@ function EpisodesListPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [deleting, setDeleting] = useState(null);
-  
+
   // Estados para series
   const [series, setSeries] = useState([]);
   const [selectedSerieId, setSelectedSerieId] = useState('');
@@ -46,10 +48,7 @@ function EpisodesListPage() {
       header: 'ID',
       size: 60,
       cell: ({ getValue }) => (
-        <span style={{ 
-          fontFamily: 'var(--font-mono)', 
-          fontSize: 'var(--font-size-sm)' 
-        }}>
+        <span>
           #{getValue()}
         </span>
       )
@@ -63,35 +62,12 @@ function EpisodesListPage() {
         const title = getValue();
         const season = row.original.season;
         const episodeNumber = row.original.episode_number;
-        
+
         return (
           <div>
-            <div style={{ 
-              fontWeight: 'var(--font-weight-semibold)',
-              marginBottom: 'var(--space-xs)'
-            }}>
+            <p>
               {title || 'Sin título'}
-            </div>
-            <div style={{ 
-              display: 'flex',
-              gap: 'var(--space-xs)',
-              alignItems: 'center'
-            }}>
-              <Badge 
-                variant="info"
-                size="xs"
-                style="soft"
-              >
-                📺 Episodio
-              </Badge>
-              <Badge 
-                variant="outline"
-                size="xs"
-                style="soft"
-              >
-                T{season}E{episodeNumber}
-              </Badge>
-            </div>
+            </p>
           </div>
         );
       }
@@ -104,9 +80,9 @@ function EpisodesListPage() {
       cell: ({ getValue, row }) => {
         const serieName = getValue();
         const serieId = row.original.serie_id;
-        
+
         return (
-          <Badge 
+          <Badge
             variant="primary"
             size="sm"
             style="soft"
@@ -124,29 +100,15 @@ function EpisodesListPage() {
       cell: ({ getValue, row }) => {
         const season = getValue();
         const episodeNumber = row.original.episode_number;
-        
+
         return (
-          <div style={{ 
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 'var(--space-xs)',
-            alignItems: 'center'
-          }}>
-            <Badge 
-              variant="warning"
-              size="sm"
-              style="soft"
-            >
-              Temporada {season}
-            </Badge>
-            <Badge 
-              variant="success"
-              size="sm"
-              style="soft"
-            >
-              Episodio {episodeNumber}
-            </Badge>
-          </div>
+          <Badge
+            variant="warning"
+            size="xs"
+            style="soft"
+          >
+            T{season}E{episodeNumber}
+          </Badge>
         );
       }
     },
@@ -158,18 +120,18 @@ function EpisodesListPage() {
       cell: ({ getValue }) => {
         const date = new Date(getValue());
         const now = new Date();
-        
+
         // ✅ CORREGIDO: Comparar solo las fechas (año, mes, día) ignorando horas
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         const createdDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-        
+
         // Calcular diferencia en días de forma correcta
         const diffTime = today.getTime() - createdDate.getTime();
         const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        
+
         let timeDisplay;
         let badgeVariant = 'neutral';
-        
+
         if (diffDays === 0) {
           timeDisplay = 'Hoy';
           badgeVariant = 'success';
@@ -192,29 +154,25 @@ function EpisodesListPage() {
           const years = Math.floor(diffDays / 365);
           timeDisplay = years === 1 ? '1 año' : `${years} años`;
         } else {
-          timeDisplay = date.toLocaleDateString('es-ES', { 
-            month: 'short', 
+          timeDisplay = date.toLocaleDateString('es-ES', {
+            month: 'short',
             day: 'numeric'
           });
         }
-        
+
         return (
           <div>
-            <Badge 
+            <Badge
               variant={badgeVariant}
               size="xs"
               style="soft"
             >
               {timeDisplay}
             </Badge>
-            <div style={{ 
-              fontSize: 'var(--font-size-xs)',
-              color: 'var(--text-muted)',
-              marginTop: 'var(--space-xs)'
-            }}>
+            <div>
               {date.toLocaleDateString('es-ES', {
                 day: '2-digit',
-                month: '2-digit', 
+                month: '2-digit',
                 year: 'numeric'
               })} {date.toLocaleTimeString('es-ES', {
                 hour: '2-digit',
@@ -228,18 +186,18 @@ function EpisodesListPage() {
   ];
 
   // ===== FUNCIONES =====
-  
+
   const loadSeries = async () => {
     try {
       setSeriesLoading(true);
       setSeriesError(null);
-      
+
+      // ===== USAR DATOS REALES DEL BACKEND =====
       const seriesData = await getSeriesService();
       const seriesList = Array.isArray(seriesData) ? seriesData : seriesData?.data || [];
-      
       console.log('📺 Series cargadas para selector:', seriesList.length);
       setSeries(seriesList);
-      
+
     } catch (err) {
       console.error('Error loading series:', err);
       setSeriesError('Error al cargar series');
@@ -257,13 +215,12 @@ function EpisodesListPage() {
     try {
       setLoading(true);
       setError(null);
-      
-      // ✅ IMPORTANTE: El backend necesita serieId como parámetro
+
+      // ===== USAR DATOS REALES DEL BACKEND =====
       const episodesData = await getEpisodesService({ serieId: selectedSerieId });
-      
       console.log('📥 Episodios recibidos del backend:', episodesData);
-      
       setEpisodes(episodesData || []);
+
     } catch (err) {
       console.error('Error loading episodes:', err);
       setError('Error al cargar los episodios');
@@ -289,37 +246,37 @@ function EpisodesListPage() {
   };
 
   const handleDeleteEpisode = async (episode) => {
-    const confirmMessage = 
+    const confirmMessage =
       `¿Estás seguro de que quieres eliminar el episodio "${episode.title || `T${episode.season}E${episode.episode_number}`}"?\n\n` +
       `⚠️ ADVERTENCIA: Esta acción eliminará permanentemente:\n` +
       `• El archivo de video y todos sus archivos asociados\n` +
       `• Todos los datos del episodio\n\n` +
       `Esta acción NO se puede deshacer.`;
-      
+
     if (!window.confirm(confirmMessage)) {
       return;
     }
 
     try {
       setDeleting(episode.id);
-      
+
       console.log('🗑️ Eliminando episodio:', episode);
-      
+
       const response = await deleteEpisodeService(episode.id);
-      
+
       console.log('📥 Respuesta del servicio de eliminación:', response);
-      
+
       console.log('✅ Episodio eliminado exitosamente');
-      
+
       alert(`✅ Episodio eliminado exitosamente`);
-      
+
       await loadEpisodes();
-      
+
     } catch (error) {
       console.error('💥 Error al eliminar episodio:', error);
-      
+
       let errorMessage = `Error al eliminar el episodio.`;
-      
+
       if (error.response?.status === 401) {
         console.log('🔒 Sesión expirada, redirigiendo...');
         sessionStorage.clear();
@@ -334,9 +291,9 @@ function EpisodesListPage() {
       } else if (error.message) {
         errorMessage = error.message;
       }
-      
+
       alert(`❌ ${errorMessage}`);
-      
+
     } finally {
       setDeleting(null);
     }
@@ -369,14 +326,14 @@ function EpisodesListPage() {
       weekAgo.setDate(weekAgo.getDate() - 7);
       return createdDate >= weekAgo;
     }).length;
-    
+
     const withDescription = episodes.filter(episode => episode.description).length;
     const bySeasons = episodes.reduce((acc, ep) => {
       acc[ep.season] = (acc[ep.season] || 0) + 1;
       return acc;
     }, {});
     const totalSeasons = Object.keys(bySeasons).length;
-    
+
     return { total, thisWeek, withDescription, totalSeasons };
   };
 
@@ -387,18 +344,8 @@ function EpisodesListPage() {
   return (
     <AdminLayout
       title="Gestión de Episodios"
-      subtitle={(() => {
-        if (seriesLoading) return 'Cargando series...';
-        if (seriesError) return 'Error al cargar series';
-        if (!selectedSerieId) return 'Selecciona una serie para ver sus episodios';
-        if (loading) return `Cargando episodios de "${selectedSerie?.title}"...`;
-        if (error) return 'Error al cargar episodios';
-        if (stats.total === 0) return `"${selectedSerie?.title}" no tiene episodios`;
-        
-        return `"${selectedSerie?.title}" - ${stats.total} episodios | ${stats.thisWeek} nuevos esta semana | ${stats.totalSeasons} temporadas`;
-      })()}
       headerActions={
-        <div style={{ display: 'flex', gap: 'var(--space-sm)', alignItems: 'center' }}>
+        <div className="episodes-list__header-actions">
           <Button
             variant="primary"
             size="sm"
@@ -411,68 +358,33 @@ function EpisodesListPage() {
         </div>
       }
     >
-      <div className="episodes-list">
+      <div>
         {/* SELECTOR DE SERIES */}
-        <div style={{ 
-          backgroundColor: 'var(--bg-secondary)',
-          padding: 'var(--space-lg)',
-          borderRadius: 'var(--radius-lg)',
-          marginBottom: 'var(--space-lg)',
-          border: '1px solid var(--border-default)'
-        }}>
-          <label 
+        <div className="episodes-list__series-selector">
+          <label
             htmlFor="serie-selector"
-            style={{ 
-              display: 'block',
-              fontWeight: 'var(--font-weight-semibold)',
-              marginBottom: 'var(--space-sm)',
-              color: 'var(--text-primary)'
-            }}
           >
             📺 Seleccionar Serie:
           </label>
-          <select
+          <Select
             id="serie-selector"
             value={selectedSerieId}
             onChange={handleSerieChange}
             disabled={seriesLoading || seriesError}
-            style={{
-              width: '100%',
-              maxWidth: '400px',
-              padding: 'var(--space-sm)',
-              border: '1px solid var(--border-default)',
-              borderRadius: 'var(--radius-md)',
-              fontSize: 'var(--font-size-base)',
-              backgroundColor: 'var(--bg-primary)',
-              color: 'var(--text-primary)'
-            }}
-          >
-            <option value="">
-              {seriesLoading 
-                ? '⏳ Cargando series...' 
-                : seriesError 
-                ? '❌ Error al cargar series'
-                : series.length === 0
-                ? '📺 No hay series disponibles'
-                : '-- Selecciona una serie --'
-              }
-            </option>
-            {series.map(serie => (
-              <option key={serie.id} value={serie.id}>
-                {serie.title} ({serie.release_year})
-              </option>
-            ))}
-          </select>
+            placeholder='-- Selecciona una serie --'
+            options={series.map(serie => ({
+              value: serie.id.toString(),
+              label: `${serie.title} (${serie.release_year})`
+            }))}
+            size="md"
+            variant="default"
+          />
         </div>
 
         {seriesError && (
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            padding: 'var(--space-lg)' 
-          }}>
-            <Badge 
-              variant="danger" 
+          <div className="episodes-list__error-container">
+            <Badge
+              variant="danger"
               size="lg"
               icon="❌"
               style="soft"
@@ -483,13 +395,9 @@ function EpisodesListPage() {
         )}
 
         {error && (
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            padding: 'var(--space-lg)' 
-          }}>
-            <Badge 
-              variant="danger" 
+          <div className="episodes-list__error-container">
+            <Badge
+              variant="danger"
               size="lg"
               icon="❌"
               style="soft"
@@ -508,14 +416,14 @@ function EpisodesListPage() {
           onDelete={handleDeleteEpisode}
           deleting={deleting}
           emptyTitle={selectedSerieId ? "No hay episodios" : "Selecciona una serie"}
-          emptyDescription={selectedSerieId 
-            ? "Esta serie no tiene episodios registrados" 
+          emptyDescription={selectedSerieId
+            ? "Esta serie no tiene episodios registrados"
             : "Elige una serie del selector para ver sus episodios"
           }
           emptyIcon="📺"
           emptyAction={selectedSerieId ? (
-            <Button 
-              variant="primary" 
+            <Button
+              variant="primary"
               onClick={handleCreateEpisode}
               leftIcon="➕"
             >

@@ -7,6 +7,7 @@ import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminL
 import { DataTable } from '../../../../components/organism/DataTable/DataTable';
 import { Button } from '../../../../components/atoms/Button/Button';
 import { Badge } from '../../../../components/atoms/Badge/Badge';
+import { ContentImage } from '../../../../components/atoms/ContentImage/ContentImage';
 import './MoviesListPage.css';
 
 // Importar servicios
@@ -37,10 +38,7 @@ function MoviesListPage() {
       header: 'ID',
       size: 60,
       cell: ({ getValue }) => (
-        <span style={{ 
-          fontFamily: 'var(--font-mono)', 
-          fontSize: 'var(--font-size-sm)' 
-        }}>
+        <span>
           #{getValue()}
         </span>
       )
@@ -54,51 +52,20 @@ function MoviesListPage() {
       cell: ({ getValue, row }) => {
         const coverImage = getValue();
         const title = row.original.title;
-        
+
         // Construir URL completa para la imagen (igual que en MainPage)
         const imageUrl = coverImage ? `${import.meta.env.VITE_CDN_URL || 'http://localhost:8082'}/covers/${coverImage}/cover.jpg` : null;
-        
+
         return (
-          <div style={{ 
-            width: '60px', 
-            height: '90px', 
-            borderRadius: 'var(--radius-md)', 
-            overflow: 'hidden',
-            backgroundColor: 'var(--bg-muted)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            {imageUrl ? (
-              <img 
-                src={imageUrl} 
-                alt={`Portada de ${title}`}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover'
-                }}
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.nextSibling.style.display = 'flex';
-                }}
-              />
-            ) : null}
-            <div 
-              style={{
-                width: '100%',
-                height: '100%',
-                backgroundColor: 'var(--bg-muted)',
-                display: imageUrl ? 'none' : 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 'var(--font-size-xl)',
-                color: 'var(--text-secondary)'
-              }}
-            >
-              🎬
-            </div>
-          </div>
+          <ContentImage
+            src={imageUrl}
+            alt={`Portada de ${title}`}
+            aspectRatio="2/3"
+            contentType="movie"
+            placeholder="🎬"
+            rounded="md"
+            showFallback={true}
+          />
         );
       }
     },
@@ -110,21 +77,18 @@ function MoviesListPage() {
       cell: ({ getValue, row }) => {
         const title = getValue();
         const mediaType = row.original.media_type || 'movie';
-        
+
         return (
           <div>
-            <div style={{ 
-              fontWeight: 'var(--font-weight-semibold)',
-              marginBottom: 'var(--space-xs)'
-            }}>
+            <p>
               {title}
-            </div>
-            <Badge 
-              variant={mediaType === 'movie' ? 'info' : 'warning'}
+            </p>
+            <Badge
+              variant="info"
               size="xs"
               style="soft"
             >
-              {mediaType === 'movie' ? '🎬 Película' : '📺 Serie'}
+              🎬 Película
             </Badge>
           </div>
         );
@@ -138,10 +102,10 @@ function MoviesListPage() {
       cell: ({ getValue, row }) => {
         const categoryName = getValue();
         const categoryId = row.original.category_id;
-        
+
         return (
-          <Badge 
-            variant="outline"
+          <Badge
+            variant="neutral"
             size="sm"
             style="soft"
           >
@@ -156,10 +120,7 @@ function MoviesListPage() {
       header: 'Año',
       size: 100,
       cell: ({ getValue }) => (
-        <span style={{ 
-          color: 'var(--text-secondary)',
-          fontFamily: 'var(--font-mono)'
-        }}>
+        <span>
           {getValue()}
         </span>
       )
@@ -173,18 +134,18 @@ function MoviesListPage() {
       cell: ({ getValue }) => {
         const date = new Date(getValue());
         const now = new Date();
-        
+
         // ✅ CORREGIDO: Comparar solo las fechas (año, mes, día) ignorando horas
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         const createdDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-        
+
         // Calcular diferencia en días de forma correcta
         const diffTime = today.getTime() - createdDate.getTime();
         const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        
+
         let timeDisplay;
         let badgeVariant = 'neutral';
-        
+
         if (diffDays === 0) {
           // Mismo día = HOY
           timeDisplay = 'Hoy';
@@ -215,29 +176,25 @@ function MoviesListPage() {
           timeDisplay = years === 1 ? '1 año' : `${years} años`;
         } else {
           // Fecha muy reciente (menos de 1 día)
-          timeDisplay = date.toLocaleDateString('es-ES', { 
-            month: 'short', 
+          timeDisplay = date.toLocaleDateString('es-ES', {
+            month: 'short',
             day: 'numeric'
           });
         }
-        
+
         return (
           <div>
-            <Badge 
+            <Badge
               variant={badgeVariant}
               size="xs"
               style="soft"
             >
               {timeDisplay}
             </Badge>
-            <div style={{ 
-              fontSize: 'var(--font-size-xs)',
-              color: 'var(--text-muted)',
-              marginTop: 'var(--space-xs)'
-            }}>
+            <div>
               {date.toLocaleDateString('es-ES', {
                 day: '2-digit',
-                month: '2-digit', 
+                month: '2-digit',
                 year: 'numeric'
               })} {date.toLocaleTimeString('es-ES', {
                 hour: '2-digit',
@@ -251,17 +208,17 @@ function MoviesListPage() {
   ];
 
   // ===== FUNCIONES (mantienen la misma lógica) =====
-  
+
   const loadMovies = async () => {
     try {
       setLoading(true);
       setError(null);
-      
+
+      // ===== USAR DATOS REALES DEL BACKEND =====
       const moviesData = await getMoviesService();
-      
       console.log('📥 Datos recibidos del backend:', moviesData);
-      
       setMovies(moviesData || []);
+
     } catch (err) {
       console.error('Error loading movies:', err);
       setError('Error al cargar las películas');
@@ -283,38 +240,38 @@ function MoviesListPage() {
   };
 
   const handleDeleteMovie = async (movie) => {
-    const confirmMessage = 
+    const confirmMessage =
       `¿Estás seguro de que quieres eliminar "${movie.title}"?\n\n` +
       `⚠️ ADVERTENCIA: Esta acción eliminará permanentemente:\n` +
       `• El archivo de video y todos sus archivos asociados\n` +
       `• La imagen de portada\n` +
       `• Todos los datos de la película\n\n` +
       `Esta acción NO se puede deshacer.`;
-      
+
     if (!window.confirm(confirmMessage)) {
       return;
     }
 
     try {
       setDeleting(movie.id);
-      
+
       console.log('🗑️ Eliminando película:', movie);
-      
+
       const response = await deleteMovieService(movie.id);
-      
+
       console.log('📥 Respuesta del servicio de eliminación:', response);
-      
+
       console.log('✅ Película eliminada exitosamente');
-      
+
       alert(`✅ Película "${movie.title}" eliminada exitosamente`);
-      
+
       await loadMovies();
-      
+
     } catch (error) {
       console.error('💥 Error al eliminar película:', error);
-      
+
       let errorMessage = `Error al eliminar la película "${movie.title}".`;
-      
+
       if (error.response?.status === 401) {
         console.log('🔒 Sesión expirada, redirigiendo...');
         sessionStorage.clear();
@@ -331,16 +288,12 @@ function MoviesListPage() {
       } else if (error.message) {
         errorMessage = error.message;
       }
-      
+
       alert(`❌ ${errorMessage}`);
-      
+
     } finally {
       setDeleting(null);
     }
-  };
-
-  const handleImportFromTMDB = () => {
-    navigate('/admin/movies/create');
   };
 
   // ===== EFECTOS =====
@@ -357,11 +310,11 @@ function MoviesListPage() {
       weekAgo.setDate(weekAgo.getDate() - 7);
       return createdDate >= weekAgo;
     }).length;
-    
+
     const withCategory = movies.filter(movie => movie.category_name).length;
     const moviesCount = movies.filter(movie => !movie.media_type || movie.media_type === 'movie').length;
     const seriesCount = movies.filter(movie => movie.media_type === 'tv').length;
-    
+
     return { total, thisWeek, withCategory, moviesCount, seriesCount };
   };
 
@@ -371,23 +324,8 @@ function MoviesListPage() {
   return (
     <AdminLayout
       title="Gestión de Películas"
-      subtitle={(() => {
-        if (loading) return 'Cargando contenido...';
-        if (error) return 'Error al cargar contenido';
-        if (stats.total === 0) return 'No hay contenido registrado';
-        
-        return `${stats.total} contenidos | ${stats.moviesCount} películas | ${stats.seriesCount} series | ${stats.thisWeek} nuevos esta semana`;
-      })()}
       headerActions={
         <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleImportFromTMDB}
-            leftIcon="🔍"
-          >
-            Buscar en TMDB
-          </Button>
           <Button
             variant="primary"
             size="sm"
@@ -399,15 +337,15 @@ function MoviesListPage() {
         </div>
       }
     >
-      <div className="movies-list-container">
+      <div>
         {error && (
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            padding: 'var(--space-lg)' 
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            padding: 'var(--space-lg)'
           }}>
-            <Badge 
-              variant="danger" 
+            <Badge
+              variant="danger"
               size="lg"
               icon="❌"
               style="soft"
@@ -429,8 +367,8 @@ function MoviesListPage() {
           emptyDescription="Comienza agregando tu primera película o serie"
           emptyIcon="🎬"
           emptyAction={
-            <Button 
-              variant="primary" 
+            <Button
+              variant="primary"
               onClick={handleCreateMovie}
               leftIcon="➕"
             >

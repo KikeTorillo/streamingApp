@@ -78,95 +78,10 @@
 }
 
 /* ===== CELDAS PERSONALIZADAS ===== */
-.users-list__id {
-  /* Estilo para ID */
-  font-family: var(--font-family-mono, 'Courier New', monospace);
-  font-size: var(--font-size-sm);
-  color: var(--text-muted);
-  font-weight: var(--font-weight-medium);
-}
 
-.users-list__email {
-  /* Estilo para email */
-  color: var(--text-primary);
-  font-weight: var(--font-weight-medium);
-  
-  /* Truncamiento */
-  display: block;
-  max-width: 25rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 
-.users-list__email:hover {
-  color: var(--color-primary);
-  cursor: help;
-}
 
-.users-list__date {
-  /* Estilo para fechas */
-  font-size: var(--font-size-sm);
-  color: var(--text-secondary);
-  white-space: nowrap;
-}
 
-.users-list__date--muted {
-  color: var(--text-muted);
-  font-style: italic;
-}
-
-/* ===== OVERLAY DE ELIMINACIÓN ===== */
-.users-list__deleting-overlay {
-  /* Posición */
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1000;
-  
-  /* Fondo */
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(0.2rem);
-  
-  /* Layout */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.users-list__deleting-message {
-  /* Layout */
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  
-  /* Colores */
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  
-  /* Espaciado */
-  padding: var(--space-lg) var(--space-xl);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-xl);
-  border: 0.1rem solid var(--border-default);
-  
-  /* Tipografía */
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-medium);
-}
-
-.users-list__deleting-spinner {
-  /* Animación del spinner */
-  font-size: var(--font-size-lg);
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
 
 /* ===== RESPONSIVE DESIGN ===== */
 
@@ -189,9 +104,6 @@
     font-size: var(--font-size-lg);
   }
   
-  .users-list__email {
-    max-width: 20rem;
-  }
 }
 
 /* Mobile (hasta 767px) */
@@ -219,14 +131,7 @@
     font-size: var(--font-size-xs);
   }
   
-  .users-list__email {
-    max-width: 15rem;
-  }
   
-  .users-list__deleting-message {
-    padding: var(--space-md);
-    margin: var(--space-md);
-  }
 }
 
 /* Mobile muy pequeño (hasta 479px) */
@@ -239,9 +144,6 @@
     grid-template-columns: 1fr 1fr;
   }
   
-  .users-list__email {
-    max-width: 12rem;
-  }
 }
 
 /* ===== ESTADOS ESPECIALES ===== */
@@ -267,13 +169,6 @@
 
 /* Reducir animaciones si el usuario lo prefiere */
 @media (prefers-reduced-motion: reduce) {
-  .users-list__deleting-spinner {
-    animation: none;
-  }
-  
-  .users-list__deleting-overlay {
-    backdrop-filter: none;
-  }
 }
 
 /* High contrast mode */
@@ -282,28 +177,15 @@
     border-width: 0.2rem;
   }
   
-  .users-list__id {
-    font-weight: var(--font-weight-bold);
-  }
   
-  .users-list__deleting-message {
-    border-width: 0.2rem;
-  }
 }
 
 /* ===== FOCUS MANAGEMENT ===== */
 
-/* Focus visible para elementos interactivos */
-.users-list__email:focus-visible {
-  outline: 0.2rem solid var(--border-focus);
-  outline-offset: 0.2rem;
-  border-radius: var(--radius-sm);
-}
 
 /* ===== PRINT STYLES ===== */
 @media print {
-  .users-list__header-actions,
-  .users-list__deleting-overlay {
+  .users-list__header-actions {
     display: none;
   }
   
@@ -317,35 +199,3 @@
   }
 }
 
-/* ===== TOOLTIPS PARA EMAILS LARGOS ===== */
-.users-list__email[title]:hover::after {
-  content: attr(title);
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-bottom: var(--space-xs);
-  
-  /* Estilo del tooltip */
-  padding: var(--space-xs) var(--space-sm);
-  background-color: var(--bg-tooltip);
-  color: var(--text-on-tooltip);
-  font-size: var(--font-size-xs);
-  border-radius: var(--radius-sm);
-  white-space: nowrap;
-  z-index: 1001;
-  
-  /* Sombra */
-  box-shadow: var(--shadow-lg);
-  
-  /* Flecha del tooltip */
-  border: 0.5rem solid transparent;
-  border-top-color: var(--bg-tooltip);
-}
-
-/* Evitar tooltip en dispositivos táctiles */
-@media (hover: none) {
-  .users-list__email[title]:hover::after {
-    display: none;
-  }
-}

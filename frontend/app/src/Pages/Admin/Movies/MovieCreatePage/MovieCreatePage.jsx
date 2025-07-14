@@ -42,6 +42,7 @@ function MovieCreatePage() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [categories, setCategories] = useState([]);
   const [success, setSuccess] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
 
   // ===== ESTADOS DE FORMULARIO =====
@@ -51,7 +52,17 @@ function MovieCreatePage() {
   const [submitError, setSubmitError] = useState(null);
 
   // ===== ESTADO DE PROGRESO DE SUBIDA =====
-  const { progress, status, message, error: progressError, monitorProgress, resetProgress } = useUploadProgress();
+  const { 
+    progress, 
+    status, 
+    message, 
+    error: progressError, 
+    monitorProgress, 
+    resetProgress,
+    setProgress,
+    setStatus,
+    setMessage
+  } = useUploadProgress();
 
   // ===== CARGAR CATEGORÍAS AL INICIO =====
   useEffect(() => {
@@ -264,6 +275,30 @@ function MovieCreatePage() {
     setFormLoading(true);
     setSubmitError(null);
 
+    // ✅ NUEVO: Mostrar feedback inmediato durante el upload
+    resetProgress();
+    setProgress(0);
+    setStatus('uploading');
+    setMessage('Preparando archivos para subir...');
+
+    // ✅ NUEVO: Escuchar eventos de progreso de upload
+    const handleUploadProgress = (event) => {
+      const { progress } = event.detail;
+      // Upload toma 0-50% del progreso total
+      const adjustedProgress = Math.round(progress * 0.5);
+      setProgress(adjustedProgress);
+      
+      if (progress < 10) {
+        setMessage('Iniciando subida del video...');
+      } else if (progress < 100) {
+        setMessage('Subiendo video al servidor...');
+      } else {
+        setMessage('Upload completado, validando archivo...');
+      }
+    };
+
+    window.addEventListener('uploadProgress', handleUploadProgress);
+
     try {
       console.log('📤 Datos originales:', movieData);
       
@@ -273,9 +308,18 @@ function MovieCreatePage() {
 
       const result = await createMovieService(filteredData);
 
+      // ✅ Limpiar listener de upload
+      window.removeEventListener('uploadProgress', handleUploadProgress);
+
       console.log('✅ Contenido creado exitosamente:', result);
 
-      setSuccess(true);
+      // ✅ Cambiar a estado de procesamiento (continuar desde 50%)
+      setProgress(50);
+      setMessage('Analizando propiedades del video...');
+      setStatus('processing');
+
+      // ✅ Marcar que está procesando, NO mostrar éxito aún
+      setIsProcessing(true);
       setHasChanges(false);
 
       const taskId = result?.taskId || result?.task_id || result?.id;
@@ -283,26 +327,32 @@ function MovieCreatePage() {
       if (taskId) {
         monitorProgress(taskId, 'movies', null, (finished, err) => {
           if (finished) {
+            // ✅ AHORA sí mostrar éxito cuando realmente termine
+            setIsProcessing(false);
             setSuccess(true);
-            setHasChanges(false);
             setTimeout(() => {
               navigate('/admin/movies');
               resetProgress();
             }, 2000);
           } else if (err) {
+            setIsProcessing(false);
             setSubmitError(err);
             resetProgress();
           }
         });
       } else {
+        // ✅ Solo si no hay taskId (procesamiento inmediato)
+        setIsProcessing(false);
         setSuccess(true);
-        setHasChanges(false);
         setTimeout(() => {
           navigate('/admin/movies');
         }, 2000);
       }
 
     } catch (err) {
+      // ✅ Limpiar listener en caso de error
+      window.removeEventListener('uploadProgress', handleUploadProgress);
+      
       console.error('❌ Error al crear contenido:', err);
 
       let errorMessage = 'Error desconocido al crear el contenido.';
@@ -319,6 +369,8 @@ function MovieCreatePage() {
       }
 
       setSubmitError(errorMessage);
+      setIsProcessing(false); // ✅ Limpiar estado de procesamiento
+      resetProgress(); // ✅ Resetear progreso en caso de error
     } finally {
       setFormLoading(false);
     }
@@ -329,6 +381,16 @@ function MovieCreatePage() {
     <AdminLayout>
       <Container size='lg'>
         <div className="movie-create-page">
+          {/* Botón volver a películas */}
+            <Button
+              variant="outline"
+              size="md"
+              leftIcon="←"
+              onClick={() => navigate('/admin/movies')}
+            >
+              Volver a Películas
+            </Button>
+
           {/* Header */}
           <Card className="movie-create-page__header">
             <CardHeader>
@@ -379,9 +441,9 @@ function MovieCreatePage() {
               initialData={generateInitialFormData(selectedItem)}
               onSubmit={handleFormSubmit}
               categoryOptions={categories.map(cat => ({ value: cat.id, label: cat.name }))}
-              loading={formLoading}
+              loading={formLoading || isProcessing}
               error={submitError}
-              success={success}
+              success={success && !isProcessing}
               hasChanges={hasChanges}
               onChange={() => setHasChanges(true)}
             />
@@ -390,13 +452,16 @@ function MovieCreatePage() {
         </div>
       </Container>
       {status !== 'idle' && (
-        <div className="movie-create-page__progress">
-          <UploadProgress
-            progress={progress}
-            status={status}
-            message={progressError || message}
-            size="md"
-          />
+        <div className="movie-create-page__progress-overlay">
+          <div className="movie-create-page__progress-backdrop" />
+          <div className="movie-create-page__progress-modal">
+            <UploadProgress
+              progress={progress}
+              status={status}
+              message={progressError || message}
+              size="lg"
+            />
+          </div>
         </div>
       )}
     </AdminLayout>

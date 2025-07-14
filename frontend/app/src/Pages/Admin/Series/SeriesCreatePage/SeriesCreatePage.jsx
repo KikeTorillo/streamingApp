@@ -319,6 +319,16 @@ function SeriesCreatePage() {
     <AdminLayout>
       <Container size='lg'>
         <div className="series-create-page">
+          {/* Botón volver a series */}
+            <Button
+              variant="outline"
+              size="md"
+              leftIcon="←"
+              onClick={() => navigate('/admin/series')}
+            >
+              Volver a Series
+            </Button>
+
           {/* Header */}
           <Card className="series-create-page__header">
             <CardHeader>

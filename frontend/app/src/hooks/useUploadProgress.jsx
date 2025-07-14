@@ -5,7 +5,7 @@ import { environmentService } from "../services/environmentService";
 
 const useUploadProgress = () => {
   const [progress, setProgress] = useState(0);
-  const [status, setStatus] = useState('idle'); // 'idle', 'processing', 'transcoding', 'completed', 'failed'
+  const [status, setStatus] = useState('idle'); // 'idle', 'uploading', 'processing', 'transcoding', 'completed', 'failed'
   const [message, setMessage] = useState('');
   const [error, setError] = useState(null);
 
@@ -30,10 +30,16 @@ const useUploadProgress = () => {
       endpoint: progressEndpoint
     });
 
-    // Reset estados
-    setProgress(0);
-    setStatus('processing');
-    setMessage('Preparando archivos...');
+    // No resetear progreso si ya está en curso
+    if (status === 'idle') {
+      setProgress(0);
+      setStatus('processing');
+      setMessage('Preparando archivos...');
+    } else {
+      // Continuar desde donde estaba
+      setStatus('processing');
+      setMessage('Conectando con servidor...');
+    }
     setError(null);
 
     const interval = setInterval(async () => {
@@ -51,22 +57,53 @@ const useUploadProgress = () => {
           error: taskError
         });
 
-        // Actualizar estados
-        setProgress(currentProgress || 0);
+        // Ajustar progreso para continuidad (50-100%)
+        const backendProgress = currentProgress || 0;
+        let adjustedProgress;
+        
+        if (taskStatus === 'processing') {
+          // Processing: 50-60%
+          adjustedProgress = 50 + (backendProgress * 0.1);
+        } else if (taskStatus === 'transcoding') {
+          // Transcoding: 60-100%
+          adjustedProgress = 60 + (backendProgress * 0.4);
+        } else {
+          adjustedProgress = backendProgress;
+        }
+        
+        setProgress(Math.round(adjustedProgress));
         setStatus(taskStatus);
 
-        // Actualizar mensaje según estado
+        // Actualizar mensaje según estado y progreso
         if (taskStatus === 'processing') {
-          setMessage('Preparando archivos...');
+          if (backendProgress === 0) {
+            setMessage('Validando formato y codificación...');
+          } else {
+            setMessage('Preparando para procesamiento...');
+          }
         } else if (taskStatus === 'transcoding') {
-          setMessage(`Transcodificando video... ${currentProgress || 0}%`);
+          const progressPercent = backendProgress || 0;
+          if (progressPercent === 0) {
+            setMessage('Analizando características del video...');
+          } else if (progressPercent === 100) {
+            setMessage('Finalizando y guardando archivo...');
+          } else {
+            // Mensajes más realistas basados en los logs del backend
+            if (progressPercent < 20) {
+              setMessage('Verificando codificación y calidad...');
+            } else if (progressPercent < 80) {
+              setMessage('Copiando archivo al almacenamiento...');
+            } else {
+              setMessage('Procesando subtítulos y metadatos...');
+            }
+          }
         } else if (taskStatus === 'completed') {
-          setMessage('¡Procesamiento completado!');
+          setMessage('¡Video procesado y agregado al catálogo!');
           setProgress(100);
           clearInterval(interval);
           
-          console.log('✅ Transcodificación completada');
-          onStatusChange?.('Transcodificación completada exitosamente');
+          console.log('✅ Procesamiento completado');
+          onStatusChange?.('Video procesado exitosamente');
           onFinish?.(true, null);
           
         } else if (taskStatus === 'failed') {
@@ -75,7 +112,7 @@ const useUploadProgress = () => {
           setError(errorMessage);
           clearInterval(interval);
           
-          console.error('❌ Transcodificación falló:', errorMessage);
+          console.error('❌ Procesamiento falló:', errorMessage);
           onStatusChange?.(`Error: ${errorMessage}`);
           onFinish?.(false, errorMessage);
         }
@@ -115,13 +152,21 @@ const useUploadProgress = () => {
     setError(null);
   };
 
+  // ✅ NUEVO: Funciones para controlar manualmente el estado
+  const setProgressManually = (value) => setProgress(value);
+  const setStatusManually = (value) => setStatus(value);
+  const setMessageManually = (value) => setMessage(value);
+
   return { 
     progress, 
     status, 
     message, 
     error,
     monitorProgress,
-    resetProgress
+    resetProgress,
+    setProgress: setProgressManually,
+    setStatus: setStatusManually, 
+    setMessage: setMessageManually
   };
 };
 

@@ -91,45 +91,6 @@
 }
 
 /* ===== CELDAS PERSONALIZADAS ===== */
-.categories-list__id {
-  /* Estilo para ID - IGUAL QUE users-list__id */
-  font-family: var(--font-family-mono, 'Courier New', monospace);
-  font-size: var(--font-size-sm);
-  color: var(--text-muted);
-  font-weight: var(--font-weight-medium);
-}
-
-.categories-list__name {
-  /* Layout para nombre de categoría */
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-}
-
-.categories-list__name-text {
-  /* Texto principal del nombre */
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
-  color: var(--text-primary);
-  line-height: var(--line-height-tight);
-}
-
-.categories-list__name-badge {
-  /* Badge de categoría */
-  font-size: var(--font-size-xs);
-  color: var(--text-muted);
-  font-weight: var(--font-weight-medium);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.categories-list__date {
-  /* Estilo para fechas - IGUAL QUE users-list */
-  font-size: var(--font-size-sm);
-  color: var(--text-secondary);
-  font-family: var(--font-family-mono, 'Courier New', monospace);
-  white-space: nowrap;
-}
 
 /* ===== ESTADOS DE FILAS ===== */
 .categories-list__row--deleting {
@@ -274,38 +235,6 @@
 }
 
 /* ===== ESTADOS ESPECIALES ===== */
-
-/* Cuando está cargando */
-.categories-list--loading {
-  opacity: 0.7;
-  pointer-events: none;
-}
-
-/* Estado de error */
-.categories-list--error .categories-list__summary {
-  border-color: var(--color-danger);
-  background-color: var(--color-danger-light);
-}
-
-/* ===== UTILIDADES ESPECÍFICAS DE CATEGORÍAS ===== */
-
-/* Resaltar categorías recientes */
-.categories-list__row--recent {
-  background-color: var(--color-success-light);
-  border-left: 0.3rem solid var(--color-success);
-}
-
-.categories-list__row--recent .categories-list__name-badge::after {
-  content: ' • NUEVA';
-  color: var(--color-success);
-  font-weight: var(--font-weight-bold);
-}
-
-/* Categorías con nombres largos */
-.categories-list__name-text--long {
-  font-size: var(--font-size-sm);
-  line-height: var(--line-height-normal);
-}
 
 /* ===== PRINT STYLES ===== */
 @media print {

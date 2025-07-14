@@ -140,6 +140,9 @@ services:
       - VITE_HOST=0.0.0.0
       - VITE_PORT=8080
       - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_INTERVAL=1000
+      - WATCHPACK_POLLING=true
+      - FAST_REFRESH=true
     volumes:
       - ./frontend/app:/app
       - /app/node_modules

@@ -138,6 +138,7 @@ function DataTable({
   // ===== ESTADOS =====
   const [globalFilter, setGlobalFilter] = useState('');
   const [currentPageSize, setCurrentPageSize] = useState(pageSize || defaultPageSize);
+  const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
   // Debounce para búsqueda
   const [debouncedGlobalFilter] = useDebounce(globalFilter, 300);
@@ -213,16 +214,31 @@ function DataTable({
     state: {
       globalFilter: debouncedGlobalFilter,
       pagination: {
-        pageIndex: 0,
+        pageIndex: currentPageIndex,
         pageSize: currentPageSize,
       },
     },
     onGlobalFilterChange: setGlobalFilter,
+    onPaginationChange: (updater) => {
+      if (typeof updater === 'function') {
+        const newPagination = updater({ pageIndex: currentPageIndex, pageSize: currentPageSize });
+        setCurrentPageIndex(newPagination.pageIndex);
+        if (newPagination.pageSize !== currentPageSize) {
+          setCurrentPageSize(newPagination.pageSize);
+        }
+      } else {
+        setCurrentPageIndex(updater.pageIndex);
+        if (updater.pageSize !== currentPageSize) {
+          setCurrentPageSize(updater.pageSize);
+        }
+      }
+    },
     globalFilterFn: 'includesString',
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    manualPagination: false,
   });
 
   // ===== ACTUALIZAR TAMAÑO DE PÁGINA =====
@@ -274,7 +290,10 @@ function DataTable({
           <div className="data-table__page-size">
             <Select
               value={currentPageSize}
-              onChange={(e) => setCurrentPageSize(Number(e.target.value))}
+              onChange={(e) => {
+                setCurrentPageSize(Number(e.target.value));
+                setCurrentPageIndex(0); // Resetear a primera página
+              }}
               size="sm"
               disabled={loading}
               options={pageSizeOptions.map(size => ({

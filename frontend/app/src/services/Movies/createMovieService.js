@@ -65,13 +65,23 @@ const createMovieService = async (movieData) => {
     console.log('- Año:', movieData.releaseYear);
     console.log('- Video:', movieData.video.name, `(${Math.round(movieData.video.size / 1024 / 1024)}MB)`);
     
-    // Realizar petición al backend
+    // Realizar petición al backend con progreso de upload
     const response = await axios.post(`${urlBackend}/api/v1/movies`, formData, {
       headers: { 
         "Content-Type": "multipart/form-data" 
       },
       withCredentials: true,
       timeout: 5 * 60 * 1000, // 5 minutos para videos grandes
+      onUploadProgress: (progressEvent) => {
+        if (progressEvent.lengthComputable) {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          console.log(`📤 Upload progreso: ${percentCompleted}%`);
+          // Trigger custom event para actualizar progreso
+          window.dispatchEvent(new CustomEvent('uploadProgress', { 
+            detail: { progress: percentCompleted } 
+          }));
+        }
+      }
     });
     
     console.log('✅ Película creada exitosamente');

@@ -13,106 +13,6 @@
   overflow-x: auto;
 }
 
-/* ===== ESTILOS DE CELDAS - HOMOLOGADOS CON SERIES ===== */
-
-/* ID del episodio */
-.episodes-list__id {
-  font-family: var(--font-family-mono);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--text-secondary);
-  background-color: var(--bg-secondary);
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-sm);
-  display: inline-block;
-  min-width: 4rem;
-  text-align: center;
-}
-
-/* Título del episodio */
-.episodes-list__title {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  max-width: 25rem;
-}
-
-.episodes-list__title-text {
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-base);
-  color: var(--text-primary);
-  line-height: var(--line-height-tight);
-  
-  /* Truncar texto largo */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.episodes-list__title-badge {
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-medium);
-  color: var(--text-secondary);
-  background-color: var(--bg-accent);
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-sm);
-  display: inline-block;
-  width: fit-content;
-}
-
-/* Serie del episodio */
-.episodes-list__serie {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-primary);
-  background-color: var(--bg-primary-light);
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-sm);
-  border: 0.1rem solid var(--border-primary);
-  display: inline-block;
-  max-width: 15rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Temporada y episodio */
-.episodes-list__season-episode {
-  font-family: var(--font-family-mono);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  color: var(--text-primary);
-  background-color: var(--bg-success-light);
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-sm);
-  border: 0.1rem solid var(--border-success);
-  display: inline-block;
-  text-align: center;
-  min-width: 5rem;
-}
-
-/* Duración del episodio */
-.episodes-list__duration {
-  font-family: var(--font-family-mono);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--text-secondary);
-  background-color: var(--bg-secondary);
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-sm);
-  display: inline-block;
-  text-align: center;
-  min-width: 5rem;
-}
-
-/* Fecha de creación */
-.episodes-list__date {
-  font-size: var(--font-size-xs);
-  color: var(--text-secondary);
-  font-weight: var(--font-weight-normal);
-  line-height: var(--line-height-tight);
-}
-
 /* ===== ESTADOS RESPONSIVE ===== */
 
 /* Tablets */
@@ -121,17 +21,6 @@
     padding: var(--space-md);
   }
   
-  .episodes-list__title {
-    max-width: 20rem;
-  }
-  
-  .episodes-list__title-text {
-    font-size: var(--font-size-sm);
-  }
-  
-  .episodes-list__serie {
-    max-width: 12rem;
-  }
 }
 
 /* Móviles */
@@ -140,79 +29,6 @@
     padding: var(--space-sm);
   }
   
-  .episodes-list__title {
-    max-width: 15rem;
-  }
-  
-  .episodes-list__title-text {
-    font-size: var(--font-size-xs);
-  }
-  
-  .episodes-list__title-badge {
-    font-size: var(--font-size-xs);
-    padding: var(--space-xs);
-  }
-  
-  .episodes-list__serie {
-    max-width: 10rem;
-    font-size: var(--font-size-xs);
-  }
-  
-  .episodes-list__season-episode {
-    font-size: var(--font-size-xs);
-    min-width: 4rem;
-  }
-  
-  .episodes-list__duration {
-    font-size: var(--font-size-xs);
-    min-width: 4rem;
-  }
-}
-
-/* ===== ESTADOS DE INTERACCIÓN ===== */
-
-/* Hover states para celdas interactivas */
-.episodes-list__title:hover .episodes-list__title-text {
-  color: var(--color-primary);
-}
-
-.episodes-list__serie:hover {
-  background-color: var(--bg-primary);
-  border-color: var(--color-primary);
-}
-
-/* ===== ACCESIBILIDAD ===== */
-
-/* Focus states */
-.episodes-list__title:focus-within .episodes-list__title-text,
-.episodes-list__serie:focus {
-  outline: 0.2rem solid var(--color-primary);
-  outline-offset: 0.1rem;
-}
-
-/* Reducir animaciones para usuarios con preferencias de accesibilidad */
-@media (prefers-reduced-motion: reduce) {
-  .episodes-list__title,
-  .episodes-list__serie,
-  .episodes-list__season-episode,
-  .episodes-list__duration {
-    transition: none;
-  }
-}
-
-/* ===== MODO OSCURO ===== */
-@media (prefers-color-scheme: dark) {
-  .episodes-list__title-badge {
-    background-color: var(--bg-accent-dark, var(--bg-accent));
-  }
-  
-  .episodes-list__serie {
-    background-color: var(--bg-primary-light-dark, var(--bg-primary-light));
-  }
-  
-  .episodes-list__season-episode {
-    background-color: var(--bg-success-light-dark, var(--bg-success-light));
-  }
 }
 
 /* ===== ESTILOS ADICIONALES PARA EL SELECTOR DE SERIES ===== */
@@ -366,4 +182,42 @@
   .episodes-list-page__stat-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* ===== NUEVAS CLASES PARA ELIMINAR ESTILOS INLINE ===== */
+
+
+
+.episodes-list__date-text {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  margin-top: var(--space-xs);
+}
+
+.episodes-list__header-actions {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+.episodes-list__series-selector {
+  background-color: var(--bg-secondary);
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-lg);
+  border: 1px solid var(--border-default);
+}
+
+.episodes-list__label {
+  display: block;
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-sm);
+  color: var(--text-primary);
+}
+
+
+.episodes-list__error-container {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-lg);
 }

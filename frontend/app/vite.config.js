@@ -29,9 +29,19 @@ export default defineConfig(({ command, mode }) => {
     server: {
       host: '0.0.0.0',
       port: 8080,
+      strictPort: true,
+      watch: {
+        usePolling: true,
+        interval: 1000,
+        ignored: ['**/node_modules/**', '**/dist/**'],
+      },
       hmr: {
         port: 8080,
-        host: 'localhost'
+        host: 'localhost',
+        clientPort: 8080,
+      },
+      fs: {
+        strict: false,
       },
     },
     

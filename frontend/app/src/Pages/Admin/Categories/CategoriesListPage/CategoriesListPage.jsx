@@ -63,7 +63,7 @@ function CategoriesListPage() {
       header: 'ID',
       size: 80,
       cell: ({ row }) => (
-        <span className="categories-list__id">
+        <span>
           {row.original.id}
         </span>
       )
@@ -72,13 +72,13 @@ function CategoriesListPage() {
       accessorKey: 'name',
       header: 'Nombre de Categoría',
       cell: ({ row }) => (
-        <div className="categories-list__name">
-          <span className="categories-list__name-text">
+        <div>
+          <div>
             {row.original.name}
-          </span>
-          <span className="categories-list__name-badge">
+          </div>
+          <div>
             🎭 Categoría
-          </span>
+          </div>
         </div>
       )
     },
@@ -87,7 +87,7 @@ function CategoriesListPage() {
       header: 'Fecha de Creación',
       size: 180,
       cell: ({ row }) => (
-        <span className="categories-list__date">
+        <span>
           {formatDate(row.original.createdAt)}
         </span>
       )
@@ -97,12 +97,11 @@ function CategoriesListPage() {
       header: 'Última Actualización',
       size: 180,
       cell: ({ row }) => (
-        <span className="categories-list__date">
+        <span>
           {formatDate(row.original.updatedAt)}
         </span>
       )
     }
-    // ✅ NO incluir columna de acciones - DataTable ya las maneja automáticamente
   ];
 
   // ===== ESTADÍSTICAS CALCULADAS =====
@@ -277,7 +276,6 @@ function CategoriesListPage() {
   return (
     <AdminLayout
       title="Gestión de Categorías"
-      subtitle={`${stats.total} categoría${stats.total !== 1 ? 's' : ''} registrada${stats.total !== 1 ? 's' : ''}`}
       breadcrumbs={[
         { label: 'Admin', href: '/admin' },
         { label: 'Categorías' }

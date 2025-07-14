@@ -121,11 +121,6 @@ function AdminSidebar({
           label: 'Episodios',
           route: '/admin/episodes',
           badge: episodeCount
-        },
-        {
-          icon: '➕',
-          label: 'Crear Episodio',
-          route: '/admin/episodes/create'
         }
       ]
     },

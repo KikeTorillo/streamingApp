@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { DataTable } from '../../../../components/organism/DataTable/DataTable';
 import { Button } from '../../../../components/atoms/Button/Button';
+import { Badge } from '../../../../components/atoms/Badge/Badge';
 import './UsersListPage.css';
 
 // Servicios de usuarios
@@ -31,13 +32,13 @@ function UsersListPage() {
   const [deleting, setDeleting] = useState(null);
 
   // ===== FUNCIONES AUXILIARES =====
-  
+
   /**
    * ✅ CORREGIDO: Formatear fechas
    */
   const formatDate = (dateString) => {
     if (!dateString) return 'No disponible';
-    
+
     try {
       const date = new Date(dateString);
       return date.toLocaleDateString('es-ES', {
@@ -65,7 +66,7 @@ function UsersListPage() {
   };
 
   // ===== FUNCIONES DE DATOS =====
-  
+
   /**
    * ✅ CORREGIDO: Cargar usuarios con SOLO campos reales del backend
    */
@@ -73,10 +74,10 @@ function UsersListPage() {
     try {
       setLoading(true);
       setError(null);
-      
+
       console.log('📥 Cargando usuarios...');
       const response = await getUsersService();
-      
+
       // ✅ MANEJAR respuesta estructurada
       if (response.message === 'session expired' && response.error) {
         console.log('🔒 Sesión expirada, redirigiendo...');
@@ -95,14 +96,14 @@ function UsersListPage() {
         createdAt: user.createdAt,
         email: user.email,
         id: user.id,
-        roleId: user.roleId,  
+        roleId: user.roleId,
         roleName: user.roleName,
         updatedAt: user.updated_at,
         userName: user.userName,
       }));
 
       setUsers(mappedUsers);
-      
+
     } catch (error) {
       console.error('💥 Error loading users:', error);
       setError(error.message || 'Error al cargar usuarios');
@@ -117,7 +118,7 @@ function UsersListPage() {
   }, []);
 
   // ===== FUNCIONES DE MANEJO =====
-  
+
   /**
    * ✅ CORREGIDO: Ver usuario
    */
@@ -140,7 +141,7 @@ function UsersListPage() {
    */
   const handleDeleteUser = async (user) => {
     console.log('🗑️ Eliminar usuario:', user);
-    
+
     // ✅ VERIFICAR: No eliminar usuario actual
     if (isCurrentUser(user.id)) {
       alert('❌ No puedes eliminar tu propia cuenta.');
@@ -166,9 +167,9 @@ function UsersListPage() {
     try {
       setDeleting(user.id);
       console.log('🔄 Eliminando usuario:', user.id);
-      
+
       const response = await deleteUserService(user.id);
-      
+
       // ✅ MANEJAR respuesta estructurada
       if (response.message === 'session expired' && response.error) {
         sessionStorage.clear();
@@ -182,10 +183,10 @@ function UsersListPage() {
 
       // ✅ ACTUALIZAR lista local
       setUsers(prevUsers => prevUsers.filter(u => u.id !== user.id));
-      
+
       console.log('✅ Usuario eliminado exitosamente');
       alert(`✅ Usuario "${user.userName}" eliminado correctamente.`);
-      
+
     } catch (err) {
       console.error('💥 Error deleting user:', err);
       alert(`❌ Error al eliminar el usuario: ${err.message}`);
@@ -215,7 +216,7 @@ function UsersListPage() {
       header: 'ID',
       size: 80,
       cell: ({ getValue }) => (
-        <span className="users-list__id">
+        <span>
           #{getValue()}
         </span>
       )
@@ -224,18 +225,16 @@ function UsersListPage() {
       accessorKey: 'userName',
       header: 'Usuario',
       cell: ({ getValue }) => (
-        <div className="users-list__user-info">
-          <span className="users-list__username" title={getValue()}>
-            {getValue()}
-          </span>
-        </div>
+        <span title={getValue()}>
+          {getValue()}
+        </span>
       )
     },
     {
       accessorKey: 'email',
       header: 'Email',
       cell: ({ getValue }) => (
-        <span className="users-list__email" title={getValue() || 'Sin email'}>
+        <span title={getValue() || 'Sin email'}>
           {getValue() || <em style={{ color: 'var(--text-muted)' }}>Sin email</em>}
         </span>
       )
@@ -247,15 +246,18 @@ function UsersListPage() {
       cell: ({ getValue, row }) => {
         const role = getValue();
         const roleId = row.original.roleId;
-        const badgeClass = 
+        const badgeVariant =
           roleId === 1 ? 'info' :     // Administrador
-          roleId === 2 ? 'warning' :  // Editor
-          'success';                  // Usuario
-        
+            roleId === 2 ? 'warning' :  // Editor
+              'success';                  // Usuario
+
         return (
-          <span className={`data-table__badge data-table__badge--${badgeClass}`}>
-            {role}
-          </span>
+          <Badge 
+            variant={badgeVariant}
+            size="sm"
+            text={role}
+            style='soft'
+          />
         );
       }
     },
@@ -264,7 +266,7 @@ function UsersListPage() {
       header: 'Fecha de Registro',
       size: 150,
       cell: ({ getValue }) => (
-        <span className="users-list__date">
+        <span>
           {formatDate(getValue())}
         </span>
       )
@@ -285,11 +287,6 @@ function UsersListPage() {
   return (
     <AdminLayout
       title="Gestión de Usuarios"
-      subtitle={`${stats.total} usuario${stats.total !== 1 ? 's' : ''} registrado${stats.total !== 1 ? 's' : ''}`}
-      breadcrumbs={[
-        { label: 'Admin', href: '/admin' },
-        { label: 'Usuarios' }
-      ]}
       headerActions={
         <div className="users-list__header-actions">
           <Button
@@ -314,44 +311,6 @@ function UsersListPage() {
       }
     >
       <div className="users-list">
-        {/* ===== ESTADÍSTICAS (SOLO DATOS REALES) ===== */}
-        {!loading && !error && stats.total > 0 && (
-          <div className="users-list__summary">
-            <div className="users-list__stats">
-              <div className="users-list__stat">
-                <span className="users-list__stat-value">
-                  {stats.admins}
-                </span>
-                <span className="users-list__stat-label">Administradores</span>
-              </div>
-              <div className="users-list__stat">
-                <span className="users-list__stat-value">
-                  {stats.editors}
-                </span>
-                <span className="users-list__stat-label">Editores</span>
-              </div>
-              <div className="users-list__stat">
-                <span className="users-list__stat-value">
-                  {stats.regularUsers}
-                </span>
-                <span className="users-list__stat-label">Usuarios</span>
-              </div>
-              <div className="users-list__stat">
-                <span className="users-list__stat-value">
-                  {stats.withEmail}
-                </span>
-                <span className="users-list__stat-label">Con Email</span>
-              </div>
-              <div className="users-list__stat">
-                <span className="users-list__stat-value">
-                  {stats.withoutEmail}
-                </span>
-                <span className="users-list__stat-label">Sin Email</span>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* ===== TABLA DE USUARIOS ===== */}
         <div className="users-list__table">
           <DataTable
