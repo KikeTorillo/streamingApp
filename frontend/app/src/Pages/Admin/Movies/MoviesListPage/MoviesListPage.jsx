@@ -13,6 +13,7 @@ import './MoviesListPage.css';
 // Importar servicios
 import { getMoviesService } from '../../../../services/Movies/getMoviesService';
 import { deleteMovieService } from '../../../../services/Movies/deleteMovieService';
+import { useMovieNavigation } from '../../../../hooks/useMovieNavigation';
 
 /**
  * MoviesListPage - CORREGIDO con columnas reales del backend
@@ -23,6 +24,7 @@ import { deleteMovieService } from '../../../../services/Movies/deleteMovieServi
  */
 function MoviesListPage() {
   const navigate = useNavigate();
+  const { navigateToPlayer } = useMovieNavigation();
 
   // ===== ESTADOS =====
   const [movies, setMovies] = useState([]);
@@ -236,7 +238,16 @@ function MoviesListPage() {
   };
 
   const handleViewMovie = (movie) => {
-    navigate(`/movie/${movie.id}`);
+    console.log('🎬 Ver película:', movie);
+    
+    // Transformar datos de película para el hook de navegación
+    const movieData = {
+      ...movie,
+      type: 'movie',
+      _original: movie // Datos originales para el hook
+    };
+    
+    navigateToPlayer(movieData);
   };
 
   const handleDeleteMovie = async (movie) => {

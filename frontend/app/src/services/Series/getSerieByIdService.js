@@ -27,10 +27,27 @@ const getSerieByIdService = async (serieId) => {
   } catch (error) {
     console.error('[getSerieByIdService] Error:', error);
     
+    // ✅ MANEJO ESPECÍFICO DE ERRORES
+    if (error.response?.status === 401) {
+      return {
+        success: false,
+        message: 'session expired',
+        error: true
+      };
+    }
+    
+    if (error.response?.status === 404) {
+      return {
+        success: false,
+        error: 'Serie no encontrada',
+        code: 'SERIES_NOT_FOUND'
+      };
+    }
+    
     return {
       success: false,
-      data: null,
-      message: error.response?.data?.message || error.message || 'Error al obtener la serie'
+      error: error.response?.data?.message || error.message || 'Error al obtener la serie',
+      details: error.response?.data
     };
   }
 };

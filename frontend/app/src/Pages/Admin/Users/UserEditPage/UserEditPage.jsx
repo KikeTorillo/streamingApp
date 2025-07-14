@@ -63,23 +63,13 @@ function UserEditPage() {
   // ===== CONFIGURACIÓN DEL FORMULARIO =====
   
   /**
-   * Campos de edición - Solo campos permitidos para actualización
-   * Según el updateUserService: userName, email, roleId
+   * Campos de edición - Solo email, rol y contraseña (username NO se puede editar)
+   * Según requerimientos: email, roleId, password
    */
   const getEditFormFields = () => {
     const isEditingSelf = isCurrentUser();
     
     return [
-      {
-        name: 'username',
-        type: 'text',
-        label: 'Nombre de Usuario',
-        placeholder: 'Ej: juan_perez',
-        required: true,
-        leftIcon: '👤',
-        helperText: 'Único, 3-30 caracteres, solo letras/números/guiones bajos',
-        width: 'half'
-      },
       {
         name: 'email',
         type: 'email',
@@ -87,8 +77,24 @@ function UserEditPage() {
         placeholder: 'usuario@ejemplo.com',
         required: false,
         leftIcon: '📧',
-        helperText: 'Opcional: para notificaciones y recuperación',
+        helperText: 'Opcional: para notificaciones y recuperación de cuenta',
         width: 'half'
+      },
+      {
+        name: 'password',
+        type: 'password',
+        label: 'Nueva Contraseña',
+        placeholder: 'Dejar vacío para mantener la actual',
+        required: false,
+        leftIcon: '🔒',
+        helperText: 'Mínimo 6 caracteres. Dejar vacío para no cambiar',
+        width: 'half',
+        validation: (value) => {
+          if (value && value.trim() !== '' && value.length < 6) {
+            return 'La contraseña debe tener al menos 6 caracteres';
+          }
+          return true;
+        }
       },
       {
         name: 'roleId',
@@ -182,8 +188,8 @@ function UserEditPage() {
       
       setUserData(normalizedUserData);
       setInitialData({ 
-        username: normalizedUserData.username,
         email: normalizedUserData.email,
+        password: '', // La contraseña siempre empieza vacía
         roleId: normalizedUserData.roleId
       });
       
@@ -205,8 +211,8 @@ function UserEditPage() {
     
     // Verificar si hay cambios comparando con datos iniciales
     const hasRealChanges = initialData && (
-      formData.username !== initialData.username ||
       formData.email !== initialData.email ||
+      (formData.password && formData.password.trim() !== '') || // Contraseña nueva si no está vacía
       parseInt(formData.roleId) !== initialData.roleId
     );
     
@@ -227,12 +233,12 @@ function UserEditPage() {
       // Preparar datos para el backend (solo campos que cambiaron)
       const updateData = {};
       
-      if (formData.username !== initialData.username) {
-        updateData.userName = formData.username.trim();
-      }
-      
       if (formData.email !== initialData.email) {
         updateData.email = formData.email?.trim() || null;
+      }
+      
+      if (formData.password && formData.password.trim() !== '') {
+        updateData.password = formData.password.trim();
       }
       
       if (parseInt(formData.roleId) !== initialData.roleId) {
@@ -476,8 +482,8 @@ function UserEditPage() {
               id="user-edit-form"
               fields={getEditFormFields()}
               initialData={{
-                username: userData.username || '',
                 email: userData.email || '',
+                password: '', // Siempre vacía inicialmente
                 roleId: userData.roleId || 3
               }}
               onSubmit={handleSubmit}

@@ -268,9 +268,9 @@ class MoviesService {
   }
 
   /**
-   * Actualiza una película cambiando el título, la portada y el año de lanzamiento.
+   * Actualiza una película cambiando el título, categoría, año de lanzamiento, descripción y portada.
    * @param {number} id - ID de la película a actualizar.
-   * @param {Object} changes - Datos a actualizar { title, coverImage, releaseYear }.
+   * @param {Object} changes - Datos a actualizar { title, categoryId, releaseYear, description, coverImage }.
    * @returns {Object} Registro actualizado.
    */
   async update(id, changes) {

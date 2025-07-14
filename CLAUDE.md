@@ -2,6 +2,14 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## REGLAS IMPORTANTES
+
+### Idioma
+- **OBLIGATORIO**: Todos los comentarios, mensajes de commit, documentación y comunicación con el usuario DEBEN ser en ESPAÑOL
+- **OBLIGATORIO**: Variables, funciones y nombres de archivos pueden estar en inglés (convención técnica)
+- **OBLIGATORIO**: Logs de debugging y mensajes de error deben estar en español
+- **PROHIBIDO**: Responder en inglés al usuario mexicano
+
 ## Key Commands
 
 ### Development (Docker-based - Recommended)

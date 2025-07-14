@@ -6,15 +6,15 @@ import { environmentService } from "../environmentService";
 
 /**
  * Actualizar usuario - HOMOLOGADO
- * ✅ CORREGIDO: Agregar campo userName para actualización
+ * ✅ CORREGIDO: Agregar campos email, password y roleId para actualización
  */
 const updateUserService = async (id, userData) => {
     const { urlBackend } = environmentService();
     
-    // ✅ CORREGIDO: Incluir userName en actualizaciones
+    // ✅ CORREGIDO: Incluir campos permitidos para actualización
     const updateData = {};
-    if (userData.username) updateData.userName = userData.username; // ✅ AGREGADO
-    if (userData.email) updateData.email = userData.email;
+    if (userData.email !== undefined) updateData.email = userData.email;
+    if (userData.password) updateData.password = userData.password; // ✅ AGREGADO
     if (userData.roleId) updateData.roleId = userData.roleId;
     
     console.log('Actualizando usuario:', id, updateData);

@@ -16,6 +16,7 @@ function useMovieNavigation() {
     
     const original = contentData?._original || contentData;
     const fileHash = original?.file_hash;
+    const contentType = contentData?.type || 'movie'; // Default a movie si no se especifica
     
     // ✅ Validar que fileHash existe
     if (!fileHash) {
@@ -26,12 +27,13 @@ function useMovieNavigation() {
     const formatted = formatResolutions(original?.available_resolutions || []);
     
     console.log('[useMovieNavigation] fileHash:', fileHash);
+    console.log('[useMovieNavigation] contentType:', contentType);
     console.log('[useMovieNavigation] resolutions originales:', original?.available_resolutions);
     console.log('[useMovieNavigation] resolutions formateadas:', formatted);
     
     return { 
       path: `/player/${fileHash}`, 
-      search: `resolutions=${formatted}` 
+      search: `resolutions=${formatted}&type=${contentType}` 
     };
   };
 

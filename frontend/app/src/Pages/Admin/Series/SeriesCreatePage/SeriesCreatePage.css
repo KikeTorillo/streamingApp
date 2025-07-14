@@ -1,11 +1,12 @@
-/* ===== MOVIECREATEPAGE.CSS - SISTEMA DE DISEÑO PURO ===== */
-/* src/Pages/Admin/Movies/MovieCreatePage/MovieCreatePage.css */
+/* ===== SERIESCREATEPAGE.CSS - SISTEMA DE DISEÑO PURO ===== */
+/* src/Pages/Admin/Series/SeriesCreatePage/SeriesCreatePage.css */
 
 /* 
-✅ SISTEMA PURO: Solo estilos específicos de MovieCreatePage
+✅ SISTEMA PURO: Solo estilos específicos de SeriesCreatePage
 ✅ RESPETO TOTAL: Container maneja su propio layout completamente
 ✅ VARIABLES: Solo variables CSS del sistema de diseño
 ✅ FILOSOFÍA: El Container se comporta como debe, sin ajustes
+✅ MODAL UNIFICADO: Ahora usa ProgressModal reutilizable
 */
 
 /* ===== ESTADOS ESPECÍFICOS DE LA PÁGINA ===== */
@@ -15,15 +16,6 @@
   pointer-events: none;
   opacity: 0.8;
   transition: opacity var(--transition-normal);
-}
-
-/* Barra de progreso flotante */
-.series-create-page__progress {
-  position: fixed;
-  left: 50%;
-  bottom: var(--space-xl);
-  transform: translateX(-50%);
-  z-index: var(--z-toast);
 }
 
 /* ===== ACCESIBILIDAD ===== */

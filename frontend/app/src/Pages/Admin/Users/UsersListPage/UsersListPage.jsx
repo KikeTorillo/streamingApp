@@ -133,7 +133,7 @@ function UsersListPage() {
    */
   const handleEditUser = (user) => {
     console.log('✏️ Editar usuario:', user);
-    navigate(`/admin/users/${user.id}/edit`);
+    navigate(`/admin/users/edit/${user.id}`);
   };
 
   /**

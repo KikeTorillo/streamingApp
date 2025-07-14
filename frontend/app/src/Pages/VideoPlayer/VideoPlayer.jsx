@@ -7,6 +7,7 @@ import hlsQualitySelector from "videojs-hls-quality-selector";
 import "./VideoPlayer.css";
 import { useParams, useSearchParams } from 'react-router-dom';
 import { getMovieByHashService } from '../../services/Movies/getMovieByIdService';
+import { getEpisodeByHashService } from '../../services/Episodes/getEpisodeByHashService';
 
 // Registra los plugins si aún no están registrados
 if (typeof videojs.getPlugin("hlsQualitySelector") !== "function") {
@@ -17,6 +18,7 @@ const VideoPlayer = () => {
   const {movieId} = useParams();
   const [searchParams] = useSearchParams();
   const resolutions = searchParams.get('resolutions');
+  const contentType = searchParams.get('type') || 'movie'; // Default a movie
   const videoRef = useRef(null);
   const playerRef = useRef(null);
   const [movieData, setMovieData] = useState(null);
@@ -51,24 +53,33 @@ const VideoPlayer = () => {
 
   const urlComplete = `${baseUrl}_,${resolutions},p.mp4.play/master.m3u8`;
 
-  // Load movie data
+  // Load content data (movie or episode)
   useEffect(() => {
-    const loadMovieData = async () => {
+    const loadContentData = async () => {
       try {
         setLoading(true);
-        const movie = await getMovieByHashService(movieId);
-        setMovieData(movie);
+        console.log(`🎬 Loading ${contentType} with hash:`, movieId);
+        
+        let contentData;
+        if (contentType === 'episode') {
+          contentData = await getEpisodeByHashService(movieId);
+        } else {
+          contentData = await getMovieByHashService(movieId);
+        }
+        
+        setMovieData(contentData);
+        console.log(`✅ ${contentType} data loaded:`, contentData);
       } catch (error) {
-        console.error('Error loading movie data:', error);
+        console.error(`❌ Error loading ${contentType} data:`, error);
       } finally {
         setLoading(false);
       }
     };
 
     if (movieId) {
-      loadMovieData();
+      loadContentData();
     }
-  }, [movieId]);
+  }, [movieId, contentType]);
 
   useEffect(() => {
     const initializePlayer = async () => {

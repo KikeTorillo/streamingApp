@@ -131,6 +131,7 @@ router.patch(
   checkRoles(['admin']),
   multiUpload,
   completeInfoUser,
+  validatorHandler(getMovieSchema, 'params'),
   validatorHandler(updateMovieSchema, 'body'),
   async (req, res, next) => {
     try {

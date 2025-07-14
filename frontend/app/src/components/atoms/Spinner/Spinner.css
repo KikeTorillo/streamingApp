@@ -1,0 +1,250 @@
+/* src/components/atoms/Spinner/Spinner.css */
+
+/* ===== OVERLAY MODE ===== */
+.spinner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.spinner-overlay__container {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner-overlay__spinner {
+  margin-bottom: 1rem;
+}
+
+.spinner-overlay__message {
+  color: #333;
+}
+
+/* ===== INLINE MODE ===== */
+.spinner-inline {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.spinner-inline__message {
+  color: #666;
+  text-align: center;
+}
+
+/* ===== TAMAÑOS ===== */
+.spinner--sm {
+  width: 32px;
+  height: 32px;
+}
+
+.spinner--md {
+  width: 48px;
+  height: 48px;
+}
+
+.spinner--lg {
+  width: 64px;
+  height: 64px;
+}
+
+.spinner__message--sm {
+  font-size: 0.875rem;
+}
+
+.spinner__message--md {
+  font-size: 1rem;
+}
+
+.spinner__message--lg {
+  font-size: 1.25rem;
+}
+
+/* ===== VARIANTES ===== */
+
+/* Circle Spinner */
+.spinner-circle {
+  border: 4px solid #f3f3f3;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.spinner-circle--primary {
+  border-top: 4px solid #3498db;
+}
+
+.spinner-circle--secondary {
+  border-top: 4px solid #6c757d;
+}
+
+.spinner-circle--success {
+  border-top: 4px solid #28a745;
+}
+
+.spinner-circle--danger {
+  border-top: 4px solid #dc3545;
+}
+
+/* Dots Spinner */
+.spinner-dots {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.spinner-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: spinnerDots 1.4s ease-in-out infinite;
+}
+
+.spinner-dot--primary {
+  background-color: #3498db;
+}
+
+.spinner-dot--secondary {
+  background-color: #6c757d;
+}
+
+.spinner-dot--success {
+  background-color: #28a745;
+}
+
+.spinner-dot--danger {
+  background-color: #dc3545;
+}
+
+.spinner-dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.spinner-dot:nth-child(2) {
+  animation-delay: 0.16s;
+}
+
+.spinner-dot:nth-child(3) {
+  animation-delay: 0.32s;
+}
+
+/* Pulse Spinner */
+.spinner-pulse {
+  border-radius: 50%;
+  animation: spinnerPulse 1.5s ease-in-out infinite;
+}
+
+.spinner-pulse--primary {
+  background-color: #3498db;
+}
+
+.spinner-pulse--secondary {
+  background-color: #6c757d;
+}
+
+.spinner-pulse--success {
+  background-color: #28a745;
+}
+
+.spinner-pulse--danger {
+  background-color: #dc3545;
+}
+
+/* Bars Spinner */
+.spinner-bars {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+
+.spinner-bar {
+  width: 4px;
+  height: 100%;
+  border-radius: 2px;
+  animation: spinnerBars 1.2s ease-in-out infinite;
+}
+
+.spinner-bar--primary {
+  background-color: #3498db;
+}
+
+.spinner-bar--secondary {
+  background-color: #6c757d;
+}
+
+.spinner-bar--success {
+  background-color: #28a745;
+}
+
+.spinner-bar--danger {
+  background-color: #dc3545;
+}
+
+.spinner-bar:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.spinner-bar:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.spinner-bar:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.spinner-bar:nth-child(4) {
+  animation-delay: 0.45s;
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes spinnerDots {
+  0%, 80%, 100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+@keyframes spinnerPulse {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes spinnerBars {
+  0%, 40%, 100% {
+    transform: scaleY(0.4);
+    opacity: 0.5;
+  }
+  20% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}

@@ -7,9 +7,9 @@ import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminL
 import { Container } from '../../../../components/atoms/Container/Container';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
 import { Button } from '../../../../components/atoms/Button/Button';
-import { UploadProgress } from "../../../../components/atoms/UploadProgress/UploadProgress";
+import { ProgressModal } from "../../../../components/molecules/ProgressModal/ProgressModal";
 import { useUploadProgress } from "../../../../hooks/useUploadProgress";
-import './EpisodesCreatePage.css';
+import "./EpisodesCreatePage.css";
 
 // Servicios
 import { createEpisodeService } from '../../../../services/Episodes/createEpisodeService';
@@ -442,17 +442,13 @@ function EpisodesCreatePage() {
 
       </Container>
 
-      {/* ===== BARRA DE PROGRESO FLOTANTE ===== */}
-      {status !== 'idle' && (
-        <div className="episodes-create-page__progress">
-          <UploadProgress
-            progress={progress}
-            status={status}
-            message={progressError || message}
-            size="md"
-          />
-        </div>
-      )}
+      <ProgressModal
+        isVisible={status !== 'idle'}
+        progress={progress}
+        status={status}
+        message={progressError || message}
+        size="md"
+      />
     </AdminLayout>
   );
 }

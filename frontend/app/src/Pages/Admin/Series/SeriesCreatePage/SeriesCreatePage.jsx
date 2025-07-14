@@ -20,6 +20,7 @@ import { getCategoriesService } from '../../../../services/Categories/getCategor
 import { tmdbService } from '../../../../services/tmdb/TMDBService';
 import { UploadProgress } from "../../../../components/atoms/UploadProgress/UploadProgress";
 import { useUploadProgress } from "../../../../hooks/useUploadProgress";
+import { Spinner } from "../../../../components/atoms/Spinner/Spinner";
 
 // ===== ESTILOS =====
 import './SeriesCreatePage.css';
@@ -49,6 +50,7 @@ function SeriesCreatePage() {
   const [categoriesLoading, setCategoriesLoading] = useState(false);
   const [categoriesError, setCategoriesError] = useState(null);
   const [submitError, setSubmitError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // ===== ESTADO DE PROGRESO DE SUBIDA =====
   const { progress, status, message, error: progressError, monitorProgress, resetProgress } = useUploadProgress();
@@ -252,6 +254,7 @@ function SeriesCreatePage() {
   // ===== HANDLER DEL FORMULARIO CON FILTRO DE CAMPOS VACÍOS =====
   const handleFormSubmit = async (seriesData) => {
     setFormLoading(true);
+    setIsSubmitting(true);
     setSubmitError(null);
 
     try {
@@ -311,6 +314,7 @@ function SeriesCreatePage() {
       setSubmitError(errorMessage);
     } finally {
       setFormLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -398,6 +402,16 @@ function SeriesCreatePage() {
             size="md"
           />
         </div>
+      )}
+      
+      {isSubmitting && (
+        <Spinner 
+          variant="pulse"
+          size="lg"
+          color="primary"
+          overlay={true}
+          message="Subiendo imagen de portada..."
+        />
       )}
     </AdminLayout>
   );

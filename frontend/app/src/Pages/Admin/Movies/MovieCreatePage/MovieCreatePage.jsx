@@ -18,7 +18,7 @@ import { MovieFormView } from './components/MovieFormView';
 import { createMovieService } from '../../../../services/Movies/createMovieService';
 import { getCategoriesService } from '../../../../services/Categories/getCategoriesService';
 import { tmdbService } from '../../../../services/tmdb/TMDBService';
-import { UploadProgress } from "../../../../components/atoms/UploadProgress/UploadProgress";
+import { ProgressModal } from "../../../../components/molecules/ProgressModal/ProgressModal";
 import { useUploadProgress } from "../../../../hooks/useUploadProgress";
 
 // ===== ESTILOS =====
@@ -451,19 +451,13 @@ function MovieCreatePage() {
 
         </div>
       </Container>
-      {status !== 'idle' && (
-        <div className="movie-create-page__progress-overlay">
-          <div className="movie-create-page__progress-backdrop" />
-          <div className="movie-create-page__progress-modal">
-            <UploadProgress
-              progress={progress}
-              status={status}
-              message={progressError || message}
-              size="lg"
-            />
-          </div>
-        </div>
-      )}
+      <ProgressModal
+        isVisible={status !== 'idle'}
+        progress={progress}
+        status={status}
+        message={progressError || message}
+        size="lg"
+      />
     </AdminLayout>
   );
 }

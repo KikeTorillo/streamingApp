@@ -24,18 +24,19 @@ import { CategoriesListPage } from "../Pages/Admin/Categories/CategoriesListPage
 // ===== RUTAS DE MOVIES =====
 import { MoviesListPage } from "../Pages/Admin/Movies/MoviesListPage/MoviesListPage";
 import { MovieCreatePage } from "../Pages/Admin/Movies/MovieCreatePage/MovieCreatePage";
-// import { MovieEditPage } from "../Pages/Admin/Movies/MovieEditPage/MovieEditPage"; // Para futuro
+import { MovieEditPage } from "../Pages/Admin/Movies/MovieEditPage/MovieEditPage";
 
 // ===== RUTAS DE SERIES - ACTIVADAS =====
 import { SeriesListPage } from '../Pages/Admin/Series/SeriesListPage/SeriesListPage';
 import { SeriesCreatePage } from '../Pages/Admin/Series/SeriesCreatePage/SeriesCreatePage';
+import { SeriesEditPage } from '../Pages/Admin/Series/SeriesEditPage/SeriesEditPage';
 
 // ===== 🆕 RUTAS DE EPISODES - NUEVAS =====
 import { EpisodesListPage } from '../Pages/Admin/Episodes/EpisodesListPage/EpisodesListPage';
 import { EpisodesCreatePage } from '../Pages/Admin/Episodes/EpisodesCreatePage/EpisodesCreatePage';
+import { EpisodeEditPage } from '../Pages/Admin/Episodes/EpisodeEditPage/EpisodeEditPage';
 
 import { SeriesDetailPage } from "../Pages/SeriesDetailPage/SeriesDetailPage";
-// import { EpisodeEditPage } from '../Pages/Admin/Episodes/EpisodeEditPage/EpisodeEditPage'; // Para futuro
 
 import "./App.css";
 
@@ -193,6 +194,14 @@ function AppRoutes() {
         </AdminRoute>
       )
     },
+    {
+      path: "/admin/movies/edit/:id",
+      element: (
+        <AdminRoute>
+          <MovieEditPage />
+        </AdminRoute>
+      )
+    },
 
     // ===== GESTIÓN DE SERIES - ACTIVADAS ✅ =====
     {
@@ -208,6 +217,14 @@ function AppRoutes() {
       element: (
         <AdminRoute>
           <SeriesCreatePage />
+        </AdminRoute>
+      )
+    },
+    {
+      path: "/admin/series/edit/:id",
+      element: (
+        <AdminRoute>
+          <SeriesEditPage />
         </AdminRoute>
       )
     },
@@ -229,8 +246,6 @@ function AppRoutes() {
         </AdminRoute>
       )
     },
-    // 🔮 RUTAS FUTURAS - Descomenta cuando implementes las páginas
-    /*
     {
       path: "/admin/episodes/edit/:id",
       element: (
@@ -239,6 +254,8 @@ function AppRoutes() {
         </AdminRoute>
       )
     },
+    // 🔮 RUTAS FUTURAS - Descomenta cuando implementes las páginas
+    /*
     {
       path: "/admin/episodes/view/:id",
       element: (

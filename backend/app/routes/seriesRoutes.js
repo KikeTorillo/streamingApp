@@ -114,8 +114,8 @@ router.patch(
     try {
       const { id } = req.params;
       const changes = req.body;
-      const updatedMovie = await service.update(id, changes);
-      res.json(updatedMovie);
+      const updatedSeries = await service.update(id, changes);
+      res.json(updatedSeries);
     } catch (error) {
       next(error);
     }

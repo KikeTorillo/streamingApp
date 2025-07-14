@@ -65,6 +65,51 @@ router.get(
 );
 
 /**
+ * Ruta para obtener un episodio específico por ID
+ */
+router.get(
+  '/:id',
+  authenticateJwt,
+  checkRoles(['admin']),
+  validatorHandler(getEpisodeSchema, 'params'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      console.log('📺 Obteniendo episodio por ID:', id);
+      const episode = await service.findOneEpisode(id);
+      
+      if (!episode || episode.length === 0) {
+        return res.status(404).json({ error: 'Episodio no encontrado' });
+      }
+      
+      res.json(episode[0]);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
+ * Ruta para obtener un episodio por su hash de archivo
+ * - Esta ruta se usa en el reproductor de video para obtener metadatos del episodio
+ * - Equivalente a /movies/by-hash/:fileHash pero para episodios
+ */
+router.get(
+  '/by-hash/:fileHash',
+  authenticateJwt,
+  async (req, res, next) => {
+    try {
+      const { fileHash } = req.params;
+      console.log('🎬 Obteniendo episodio por hash:', fileHash);
+      const episode = await service.findEpisodeByFileHash(fileHash);
+      res.json(episode);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
  * ✅ NUEVO: Endpoint para obtener el progreso de una tarea de episodio
  * - Esta ruta maneja una solicitud GET para consultar el estado de una tarea específica.
  * - Devuelve el estado (`status`) y el progreso (`progress`) de la tarea.

@@ -82,37 +82,33 @@ const getEpisodeSchema = Joi.object({
   }),
 });
 
-// Nuevo esquema para actualizar una película
+// Nuevo esquema para actualizar un episodio
 const updateEpisodeSchema = Joi.object({
   serieId: serieId.optional().messages({
-    'any.required': 'El id de a serie es obligatorio para episodios',
-    'number.base': 'El id de a serie es obligatorio para episodios',
+    'number.base': 'El id de la serie debe ser un número válido',
+    'number.positive': 'El id de la serie debe ser un número positivo',
   }),
 
-  // En series, para subir un episodio se requieren temporada y número de episodio.
-  // Si se está creando una serie, estos campos se rechazan.
   season: season.optional().messages({
-    'any.required': 'La temporada es obligatoria para episodios',
     'number.base': 'La temporada debe ser un número entero positivo',
+    'number.positive': 'La temporada debe ser mayor a 0',
   }),
 
   episodeNumber: episodeNumber.optional().messages({
-    'any.required': 'El número de episodio es obligatorio para episodios',
     'number.base': 'El número de episodio debe ser un número entero positivo',
+    'number.positive': 'El número de episodio debe ser mayor a 0',
   }),
 
   title: title.optional().messages({
-    'any.required': 'El nombre de la serie es obligatorio',
-    'string.empty': 'El nombre no puede estar vacío',
+    'string.base': 'El título debe ser un texto válido',
   }),
 
   description: description.optional().messages({
-    'any.required': 'La descripcion de la serie es obligatoria',
-    'string.empty': 'La descripcion de la serie es obligatoria',
+    'string.base': 'La descripción debe ser un texto válido',
   }),
 
-  user: user.required(),
-  ip: ip.required(),
+  user: user.optional(),
+  ip: ip.optional(),
 });
 
 module.exports = {

@@ -57,14 +57,16 @@ const getUserSchema = Joi.object({
 /**
  * Esquema para la actualización de un usuario.
  * Valida los datos opcionales que pueden ser actualizados.
+ * NOTA: userName NO se puede editar por requerimientos de negocio
  */
 const updateUserSchema = Joi.object({
-  userName: userName.optional().messages({
-    'string.empty': 'El userName no puede estar vacío',
-    'string.base': 'El userName debe ser un string',
-  }),
   email: email.optional().messages({
     'string.empty': 'El email no puede estar vacío',
+  }),
+  password: password.optional().messages({
+    'string.empty': 'El password no puede estar vacío',
+    'string.base': 'El password debe ser un string',
+    'string.alphanum': 'El password solo puede contener letras y números',
   }),
   roleId: roleId.optional().messages({
     'number.empty': 'El roleId no puede estar vacio',

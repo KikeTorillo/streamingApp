@@ -327,42 +327,37 @@ function TMDBSearchView({
             onSubmit={handleSearchSubmit}
             onChange={handleSearchFormChange}
             className="tmdb-search-view__form"
+            actions={[
+              {
+                key: 'search',
+                type: 'submit',
+                text: loading ? 'Buscando...' : 'Buscar',
+                variant: 'primary',
+                leftIcon: '🔍',
+                loading: loading,
+                disabled: !safeSearchQuery || safeSearchQuery.length < 2 || !isApiKeyValid,
+                onClick: performSearch
+              },
+              {
+                key: 'clear',
+                text: 'Limpiar',
+                variant: 'ghost',
+                leftIcon: '🗑️',
+                onClick: handleClearResults,
+                disabled: loading,
+                show: hasSearched
+              },
+              {
+                key: 'manual',
+                text: 'Crear manualmente',
+                variant: 'secondary',
+                leftIcon: '✏️',
+                onClick: onManualCreate,
+                disabled: loading,
+                show: showManualCreate
+              }
+            ]}
           />
-          
-          <div className="tmdb-search-view__actions">
-            <Button 
-              type="submit"
-              variant="primary"
-              leftIcon="🔍"
-              loading={loading}
-              disabled={!safeSearchQuery || safeSearchQuery.length < 2 || !isApiKeyValid}
-              onClick={performSearch}
-            >
-              {loading ? 'Buscando...' : 'Buscar'}
-            </Button>
-            
-            {hasSearched && (
-              <Button 
-                variant="ghost"
-                leftIcon="🗑️"
-                onClick={handleClearResults}
-                disabled={loading}
-              >
-                Limpiar
-              </Button>
-            )}
-            
-            {showManualCreate && (
-              <Button 
-                variant="secondary"
-                leftIcon="✏️"
-                onClick={onManualCreate}
-                disabled={loading}
-              >
-                Crear manualmente
-              </Button>
-            )}
-          </div>
         </CardBody>
       </Card>
 

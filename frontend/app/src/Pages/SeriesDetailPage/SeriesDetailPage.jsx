@@ -90,17 +90,29 @@ function SeriesDetailPage() {
 
     // ===== HANDLERS =====
     const handlePlayEpisode = (episode) => {
-        console.log('Reproducir episodio:', episode);
+        console.log('🎬 Reproducir episodio:', episode);
+        console.log('🔍 Episode file_hash:', episode.file_hash);
+        console.log('🔍 Episode available_resolutions:', episode.available_resolutions);
+        console.log('🔍 Episode full data:', JSON.stringify(episode, null, 2));
+        
+        // Verificar si tiene file_hash
+        if (!episode.file_hash) {
+            console.error('❌ ERROR: El episodio no tiene file_hash:', episode);
+            alert('Error: El episodio no tiene archivo de video asociado. Verifica que el episodio esté correctamente subido.');
+            return;
+        }
         
         // Transformar datos del episodio para que funcione con navigateToPlayer
         const episodeData = {
             ...episode,
             _original: episode,
+            type: 'episode',
             // Asegurar que tenga los campos necesarios
             file_hash: episode.file_hash,
             available_resolutions: episode.available_resolutions || [480, 720, 1080]
         };
         
+        console.log('🎬 Datos transformados para navigateToPlayer:', episodeData);
         navigateToPlayer(episodeData);
     };
 

@@ -203,25 +203,31 @@ class SeriesService {
   }
 
   /**
-   * Actualiza una serie cambiando el título, la portada y el año de lanzamiento.
+   * Actualiza una serie cambiando el título, categoría, año de lanzamiento, descripción y portada.
    * @param {number} id - ID de la serie a actualizar.
-   * @param {Object} changes - Datos a actualizar { title, coverImage, releaseYear }.
+   * @param {Object} changes - Datos a actualizar { title, categoryId, releaseYear, description, coverImage }.
    * @returns {Object} Registro actualizado.
    */
   async update(id, changes) {
     const client = await this.pool.connect();
-    const { title, releaseYear, coverImage } = changes;
+    const { title, releaseYear, coverImage, categoryId, description } = changes;
 
     try {
       await client.query('BEGIN');
 
-      if (await this.checkExistByTitleAndYear(title, releaseYear)) {
-        throw new Error(
-          'La serie ya existe. Nombre y anio de lanzamiento ya existen en la BD.'
-        );
-      }
-
+      // ✅ CORREGIDO: Solo validar duplicados si título o año han cambiado
       const serie = await this.findOne(id);
+      
+      if ((title && title !== serie.title) || (releaseYear && releaseYear !== serie.release_year)) {
+        const checkTitle = title || serie.title;
+        const checkYear = releaseYear || serie.release_year;
+        
+        if (await this.checkExistByTitleAndYear(checkTitle, checkYear)) {
+          throw new Error(
+            'La serie ya existe. Nombre y año de lanzamiento ya existen en la BD.'
+          );
+        }
+      }
 
       if (coverImage) {
         const coverFileHash = await this.calculateFileHash(coverImage);
@@ -496,6 +502,61 @@ class SeriesService {
   }
 
   /**
+   * Obtiene un episodio por su hash de archivo, incluyendo información del video asociado.
+   * @param {string} fileHash - Hash del archivo de video.
+   * @returns {Object} Datos del episodio encontrado con información del video.
+   * @throws {Error} Error si el episodio no existe.
+   */
+  async findEpisodeByFileHash(fileHash) {
+    const query = `
+      SELECT 
+        ep.*,
+        s.title as serie_name,
+        s.id as serie_id,
+        vi.file_hash, 
+        vi.available_resolutions,
+        vi.available_subtitles,
+        vi.duration as video_duration
+      FROM episodes ep
+      LEFT JOIN series s ON s.id = ep.serie_id
+      LEFT JOIN videos vi ON vi.id = ep.video_id
+      WHERE vi.file_hash = $1
+    `;
+    const result = await this.pool.query(query, [fileHash]);
+    if (!result.rows.length) {
+      throw boom.notFound('Episodio no encontrado');
+    }
+    
+    const episode = result.rows[0];
+    
+    // ✅ PARSEO SEGURO de available_resolutions
+    if (episode.available_resolutions) {
+      try {
+        if (typeof episode.available_resolutions === 'string') {
+          episode.available_resolutions = JSON.parse(episode.available_resolutions);
+        }
+      } catch (error) {
+        console.error('❌ Error parsing available_resolutions:', error.message);
+        episode.available_resolutions = null;
+      }
+    }
+
+    // ✅ PARSEO SEGURO de available_subtitles
+    if (episode.available_subtitles) {
+      try {
+        if (typeof episode.available_subtitles === 'string') {
+          episode.available_subtitles = JSON.parse(episode.available_subtitles);
+        }
+      } catch (error) {
+        console.error('❌ Error parsing available_subtitles:', error.message);
+        episode.available_subtitles = null;
+      }
+    }
+    
+    return episode;
+  }
+
+  /**
    * Flujo para subir un episodio a una serie existente.
    * Procesa el video (transcodificación, etc.) e inserta registros en las tablas "videos" y "episodes".
    *
@@ -618,7 +679,7 @@ class SeriesService {
   async updateEpisode(id, changes) {
     const client = await this.pool.connect();
 
-    const { serieId, season, episodeNumber } = changes;
+    const { serieId, season, episodeNumber, title } = changes;
 
     try {
       await client.query('BEGIN');

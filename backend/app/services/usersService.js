@@ -111,7 +111,7 @@ class UsersService {
   /**
    * Actualiza un usuario existente.
    * @param {number} id - ID del usuario a actualizar.
-   * @param {Object} changes - Datos a actualizar.
+   * @param {Object} changes - Datos a actualizar (email, password, roleId).
    * @returns {Object} Confirmación de actualización.
    */
   async update(id, changes) {
@@ -121,14 +121,18 @@ class UsersService {
       await client.query('BEGIN');
       const user = await this.findOne(id);
 
-      const userName = await this.findByUserName(changes.userName);
-      if (userName) {
-        throw boom.conflict('El userName  ya está registrado');
+      // ✅ CORREGIDO: Validar email solo si se está cambiando y no es el mismo usuario
+      if (changes.email && changes.email !== user.email) {
+        const existingEmailUser = await this.findByEmail(changes.email);
+        if (existingEmailUser && existingEmailUser.id !== user.id) {
+          throw boom.conflict('El email ya está registrado por otro usuario');
+        }
       }
 
-      const email = await this.findByEmail(changes.email);
-      if (email) {
-        throw boom.conflict('El email  ya está registrado');
+      // ✅ NUEVO: Encriptar contraseña si se proporciona
+      if (changes.password) {
+        const hashedPassword = await bcrypt.hash(changes.password, 10);
+        changes.password = hashedPassword;
       }
 
       const result = await updateTable(client, 'users', user.id, changes);

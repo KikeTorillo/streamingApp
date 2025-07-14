@@ -61,7 +61,10 @@ const DynamicForm = ({
   submitRounded = 'md',
   submitText = 'Enviar',
   submitIcon,
-  submitFullWidth = false
+  submitFullWidth = false,
+
+  // Nuevo prop para múltiples acciones
+  actions = null
 }) => {
   // Estado del formulario con datos iniciales
   const [formData, setFormData] = useState(() => {
@@ -559,18 +562,45 @@ const DynamicForm = ({
           </div>
 
           <div className="dynamic-form__submit-container">
-            <Button
-              type="submit"
-              variant={submitVariant}
-              size={submitSize}
-              rounded={submitRounded}
-              icon={submitIcon}
-              loading={loading}
-              disabled={disabled}
-              fullWidth={submitFullWidth}
-            >
-              {submitText}
-            </Button>
+            {actions ? (
+              // Renderizar botones personalizados
+              actions.map((action, index) => {
+                // Verificar si el botón debe mostrarse
+                if (action.show === false) return null;
+                
+                return (
+                  <Button
+                    key={action.key || index}
+                    type={action.type || 'button'}
+                    variant={action.variant || 'primary'}
+                    size={action.size || submitSize}
+                    rounded={action.rounded || submitRounded}
+                    leftIcon={action.leftIcon}
+                    rightIcon={action.rightIcon}
+                    loading={action.loading || loading}
+                    disabled={action.disabled || disabled}
+                    fullWidth={action.fullWidth || submitFullWidth}
+                    onClick={action.onClick}
+                  >
+                    {action.text || action.children}
+                  </Button>
+                );
+              })
+            ) : (
+              // Comportamiento original (backward compatibility)
+              <Button
+                type="submit"
+                variant={submitVariant}
+                size={submitSize}
+                rounded={submitRounded}
+                icon={submitIcon}
+                loading={loading}
+                disabled={disabled}
+                fullWidth={submitFullWidth}
+              >
+                {submitText}
+              </Button>
+            )}
           </div>
         </form>
       )}
