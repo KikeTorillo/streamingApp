@@ -83,12 +83,6 @@ function MovieFormView({
     return selectedItem ? 'Confirmar Información de TMDB' : 'Información del Contenido';
   };
 
-  const getFormDescription = () => {
-    return selectedItem ?
-      'Revisa y completa los datos obtenidos de TMDB. Los campos se rellenan automáticamente pero puedes modificarlos.' :
-      'Completa todos los campos requeridos para agregar la película o serie al catálogo.';
-  };
-
   /**
    * ✅ NUEVO: Obtener información descriptiva del tipo de imagen
    */
@@ -223,71 +217,9 @@ function MovieFormView({
   // ===== RENDER =====
   return (
     <div className="movie-form-view">
-      {/* ===== TARJETA DE VISTA PREVIA DE TMDB ===== */}
-      {selectedItem && (
-        <Card className="movie-form-view__preview">
-          <CardHeader>
-            <CardTitle>🎬 Vista Previa de TMDB</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <div className="movie-form-view__preview-content">
-              {selectedItem.poster_path && (
-                <div className="movie-form-view__preview-image">
-                  <ContentImage
-                    src={selectedItem.poster_path}
-                    alt={selectedItem.title || selectedItem.name}
-                    fallbackIcon="🎬"
-                  />
-                </div>
-              )}
-
-              <div className="movie-form-view__preview-info">
-                <h3 className="movie-form-view__preview-title">
-                  {selectedItem.title || selectedItem.name}
-                </h3>
-
-                <div className="movie-form-view__preview-meta">
-                  <span className="movie-form-view__preview-type">
-                    {selectedItem.type === 'tv' || selectedItem.media_type === 'tv' || selectedItem.name ? '📺 Serie' : '🎬 Película'}
-                  </span>
-                  {selectedItem.year && <span>📅 {selectedItem.year}</span>}
-                  {selectedItem.rating && <span>⭐ {selectedItem.rating}</span>}
-                </div>
-
-                {selectedItem.overview && (
-                  <p className="movie-form-view__preview-overview">
-                    {selectedItem.overview}
-                  </p>
-                )}
-              </div>
-            </div>
-          </CardBody>
-        </Card>
-      )}
-
       {/* ===== FORMULARIO PRINCIPAL ===== */}
       <Card>
-        <CardHeader>
-          <div className="movie-form-view__form-header">
-            <CardTitle>{getFormTitle()}</CardTitle>
-            {!selectedItem && showBackButton && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onBackToSearch}
-                disabled={formLoading}
-                leftIcon="←"
-              >
-                Volver a Búsqueda
-              </Button>
-            )}
-          </div>
-        </CardHeader>
         <CardBody>
-          <p className="movie-form-view__form-description">
-            {getFormDescription()}
-          </p>
-
           {/* ===== VISTA PREVIA DE IMAGEN ACTUAL ===== */}
           {imagePreview && (
             <div className="movie-form-view__current-image">

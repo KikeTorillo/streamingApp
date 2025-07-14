@@ -391,36 +391,6 @@ function MovieCreatePage() {
               Volver a Películas
             </Button>
 
-          {/* Header */}
-          <Card className="movie-create-page__header">
-            <CardHeader>
-              <CardTitle>
-                {currentView === 'search' ? '🔍 Buscar Contenido' : '📝 Crear Contenido'}
-              </CardTitle>
-              <p className="movie-create-page__description">
-                {currentView === 'search'
-                  ? 'Busca películas y series en TMDB o crea contenido manualmente'
-                  : selectedItem
-                    ? `Creando: ${selectedItem.title || selectedItem.name || 'Contenido desde TMDB'}`
-                    : 'Creando contenido manualmente'
-                }
-              </p>
-            </CardHeader>
-
-            {currentView === 'form' && (
-              <CardBody>
-                <Button
-                  variant="ghost"
-                  leftIcon="←"
-                  onClick={handleBackToSearch}
-                  disabled={formLoading}
-                >
-                  Volver a búsqueda
-                </Button>
-              </CardBody>
-            )}
-          </Card>
-
           {/* Contenido principal */}
           {currentView === 'search' && (
             <TMDBSearchView
@@ -428,7 +398,7 @@ function MovieCreatePage() {
               onManualCreate={handleManualCreate}
               contentType="all"
               title="🎬 Buscar en TMDB"
-              description="Busca películas y series en The Movie Database para agregar a tu catálogo"
+              description="Busca películas en The Movie Database para agregar a tu catálogo"
               placeholder="Ej: Avatar, Breaking Bad, Inception..."
               helperText="Busca por título, año o palabras clave"
               showManualCreate={true}

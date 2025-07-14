@@ -333,36 +333,6 @@ function SeriesCreatePage() {
               Volver a Series
             </Button>
 
-          {/* Header */}
-          <Card className="series-create-page__header">
-            <CardHeader>
-              <CardTitle>
-                {currentView === 'search' ? '🔍 Buscar Series' : '📝 Crear Serie'}
-              </CardTitle>
-              <p className="series-create-page__description">
-                {currentView === 'search'
-                  ? 'Busca series en TMDB o crea contenido manualmente'
-                  : selectedItem
-                    ? `Creando: ${selectedItem.name || selectedItem.title || 'Serie desde TMDB'}`
-                    : 'Creando contenido manualmente'
-                }
-              </p>
-            </CardHeader>
-
-            {currentView === 'form' && (
-              <CardBody>
-                <Button
-                  variant="ghost"
-                  leftIcon="←"
-                  onClick={handleBackToSearch}
-                  disabled={formLoading}
-                >
-                  Volver a búsqueda
-                </Button>
-              </CardBody>
-            )}
-          </Card>
-
           {/* Contenido principal */}
           {currentView === 'search' && (
             <TMDBSearchView
