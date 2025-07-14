@@ -66,7 +66,6 @@ function DataTable({
   searchPlaceholder = 'Buscar...',
   pageSize = 25,
   pageSizeOptions = [10, 25, 50, 100],
-  defaultPageSize = 25,
 
   // Props de estados vacíos
   emptyTitle = 'No hay datos',
@@ -111,7 +110,6 @@ function DataTable({
     searchPlaceholder: _searchPlaceholder,
     pageSize: _pageSize,
     pageSizeOptions: _pageSizeOptions,
-    defaultPageSize: _defaultPageSize,
 
     // Props de estados vacíos (personalizadas)
     emptyTitle: _emptyTitle,
@@ -137,7 +135,7 @@ function DataTable({
 
   // ===== ESTADOS =====
   const [globalFilter, setGlobalFilter] = useState('');
-  const [currentPageSize, setCurrentPageSize] = useState(pageSize || defaultPageSize);
+  const [currentPageSize, setCurrentPageSize] = useState(pageSize);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
   // Debounce para búsqueda

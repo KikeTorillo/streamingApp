@@ -447,7 +447,7 @@ function EpisodesCreatePage() {
         progress={progress}
         status={status}
         message={progressError || message}
-        size="md"
+        size="lg"
       />
     </AdminLayout>
   );

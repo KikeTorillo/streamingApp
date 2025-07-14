@@ -320,7 +320,7 @@ function UsersListPage() {
             error={error}
             searchPlaceholder="Buscar por usuario, email o rol..."
             pageSizeOptions={[10, 25, 50, 100]}
-            defaultPageSize={25}
+            pageSize={10}
             variant="default"
             emptyTitle="No hay usuarios registrados"
             emptyDescription="Crea tu primer usuario para comenzar a gestionar tu plataforma"

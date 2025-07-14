@@ -304,38 +304,6 @@ function CategoriesListPage() {
       }
     >
       <div className="categories-list">
-        {/* ===== ESTADÍSTICAS ===== */}
-        {!loading && !error && stats.total > 0 && (
-          <div className="categories-list__summary">
-            <div className="categories-list__stats">
-              <div className="categories-list__stat">
-                <span className="categories-list__stat-value">
-                  {stats.total}
-                </span>
-                <span className="categories-list__stat-label">Total Categorías</span>
-              </div>
-              <div className="categories-list__stat">
-                <span className="categories-list__stat-value">
-                  {stats.recentlyCreated}
-                </span>
-                <span className="categories-list__stat-label">Nuevas (7 días)</span>
-              </div>
-              <div className="categories-list__stat">
-                <span className="categories-list__stat-value">
-                  {stats.withShortNames}
-                </span>
-                <span className="categories-list__stat-label">Nombres Cortos</span>
-              </div>
-              <div className="categories-list__stat">
-                <span className="categories-list__stat-value">
-                  {stats.withLongNames}
-                </span>
-                <span className="categories-list__stat-label">Nombres Largos</span>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* ===== TABLA DE CATEGORÍAS ===== */}
         <div className="categories-list__table">
           <DataTable
@@ -345,7 +313,7 @@ function CategoriesListPage() {
             error={error}
             searchPlaceholder="Buscar categorías por nombre..."
             pageSizeOptions={[10, 25, 50, 100]}
-            defaultPageSize={25}
+            pageSize={10}
             variant="default"
             emptyTitle="No hay categorías registradas"
             emptyDescription="Crea tu primera categoría para organizar el contenido multimedia"

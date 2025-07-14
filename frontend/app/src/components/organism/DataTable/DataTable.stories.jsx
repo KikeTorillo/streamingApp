@@ -92,7 +92,7 @@ const users = [
   error={errorMessage}
   searchPlaceholder="Buscar usuarios..."
   pageSizeOptions={[10, 25, 50, 100]}
-  defaultPageSize={25}
+  pageSize={25}
   variant="striped"
   emptyTitle="No hay usuarios"
   emptyDescription="Crea tu primer usuario"
@@ -463,7 +463,7 @@ Playground.args = {
   loading: false,
   searchPlaceholder: 'Buscar usuarios...',
   pageSizeOptions: [10, 25, 50],
-  defaultPageSize: 10
+  pageSize: 10
 };
 Playground.parameters = {
   docs: {
@@ -553,7 +553,7 @@ export const MoviesTable = () => (
       columns={movieColumns}
       variant="striped"
       searchPlaceholder="Buscar películas..."
-      defaultPageSize={25}
+      pageSize={25}
       emptyTitle="No hay películas en el catálogo"
       emptyDescription="Agrega tu primera película al catálogo"
       emptyIcon="🎬"
@@ -700,7 +700,7 @@ export const ResponsiveDemo = () => (
       columns={movieColumns}
       variant="bordered"
       searchPlaceholder="Prueba la búsqueda responsive..."
-      defaultPageSize={5}
+      pageSize={5}
     />
   </div>
 );
