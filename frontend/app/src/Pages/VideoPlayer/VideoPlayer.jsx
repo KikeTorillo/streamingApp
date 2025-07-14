@@ -5,9 +5,10 @@ import "videojs-contrib-quality-levels";
 import "videojs-hls-quality-selector/dist/videojs-hls-quality-selector.css";
 import hlsQualitySelector from "videojs-hls-quality-selector";
 import "./VideoPlayer.css";
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { getMovieByHashService } from '../../services/Movies/getMovieByIdService';
 import { getEpisodeByHashService } from '../../services/Episodes/getEpisodeByHashService';
+import { Button } from '../../components/atoms/Button/Button';
 
 // Registra los plugins si aún no están registrados
 if (typeof videojs.getPlugin("hlsQualitySelector") !== "function") {
@@ -17,6 +18,7 @@ if (typeof videojs.getPlugin("hlsQualitySelector") !== "function") {
 const VideoPlayer = () => {
   const {movieId} = useParams();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const resolutions = searchParams.get('resolutions');
   const contentType = searchParams.get('type') || 'movie'; // Default a movie
   const videoRef = useRef(null);
@@ -52,6 +54,22 @@ const VideoPlayer = () => {
   }
 
   const urlComplete = `${baseUrl}_,${resolutions},p.mp4.play/master.m3u8`;
+
+  // Función para manejar el botón de regresar
+  const handleGoBack = () => {
+    // Si el reproductor está en pantalla completa, salir primero
+    if (playerRef.current && playerRef.current.isFullscreen()) {
+      playerRef.current.exitFullscreen();
+    }
+    
+    // Pausar el video antes de navegar
+    if (playerRef.current) {
+      playerRef.current.pause();
+    }
+    
+    // Navegar hacia atrás
+    navigate(-1);
+  };
 
   // Load content data (movie or episode)
   useEffect(() => {
@@ -133,7 +151,7 @@ const VideoPlayer = () => {
 
         const player = videojs(videoRef.current, {
           controls: true,
-          autoplay: false,
+          autoplay: true,
           preload: "auto",
           fluid: true,
           sources: [
@@ -176,6 +194,19 @@ const VideoPlayer = () => {
               player.addRemoteTextTrack(track, false);
             });
           }
+          
+          // Entrar automáticamente a pantalla completa cuando el reproductor esté listo
+          setTimeout(() => {
+            if (player.requestFullscreen) {
+              player.requestFullscreen()
+                .then(() => {
+                  console.log('✅ Pantalla completa activada automáticamente');
+                })
+                .catch((err) => {
+                  console.warn('⚠️ No se pudo activar pantalla completa automáticamente:', err.message);
+                });
+            }
+          }, 500); // Pequeño delay para asegurar que el reproductor esté completamente inicializado
         });
 
         // Enable quality selection
@@ -254,6 +285,19 @@ const VideoPlayer = () => {
   
   return (
     <div className="video-player-container">
+      {/* Botón de regresar */}
+      <Button 
+        className="back-button"
+        onClick={handleGoBack}
+        ariaLabel="Regresar"
+        variant="secondary"
+        size="md"
+        icon="←"
+        iconPosition="left"
+      >
+        Regresar
+      </Button>
+
       <div className="video-wrapper">
         <div className="video-info">
           <h2>Reproduciendo: {movieData?.title || 'Video'}</h2>

@@ -6,20 +6,21 @@ const { uploadFileIfNotExists } = require('./aws');
 const { createTempDir, deleteTempDir } = require('../utils/fileHelpers');
 
 /**
- * Procesa una imagen de portada.
+ * Optimiza una imagen de portada manteniendo dimensiones originales.
+ * Solo convierte a JPEG para optimización web, SIN redimensionar.
  * @param {string} inputPath - Ruta de la imagen original.
- * @param {string} outputPath - Ruta donde se guardará la imagen procesada.
- * @param {Object} options - Opciones de procesamiento (ancho, alto, formato y calidad).
+ * @param {string} outputPath - Ruta donde se guardará la imagen optimizada.
  */
 const processCoverImage = async (inputPath, outputPath) => {
-  const { width, height, format } = imageconfig;
+  const { format, quality } = imageconfig;
 
   try {
+    // ✅ Solo convertir a JPEG con calidad optimizada, mantener dimensiones originales
     await sharp(inputPath)
-      .resize(width, height, { fit: 'cover' })
+      .jpeg({ quality: quality })
       .toFormat(format)
       .toFile(outputPath);
-    console.log(`Imagen procesada: ${outputPath}`);
+    console.log(`Imagen optimizada a JPEG (dimensiones originales): ${outputPath}`);
     return outputPath;
   } catch (error) {
     console.error('Error procesando la imagen:', error);

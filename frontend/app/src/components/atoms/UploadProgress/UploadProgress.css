@@ -11,7 +11,8 @@
   font-family: var(--font-family-base);
   color: var(--text-primary);
   text-align: center;
-  width: 50rem;
+  width: 100%;
+  max-width: 50rem;
   margin: 0 auto;
 }
 
@@ -19,19 +20,19 @@
 .upload-progress--sm {
   padding: var(--space-md);
   gap: var(--space-sm);
-  width: 30rem;
+  max-width: 30rem;
 }
 
 .upload-progress--md {
   padding: var(--space-lg);
   gap: var(--space-md);
-  width: 40rem;
+  max-width: 40rem;
 }
 
 .upload-progress--lg {
   padding: var(--space-xl);
   gap: var(--space-lg);
-  width: 50rem;
+  max-width: 50rem;
 }
 
 /* ===== MENSAJE DE ESTADO ===== */
@@ -101,6 +102,7 @@
   overflow: hidden;
   border: 0.1rem solid var(--border-light);
   box-shadow: var(--shadow-inset);
+  min-width: 0; /* Permite que se reduzca */
 }
 
 .upload-progress--sm .upload-progress__bar-container {
@@ -244,21 +246,19 @@
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .upload-progress {
-    width: 90vw !important;
+    width: 100%;
+    max-width: 90vw;
+    padding: var(--space-md);
+  }
+  
+  .upload-progress--sm,
+  .upload-progress--md,
+  .upload-progress--lg {
     max-width: 90vw;
   }
   
-  .upload-progress--sm {
-    width: 90vw !important;
-  }
-  
-  .upload-progress--md {
-    width: 90vw !important;
-  }
-  
   .upload-progress--lg {
-    width: 90vw !important;
-    padding: var(--space-lg);
+    padding: var(--space-md);
   }
   
   .upload-progress__bar-container {

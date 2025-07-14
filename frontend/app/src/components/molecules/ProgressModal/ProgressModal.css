@@ -1,243 +1,50 @@
-/* ===== PROGRESS MODAL CSS - SISTEMA DE DISEÑO PURO ===== */
+/* ===== PROGRESS MODAL CSS - USANDO MODAL BASE ===== */
 /* src/components/molecules/ProgressModal/ProgressModal.css */
 
 /* 
-✅ SISTEMA PURO: Solo variables CSS del sistema de diseño
-✅ REUTILIZABLE: Modal overlay unificado para Movies, Series y Episodes
-✅ CONSISTENCIA: Mismos estilos elegantes en todas las páginas
-✅ ACCESIBILIDAD: Soporte para reduced-motion y navegación por teclado
-✅ RESPONSIVE: Adaptable a diferentes dispositivos
+✅ MODAL BASE: Usa Modal molecule base para overlay, backdrop, etc.
+✅ SISTEMA PURO: Solo estilos específicos del ProgressModal
+✅ REUTILIZABLE: Para Movies, Series y Episodes
+✅ CONSISTENCIA: Mismo sistema que EditModal
 */
 
-/* ===== OVERLAY PRINCIPAL ===== */
+/* ===== CONTENIDO ESPECÍFICO DEL PROGRESS MODAL ===== */
 
-/* Overlay que cubre toda la pantalla */
-.progress-modal__overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: var(--z-modal);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-lg);
-}
-
-/* Fondo oscuro con transparencia y blur */
-.progress-modal__backdrop {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(2px);
-}
-
-/* ===== CONTENEDOR DEL MODAL ===== */
-
-/* Contenedor principal del modal */
-.progress-modal__container {
-  position: relative;
-  z-index: 1;
-  background: var(--bg-primary);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-2xl);
-  border: 1px solid var(--border-light);
-  padding: var(--space-xl);
-  min-width: 32rem;
-  max-width: 90vw;
-  text-align: center;
-}
-
-/* ===== CONTENIDO DEL MODAL ===== */
-
-/* Título del modal */
-.progress-modal__title {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
-  color: var(--text-primary);
-  margin-bottom: var(--space-lg);
-  line-height: var(--line-height-tight);
-}
-
-/* Contenedor del componente UploadProgress */
+/* Contenedor del contenido del modal */
 .progress-modal__content {
-  margin-bottom: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  align-items: center;
+  text-align: center;
 }
 
 /* Descripción adicional */
 .progress-modal__description {
+  /* Typography */
   font-size: var(--font-size-sm);
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
   line-height: var(--line-height-relaxed);
-  margin-bottom: var(--space-md);
+  
+  /* Layout */
+  max-width: 90%;
+  margin: 0 auto;
 }
 
-/* ===== BOTÓN DE CERRAR ===== */
-
-/* Botón de cerrar (solo visible cuando es posible cerrar) */
-.progress-modal__close-button {
-  position: absolute;
-  top: var(--space-md);
-  right: var(--space-md);
-  width: 2rem;
-  height: 2rem;
-  border: none;
-  background: var(--bg-secondary);
-  color: var(--text-secondary);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-sm);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition-fast);
-}
-
-.progress-modal__close-button:hover {
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-  transform: scale(1.05);
-}
-
-.progress-modal__close-button:focus {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-
-.progress-modal__close-button:active {
-  transform: scale(0.95);
-}
-
-/* ===== ANIMACIONES DE ENTRADA ===== */
-
-/* Entrada suave del overlay */
-.progress-modal__overlay {
-  animation: progressModalFadeIn 0.3s ease-out;
-}
-
-/* Entrada suave del contenedor */
-.progress-modal__container {
-  animation: progressModalSlideIn 0.4s ease-out;
-}
-
-@keyframes progressModalFadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes progressModalSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-2rem) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-/* ===== RESPONSIVE DESIGN ===== */
-
-/* Tablets y móviles */
+/* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .progress-modal__container {
-    min-width: auto;
-    width: 90vw;
-    padding: var(--space-lg);
+  .progress-modal__content {
+    gap: var(--space-md);
   }
   
-  .progress-modal__overlay {
-    padding: var(--space-md);
-  }
-
-  .progress-modal__title {
-    font-size: var(--font-size-md);
+  .progress-modal__description {
+    font-size: var(--font-size-xs);
   }
 }
 
-/* Móviles pequeños */
-@media (max-width: 480px) {
-  .progress-modal__container {
-    width: 95vw;
-    padding: var(--space-md);
-  }
-
-  .progress-modal__overlay {
-    padding: var(--space-sm);
-  }
-}
-
-/* ===== MODO OSCURO ===== */
-
-@media (prefers-color-scheme: dark) {
-  .progress-modal__backdrop {
-    background-color: rgba(0, 0, 0, 0.8);
-  }
-}
-
-/* ===== ACCESIBILIDAD ===== */
-
-/* Reduced motion */
+/* ===== REDUCED MOTION ===== */
 @media (prefers-reduced-motion: reduce) {
-  .progress-modal__overlay,
-  .progress-modal__container {
-    animation: none;
-  }
-  
-  .progress-modal__close-button {
-    transition: none;
-  }
-}
-
-/* High contrast */
-@media (prefers-contrast: high) {
-  .progress-modal__container {
-    border: 2px solid var(--border-primary);
-  }
-  
-  .progress-modal__close-button {
-    border: 1px solid var(--border-primary);
-  }
-}
-
-/* ===== ESTADOS DE FOCUS ===== */
-
-/* Focus visible para navegación por teclado */
-.progress-modal__overlay:focus-visible {
-  outline: none;
-}
-
-.progress-modal__container:focus-within {
-  box-shadow: var(--shadow-2xl), 0 0 0 2px var(--color-primary);
-}
-
-/* ===== PRINT STYLES ===== */
-
-@media print {
-  .progress-modal__overlay {
-    position: static;
-    background: none;
-    box-shadow: none;
-  }
-  
-  .progress-modal__backdrop {
-    display: none;
-  }
-  
-  .progress-modal__container {
-    box-shadow: none;
-    border: 1px solid #000;
-  }
-  
-  .progress-modal__close-button {
-    display: none;
+  .progress-modal__content {
+    /* Sin animaciones adicionales */
   }
 }

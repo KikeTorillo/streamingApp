@@ -13,7 +13,7 @@ import './AppHeader.css';
  */
 function AppHeader({
   // Título de la app
-  appTitle = 'StreamFlix',
+  appTitle = 'StreamApp',
   
   // Usuario
   userName = null,
@@ -79,7 +79,7 @@ function AppHeader({
         >
           Cerrar Sesión
         </Button>
-        <ThemeSelector variant="compact" size={size === 'lg' ? 'lg' : 'sm'} />
+        <ThemeSelector variant="compact" size='md' />
       </div>
     </header>
   );

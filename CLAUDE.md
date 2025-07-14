@@ -129,6 +129,15 @@ This is a **monorepo streaming platform** with the following structure:
 4. **Storybook**: Component development and testing
 5. **Database**: Access via pgAdmin or `npm run shell:db`
 
+## Principio de Simplicidad
+
+**REGLA DE ORO**: SIEMPRE PRIORIZAR LA SIMPLICIDAD
+- **KISS (Keep It Simple, Stupid)**: La solución más simple es generalmente la correcta
+- **Evitar over-engineering**: No crear complejidad innecesaria
+- **Lógica directa**: Preferir código claro sobre código "inteligente"
+- **Una responsabilidad**: Cada función/componente debe hacer una sola cosa bien
+- **Debugging fácil**: Si es difícil de debuggear, probablemente es muy complejo
+
 ## Testing
 
 ### Frontend Testing Architecture
@@ -222,8 +231,11 @@ This is a **monorepo streaming platform** with the following structure:
 - **MANDATORY**: Only use components that have Storybook stories when building UI
 - **MANDATORY**: Before using any component, verify it exists in Storybook by checking for a `.stories.jsx` file
 - **MANDATORY**: All new components MUST have Storybook stories before they can be used elsewhere
+- **MANDATORY**: SIEMPRE usar componentes del proyecto en lugar de elementos HTML nativos (usar Button en lugar de `<button>`, etc.)
+- **MANDATORY**: Proponer nuevos componentes cuando sea necesario en lugar de crear elementos HTML customizados
 - **FORBIDDEN**: Using third-party UI libraries or components not documented in Storybook
 - **FORBIDDEN**: Creating custom styled HTML elements instead of using existing components
+- **FORBIDDEN**: Usar elementos HTML nativos cuando existe un componente equivalente (button, input, select, etc.)
 
 ### Code Quality Enforcement
 - **MANDATORY**: Run `npm run lint` before any commit

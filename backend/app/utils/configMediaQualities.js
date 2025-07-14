@@ -1,10 +1,10 @@
 // config.js
 
 const imageconfig = {
-  width: 640,
-  height: 360,
   format: 'jpeg',
   quality: 80,
+  // ✅ ELIMINADO: width y height - Las imágenes mantienen sus dimensiones originales
+  // Solo optimizamos formato y calidad para web
 };
 
 const { config } = require('../config/config');

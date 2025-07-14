@@ -446,6 +446,7 @@ function MovieCreatePage() {
               success={success && !isProcessing}
               hasChanges={hasChanges}
               onChange={() => setHasChanges(true)}
+              selectedItem={selectedItem} // ✅ AGREGAR: Para detectar si es manual o TMDB
             />
           )}
 

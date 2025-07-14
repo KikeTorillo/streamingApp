@@ -122,4 +122,43 @@ router.post(
   }
 );
 
+/**
+ * @route POST /api/v1/auth/logout
+ * @summary Cierra la sesión del usuario limpiando la cookie de autenticación
+ * @description No requiere autenticación - el logout debe ser permisivo para permitir 
+ *              cerrar sesión incluso con tokens expirados o inválidos
+ * @param {import('express').Request} req - Objeto de petición Express
+ * @param {import('express').Response} res - Objeto de respuesta Express
+ * @param {import('express').NextFunction} next - Función para pasar al siguiente middleware
+ * @returns {Object|Error} JSON con confirmación de logout o un error
+ */
+router.post(
+  '/logout',
+  async (req, res, next) => {
+    try {
+      console.log('🚪 Procesando logout...');
+      
+      // Limpiar la cookie de autenticación
+      res.clearCookie('access_token', {
+        httpOnly: true,
+        secure: false, // Cambiar a true en producción con HTTPS
+        sameSite: 'lax'
+      });
+      
+      console.log('✅ Cookie de autenticación limpiada');
+      
+      // Respuesta de éxito
+      res.json({
+        success: true,
+        message: 'Logout exitoso',
+        timestamp: new Date().toISOString()
+      });
+      
+    } catch (error) {
+      console.error('❌ Error en logout:', error);
+      next(error);
+    }
+  }
+);
+
 module.exports = router;

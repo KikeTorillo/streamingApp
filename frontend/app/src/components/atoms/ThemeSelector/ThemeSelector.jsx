@@ -1,5 +1,7 @@
 import React from 'react';
 import { useTheme } from '../../../app/context/ThemeContext';
+import { Select } from '../Select/Select';
+import { Button } from '../Button/Button';
 import './ThemeSelector.css';
 
 function ThemeSelector({
@@ -15,6 +17,20 @@ function ThemeSelector({
     setTheme(e.target.value);
   };
 
+  // Opciones para el Select con grupos
+  const themeOptions = [
+    { value: 'light', label: '☀️ Claro (Defecto)' },
+    { value: 'dark', label: '🌙 Oscuro (Defecto)' },
+    { value: 'ocean-light', label: '🌊 Océano Claro' },
+    { value: 'ocean-dark', label: '🌊 Océano Oscuro' },
+    { value: 'forest-light', label: '🌲 Bosque Claro' },
+    { value: 'forest-dark', label: '🌲 Bosque Oscuro' },
+    { value: 'sunset-light', label: '🌅 Atardecer Claro' },
+    { value: 'sunset-dark', label: '🌅 Atardecer Oscuro' },
+    { value: 'purple-light', label: '💜 Violeta Claro' },
+    { value: 'purple-dark', label: '💜 Violeta Oscuro' }
+  ];
+
   const selectorClasses = [
     'theme-selector',
     `theme-selector--size-${size}`,
@@ -25,42 +41,30 @@ function ThemeSelector({
   return (
     <div className={selectorClasses} {...restProps}>
       {showLabels && <label className="theme-selector__label">Tema</label>}
-      <select
-        className="theme-selector__select"
-        value={theme}
-        onChange={handleChange}
-        aria-label="Selector de tema"
-      >
-        <optgroup label="Por Defecto">
-          <option value="light">Claro</option>
-          <option value="dark">Oscuro</option>
-        </optgroup>
-        <optgroup label="Océano">
-          <option value="ocean-light">Claro</option>
-          <option value="ocean-dark">Oscuro</option>
-        </optgroup>
-        <optgroup label="Bosque">
-          <option value="forest-light">Claro</option>
-          <option value="forest-dark">Oscuro</option>
-        </optgroup>
-        <optgroup label="Atardecer">
-          <option value="sunset-light">Claro</option>
-          <option value="sunset-dark">Oscuro</option>
-        </optgroup>
-        <optgroup label="Violeta">
-          <option value="purple-light">Claro</option>
-          <option value="purple-dark">Oscuro</option>
-        </optgroup>
-      </select>
-      <button
-        type="button"
-        className="theme-selector__toggle"
-        onClick={toggleMode}
-        aria-label="Alternar modo claro/oscuro"
-      >
-        {palette === 'default' && (theme === 'dark' ? '🌙' : '☀️')}
-        {palette !== 'default' && (theme.endsWith('dark') ? '🌙' : '☀️')}
-      </button>
+      
+      <div className="theme-selector__controls">
+        <Select
+          className="theme-selector__select"
+          value={theme}
+          onChange={handleChange}
+          options={themeOptions}
+          size={size}
+          variant={variant}
+          ariaLabel="Selector de tema"
+          compact={true}
+        />
+        
+        <Button
+          className="theme-selector__toggle"
+          onClick={toggleMode}
+          ariaLabel="Alternar modo claro/oscuro"
+          variant="ghost"
+          size={size}
+          iconOnly={true}
+          icon={palette === 'default' && (theme === 'dark' ? '🌙' : '☀️') || 
+                palette !== 'default' && (theme.endsWith('dark') ? '🌙' : '☀️')}
+        />
+      </div>
     </div>
   );
 }

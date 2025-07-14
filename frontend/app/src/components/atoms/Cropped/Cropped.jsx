@@ -55,10 +55,16 @@ const Cropped = ({ imageSrc, aspect = 16 / 9, onComplete }) => {
   // Maneja la confirmación del recorte
   const handleCropConfirm = async () => {
     try {
+      console.log('🔧 Iniciando recorte...', { croppedAreaPixels });
       const croppedBlob = await getCroppedImg(imageSrc, croppedAreaPixels);
-      if (onComplete) onComplete(croppedBlob);
+      console.log('✅ Imagen recortada exitosamente:', croppedBlob);
+      if (onComplete) {
+        onComplete(croppedBlob);
+      } else {
+        console.warn('⚠️ No hay callback onComplete definido');
+      }
     } catch (error) {
-      console.error("Error al recortar la imagen:", error);
+      console.error("❌ Error al recortar la imagen:", error);
     }
   };
 

@@ -5,30 +5,20 @@
   font-family: var(--font-family-base);
 }
 
+.theme-selector__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+/* Personalización específica para el Select en ThemeSelector */
 .theme-selector__select {
-  height: var(--component-height-md);
-  padding: var(--component-padding-md);
-  font-size: var(--component-font-md);
-  border: 0.1rem solid var(--border-default);
-  border-radius: var(--radius-md);
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  min-width: 200px;
 }
 
+/* Personalización específica para el Button en ThemeSelector */
 .theme-selector__toggle {
-  height: var(--component-height-md);
-  padding: 0 var(--space-sm);
-  font-size: var(--component-font-md);
-  background-color: var(--color-secondary);
-  color: var(--text-on-primary);
-  border: none;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: background-color var(--transition-normal);
-}
-
-.theme-selector__toggle:hover {
-  background-color: var(--color-secondary-hover);
+  flex-shrink: 0;
 }
 
 .theme-selector--variant-floating {
@@ -46,29 +36,19 @@
   display: none;
 }
 
-.theme-selector--size-xs .theme-selector__select,
-.theme-selector--size-xs .theme-selector__toggle {
-  height: var(--component-height-xs);
-  font-size: var(--component-font-xs);
-  padding: var(--space-xs) var(--space-sm);
+/* Los tamaños ahora se manejan directamente por los componentes Select y Button */
+.theme-selector--size-xs .theme-selector__select {
+  min-width: 150px;
 }
 
-.theme-selector--size-sm .theme-selector__select,
-.theme-selector--size-sm .theme-selector__toggle {
-  height: var(--component-height-sm);
-  font-size: var(--component-font-sm);
+.theme-selector--size-sm .theme-selector__select {
+  min-width: 170px;
 }
 
-.theme-selector--size-lg .theme-selector__select,
-.theme-selector--size-lg .theme-selector__toggle {
-  height: var(--component-height-lg);
-  font-size: var(--component-font-lg);
-  padding: var(--space-md) var(--space-lg);
+.theme-selector--size-lg .theme-selector__select {
+  min-width: 230px;
 }
 
-.theme-selector--size-xl .theme-selector__select,
-.theme-selector--size-xl .theme-selector__toggle {
-  height: var(--component-height-xl);
-  font-size: var(--component-font-xl);
-  padding: var(--space-md) var(--space-xl);
+.theme-selector--size-xl .theme-selector__select {
+  min-width: 250px;
 }

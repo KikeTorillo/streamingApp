@@ -1,5 +1,4 @@
 // src/components/atoms/UploadProgress/UploadProgress.jsx
-import React from "react";
 import "./UploadProgress.css";
 
 const UploadProgress = ({ 
@@ -8,7 +7,8 @@ const UploadProgress = ({
   status = "processing", // 'uploading', 'processing', 'transcoding', 'completed', 'failed'
   showPercentage = true,
   size = "md" // 'sm', 'md', 'lg'
-}) => (
+}) => {
+  return (
   <div className={`upload-progress upload-progress--${size} upload-progress--${status}`}>
     
     {/* Texto de estado */}
@@ -60,6 +60,7 @@ const UploadProgress = ({
     </div>
     
   </div>
-);
+  );
+};
 
 export { UploadProgress };

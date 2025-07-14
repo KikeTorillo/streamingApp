@@ -1,4 +1,5 @@
 // src/components/molecules/ProgressModal/ProgressModal.jsx
+import { Modal } from "../Modal/Modal";
 import { UploadProgress } from "../../atoms/UploadProgress/UploadProgress";
 import "./ProgressModal.css";
 
@@ -28,86 +29,60 @@ function ProgressModal({
   // Determinar si se puede cerrar el modal
   const canClose = onClose && (status === 'completed' || status === 'failed');
 
-  // Manejar clic en backdrop (solo si se puede cerrar)
-  const handleBackdropClick = (event) => {
-    if (canClose && event.target === event.currentTarget) {
-      onClose();
+  // Función para obtener el título
+  const getTitle = () => {
+    switch (status) {
+      case 'uploading': return '📤 Subiendo archivo...';
+      case 'processing': return '⚙️ Procesando contenido...';
+      case 'transcoding': return '🎬 Transcodificando video...';
+      case 'completed': return '✅ ¡Proceso completado!';
+      case 'failed': return '❌ Error en el proceso';
+      default: return '⚙️ Procesando contenido...';
     }
   };
 
-  // Manejar tecla Escape (solo si se puede cerrar)
-  const handleKeyDown = (event) => {
-    if (canClose && event.key === 'Escape') {
-      onClose();
+  // Función para obtener la descripción
+  const getDescription = () => {
+    switch (status) {
+      case 'uploading': return 'El archivo se está subiendo al servidor...';
+      case 'processing': return 'Validando y preparando el contenido...';
+      case 'transcoding': return 'Generando diferentes calidades de video...';
+      case 'completed': return 'El contenido ha sido procesado exitosamente.';
+      case 'failed': return 'Ocurrió un error durante el procesamiento.';
+      default: return 'Procesando contenido...';
     }
   };
 
   return (
-    <div 
-      className="progress-modal__overlay"
-      onClick={handleBackdropClick}
-      onKeyDown={handleKeyDown}
-      tabIndex={-1}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="progress-modal-title"
+    <Modal
+      isOpen={isVisible}
+      onClose={canClose ? onClose : undefined}
+      title={getTitle()}
+      size={size}
+      closeOnBackdrop={canClose}
+      closeOnEscape={canClose}
       aria-describedby="progress-modal-description"
+      className="progress-modal"
     >
-      {/* Fondo oscuro con blur */}
-      <div className="progress-modal__backdrop" />
-      
-      {/* Contenedor del modal */}
-      <div className="progress-modal__container">
-        
-        {/* Título del modal */}
-        <div 
-          id="progress-modal-title" 
-          className="progress-modal__title"
-        >
-          {status === 'uploading' && '📤 Subiendo archivo...'}
-          {status === 'processing' && '⚙️ Procesando contenido...'}
-          {status === 'transcoding' && '🎬 Transcodificando video...'}
-          {status === 'completed' && '✅ ¡Proceso completado!'}
-          {status === 'failed' && '❌ Error en el proceso'}
-        </div>
-
+      <div className="progress-modal__content">
         {/* Componente de progreso */}
-        <div className="progress-modal__content">
-          <UploadProgress
-            progress={progress}
-            status={status}
-            message={message}
-            showPercentage={showPercentage}
-            size={size}
-          />
-        </div>
+        <UploadProgress
+          progress={progress}
+          status={status}
+          message={message}
+          showPercentage={showPercentage}
+          size={size}
+        />
 
         {/* Descripción adicional */}
         <div 
           id="progress-modal-description" 
           className="progress-modal__description"
         >
-          {status === 'uploading' && 'El archivo se está subiendo al servidor...'}
-          {status === 'processing' && 'Validando y preparando el contenido...'}
-          {status === 'transcoding' && 'Generando diferentes calidades de video...'}
-          {status === 'completed' && 'El contenido ha sido procesado exitosamente.'}
-          {status === 'failed' && 'Ocurrió un error durante el procesamiento.'}
+          {getDescription()}
         </div>
-
-        {/* Botón de cerrar (solo si es posible) */}
-        {canClose && (
-          <button
-            type="button"
-            className="progress-modal__close-button"
-            onClick={onClose}
-            aria-label="Cerrar modal"
-          >
-            ✕
-          </button>
-        )}
-
       </div>
-    </div>
+    </Modal>
   );
 }
 

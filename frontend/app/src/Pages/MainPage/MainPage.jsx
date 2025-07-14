@@ -19,8 +19,7 @@ import { searchMoviesService } from '../../services/Movies/searchMoviesService';
 import { getSeriesService } from '../../services/Series/getSeriesService';
 import { searchSeriesService } from '../../services/Series/searchSeriesService';
 import { getCategoriesService } from '../../services/Categories/getCategoriesService';
-
-//import { logoutService } from '../../services/Auth/logoutService';
+import { logoutService } from '../../services/Auth/logoutService';
 
 function MainPage() {
     const navigate = useNavigate();
@@ -121,11 +120,26 @@ function MainPage() {
 
     /**
      * Manejar logout
+     * Ejecuta el servicio de logout que limpia sesión y redirige
      */
-    //const handleLogout = async () => {
-    //    await logoutService();
-    // logoutService ya maneja la redirección
-    //};
+    const handleLogout = async () => {
+        try {
+            console.log('🚪 Usuario solicitando logout...');
+            
+            // Mostrar mensaje de confirmación opcional
+            const confirmLogout = window.confirm('¿Estás seguro de que quieres cerrar sesión?');
+            
+            if (confirmLogout) {
+                await logoutService();
+                // logoutService ya maneja la redirección automáticamente
+            }
+        } catch (error) {
+            console.error('❌ Error en handleLogout:', error);
+            // En caso de error, forzar limpieza y redirigir
+            sessionStorage.removeItem('sessionUser');
+            window.location.href = '/login';
+        }
+    };
 
     /**
      * Manejar búsqueda
@@ -337,7 +351,7 @@ function MainPage() {
                     searchValue={searchTerm}
                     onSearchChange={handleSearchChange}
                     searchPlaceholder="Buscar películas y series..."
-                    //onLogout={handleLogout}
+                    onLogout={handleLogout}
                     variant="default"
                     size="lg"
                 />
@@ -376,7 +390,7 @@ function MainPage() {
         >
             {/* ===== SECCIÓN DE PELÍCULAS ===== */}
             <ContentSection
-                title={`🎬 Películas ${searchTerm ? `- "${searchTerm}"` : selectedCategory !== 'all' ? '- Filtradas' : 'Populares'}`}
+                title={`Películas ${searchTerm ? `- "${searchTerm}"` : selectedCategory !== 'all' ? '- Filtradas' : 'Populares'}`}
                 icon="🎬"
                 loading={loadingMovies || searching}
                 error={moviesError}
@@ -433,7 +447,7 @@ function MainPage() {
 
             {/* ===== SECCIÓN DE SERIES ===== */}
             <ContentSection
-                title={`📺 Series ${searchTerm ? `- "${searchTerm}"` : selectedCategory !== 'all' ? '- Filtradas' : 'Populares'}`}
+                title={`Series ${searchTerm ? `- "${searchTerm}"` : selectedCategory !== 'all' ? '- Filtradas' : 'Populares'}`}
                 icon="📺"
                 loading={loadingSeries || searching}
                 error={seriesError}

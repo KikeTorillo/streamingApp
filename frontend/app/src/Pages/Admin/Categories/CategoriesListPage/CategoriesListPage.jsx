@@ -6,11 +6,13 @@ import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { DataTable } from '../../../../components/organism/DataTable/DataTable';
 import { Button } from '../../../../components/atoms/Button/Button';
+import { EditModal } from '../../../../components/organism/EditModal/EditModal';
 import './CategoriesListPage.css';
 
 // Servicios de categorías
 import { getCategoriesService } from '../../../../services/Categories/getCategoriesService';
 import { deleteCategoryService } from '../../../../services/Categories/deleteCategoryService';
+import { updateCategoryService } from '../../../../services/Categories/updateCategoryService';
 
 /**
  * CategoriesListPage - Página de gestión de categorías COMPLETA
@@ -29,6 +31,11 @@ function CategoriesListPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [deleting, setDeleting] = useState(null);
+  
+  // Estados para el modal de edición
+  const [editModal, setEditModal] = useState({ isOpen: false, category: null });
+  const [editing, setEditing] = useState(false);
+  const [editError, setEditError] = useState(null);
 
   // ===== FUNCIONES AUXILIARES =====
   
@@ -181,11 +188,69 @@ function CategoriesListPage() {
   };
 
   /**
-   * Editar categoría
+   * Editar categoría - Abrir modal de edición
    */
   const handleEditCategory = (category) => {
     console.log('✏️ Editar categoría:', category);
-    navigate(`/admin/categories/edit/${category.id}`);
+    setEditModal({ isOpen: true, category });
+    setEditError(null);
+  };
+  
+  /**
+   * Guardar cambios en categoría
+   */
+  const handleSaveCategory = async (newName) => {
+    setEditing(true);
+    setEditError(null);
+    
+    try {
+      console.log('📝 Actualizando categoría:', { id: editModal.category.id, name: newName });
+      
+      const response = await updateCategoryService(editModal.category.id, newName);
+      
+      console.log('📥 Respuesta del servicio de actualización:', response);
+      
+      // Actualizar la categoría en el estado local
+      setCategories(prev => 
+        prev.map(cat => 
+          cat.id === editModal.category.id 
+            ? { ...cat, name: newName }
+            : cat
+        )
+      );
+      
+      // Cerrar modal
+      setEditModal({ isOpen: false, category: null });
+      
+      console.log('✅ Categoría actualizada exitosamente');
+      
+    } catch (error) {
+      console.error('💥 Error al actualizar categoría:', error);
+      
+      let errorMessage = 'Error al actualizar la categoría.';
+      
+      if (error.response?.status === 401) {
+        console.log('🔒 Sesión expirada, redirigiendo...');
+        sessionStorage.clear();
+        navigate('/login');
+        return;
+      } else if (error.response?.status === 404) {
+        errorMessage = 'La categoría no existe.';
+      } else if (error.response?.status === 403) {
+        errorMessage = 'No tienes permisos para editar esta categoría.';
+      } else if (error.response?.status === 409) {
+        errorMessage = 'Ya existe una categoría con este nombre.';
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      setEditError(errorMessage);
+      
+    } finally {
+      setEditing(false);
+    }
   };
 
   /**
@@ -321,6 +386,8 @@ function CategoriesListPage() {
             onView={handleViewCategory}
             onEdit={handleEditCategory}
             onDelete={handleDeleteCategory}
+            deleting={deleting}
+            editing={editing}
             className={deleting ? 'categories-list__table--deleting' : ''}
             rowClassName={(row) => {
               const classes = [];
@@ -332,6 +399,24 @@ function CategoriesListPage() {
           />
         </div>
       </div>
+      
+      {/* Modal de edición */}
+      <EditModal
+        isOpen={editModal.isOpen}
+        onClose={() => setEditModal({ isOpen: false, category: null })}
+        onSave={handleSaveCategory}
+        title="Editar Categoría"
+        fieldLabel="Nombre de la Categoría"
+        fieldPlaceholder="Ej: Acción, Comedia, Drama..."
+        initialValue={editModal.category?.name || ''}
+        loading={editing}
+        error={editError}
+        icon="📂"
+        required
+        minLength={2}
+        maxLength={50}
+        size="md"
+      />
     </AdminLayout>
   );
 }

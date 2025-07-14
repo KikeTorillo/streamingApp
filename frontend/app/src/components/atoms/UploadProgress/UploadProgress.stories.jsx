@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+// ===== UPLOAD PROGRESS STORIES =====
+// src/components/atoms/UploadProgress/UploadProgress.stories.jsx
+
+import { useState } from 'react';
 import { UploadProgress } from './UploadProgress';
 
 export default {
@@ -6,31 +9,31 @@ export default {
   component: UploadProgress,
   tags: ['autodocs'],
   parameters: {
+    layout: 'centered',
     docs: {
       description: {
         component: `
 # UploadProgress Atom
 
-El átomo **UploadProgress** proporciona una interfaz visual elegante para mostrar el progreso de operaciones de carga y transcodificación siguiendo principios de **Atomic Design**.
+Componente para mostrar el progreso de carga y procesamiento de archivos.
 
-## 🎯 Características principales
+## Caracteristicas
 
-- **5 tamaños**: xs, sm, md, lg, xl
-- **4 variantes**: default, success, warning, error  
-- **Estados completos**: processing, transcoding, completed, failed
-- **Accesibilidad**: ARIA labels, navegación por teclado, reduced motion
-- **Animaciones elegantes**: Shimmer effect, dots animation, smooth transitions
-- **Theming**: Variables CSS del sistema
+- **Estados multiples**: processing, transcoding, completed, failed
+- **Animaciones**: Barras shimmer y dots animados
+- **Responsive**: Se adapta al contenedor
+- **Accesibilidad**: ARIA y reduced motion
+- **Tamaños**: sm, md, lg
 
-## 🔧 Uso básico
+## Uso basico
 
 \`\`\`jsx
 import { UploadProgress } from './atoms/UploadProgress';
 
 <UploadProgress 
   progress={45}
-  status="transcoding"
-  message="Transcodificando video..."
+  status="processing"
+  message="Procesando archivo..."
   showPercentage={true}
   size="md"
 />
@@ -41,217 +44,135 @@ import { UploadProgress } from './atoms/UploadProgress';
   },
   argTypes: {
     progress: {
-      name: 'Progreso',
-      description: 'Porcentaje de progreso (0-100)',
       control: { type: 'range', min: 0, max: 100, step: 1 },
-      table: { 
-        type: { summary: 'number' },
-        defaultValue: { summary: '0' }
-      }
-    },
-    message: {
-      name: 'Mensaje',
-      description: 'Texto descriptivo del estado actual',
-      control: 'text',
-      table: { 
-        type: { summary: 'string' },
-        defaultValue: { summary: 'Procesando...' }
-      }
+      description: 'Porcentaje de progreso (0-100)'
     },
     status: {
-      name: 'Estado',
-      description: 'Estado actual del progreso',
       control: 'select',
       options: ['processing', 'transcoding', 'completed', 'failed'],
-      table: { 
-        type: { summary: "'processing' | 'transcoding' | 'completed' | 'failed'" },
-        defaultValue: { summary: 'processing' }
-      }
+      description: 'Estado del progreso'
+    },
+    message: {
+      control: 'text',
+      description: 'Mensaje a mostrar'
     },
     showPercentage: {
-      name: 'Mostrar porcentaje',
-      description: 'Si se muestra el porcentaje numérico',
       control: 'boolean',
-      table: { 
-        type: { summary: 'boolean' },
-        defaultValue: { summary: 'true' }
-      }
+      description: 'Mostrar porcentaje'
     },
     size: {
-      name: 'Tamaño',
-      description: 'Tamaño del componente',
       control: 'select',
       options: ['sm', 'md', 'lg'],
-      table: { 
-        type: { summary: "'sm' | 'md' | 'lg'" },
-        defaultValue: { summary: 'md' }
-      }
+      description: 'Tamaño del componente'
     }
   }
 };
 
-// ========== 1. DEFAULT ==========
-export const Default = () => (
-  <UploadProgress 
-    progress={65}
-    status="transcoding"
-    message="Transcodificando video..."
-    showPercentage={true}
-    size="md"
-  />
-);
-Default.parameters = {
-  docs: { 
-    description: { 
-      story: 'Configuración por defecto del componente mostrando transcodificación en progreso.' 
-    } 
+// ===== HISTORIAS B�SICAS =====
+
+export const Default = {
+  args: {
+    progress: 45,
+    status: 'processing',
+    message: 'Procesando archivo...',
+    showPercentage: true,
+    size: 'md'
   }
 };
 
-// ========== 2. SIZES ==========
+export const Processing = {
+  args: {
+    progress: 25,
+    status: 'processing',
+    message: 'Preparando archivo...',
+    showPercentage: true,
+    size: 'md'
+  }
+};
+
+export const Transcoding = {
+  args: {
+    progress: 75,
+    status: 'transcoding',
+    message: 'Transcodificando video...',
+    showPercentage: true,
+    size: 'md'
+  }
+};
+
+export const Completed = {
+  args: {
+    progress: 100,
+    status: 'completed',
+    message: 'Proceso completado!',
+    showPercentage: true,
+    size: 'md'
+  }
+};
+
+export const Failed = {
+  args: {
+    progress: 60,
+    status: 'failed',
+    message: 'Error en el procesamiento',
+    showPercentage: true,
+    size: 'md'
+  }
+};
+
+// ===== TAMA�OS =====
+
 export const Sizes = () => (
-  <div style={{
-    display: 'grid',
-    gap: 'var(--space-lg)',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-    alignItems: 'center',
-    padding: 'var(--space-md)'
-  }}>
-    {['sm', 'md', 'lg'].map((size, index) => (
-      <div key={size} style={{
-        border: '1px solid var(--border-default)',
-        borderRadius: 'var(--radius-md)',
-        padding: 'var(--space-sm)',
-        backgroundColor: 'var(--bg-secondary)'
-      }}>
-        <div style={{ 
-          textAlign: 'center', 
-          marginBottom: 'var(--space-sm)',
-          fontSize: '1.2rem',
-          fontWeight: '500',
-          color: 'var(--text-secondary)'
-        }}>
-          {size.toUpperCase()}
-        </div>
-        <UploadProgress 
-          progress={40 + index * 20}
-          status="processing"
-          message={`Tamaño ${size}`}
-          showPercentage={true}
-          size={size}
-        />
-      </div>
-    ))}
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
+    <div>
+      <h4>Pequeño (sm)</h4>
+      <UploadProgress progress={30} status="processing" message="Tamaño pequeño" size="sm" />
+    </div>
+    <div>
+      <h4>Mediano (md)</h4>
+      <UploadProgress progress={60} status="transcoding" message="Tamaño mediano" size="md" />
+    </div>
+    <div>
+      <h4>Grande (lg)</h4>
+      <UploadProgress progress={90} status="processing" message="Tamaño grande" size="lg" />
+    </div>
   </div>
 );
-Sizes.parameters = {
-  docs: { 
-    description: { 
-      story: 'Los 3 tamaños disponibles: sm, md, lg con diferentes contenedores.' 
-    } 
-  }
-};
 
-// ========== 3. VARIANTS ==========
-export const Variants = () => (
-  <div style={{
-    display: 'grid',
-    gap: 'var(--space-lg)',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-    alignItems: 'center',
-    padding: 'var(--space-md)'
-  }}>
-    {[
-      { status: 'processing', progress: 25, message: 'Preparando archivos...', color: '#3b82f6' },
-      { status: 'transcoding', progress: 65, message: 'Transcodificando video...', color: '#f59e0b' },
-      { status: 'completed', progress: 100, message: '¡Completado!', color: '#22c55e' },
-      { status: 'failed', progress: 45, message: 'Error en el proceso', color: '#ef4444' }
-    ].map((variant) => (
-      <div key={variant.status} style={{
-        border: '1px solid var(--border-default)',
-        borderRadius: 'var(--radius-md)',
-        padding: 'var(--space-sm)',
-        backgroundColor: 'var(--bg-primary)'
-      }}>
-        <div style={{ 
-          textAlign: 'center', 
-          marginBottom: 'var(--space-sm)',
-          fontSize: '1.1rem',
-          fontWeight: '500',
-          color: variant.color,
-          textTransform: 'capitalize'
-        }}>
-          {variant.status}
-        </div>
-        <UploadProgress 
-          progress={variant.progress}
-          status={variant.status}
-          message={variant.message}
-          showPercentage={true}
-          size="md"
+// ===== EJEMPLO SIMPLE =====
+
+export const SimpleTest = () => {
+  const [progress, setProgress] = useState(25);
+  
+  return (
+    <div style={{ padding: 'var(--space-lg)', maxWidth: '500px' }}>
+      <div style={{ marginBottom: 'var(--space-md)' }}>
+        <label style={{ display: 'block', marginBottom: 'var(--space-sm)' }}>
+          Progreso: {progress}%
+        </label>
+        <input 
+          type="range" 
+          min="0" 
+          max="100" 
+          value={progress}
+          onChange={(e) => setProgress(Number(e.target.value))}
+          style={{ width: '100%' }}
         />
       </div>
-    ))}
-  </div>
-);
-Variants.parameters = {
-  docs: { 
-    description: { 
-      story: 'Los 4 estados principales: processing, transcoding, completed, failed con sus colores y mensajes correspondientes.' 
-    } 
-  }
+      
+      <UploadProgress 
+        progress={progress}
+        status="processing"
+        message={`Procesando ${progress}%...`}
+        showPercentage={true}
+        size="md"
+      />
+    </div>
+  );
 };
 
-// ========== 4. STATES ==========
-export const States = () => (
-  <div style={{
-    display: 'grid',
-    gap: 'var(--space-lg)',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-    alignItems: 'center',
-    padding: 'var(--space-md)'
-  }}>
-    {[
-      { label: 'Inicio', progress: 0, message: 'Iniciando...' },
-      { label: 'Progreso bajo', progress: 15, message: 'Preparando...' },
-      { label: 'Progreso medio', progress: 50, message: 'Procesando...' },
-      { label: 'Casi completo', progress: 85, message: 'Finalizando...' }
-    ].map((state) => (
-      <div key={state.label} style={{
-        border: '1px solid var(--border-default)',
-        borderRadius: 'var(--radius-md)',
-        padding: 'var(--space-sm)',
-        backgroundColor: 'var(--bg-secondary)'
-      }}>
-        <div style={{ 
-          textAlign: 'center', 
-          marginBottom: 'var(--space-sm)',
-          fontSize: '1.1rem',
-          fontWeight: '500',
-          color: 'var(--text-primary)'
-        }}>
-          {state.label}
-        </div>
-        <UploadProgress 
-          progress={state.progress}
-          status="processing"
-          message={state.message}
-          showPercentage={true}
-          size="md"
-        />
-      </div>
-    ))}
-  </div>
-);
-States.parameters = {
-  docs: { 
-    description: { 
-      story: 'Diferentes estados de progreso mostrando la evolución visual del componente.' 
-    } 
-  }
-};
+// ===== EJEMPLO INTERACTIVO =====
 
-// ========== 5. INTERACTIVE ==========
 export const Interactive = () => {
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState('processing');
@@ -265,18 +186,21 @@ export const Interactive = () => {
     setStatus('processing');
     
     const interval = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 100) {
+      setProgress((prev) => {
+        const newProgress = prev + 1;
+        
+        if (newProgress >= 100) {
           setStatus('completed');
           setIsRunning(false);
           clearInterval(interval);
           return 100;
-        } else if (prev >= 50) {
+        } else if (newProgress >= 60) {
           setStatus('transcoding');
         }
-        return prev + 2;
+        
+        return newProgress;
       });
-    }, 100);
+    }, 50);
   };
 
   const resetProgress = () => {
@@ -292,9 +216,9 @@ export const Interactive = () => {
 
   const getMessage = () => {
     switch (status) {
-      case 'processing': return 'Preparando archivos...';
-      case 'transcoding': return `Transcodificando video... ${progress}%`;
-      case 'completed': return '¡Transcodificación completada!';
+      case 'processing': return 'Preparando archivo...';
+      case 'transcoding': return 'Transcodificando video...';
+      case 'completed': return 'Proceso completado exitosamente!';
       case 'failed': return 'Error en el procesamiento';
       default: return 'Procesando...';
     }
@@ -302,14 +226,20 @@ export const Interactive = () => {
 
   return (
     <div style={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      gap: 'var(--space-lg)', 
-      alignItems: 'center', 
-      padding: 'var(--space-md)',
-      maxWidth: '500px',
+      padding: 'var(--space-lg)',
+      maxWidth: '600px',
       margin: '0 auto'
     }}>
+      <div style={{ 
+        textAlign: 'center',
+        marginBottom: 'var(--space-lg)'
+      }}>
+        <h3 style={{ margin: '0 0 var(--space-sm) 0' }}>Simulador de Progreso</h3>
+        <p style={{ margin: 0, color: 'var(--text-secondary)' }}>
+          Progreso: {progress}% | Estado: {status}
+        </p>
+      </div>
+      
       <UploadProgress 
         progress={progress}
         status={status}
@@ -320,139 +250,75 @@ export const Interactive = () => {
       
       <div style={{ 
         display: 'flex', 
-        gap: 'var(--space-sm)',
-        flexWrap: 'wrap',
-        justifyContent: 'center'
+        gap: 'var(--space-md)',
+        justifyContent: 'center',
+        marginTop: 'var(--space-lg)',
+        flexWrap: 'wrap'
       }}>
         <button 
           onClick={startProgress}
           disabled={isRunning}
           style={{
             padding: 'var(--space-sm) var(--space-md)',
-            backgroundColor: isRunning ? 'var(--color-muted)' : 'var(--color-primary)',
+            backgroundColor: isRunning ? '#999' : '#007bff',
             color: 'white',
             border: 'none',
-            borderRadius: 'var(--radius-md)',
+            borderRadius: '4px',
             cursor: isRunning ? 'not-allowed' : 'pointer',
-            fontSize: '1.3rem',
-            fontWeight: '500'
+            fontSize: '14px'
           }}
         >
-          {isRunning ? 'Procesando...' : 'Iniciar'}
+          {isRunning ? 'Procesando...' : '� Iniciar'}
         </button>
         
         <button 
           onClick={resetProgress}
           style={{
             padding: 'var(--space-sm) var(--space-md)',
-            backgroundColor: 'var(--color-secondary)',
+            backgroundColor: '#6c757d',
             color: 'white',
             border: 'none',
-            borderRadius: 'var(--radius-md)',
+            borderRadius: '4px',
             cursor: 'pointer',
-            fontSize: '1.3rem',
-            fontWeight: '500'
+            fontSize: '14px'
           }}
         >
-          Reset
+          =Reset
         </button>
         
         <button 
           onClick={simulateError}
           style={{
             padding: 'var(--space-sm) var(--space-md)',
-            backgroundColor: 'var(--color-danger)',
+            backgroundColor: '#dc3545',
             color: 'white',
             border: 'none',
-            borderRadius: 'var(--radius-md)',
+            borderRadius: '4px',
             cursor: 'pointer',
-            fontSize: '1.3rem',
-            fontWeight: '500'
+            fontSize: '14px'
           }}
         >
-          Simular Error
+          L Error
         </button>
       </div>
       
       <div style={{
-        fontSize: '1.2rem',
-        color: 'var(--text-muted)',
         textAlign: 'center',
+        fontSize: '12px',
+        color: 'var(--text-tertiary)',
+        marginTop: 'var(--space-md)',
         fontStyle: 'italic'
       }}>
-        💡 Prueba los diferentes estados y observa las animaciones
+        Haz clic en "Iniciar" para ver la animacion automatica
       </div>
     </div>
   );
 };
+
 Interactive.parameters = {
   docs: { 
     description: { 
-      story: 'Ejemplo interactivo completo: simula el progreso real de transcodificación con controles para diferentes estados.' 
-    } 
-  }
-};
-
-// ========== 6. ACCESSIBILITY ==========
-export const Accessibility = () => (
-  <div style={{
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 'var(--space-lg)',
-    alignItems: 'center',
-    padding: 'var(--space-md)',
-    maxWidth: '500px',
-    margin: '0 auto'
-  }}>
-    <UploadProgress 
-      progress={75}
-      status="transcoding"
-      message="Transcodificando video con accesibilidad completa..."
-      showPercentage={true}
-      size="md"
-      // Props de accesibilidad que el componente debería soportar
-      aria-label="Progreso de transcodificación"
-      role="progressbar"
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-valuenow={75}
-    />
-    
-    <div style={{ 
-      padding: 'var(--space-md)', 
-      backgroundColor: 'var(--bg-secondary)',
-      borderRadius: 'var(--radius-md)',
-      border: '1px solid var(--border-default)',
-      fontSize: '1.2rem',
-      lineHeight: 1.5
-    }}>
-      <h4 style={{ 
-        margin: '0 0 var(--space-sm) 0',
-        fontSize: '1.3rem',
-        fontWeight: '600',
-        color: 'var(--text-primary)'
-      }}>
-        ♿ Características de Accesibilidad:
-      </h4>
-      <ul style={{ 
-        margin: 0, 
-        paddingLeft: 'var(--space-md)',
-        color: 'var(--text-muted)'
-      }}>
-        <li><strong>ARIA progressbar</strong>: Role y valores apropiados</li>
-        <li><strong>Live regions</strong>: Actualizaciones anunciadas automáticamente</li>
-        <li><strong>Reduced motion</strong>: Respeta preferencias del usuario</li>
-        <li><strong>Color contrast</strong>: Cumple estándares WCAG 2.1</li>
-        <li><strong>Focus management</strong>: Indicadores visuales claros</li>
-        <li><strong>Screen readers</strong>: Descripción completa del estado</li>
-      </ul>
-    </div>
-  </div>
-);
-Accessibility.parameters = {
-  docs: { 
-    description: { 
-      story: 'Configuración completa de accesibilidad con ARIA attributes, live regions y soporte para lectores de pantalla.' 
+      story: 'Ejemplo interactivo que simula un progreso real con cambios automaticos de estado.' 
     } 
   }
 };
