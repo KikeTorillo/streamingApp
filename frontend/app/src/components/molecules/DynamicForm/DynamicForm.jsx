@@ -4,6 +4,7 @@ import { TextInput } from '../TextInput/TextInput';
 import { TextSelect } from '../TextSelect/TextSelect'; // ← NUEVA IMPORTACIÓN
 import { Button } from '../../atoms/Button/Button';
 import { FileInputField } from '../FileInputField/FileInputField';
+import { ImageCropField } from '../ImageCropField/ImageCropField'; // ← NUEVA IMPORTACIÓN
 import { Checkbox } from '../../atoms/Checkbox/Checkbox'; // ← AGREGAR ESTA LÍNEA
 import './DynamicForm.css';
 
@@ -386,6 +387,39 @@ const DynamicForm = ({
               handleFieldChange(fieldName, value);
             }}
             onBlur={() => handleFieldBlur(fieldName)}
+          />
+        </div>
+      );
+    }
+
+    // ✨ NUEVO: Para campos de tipo image-crop
+    if (fieldType === 'image-crop') {
+      return (
+        <div key={index} className={fieldClasses.join(' ')}>
+          <ImageCropField
+            name={fieldName}
+            label={fieldLabel}
+            value={formData[fieldName] || null}
+            onChange={(file) => handleFieldChange(fieldName, file)}
+            helperText={!hasError ? fieldHelperText : ''}
+            errorText={hasError ? fieldError : ''}
+            required={fieldRequired}
+            disabled={fieldDisabled}
+            size={fieldSize}
+            rounded={fieldRounded}
+            variant={hasError ? 'danger' : (field.variant || 'default')}
+            fullWidth={true}
+            compact={compact}
+            // Props específicas de ImageCropField
+            aspect={field.aspect || 16/9}
+            showPreview={field.showPreview !== false}
+            acceptedFormats={field.acceptedFormats || ['jpg', 'png', 'webp']}
+            maxFileSize={field.maxFileSize || '5MB'}
+            previewDimensions={field.previewDimensions || { width: 300, height: 200 }}
+            cropButtonText={field.cropButtonText || 'Volver a recortar'}
+            changeButtonText={field.changeButtonText || 'Cambiar imagen'}
+            selectButtonText={field.selectButtonText || 'Seleccionar imagen'}
+            previewAlt={field.previewAlt || 'Vista previa de imagen'}
           />
         </div>
       );

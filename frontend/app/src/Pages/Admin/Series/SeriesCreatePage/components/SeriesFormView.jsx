@@ -6,6 +6,7 @@ import { DynamicForm } from '../../../../../components/molecules/DynamicForm/Dyn
 import { Card, CardHeader, CardBody, CardTitle } from '../../../../../components/atoms/Card/Card';
 import { Button } from '../../../../../components/atoms/Button/Button';
 import { ContentImage } from '../../../../../components/atoms/ContentImage/ContentImage';
+import { ImageCropperModal } from '../../../../../components/molecules/ImageCropperModal/ImageCropperModal';
 import './SeriesFormView.css';
 
 /**
@@ -34,6 +35,9 @@ function SeriesFormView({
   const [imagePreview, setImagePreview] = useState(null);
   const [imageType, setImageType] = useState(null);
   const [formLoading, setFormLoading] = useState(loading);
+  const [showCropper, setShowCropper] = useState(false);
+  const [croppedImageFile, setCroppedImageFile] = useState(null);
+  const [lastProcessedFile, setLastProcessedFile] = useState(null);
 
   // ===== EFECTOS =====
   useEffect(() => {
@@ -45,37 +49,64 @@ function SeriesFormView({
   }, [loading]);
 
   /**
-   * ✅ NUEVO: Gestión automática de preview de imagen
+   * ✅ EFECTO SEPARADO: Detectar cambios de archivo para abrir cropper
+   */
+  useEffect(() => {
+    const { coverImageFile } = currentFormData;
+    
+    if (coverImageFile instanceof File) {
+      // Detectar si es un archivo nuevo (diferente al último procesado)
+      const isNewFile = !lastProcessedFile || 
+                       lastProcessedFile.name !== coverImageFile.name || 
+                       lastProcessedFile.lastModified !== coverImageFile.lastModified ||
+                       lastProcessedFile.size !== coverImageFile.size;
+      
+      // Solo mostrar cropper si es un archivo nuevo
+      if (isNewFile) {
+        setShowCropper(true);
+        setLastProcessedFile(coverImageFile);
+        // Reset del archivo recortado cuando se selecciona una nueva imagen
+        setCroppedImageFile(null);
+      }
+    } else {
+      // Reset cuando no hay archivo
+      setLastProcessedFile(null);
+      setCroppedImageFile(null);
+    }
+  }, [currentFormData.coverImageFile]);
+
+  /**
+   * ✅ EFECTO SEPARADO: Gestión de preview de imagen
    */
   useEffect(() => {
     const { coverImageUrl, coverImageFile, coverImage } = currentFormData;
 
-    // Prioridad: archivo > URL > TMDB
-    if (coverImageFile && coverImageFile instanceof File) {
+    // Prioridad: archivo recortado > archivo original > URL
+    if (croppedImageFile) {
       setImageType('file');
-      try {
-        const previewUrl = URL.createObjectURL(coverImageFile);
-        setImagePreview(previewUrl);
-
-        // Cleanup para evitar memory leaks
-        return () => URL.revokeObjectURL(previewUrl);
-      } catch (error) {
-        console.error('❌ Error creando preview del archivo:', error);
-        setImagePreview(null);
-      }
-    } else if ((coverImageUrl && typeof coverImageUrl === 'string' && coverImageUrl.trim()) || (typeof coverImage === 'string' && coverImage.trim())) {
-      const urlToCheck = coverImageUrl || coverImage;
-      if (urlToCheck.includes('image.tmdb.org')) {
-        setImageType('tmdb');
-      } else {
-        setImageType('url');
-      }
-      setImagePreview(urlToCheck);
-    } else {
-      setImageType(null);
-      setImagePreview(null);
+      const previewUrl = URL.createObjectURL(croppedImageFile);
+      setImagePreview(previewUrl);
+      return () => URL.revokeObjectURL(previewUrl);
+    } 
+    
+    if (coverImageFile instanceof File) {
+      setImageType('file');
+      const previewUrl = URL.createObjectURL(coverImageFile);
+      setImagePreview(previewUrl);
+      return () => URL.revokeObjectURL(previewUrl);
+    } 
+    
+    const imageUrl = coverImageUrl || coverImage;
+    if (imageUrl && typeof imageUrl === 'string' && imageUrl.trim()) {
+      setImageType(imageUrl.includes('image.tmdb.org') ? 'tmdb' : 'url');
+      setImagePreview(imageUrl);
+      return;
     }
-  }, [currentFormData.coverImageUrl, currentFormData.coverImageFile, currentFormData.coverImage]);
+
+    // Sin imagen
+    setImageType(null);
+    setImagePreview(null);
+  }, [currentFormData.coverImageFile, currentFormData.coverImageUrl, currentFormData.coverImage, croppedImageFile]);
 
   // ===== FUNCIONES AUXILIARES =====
 
@@ -102,8 +133,10 @@ function SeriesFormView({
         };
       case 'file':
         return {
-          badge: '📁 Archivo',
-          description: `Archivo subido: ${currentFormData.coverImageFile?.name || currentFormData.coverImage?.name || 'Unknown'}`,
+          badge: croppedImageFile ? '✂️ Recortado' : '📁 Archivo',
+          description: croppedImageFile 
+            ? `Imagen recortada: ${croppedImageFile.name}`
+            : `Archivo subido: ${currentFormData.coverImageFile?.name || currentFormData.coverImage?.name || 'Unknown'}`,
           bgClass: 'series-form-view__image-info--file'
         };
       case 'url':
@@ -151,6 +184,42 @@ function SeriesFormView({
   };
 
   /**
+   * ✅ SIMPLIFICADO: Manejar el resultado del cropping
+   */
+  const handleCropComplete = (croppedBlob) => {
+    const originalFile = currentFormData.coverImageFile;
+    const croppedFile = new File([croppedBlob], `cropped_${originalFile?.name || 'image.jpg'}`, {
+      type: 'image/jpeg',
+      lastModified: Date.now()
+    });
+    
+    setCroppedImageFile(croppedFile);
+    setShowCropper(false);
+    // No actualizar coverImageFile para evitar que se detecte como archivo nuevo
+    // El croppedImageFile tendrá prioridad en el envío del formulario
+    onChange?.();
+  };
+
+  /**
+   * ✅ SIMPLIFICADO: Cancelar el cropping - mantiene la imagen original
+   */
+  const handleCropCancel = () => {
+    setShowCropper(false);
+    // No eliminar la imagen, solo cerrar el cropper
+    // La imagen original seguirá disponible para el usuario
+    onChange?.();
+  };
+
+  /**
+   * ✅ SIMPLIFICADO: Volver a abrir el cropper
+   */
+  const handleReCrop = () => {
+    if (currentFormData.coverImageFile instanceof File) {
+      setShowCropper(true);
+    }
+  };
+
+  /**
    * ✅ ACTUALIZADO: Manejar envío del formulario con filtrado de campos vacíos
    */
   const handleFormSubmit = (formData) => {
@@ -166,7 +235,8 @@ function SeriesFormView({
       categoryId: filteredData.categoryId || filteredData.category_id,
       releaseYear: filteredData.releaseYear || filteredData.year,
       description: filteredData.description,
-      coverImage: filteredData.coverImage || filteredData.coverImageFile || filteredData.coverImageUrl,
+      // Priorizar imagen recortada si existe
+      coverImage: croppedImageFile || filteredData.coverImage || filteredData.coverImageFile || filteredData.coverImageUrl,
       // Solo incluir email si tiene valor
       ...(filteredData.email && { email: filteredData.email }),
       // Solo incluir tmdb_id si tiene valor
@@ -183,13 +253,10 @@ function SeriesFormView({
   };
 
   /**
-   * Manejar cambios en el formulario
+   * ✅ SIMPLIFICADO: Manejar cambios en el formulario
    */
-  const handleFormChange = (fieldName, value) => {
-    setCurrentFormData(prev => ({
-      ...prev,
-      [fieldName]: value
-    }));
+  const handleFormChange = (formData) => {
+    setCurrentFormData(formData);
     onChange?.();
   };
 
@@ -283,12 +350,28 @@ function SeriesFormView({
           </div>
         </CardHeader>
         <CardBody>
+          {/* ===== MODAL CROPPER DE IMAGEN ===== */}
+          <ImageCropperModal
+            isOpen={showCropper}
+            onClose={handleCropCancel}
+            onComplete={handleCropComplete}
+            imageSrc={currentFormData.coverImageFile ? URL.createObjectURL(currentFormData.coverImageFile) : null}
+            aspect={16 / 9}
+            title="✂️ Recortar Imagen de Portada de Serie"
+            description="Ajusta el área de recorte para tu imagen de portada de serie. Se recomienda usar una proporción de 16:9."
+            helpText="Ajusta el área de recorte y haz clic en 'Confirmar recorte' para proceder."
+            cancelText="❌ Cancelar"
+            size="lg"
+            closeOnBackdrop={false}
+            closeOnEscape={true}
+          />
+
           <p className="series-form-view__form-description">
             {getFormDescription()}
           </p>
 
           {/* ===== VISTA PREVIA DE IMAGEN ACTUAL ===== */}
-          {imagePreview && (
+          {imagePreview && !showCropper && (
             <div className="series-form-view__current-image">
               <h4>🖼️ Imagen de Portada Actual</h4>
 
@@ -302,6 +385,19 @@ function SeriesFormView({
                   className="series-form-view__preview-image"
                 />
               </div>
+
+              {/* Botón para volver a recortar si hay una imagen de archivo */}
+              {croppedImageFile && (
+                <div className="series-form-view__recrop-actions">
+                  <Button
+                    onClick={handleReCrop}
+                    variant="secondary"
+                    size="sm"
+                  >
+                    ✂️ Recortar de nuevo
+                  </Button>
+                </div>
+              )}
             </div>
           )}
 

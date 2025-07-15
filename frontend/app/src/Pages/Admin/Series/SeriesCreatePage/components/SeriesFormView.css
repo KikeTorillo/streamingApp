@@ -405,6 +405,24 @@
   outline: none;
 }
 
+/* ===== ACCIONES DE RE-CROPPING ===== */
+.series-form-view__recrop-actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 0.1rem solid var(--border-light);
+}
+
+/* ===== RESPONSIVE PARA ACCIONES DE RE-CROPPING ===== */
+@media (max-width: 768px) {
+  .series-form-view__recrop-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
 /* ===== PRINT STYLES ===== */
 @media print {
   .series-form-view__success-icon {

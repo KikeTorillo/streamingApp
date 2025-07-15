@@ -109,6 +109,12 @@ function Modal({
     className
   ].filter(Boolean).join(' ');
   
+  // ✅ RENDERIZADO CONDICIONAL: Solo renderizar el <dialog> cuando isOpen es true
+  // Esto evita problemas con el elemento <dialog> que puede interferir con otros controles
+  if (!isOpen) {
+    return null;
+  }
+  
   return (
     <dialog
       ref={dialogRef}

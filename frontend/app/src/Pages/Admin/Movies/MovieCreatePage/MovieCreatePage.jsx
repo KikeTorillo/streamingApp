@@ -189,11 +189,14 @@ function MovieCreatePage() {
       },
       {
         name: 'coverImageFile',
-        type: 'file',
+        type: 'image-crop',
         label: 'Archivo de Portada',
-        accept: 'image/*',
-        leftIcon: '🖼️',
-        helperText: 'Sube una imagen como portada (opcional si usas URL)'
+        aspect: 16/9,
+        acceptedFormats: ['jpg', 'png', 'webp'],
+        maxFileSize: '5MB',
+        showPreview: true,
+        previewDimensions: { width: 400, height: 225 },
+        helperText: 'Sube una imagen para recortar como portada (16:9)'
       },
       {
         name: 'video',

@@ -1,0 +1,363 @@
+/* ===== IMAGE CROP FIELD COMPONENT ===== */
+/* ImageCropField.css - Estilos específicos para la molécula de recorte de imágenes */
+/* Siguiendo el patrón de TextInput.css con variables del design system */
+
+/* ===== WRAPPER BASE ===== */
+.image-crop-field-wrapper {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    font-family: var(--font-family-base);
+    gap: var(--space-xs);
+}
+
+.image-crop-field-wrapper--full-width {
+    width: 100%;
+}
+
+.image-crop-field-wrapper--disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.image-crop-field-wrapper--has-value {
+    /* Espaciado adicional cuando hay valor */
+    gap: var(--space-sm);
+}
+
+/* ===== LABEL ===== */
+.image-crop-field__label {
+    display: block;
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-tight);
+    margin: 0;
+    transition: color var(--transition-normal);
+}
+
+.image-crop-field__label--required::after {
+    content: ' *';
+    color: var(--color-danger);
+    font-weight: var(--font-weight-bold);
+}
+
+/* Estados del label */
+.image-crop-field-wrapper--focused .image-crop-field__label {
+    color: var(--border-focus);
+}
+
+.image-crop-field-wrapper--error .image-crop-field__label {
+    color: var(--color-danger);
+}
+
+.image-crop-field-wrapper--success .image-crop-field__label {
+    color: var(--color-success);
+}
+
+.image-crop-field-wrapper--warning .image-crop-field__label {
+    color: var(--color-warning);
+}
+
+/* ===== CONTAINER PRINCIPAL ===== */
+.image-crop-field__container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+/* Cuando hay preview, cambiar a layout horizontal en pantallas grandes */
+.image-crop-field-wrapper--has-value .image-crop-field__container {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--space-lg);
+}
+
+/* ===== PREVIEW DE IMAGEN ===== */
+.image-crop-field__preview {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    border: 0.1rem solid var(--border-primary);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-primary);
+    transition: all var(--transition-normal);
+    overflow: hidden;
+}
+
+.image-crop-field__preview:hover {
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-sm);
+}
+
+.image-crop-field__preview-image {
+    display: block;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    object-position: center;
+    width: 100%;
+    height: auto;
+    transition: transform var(--transition-normal);
+    background-color: var(--bg-secondary);
+}
+
+.image-crop-field__preview-image:hover {
+    transform: scale(1.02);
+}
+
+/* ===== ACCIONES DEL PREVIEW ===== */
+.image-crop-field__preview-actions {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+}
+
+.image-crop-field__action-button {
+    flex: 1;
+    min-width: max-content;
+}
+
+/* ===== SECCIÓN DE INPUT ===== */
+.image-crop-field__input-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+/* ===== FOOTER CON MENSAJES ===== */
+.image-crop-field__footer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    min-height: 2rem;
+}
+
+/* ===== MENSAJES ===== */
+.image-crop-field__helper-text {
+    display: block;
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    line-height: var(--line-height-normal);
+    margin: 0;
+    transition: color var(--transition-normal);
+}
+
+.image-crop-field__error-text {
+    display: block;
+    font-size: var(--font-size-sm);
+    color: var(--color-danger);
+    line-height: var(--line-height-normal);
+    font-weight: var(--font-weight-medium);
+    margin: 0;
+    animation: slideInError 0.2s ease-out;
+}
+
+.image-crop-field__info {
+    display: block;
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    line-height: var(--line-height-normal);
+    margin: 0;
+    font-style: italic;
+}
+
+/* Animación sutil para errores */
+@keyframes slideInError {
+    from {
+        opacity: 0;
+        transform: translateY(-0.4rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== VARIANTES POR TAMAÑO ===== */
+.image-crop-field-wrapper--xs .image-crop-field__preview {
+    padding: var(--space-sm);
+}
+
+.image-crop-field-wrapper--xs .image-crop-field__preview-actions {
+    gap: var(--space-xs);
+}
+
+.image-crop-field-wrapper--sm .image-crop-field__preview {
+    padding: var(--space-sm);
+}
+
+.image-crop-field-wrapper--lg .image-crop-field__preview,
+.image-crop-field-wrapper--xl .image-crop-field__preview {
+    padding: var(--space-lg);
+}
+
+.image-crop-field-wrapper--lg .image-crop-field__preview-actions,
+.image-crop-field-wrapper--xl .image-crop-field__preview-actions {
+    gap: var(--space-md);
+}
+
+/* ===== VARIANTES POR ESTADO ===== */
+.image-crop-field-wrapper--error .image-crop-field__preview {
+    border-color: var(--color-danger);
+    background-color: var(--bg-danger-subtle);
+}
+
+.image-crop-field-wrapper--success .image-crop-field__preview {
+    border-color: var(--color-success);
+    background-color: var(--bg-success-subtle);
+}
+
+.image-crop-field-wrapper--warning .image-crop-field__preview {
+    border-color: var(--color-warning);
+    background-color: var(--bg-warning-subtle);
+}
+
+.image-crop-field-wrapper--focused .image-crop-field__preview {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 0.2rem var(--border-focus-subtle);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    /* En móvil, siempre layout vertical */
+    .image-crop-field-wrapper--has-value .image-crop-field__container {
+        flex-direction: column;
+        gap: var(--space-md);
+    }
+    
+    /* Preview más compacto en móvil */
+    .image-crop-field__preview {
+        padding: var(--space-sm);
+    }
+    
+    .image-crop-field__preview-actions {
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+    
+    .image-crop-field__action-button {
+        flex: none;
+        width: 100%;
+    }
+    
+    /* Footer en móvil */
+    .image-crop-field__footer {
+        gap: var(--space-xs);
+    }
+}
+
+@media (max-width: 480px) {
+    /* Preview aún más compacto en móviles pequeños */
+    .image-crop-field__preview {
+        padding: var(--space-xs);
+    }
+    
+    /* Imagen responsiva en móviles pequeños */
+    .image-crop-field__preview-image {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+/* ===== VERSIÓN COMPACTA ===== */
+.image-crop-field-wrapper--compact {
+    gap: calc(var(--space-xs) / 2);
+}
+
+.image-crop-field-wrapper--compact .image-crop-field__container {
+    gap: var(--space-sm);
+}
+
+.image-crop-field-wrapper--compact .image-crop-field__preview {
+    padding: var(--space-sm);
+}
+
+.image-crop-field-wrapper--compact .image-crop-field__preview-actions {
+    gap: var(--space-xs);
+}
+
+.image-crop-field-wrapper--compact .image-crop-field__footer {
+    min-height: 1.6rem;
+    gap: calc(var(--space-xs) / 2);
+}
+
+.image-crop-field-wrapper--compact .image-crop-field__helper-text,
+.image-crop-field-wrapper--compact .image-crop-field__error-text,
+.image-crop-field-wrapper--compact .image-crop-field__info {
+    font-size: var(--font-size-xs);
+}
+
+/* ===== ACCESIBILIDAD ===== */
+/* Asegurar contraste en modo de alto contraste */
+@media (prefers-contrast: high) {
+    .image-crop-field__preview {
+        border-width: 0.2rem;
+    }
+    
+    .image-crop-field__preview-image {
+        border: 0.1rem solid var(--border-primary);
+    }
+}
+
+/* Reducir animaciones si el usuario lo prefiere */
+@media (prefers-reduced-motion: reduce) {
+    .image-crop-field__preview,
+    .image-crop-field__preview-image,
+    .image-crop-field__label {
+        transition: none;
+    }
+    
+    .image-crop-field__preview-image:hover {
+        transform: none;
+    }
+    
+    .image-crop-field__error-text {
+        animation: none;
+    }
+}
+
+/* ===== ESTADOS DE CARGA ===== */
+.image-crop-field__preview--loading {
+    background-color: var(--bg-secondary);
+    position: relative;
+}
+
+.image-crop-field__preview--loading::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2rem;
+    height: 2rem;
+    margin: -1rem 0 0 -1rem;
+    border: 0.2rem solid var(--border-secondary);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ===== HOVER STATES ===== */
+.image-crop-field__preview:hover .image-crop-field__preview-actions {
+    opacity: 1;
+}
+
+/* En desktop, ocultar acciones por defecto y mostrar en hover */
+@media (min-width: 769px) {
+    .image-crop-field__preview-actions {
+        opacity: 0.8;
+        transition: opacity var(--transition-normal);
+    }
+    
+    .image-crop-field__preview:hover .image-crop-field__preview-actions {
+        opacity: 1;
+    }
+}

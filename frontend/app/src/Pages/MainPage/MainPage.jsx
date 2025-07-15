@@ -501,33 +501,6 @@ function MainPage() {
                     />
                 ))}
             </ContentSection>
-
-            {/* ===== ESTADO VACÍO GLOBAL ===== */}
-            {!loadingMovies && !loadingSeries && !searching &&
-                filteredMovies.length === 0 &&
-                filteredSeries.length === 0 &&
-                !searchTerm &&
-                selectedCategory === 'all' && (
-                    <EmptyState
-                        icon="🚀"
-                        title="¡Bienvenido a StreamApp!"
-                        description="Tu plataforma de streaming está lista. El contenido se está cargando o será agregado pronto."
-                        action={
-                            <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
-                                <Button variant="outline" size="md" onClick={() => window.location.reload()}>
-                                    Recargar contenido
-                                </Button>
-                                {isAdmin && (
-                                    <Button variant="primary" size="md" onClick={handleGoToAdmin}>
-                                        Ir al Admin Panel
-                                    </Button>
-                                )}
-                            </div>
-                        }
-                        variant="info"
-                        size="lg"
-                    />
-                )}
         </PageLayout>
     );
 }
