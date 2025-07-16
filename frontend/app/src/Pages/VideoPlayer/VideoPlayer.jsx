@@ -344,9 +344,9 @@ const VideoPlayer = () => {
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: calc(100% - 8rem);
             pointer-events: none;
-            z-index: 1000;
+            z-index: 500;
           `;
           
           overlayContainerRef.current = overlayContainer;
@@ -620,15 +620,6 @@ const VideoPlayer = () => {
       </Button>
 
       <div className="video-wrapper">
-        <div className="video-info">
-          <h2>Reproduciendo: {movieData?.title || 'Video'}</h2>
-          <p>Movie ID: {movieId}</p>
-          <p>Resoluciones: {resolutions}</p>
-          {movieData?.available_subtitles && movieData.available_subtitles.length > 0 && (
-            <p>Subtítulos: {movieData.available_subtitles.join(', ')}</p>
-          )}
-        </div>
-        
         <div className="video-container">
           <div data-vjs-player>
             <video

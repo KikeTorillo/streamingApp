@@ -10,9 +10,10 @@
   justify-content: center;
   transition: all var(--transition-normal);
   pointer-events: none;
-  z-index: 1000;
+  z-index: 500; /* Menor que controles nativos */
   width: 100%;
-  height: 100%;
+  height: calc(100% - 3rem); /* Evitar barra de controles */
+  margin-top: -4rem; /* Centrar considerando el espacio reducido */
 }
 
 .video-player-overlay__center-controls {
@@ -199,7 +200,9 @@
 /* ===== AJUSTES PARA PANTALLA COMPLETA ===== */
 
 .video-js.vjs-fullscreen .video-player-overlay {
-  z-index: 2000;
+  z-index: 500; /* Menor que controles nativos */
+  height: 100%; /* Más espacio en fullscreen */
+  margin-top: -5rem; /* Ajustar centrado */
 }
 
 .video-js.vjs-fullscreen .video-player-overlay__center-controls {

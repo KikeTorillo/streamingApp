@@ -59,6 +59,12 @@ const VideoPlayerOverlay = ({
         visibility: isVisible ? 'visible' : 'hidden',
         pointerEvents: isVisible ? 'all' : 'none'
       }}
+      onClick={(e) => {
+        // Si el click es en el fondo, mostrar controles
+        if (e.target === e.currentTarget) {
+          showControls();
+        }
+      }}
     >
       <div className="video-player-overlay__center-controls">
         <button 

@@ -156,7 +156,7 @@ Una vez ejecutado `npm run dev`, acceder a:
 ## 📁 Estructura del Proyecto
 
 ```
-streamingAppBack/
+streamingApp/
 ├── package.json              # 🎯 NUEVO: Scripts centralizados
 ├── docker-compose.yml        # Orquestación de servicios
 ├── example.env               # Variables de entorno de ejemplo
