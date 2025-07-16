@@ -181,3 +181,100 @@ export const cleanupImagePreview = (previewUrl) => {
     URL.revokeObjectURL(previewUrl);
   }
 };
+
+// ===== NUEVAS FUNCIONES PARA FORMULARIOS =====
+
+/**
+ * Obtiene información sobre el tipo de imagen y su presentación visual
+ * 
+ * ✅ REUTILIZABLE: Para cualquier componente que maneje imágenes
+ * ✅ CONFIGURABLE: Prefijo CSS personalizable por componente
+ * ✅ CONSISTENTE: Misma lógica para todos los tipos de imagen
+ * ✅ ESCALABLE: Fácil agregar nuevos tipos de imagen
+ * 
+ * @param {string|null} imageType - Tipo de imagen: 'file', 'tmdb', 'url', o null
+ * @param {string} [cssPrefix=''] - Prefijo para las clases CSS (ej: 'movie-form-view')
+ * @returns {Object|null} Información del tipo de imagen o null si no hay tipo
+ * 
+ * @example
+ * // Uso básico
+ * const info = getImageTypeInfo('file');
+ * // Resultado: { badge: '📁 Archivo Recortado', description: '...', bgClass: '__image-info--file' }
+ * 
+ * @example
+ * // Con prefijo CSS personalizado
+ * const info = getImageTypeInfo('tmdb', 'movie-form-view');
+ * // Resultado: { badge: '🌐 TMDB', description: '...', bgClass: 'movie-form-view__image-info--tmdb' }
+ */
+export const getImageTypeInfo = (imageType, cssPrefix = '') => {
+  if (!imageType) return null;
+
+  const baseClass = cssPrefix ? `${cssPrefix}__image-info` : '__image-info';
+
+  switch (imageType) {
+    case 'file':
+      return {
+        badge: '📁 Archivo Recortado',
+        description: 'Imagen subida y recortada manualmente',
+        bgClass: `${baseClass}--file`
+      };
+    case 'tmdb':
+      return {
+        badge: '🌐 TMDB',
+        description: 'Imagen de alta calidad desde TMDB',
+        bgClass: `${baseClass}--tmdb`
+      };
+    case 'url':
+      return {
+        badge: '🔗 URL Externa',
+        description: 'Imagen desde enlace externo',
+        bgClass: `${baseClass}--url`
+      };
+    default:
+      return null;
+  }
+};
+
+/**
+ * Determina el tipo de imagen basado en su fuente
+ * 
+ * @param {string} imageSrc - URL o fuente de la imagen
+ * @returns {string} Tipo de imagen: 'tmdb', 'url', o 'unknown'
+ */
+export const detectImageType = (imageSrc) => {
+  if (!imageSrc || typeof imageSrc !== 'string') return 'unknown';
+  
+  if (imageSrc.includes('image.tmdb.org')) return 'tmdb';
+  if (imageSrc.startsWith('http')) return 'url';
+  if (imageSrc.startsWith('blob:')) return 'file';
+  
+  return 'unknown';
+};
+
+/**
+ * Selecciona la imagen final con prioridad: File > URL externa > Cover Image
+ * 
+ * @param {Object} imageData - Objeto con las diferentes fuentes de imagen
+ * @param {File|null} imageData.coverImageFile - Archivo recortado
+ * @param {string|null} imageData.coverImageUrl - URL externa
+ * @param {string|null} imageData.coverImage - Imagen de cobertura (TMDB)
+ * @returns {File|string|null} La imagen final seleccionada
+ */
+export const selectFinalImage = ({ coverImageFile, coverImageUrl, coverImage }) => {
+  // Prioridad: 1. Archivo recortado (SIEMPRE tiene prioridad)
+  if (coverImageFile && coverImageFile instanceof File) {
+    return coverImageFile;
+  }
+  
+  // 2. URL externa
+  if (coverImageUrl && typeof coverImageUrl === 'string' && coverImageUrl.trim()) {
+    return coverImageUrl;
+  }
+  
+  // 3. Cover Image (TMDB)
+  if (coverImage && typeof coverImage === 'string' && coverImage.trim()) {
+    return coverImage;
+  }
+  
+  return null;
+};

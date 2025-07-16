@@ -6,6 +6,8 @@ import { DynamicForm } from '../../../../../components/molecules/DynamicForm/Dyn
 import { Card, CardBody } from '../../../../../components/atoms/Card/Card';
 import { Button } from '../../../../../components/atoms/Button/Button';
 import { ContentImage } from '../../../../../components/atoms/ContentImage/ContentImage';
+import { filterEmptyFields } from '../../../../../utils/formUtils';
+import { getImageTypeInfo, selectFinalImage } from '../../../../../utils/imageUtils';
 import './MovieFormView.css';
 
 /**
@@ -37,15 +39,7 @@ function MovieFormView({
 
   // ===== EFECTOS =====
   useEffect(() => {
-    console.log('📊 Actualizando initialData:', {
-      newData: Object.keys(initialData || {}),
-      hasImageUrl: !!initialData?.coverImageUrl
-    });
-    
-    if (initialData && Object.keys(initialData).length > 0) {
-      console.log('🔄 Actualizando con nueva data inicial');
-      setCurrentFormData(initialData);
-    }
+    setCurrentFormData(initialData);
   }, [initialData]);
 
   useEffect(() => {
@@ -57,7 +51,6 @@ function MovieFormView({
    */
   useEffect(() => {
     const { coverImageUrl, coverImage, coverImageFile } = currentFormData;
-    
     
     // Limpiar URL previa si existe
     if (imagePreview && imagePreview.startsWith('blob:')) {
@@ -93,87 +86,18 @@ function MovieFormView({
 
   // ===== FUNCIONES AUXILIARES =====
 
-  /**
-   * ✅ MEJORADO: Obtener información del tipo de imagen (incluye archivos)
-   */
-  const getImageTypeInfo = () => {
-    switch (imageType) {
-      case 'file':
-        return {
-          badge: '📁 Archivo Recortado',
-          description: 'Imagen subida y recortada manualmente',
-          bgClass: 'movie-form-view__image-info--file'
-        };
-      case 'tmdb':
-        return {
-          badge: '🌐 TMDB',
-          description: 'Imagen de alta calidad desde TMDB',
-          bgClass: 'movie-form-view__image-info--tmdb'
-        };
-      case 'url':
-        return {
-          badge: '🔗 URL Externa',
-          description: 'Imagen desde enlace externo',
-          bgClass: 'movie-form-view__image-info--url'
-        };
-      default:
-        return null;
-    }
-  };
 
-  /**
-   * ✅ NUEVA FUNCIÓN: Filtrar campos vacíos antes del envío
-   */
-  const filterEmptyFields = (formData) => {
-    const filteredData = {};
-    
-    Object.keys(formData).forEach(key => {
-      const value = formData[key];
-      
-      // Solo incluir el campo si tiene un valor válido
-      if (value !== null && value !== undefined && value !== '') {
-        // Para archivos, verificar que sea un File válido
-        if (value instanceof File) {
-          filteredData[key] = value;
-        }
-        // Para strings, verificar que no estén vacíos después de trim
-        else if (typeof value === 'string' && value.trim() !== '') {
-          filteredData[key] = value.trim();
-        }
-        // Para números, verificar que sean válidos
-        else if (typeof value === 'number' && !isNaN(value)) {
-          filteredData[key] = value;
-        }
-        // Para booleans y otros tipos válidos
-        else if (typeof value === 'boolean' || Array.isArray(value)) {
-          filteredData[key] = value;
-        }
-      }
-    });
-    
-    return filteredData;
-  };
 
   /**
    * ✅ SIMPLIFICADO: Manejar envío del formulario con ImageCropField
    */
   const handleFormSubmit = (formData) => {
-    console.log('📝 Datos del formulario:', formData);
-    
     // Filtrar campos vacíos
     const filteredData = filterEmptyFields(formData);
-    console.log('📝 Datos filtrados:', filteredData);
 
-    // ImageCropField ya maneja el archivo recortado directamente en coverImageFile
-    const finalCoverImage = filteredData.coverImageFile || 
-                           filteredData.coverImage || 
-                           filteredData.coverImageUrl;
+    // Usar utility para seleccionar la imagen final
+    const finalCoverImage = selectFinalImage(filteredData);
 
-    console.log('🖼️ Imagen final seleccionada:', {
-      finalCoverImage: finalCoverImage?.name || finalCoverImage || 'Ninguna',
-      type: finalCoverImage instanceof File ? 'File' : typeof finalCoverImage,
-      size: finalCoverImage?.size ? `${(finalCoverImage.size / 1024).toFixed(1)}KB` : 'N/A'
-    });
 
     // Preparar datos para el servicio con nombres correctos
     const movieData = {
@@ -191,13 +115,9 @@ function MovieFormView({
       ...(filteredData.media_type && { media_type: filteredData.media_type })
     };
 
-    // Filtrar una vez más para asegurar que no hay campos undefined
-    const finalData = filterEmptyFields(movieData);
+    // Los datos ya están filtrados, no necesitamos filtrar de nuevo
+    const finalData = movieData;
     
-    console.log('📤 Datos finales para el servicio:', {
-      ...finalData,
-      coverImage: finalData.coverImage?.name || finalData.coverImage || 'Ninguna'
-    });
     onSubmit?.(finalData);
   };
 
@@ -205,8 +125,6 @@ function MovieFormView({
    * Manejar cambios en el formulario
    */
   const handleFormChange = (newFormData) => {
-    console.log('📝 handleFormChange llamado:', newFormData);
-    
     // Actualizar datos del formulario
     setCurrentFormData(newFormData || {});
     
@@ -218,7 +136,7 @@ function MovieFormView({
    * ✅ SIMPLIFICADO: Renderizar información de la imagen actual
    */
   const renderImageInfo = () => {
-    const imageInfo = getImageTypeInfo();
+    const imageInfo = getImageTypeInfo(imageType, 'movie-form-view');
     if (!imageInfo) return null;
     
     return (

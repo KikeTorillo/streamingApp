@@ -20,7 +20,6 @@ import { getCategoriesService } from '../../../../services/Categories/getCategor
 import { tmdbService } from '../../../../services/tmdb/TMDBService';
 import { UploadProgress } from "../../../../components/atoms/UploadProgress/UploadProgress";
 import { useUploadProgress } from "../../../../hooks/useUploadProgress";
-import { Spinner } from "../../../../components/atoms/Spinner/Spinner";
 
 // ===== ESTILOS =====
 import './SeriesCreatePage.css';
@@ -50,7 +49,6 @@ function SeriesCreatePage() {
   const [categoriesLoading, setCategoriesLoading] = useState(false);
   const [categoriesError, setCategoriesError] = useState(null);
   const [submitError, setSubmitError] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // ===== ESTADO DE PROGRESO DE SUBIDA =====
   const { progress, status, message, error: progressError, monitorProgress, resetProgress } = useUploadProgress();
@@ -171,20 +169,15 @@ function SeriesCreatePage() {
         helperText: categoriesError || 'Categoría principal para organizar el contenido'
       },
       {
-        name: 'coverImageUrl',
-        type: 'text',
-        label: 'URL de Portada',
-        placeholder: 'https://ejemplo.com/imagen.jpg',
-        leftIcon: '🔗',
-        helperText: 'URL de la imagen de portada (opcional si subes archivo)'
-      },
-      {
         name: 'coverImageFile',
-        type: 'file',
+        type: 'image-crop',
         label: 'Archivo de Portada',
-        accept: 'image/*',
-        leftIcon: '🖼️',
-        helperText: 'Sube una imagen como portada (opcional si usas URL)'
+        aspect: 2/3,
+        acceptedFormats: ['jpg', 'png', 'webp'],
+        maxFileSize: '5MB',
+        showPreview: true,
+        previewDimensions: { width: 120, height: 180 },
+        helperText: 'Sube una imagen para recortar como portada (formato póster 2:3)'
       }
     ];
   };
@@ -197,8 +190,7 @@ function SeriesCreatePage() {
       releaseYear: new Date().getFullYear(),
       categoryId: categories.length > 0 ? categories[0].id : '',
       email: '',
-      coverImageUrl: '',
-      coverImageFile: null,
+      coverImage: '',
       tmdb_id: null,
       media_type: 'tv'
     };
@@ -211,7 +203,7 @@ function SeriesCreatePage() {
         description: item.overview || baseData.description,
         releaseYear: item.year || (item.first_air_date ? new Date(item.first_air_date).getFullYear() :
           item.release_date ? new Date(item.release_date).getFullYear() : baseData.releaseYear),
-        coverImageUrl: item.poster_path || baseData.coverImageUrl,
+        coverImage: item.poster_path || baseData.coverImage,
         tmdb_id: item.id || item.tmdb_id || baseData.tmdb_id,
         media_type: 'tv'
       };
@@ -254,7 +246,6 @@ function SeriesCreatePage() {
   // ===== HANDLER DEL FORMULARIO CON FILTRO DE CAMPOS VACÍOS =====
   const handleFormSubmit = async (seriesData) => {
     setFormLoading(true);
-    setIsSubmitting(true);
     setSubmitError(null);
 
     try {
@@ -314,7 +305,6 @@ function SeriesCreatePage() {
       setSubmitError(errorMessage);
     } finally {
       setFormLoading(false);
-      setIsSubmitting(false);
     }
   };
 
@@ -372,16 +362,6 @@ function SeriesCreatePage() {
             size="md"
           />
         </div>
-      )}
-      
-      {isSubmitting && (
-        <Spinner 
-          variant="pulse"
-          size="lg"
-          color="primary"
-          overlay={true}
-          message="Subiendo imagen de portada..."
-        />
       )}
     </AdminLayout>
   );

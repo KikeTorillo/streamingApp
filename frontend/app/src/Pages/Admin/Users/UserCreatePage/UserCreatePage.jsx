@@ -9,6 +9,7 @@ import { DynamicForm } from '../../../../components/molecules/DynamicForm/Dynami
 import { Button } from '../../../../components/atoms/Button/Button';
 import './UserCreatePage.css';
 import { createUserService } from '../../../../services/Users/createUserService';
+import { validatePasswordsMatch, prepareUserData } from '../../../../utils/formUtils';
 
 /**
  * UserCreatePage - MIGRADO A CONTAINER COMPONENT
@@ -99,13 +100,13 @@ function UserCreatePage() {
     setError(null);
 
     try {
-      // Validar contraseñas coinciden
-      if (formData.password !== formData.confirmPassword) {
+      // Validar contraseñas coinciden usando utility
+      if (!validatePasswordsMatch(formData.password, formData.confirmPassword)) {
         throw new Error('Las contraseñas no coinciden');
       }
 
-      // Limpiar datos para envío (quitar confirmPassword)
-      const { confirmPassword, ...userData } = formData;
+      // Limpiar datos para envío usando utility
+      const userData = prepareUserData(formData);
 
       // Crear usuario
       const result = await createUserService(userData);

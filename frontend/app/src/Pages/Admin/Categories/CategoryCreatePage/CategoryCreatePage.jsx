@@ -11,6 +11,7 @@ import './CategoryCreatePage.css';
 
 // Importar servicio para crear categorías
 import { createCategoryService } from '../../../../services/Categories/createCategoryService';
+import { filterEmptyFields } from '../../../../utils/formUtils';
 
 /**
  * CategoryCreatePage - MIGRADO A CONTAINER COMPONENT
@@ -115,10 +116,8 @@ function CategoryCreatePage() {
     try {
       console.log('📤 Enviando datos al backend:', formData);
 
-      // Preparar datos para el backend
-      const categoryData = {
-        name: formData.name.trim()
-      };
+      // Preparar datos para el backend usando utility
+      const categoryData = filterEmptyFields(formData);
 
       const result = await createCategoryService(categoryData);
 
