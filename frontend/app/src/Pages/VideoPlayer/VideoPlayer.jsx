@@ -139,12 +139,12 @@ const VideoPlayer = () => {
           html5: {
             vhs: {
               overrideNative: true,
-              smoothSeekingEnabled: false,
-              enableLowInitialPlaylist: false,
-              fastQualityChange: false,
+              smoothSeekingEnabled: true,
+              enableLowInitialPlaylist: true,
+              fastQualityChange: true,
               maxPlaylistRetries: 3,
               seekingEnabled: true,
-              seekingTimeMargin: 5,
+              seekingTimeMargin: 2,
               bandwidth: 4194304,
               playlistExclusionDuration: 60,
               maxBufferLength: 30,
@@ -153,13 +153,13 @@ const VideoPlayer = () => {
               bufferBasedABR: true,
               experimentalBufferBasedABR: false,
               experimentalLLHLS: false,
-              allowSeeksWithinUnsafeLiveWindow: false,
+              allowSeeksWithinUnsafeLiveWindow: true,
               useBandwidthFromLocalStorage: false,
             },
             nativeControlsForTouch: false,
             playsinline: true,
             nativeTextTracks: false,
-            preloadTextTracks: false,
+            preloadTextTracks: true,
           },
           pip: true,
           controlBar: {
@@ -186,10 +186,15 @@ const VideoPlayer = () => {
           },
         });
         
-        // Variables para tracking de seeking
+        // Variables para tracking de seeking y sincronización
         let seekStart = null;
         let previousTime = 0;
         let seekingTimeout = null;
+        let syncCheckInterval = null;
+        let isProcessingSeek = false;
+        let subtitleOffset = 0; // Offset en segundos para subtítulos
+        let lastSyncTime = 0; // Timestamp de la última sincronización para cooldown
+        let lastCorrectionTime = 0; // Timestamp de la última corrección
         
         const resyncSubtitles = () => {
           const textTracks = player.textTracks();
@@ -203,21 +208,56 @@ const VideoPlayer = () => {
               setTimeout(() => {
                 if (wasShowing) {
                   track.mode = 'showing';
+                  // Aplicar offset de subtítulos si existe
+                  if (subtitleOffset !== 0) {
+                    console.log('🎬 Aplicando offset de subtítulos:', subtitleOffset, 'segundos');
+                    const currentTime = player.currentTime();
+                    player.trigger('timeupdate', { target: { currentTime: currentTime + subtitleOffset } });
+                  }
                 }
                 if (track.removeAttribute) {
                   track.removeAttribute('data-resync');
                 }
-              }, 100);
+              }, 50);
             }
           }
         };
         
-        // Manejar eventos de seeking para sincronización
+        // Función para forzar sincronización audio-video
+        const forceSyncronization = () => {
+          if (isProcessingSeek) return;
+          
+          const videoElement = player.el().querySelector('video');
+          if (!videoElement) return;
+          
+          const playerTime = player.currentTime();
+          const videoTime = videoElement.currentTime;
+          const timeDiff = Math.abs(videoTime - playerTime);
+          
+          // Ajustar umbral de tolerancia para HLS (500ms es más apropiado)
+          if (timeDiff > 0.8) {
+            console.log('⚠️ Sincronizando audio-video. Diferencia:', timeDiff.toFixed(3), 'segundos');
+            videoElement.currentTime = playerTime;
+            
+            // Esperar a que se complete el ajuste
+            setTimeout(() => {
+              if (Math.abs(videoElement.currentTime - playerTime) > 0.2) {
+                videoElement.currentTime = playerTime;
+              }
+            }, 100);
+          }
+        };
+        
+        // Manejar eventos de seeking para sincronización mejorada
         player.on('timeupdate', function() {
-          previousTime = player.currentTime();
+          if (!isProcessingSeek) {
+            previousTime = player.currentTime();
+          }
         });
         
         player.on('seeking', function() {
+          isProcessingSeek = true;
+          
           if (seekStart === null) {
             seekStart = previousTime;
           }
@@ -241,13 +281,20 @@ const VideoPlayer = () => {
           const currentTime = player.currentTime();
           const seekDistance = Math.abs(currentTime - (seekStart || 0));
           
-          // Re-sincronizar subtítulos después de seek significativo
-          if (seekDistance > 1) {
-            seekingTimeout = setTimeout(() => {
+          // Re-sincronizar después de seek
+          seekingTimeout = setTimeout(() => {
+            isProcessingSeek = false;
+            
+            // Forzar sincronización inmediata después del seek
+            forceSyncronization();
+            
+            // Re-sincronizar subtítulos si es necesario
+            if (seekDistance > 0.8) {
               resyncSubtitles();
-              player.trigger('timeupdate');
-            }, 500);
-          }
+            }
+            
+            player.trigger('timeupdate');
+          }, 200);
           
           seekStart = null;
         });
@@ -270,87 +317,124 @@ const VideoPlayer = () => {
           }, 50);
         });
         
-        // Monitoreo continuo de sincronización audio/video/subtítulos
-        let lastSyncCheck = 0;
-        let videoElement = null;
-        
-        player.on('timeupdate', function() {
-          const currentTime = player.currentTime();
-          
-          // Verificar sincronización cada 3 segundos
-          if (currentTime - lastSyncCheck > 3) {
-            lastSyncCheck = currentTime;
+        // Monitoreo periódico de sincronización (optimizado con cooldown)
+        syncCheckInterval = setInterval(() => {
+          // Solo verificar si no estamos procesando un seek
+          if (!isProcessingSeek && !player.paused()) {
+            forceSyncronization();
             
-            // Obtener elemento video para verificar sincronización
-            if (!videoElement) {
-              videoElement = player.el().querySelector('video');
+            const now = Date.now();
+            // Cooldown de 3 segundos entre correcciones para evitar parpadeo
+            if (now - lastCorrectionTime < 3000) {
+              return;
             }
             
-            if (videoElement) {
-              const videoTime = videoElement.currentTime;
-              const playerTime = player.currentTime();
-              const timeDiff = Math.abs(videoTime - playerTime);
-              
-              // Si hay desincronización mayor a 100ms, forzar sincronización
-              if (timeDiff > 0.1) {
-                console.log('⚠️ Desincronización detectada:', timeDiff, 'segundos');
-                videoElement.currentTime = playerTime;
-              }
-            }
-            
-            // Verificar si hay subtítulos activos
+            // Verificar sincronización de subtítulos con corrección más inteligente
             const textTracks = player.textTracks();
             for (let i = 0; i < textTracks.length; i++) {
               const track = textTracks[i];
-              if (track.mode === 'showing') {
-                player.trigger('texttrackchange');
-                break;
+              if (track.mode === 'showing' && track.cues) {
+                const currentTime = player.currentTime();
+                const activeCues = track.activeCues;
+                
+                // Si hay subtítulos activos pero parecen estar desincronizados
+                if (activeCues && activeCues.length > 0) {
+                  const cue = activeCues[0];
+                  const cueTime = cue.startTime;
+                  const timeDiff = Math.abs(currentTime - cueTime);
+                  
+                  // Detectar retraso con umbral más alto para evitar correcciones excesivas
+                  const isSubtitleLate = currentTime > cueTime;
+                  if (timeDiff > 0.3 && isSubtitleLate) {
+                    console.log('🎬 Detectado desajuste de subtítulos en monitoreo:', {
+                      expected: cueTime,
+                      actual: currentTime,
+                      diff: timeDiff,
+                      text: cue.text.substring(0, 30) + '...'
+                    });
+                    
+                    // Aplicar corrección con cooldown
+                    lastCorrectionTime = now;
+                    setTimeout(() => {
+                      const textTracks = player.textTracks();
+                      for (let j = 0; j < textTracks.length; j++) {
+                        const textTrack = textTracks[j];
+                        if (textTrack.mode === 'showing') {
+                          textTrack.mode = 'disabled';
+                          setTimeout(() => {
+                            textTrack.mode = 'showing';
+                            console.log('🎬 Subtítulos re-sincronizados (umbral 0.3s con cooldown)');
+                          }, 100);
+                        }
+                      }
+                    }, 50);
+                  }
+                }
               }
             }
           }
-        });
+        }, 3000); // Verificar cada 3 segundos
         
-        // Eventos para forzar sincronización en momentos críticos
+        // Eventos para forzar sincronización en momentos críticos (optimizados)
         player.on('loadeddata', function() {
-          console.log('🎬 Video data loaded, forzando sincronización inicial');
+          console.log('🎬 Video data loaded, iniciando sincronización');
           setTimeout(() => {
-            const videoEl = player.el().querySelector('video');
-            if (videoEl && player.currentTime() !== videoEl.currentTime) {
-              videoEl.currentTime = player.currentTime();
-            }
-          }, 100);
+            forceSyncronization();
+          }, 250);
         });
         
         player.on('canplay', function() {
           console.log('🎬 Video can play, verificando sincronización');
-          const videoEl = player.el().querySelector('video');
-          if (videoEl) {
-            const timeDiff = Math.abs(videoEl.currentTime - player.currentTime());
-            if (timeDiff > 0.05) {
-              console.log('⚠️ Ajustando sincronización en canplay:', timeDiff);
-              videoEl.currentTime = player.currentTime();
-            }
-          }
+          setTimeout(() => {
+            forceSyncronization();
+          }, 100);
         });
         
         player.on('playing', function() {
           console.log('🎬 Video playing, sincronizando audio/video');
-          const videoEl = player.el().querySelector('video');
-          if (videoEl) {
-            const timeDiff = Math.abs(videoEl.currentTime - player.currentTime());
-            if (timeDiff > 0.05) {
-              console.log('⚠️ Ajustando sincronización en playing:', timeDiff);
-              videoEl.currentTime = player.currentTime();
-            }
-          }
+          setTimeout(() => {
+            forceSyncronization();
+          }, 50);
         });
+        
+        // Limpiar intervalo cuando se destruya el player
+        const originalDispose = player.dispose;
+        player.dispose = function() {
+          if (syncCheckInterval) {
+            clearInterval(syncCheckInterval);
+          }
+          if (seekingTimeout) {
+            clearTimeout(seekingTimeout);
+          }
+          originalDispose.call(this);
+        };
         
         // Wait for video metadata to load before adding subtitles
         player.ready(() => {
           if (subtitleTracks.length > 0) {
             subtitleTracks.forEach((track) => {
               console.log('Adding subtitle track:', track.label, 'URL:', track.src);
-              player.addRemoteTextTrack(track, false);
+              const textTrack = player.addRemoteTextTrack(track, false);
+              
+              // Monitorear la carga de subtítulos para ajustar sincronización
+              if (textTrack && textTrack.track) {
+                textTrack.track.addEventListener('load', () => {
+                  console.log('🎬 Subtítulos cargados para:', track.label);
+                  
+                  // Aplicar offset si se ha detectado desincronización
+                  if (subtitleOffset !== 0) {
+                    console.log('🎬 Aplicando offset de', subtitleOffset, 'segundos a subtítulos');
+                    const cues = textTrack.track.cues;
+                    if (cues) {
+                      for (let i = 0; i < cues.length; i++) {
+                        const cue = cues[i];
+                        cue.startTime += subtitleOffset;
+                        cue.endTime += subtitleOffset;
+                      }
+                    }
+                  }
+                });
+              }
             });
           }
           
@@ -617,13 +701,59 @@ const VideoPlayer = () => {
                   track.mode = 'showing';
                   console.log('Subtítulos activados:', track.label);
                   
+                  // Configurar listener para cues cargadas
+                  track.addEventListener('cuechange', () => {
+                    const currentTime = player.currentTime();
+                    const activeCues = track.activeCues;
+                    
+                    if (activeCues && activeCues.length > 0) {
+                      const cue = activeCues[0];
+                      console.log('🎬 Cue activa:', cue.text, 'en tiempo:', cue.startTime, 'video en:', currentTime);
+                      
+                      // Detectar desincronización automáticamente con cooldown
+                      const timeDiff = Math.abs(currentTime - cue.startTime);
+                      const isSubtitleLate = currentTime > cue.startTime;
+                      const now = Date.now();
+                      
+                      // Detectar retraso solo si hay un retraso significativo y no hay cooldown activo
+                      if (timeDiff > 0.4 && isSubtitleLate && subtitleOffset === 0 && (now - lastSyncTime > 2000)) {
+                        subtitleOffset = currentTime - cue.startTime;
+                        lastSyncTime = now;
+                        console.log('🎬 Detectado retraso de subtítulos:', subtitleOffset, 'segundos');
+                        
+                        // Aplicar corrección inmediata re-sincronizando el track con cooldown
+                        setTimeout(() => {
+                          const wasShowing = track.mode === 'showing';
+                          track.mode = 'disabled';
+                          setTimeout(() => {
+                            if (wasShowing) {
+                              track.mode = 'showing';
+                              console.log('🎬 Subtítulos re-sincronizados en cuechange');
+                            }
+                          }, 100);
+                        }, 50);
+                      }
+                      
+                      // Log solo para retrasos significativos
+                      if (timeDiff > 0.2) {
+                        console.log('🎬 Sync check:', {
+                          text: cue.text.substring(0, 20) + '...',
+                          expected: cue.startTime,
+                          actual: currentTime,
+                          diff: timeDiff,
+                          late: isSubtitleLate
+                        });
+                      }
+                    }
+                  });
+                  
                   // Forzar sincronización inmediata con el audio
                   player.trigger('texttrackchange');
                   player.trigger('timeupdate');
                   break;
                 }
               }
-            }, 100);
+            }, 200); // Aumentar timeout para mejor carga
           });
         });
 
@@ -720,8 +850,18 @@ const VideoPlayer = () => {
             <VideoPlayerOverlay
               onSkipBack={() => {
                 if (playerRef.current) {
+                  // Usar la función handleSkip para mantener consistencia con la sincronización
                   const currentTime = playerRef.current.currentTime();
+                  
+                  // Aplicar el cambio usando el método del player para activar eventos
                   playerRef.current.currentTime(Math.max(0, currentTime - 10));
+                  
+                  // Activar manualmente los eventos de seeking para sincronización
+                  playerRef.current.trigger('seeking');
+                  setTimeout(() => {
+                    playerRef.current.trigger('seeked');
+                  }, 50);
+                  
                   const overlay = playerRef.current.el().querySelector('.vjs-overlay');
                   if (overlay) {
                     const skipIndicator = document.createElement('div');
@@ -763,9 +903,18 @@ const VideoPlayer = () => {
               }}
               onSkipForward={() => {
                 if (playerRef.current) {
+                  // Usar la función handleSkip para mantener consistencia con la sincronización
                   const currentTime = playerRef.current.currentTime();
                   const duration = playerRef.current.duration();
+                  
+                  // Aplicar el cambio usando el método del player para activar eventos
                   playerRef.current.currentTime(Math.min(duration, currentTime + 10));
+                  
+                  // Activar manualmente los eventos de seeking para sincronización
+                  playerRef.current.trigger('seeking');
+                  setTimeout(() => {
+                    playerRef.current.trigger('seeked');
+                  }, 50);
                   
                   const overlay = playerRef.current.el().querySelector('.vjs-overlay');
                   if (overlay) {
