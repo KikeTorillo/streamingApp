@@ -32,6 +32,80 @@ const VideoPlayer = () => {
   const subsUrl = `${cdnUrl}/subs/${movieId}/`;
   
   const urlComplete = `${baseUrl}_,${resolutions},p.mp4.play/master.m3u8`;
+  
+  // ===== FUNCIONES GLOBALES PARA REUTILIZACIÓN =====
+  
+  // Función para crear indicadores de skip reutilizable
+  const createSkipIndicatorGlobal = (player, text, direction) => {
+    const overlay = player.el().querySelector('.vjs-overlay');
+    if (!overlay) return;
+    
+    const skipIndicator = document.createElement('div');
+    skipIndicator.className = 'skip-indicator';
+    skipIndicator.style.cssText = `
+      position: absolute;
+      top: 50%;
+      ${direction === 'backward' ? 'left: 20%' : 'right: 20%'};
+      transform: translateY(-50%);
+      background-color: rgba(0, 0, 0, 0.8);
+      color: var(--text-on-primary);
+      padding: var(--space-md) var(--space-lg);
+      border-radius: var(--radius-lg);
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      z-index: 2000;
+      animation: skipFade 1s ease-out forwards;
+    `;
+    skipIndicator.textContent = text;
+    
+    overlay.appendChild(skipIndicator);
+    
+    setTimeout(() => {
+      if (skipIndicator.parentNode) {
+        skipIndicator.parentNode.removeChild(skipIndicator);
+      }
+    }, 1000);
+  };
+  
+  // Función unificada para skip con sincronización global
+  const handleSkipGlobal = (player, seconds, direction) => {
+    if (!player) return;
+    
+    const currentTime = player.currentTime();
+    const duration = player.duration();
+    
+    let newTime;
+    if (direction === 'backward') {
+      newTime = Math.max(0, currentTime - seconds);
+    } else {
+      newTime = Math.min(duration, currentTime + seconds);
+    }
+    
+    // Aplicar el cambio
+    player.currentTime(newTime);
+    
+    // Activar eventos de sincronización
+    player.trigger('seeking');
+    setTimeout(() => {
+      player.trigger('seeked');
+      setTimeout(() => {
+        const textTracks = player.textTracks();
+        for (let i = 0; i < textTracks.length; i++) {
+          const track = textTracks[i];
+          if (track.mode === 'showing') {
+            track.mode = 'disabled';
+            setTimeout(() => {
+              track.mode = 'showing';
+              console.log('🎬 Subtítulos re-sincronizados post-skip');
+            }, 20);
+            break;
+          }
+        }
+      }, 100);
+    }, 50);
+    const text = direction === 'backward' ? `⏪ ${seconds}s` : `${seconds}s ⏩`;
+    createSkipIndicatorGlobal(player, text, direction);
+  };
 
   // Función para manejar el botón de regresar
   const handleGoBack = () => {
@@ -46,9 +120,6 @@ const VideoPlayer = () => {
     navigate(-1);
   };
 
-
-
-  // Load content data (movie or episode)
   useEffect(() => {
     const loadContentData = async () => {
       try {
@@ -94,7 +165,6 @@ const VideoPlayer = () => {
           playerRef.current.dispose();
         }
         
-        // Prepare subtitles
         const subtitleTracks = [];
         if (movieData.available_subtitles && movieData.available_subtitles.length > 0) {
           movieData.available_subtitles.forEach(subtitle => {
@@ -192,13 +262,87 @@ const VideoPlayer = () => {
         let seekingTimeout = null;
         let syncCheckInterval = null;
         let isProcessingSeek = false;
-        let subtitleOffset = 0; // Offset en segundos para subtítulos
-        let lastSyncTime = 0; // Timestamp de la última sincronización para cooldown
-        let lastCorrectionTime = 0; // Timestamp de la última corrección
+        let subtitleOffset = 0;
+        let lastSyncTime = 0;
+        let lastCorrectionTime = 0;
         
-        const resyncSubtitles = () => {
-          const textTracks = player.textTracks();
+        // ===== FUNCIONES DE UTILIDAD UNIFICADAS =====
+        
+        // Función unificada para crear indicadores de skip
+        const createSkipIndicator = (text, direction) => {
+          const overlay = player.el().querySelector('.vjs-overlay');
+          if (!overlay) return;
           
+          const skipIndicator = document.createElement('div');
+          skipIndicator.className = 'skip-indicator';
+          skipIndicator.style.cssText = `
+            position: absolute;
+            top: 50%;
+            ${direction === 'backward' ? 'left: 20%' : 'right: 20%'};
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: var(--text-on-primary);
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-lg);
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-bold);
+            z-index: 2000;
+            animation: skipFade 1s ease-out forwards;
+          `;
+          skipIndicator.textContent = text;
+          
+          overlay.appendChild(skipIndicator);
+          
+          setTimeout(() => {
+            if (skipIndicator.parentNode) {
+              skipIndicator.parentNode.removeChild(skipIndicator);
+            }
+          }, 1000);
+        };
+        
+        // Función unificada para manejar skip con sincronización
+        const handleSkipAction = (seconds, direction) => {
+          const currentTime = player.currentTime();
+          const duration = player.duration();
+          
+          let newTime;
+          if (direction === 'backward') {
+            newTime = Math.max(0, currentTime - seconds);
+          } else {
+            newTime = Math.min(duration, currentTime + seconds);
+          }
+          
+          // Aplicar el cambio
+          player.currentTime(newTime);
+          
+          // Activar eventos de sincronización
+          player.trigger('seeking');
+          setTimeout(() => {
+            player.trigger('seeked');
+          }, 50);
+          
+          // Mostrar indicador
+          const text = direction === 'backward' ? `⏪ ${seconds}s` : `${seconds}s ⏩`;
+          createSkipIndicator(text, direction);
+        };
+        
+        // Función simplificada de sincronización solo para seeking
+        const performSeekSynchronization = () => {
+          const videoElement = player.el().querySelector('video');
+          if (!videoElement) return;
+          
+          const playerTime = player.currentTime();
+          const videoTime = videoElement.currentTime;
+          const timeDiff = Math.abs(videoTime - playerTime);
+          
+          // Sincronizar audio-video si hay diferencia significativa
+          if (timeDiff > 0.5) {
+            console.log('⚠️ Sincronizando audio-video post-seek. Diferencia:', timeDiff.toFixed(3), 'segundos');
+            videoElement.currentTime = playerTime;
+          }
+          
+          // Sincronizar subtítulos marcados para re-sync (solo los que necesitan)
+          const textTracks = player.textTracks();
           for (let i = 0; i < textTracks.length; i++) {
             const track = textTracks[i];
             if (track.getAttribute && track.getAttribute('data-resync') === 'true') {
@@ -208,43 +352,13 @@ const VideoPlayer = () => {
               setTimeout(() => {
                 if (wasShowing) {
                   track.mode = 'showing';
-                  // Aplicar offset de subtítulos si existe
-                  if (subtitleOffset !== 0) {
-                    console.log('🎬 Aplicando offset de subtítulos:', subtitleOffset, 'segundos');
-                    const currentTime = player.currentTime();
-                    player.trigger('timeupdate', { target: { currentTime: currentTime + subtitleOffset } });
-                  }
+                  console.log('🎬 Subtítulos re-sincronizados post-seek');
                 }
                 if (track.removeAttribute) {
                   track.removeAttribute('data-resync');
                 }
               }, 50);
             }
-          }
-        };
-        
-        // Función para forzar sincronización audio-video
-        const forceSyncronization = () => {
-          if (isProcessingSeek) return;
-          
-          const videoElement = player.el().querySelector('video');
-          if (!videoElement) return;
-          
-          const playerTime = player.currentTime();
-          const videoTime = videoElement.currentTime;
-          const timeDiff = Math.abs(videoTime - playerTime);
-          
-          // Ajustar umbral de tolerancia para HLS (500ms es más apropiado)
-          if (timeDiff > 0.8) {
-            console.log('⚠️ Sincronizando audio-video. Diferencia:', timeDiff.toFixed(3), 'segundos');
-            videoElement.currentTime = playerTime;
-            
-            // Esperar a que se complete el ajuste
-            setTimeout(() => {
-              if (Math.abs(videoElement.currentTime - playerTime) > 0.2) {
-                videoElement.currentTime = playerTime;
-              }
-            }, 100);
           }
         };
         
@@ -285,12 +399,11 @@ const VideoPlayer = () => {
           seekingTimeout = setTimeout(() => {
             isProcessingSeek = false;
             
-            // Forzar sincronización inmediata después del seek
-            forceSyncronization();
+            // Forzar sincronización solo después del seek
+            performSeekSynchronization();
             
-            // Re-sincronizar subtítulos si es necesario
-            if (seekDistance > 0.8) {
-              resyncSubtitles();
+            if (seekDistance > 0.5) {
+              console.log('🎬 Re-sincronización completa por seek de', seekDistance.toFixed(2), 'segundos');
             }
             
             player.trigger('timeupdate');
@@ -299,113 +412,47 @@ const VideoPlayer = () => {
           seekStart = null;
         });
         
-        // Manejar cambios de text tracks con monitoreo de sincronización
+        // Manejar cambios de text tracks sin auto-sincronización
         player.on('texttrackchange', function() {
-          const currentTime = player.currentTime();
-          console.log('Text track changed at time:', currentTime);
-          
-          // Verificar sincronización cada vez que cambian los subtítulos
-          setTimeout(() => {
-            const textTracks = player.textTracks();
-            for (let i = 0; i < textTracks.length; i++) {
-              const track = textTracks[i];
-              if (track.mode === 'showing') {
-                console.log('Subtítulo activo sincronizado a:', currentTime, 'segundos');
-                break;
-              }
-            }
-          }, 50);
+          console.log('Text track changed');
         });
         
-        // Monitoreo periódico de sincronización (optimizado con cooldown)
-        syncCheckInterval = setInterval(() => {
-          // Solo verificar si no estamos procesando un seek
-          if (!isProcessingSeek && !player.paused()) {
-            forceSyncronization();
-            
-            const now = Date.now();
-            // Cooldown de 3 segundos entre correcciones para evitar parpadeo
-            if (now - lastCorrectionTime < 3000) {
-              return;
-            }
-            
-            // Verificar sincronización de subtítulos con corrección más inteligente
-            const textTracks = player.textTracks();
-            for (let i = 0; i < textTracks.length; i++) {
-              const track = textTracks[i];
-              if (track.mode === 'showing' && track.cues) {
-                const currentTime = player.currentTime();
-                const activeCues = track.activeCues;
-                
-                // Si hay subtítulos activos pero parecen estar desincronizados
-                if (activeCues && activeCues.length > 0) {
-                  const cue = activeCues[0];
-                  const cueTime = cue.startTime;
-                  const timeDiff = Math.abs(currentTime - cueTime);
-                  
-                  // Detectar retraso con umbral más alto para evitar correcciones excesivas
-                  const isSubtitleLate = currentTime > cueTime;
-                  if (timeDiff > 0.3 && isSubtitleLate) {
-                    console.log('🎬 Detectado desajuste de subtítulos en monitoreo:', {
-                      expected: cueTime,
-                      actual: currentTime,
-                      diff: timeDiff,
-                      text: cue.text.substring(0, 30) + '...'
-                    });
-                    
-                    // Aplicar corrección con cooldown
-                    lastCorrectionTime = now;
-                    setTimeout(() => {
-                      const textTracks = player.textTracks();
-                      for (let j = 0; j < textTracks.length; j++) {
-                        const textTrack = textTracks[j];
-                        if (textTrack.mode === 'showing') {
-                          textTrack.mode = 'disabled';
-                          setTimeout(() => {
-                            textTrack.mode = 'showing';
-                            console.log('🎬 Subtítulos re-sincronizados (umbral 0.3s con cooldown)');
-                          }, 100);
-                        }
-                      }
-                    }, 50);
-                  }
-                }
-              }
-            }
-          }
-        }, 3000); // Verificar cada 3 segundos
+        // No hay monitoreo periódico - solo sincronización manual
+        let syncAnimationFrame; // Mantener variable para cleanup
         
-        // Eventos para forzar sincronización en momentos críticos (optimizados)
+        // Sincronización inicial solo al cargar
         player.on('loadeddata', function() {
-          console.log('🎬 Video data loaded, iniciando sincronización');
-          setTimeout(() => {
-            forceSyncronization();
-          }, 250);
-        });
-        
-        player.on('canplay', function() {
-          console.log('🎬 Video can play, verificando sincronización');
-          setTimeout(() => {
-            forceSyncronization();
-          }, 100);
+          console.log('🎬 Video data loaded - sincronización inicial');
         });
         
         player.on('playing', function() {
-          console.log('🎬 Video playing, sincronizando audio/video');
-          setTimeout(() => {
-            forceSyncronization();
-          }, 50);
+          console.log('🎬 Video playing - sin auto-sincronización');
         });
         
-        // Limpiar intervalo cuando se destruya el player
+        // Cleanup mejorado para evitar memory leaks
         const originalDispose = player.dispose;
         player.dispose = function() {
+          // Limpiar todos los intervalos y timeouts
           if (syncCheckInterval) {
             clearInterval(syncCheckInterval);
+          }
+          if (syncAnimationFrame) {
+            cancelAnimationFrame(syncAnimationFrame);
           }
           if (seekingTimeout) {
             clearTimeout(seekingTimeout);
           }
+          
+          // Limpiar event listeners personalizados
+          const textTracks = player.textTracks();
+          for (let i = 0; i < textTracks.length; i++) {
+            const track = textTracks[i];
+            if (track.removeEventListener) {
+              track.removeEventListener('cuechange', () => {});
+              track.removeEventListener('load', () => {});
+            }
+          }
+          
           originalDispose.call(this);
         };
         
@@ -488,7 +535,7 @@ const VideoPlayer = () => {
                   return (event.which === 37);
                 },
                 handler: function() {
-                  handleSkip(10, 'backward');
+                  handleSkipAction(10, 'backward');
                 }
               },
               rightArrow: {
@@ -496,7 +543,7 @@ const VideoPlayer = () => {
                   return (event.which === 39);
                 },
                 handler: function() {
-                  handleSkip(10, 'forward');
+                  handleSkipAction(10, 'forward');
                 }
               }
             }
@@ -529,40 +576,7 @@ const VideoPlayer = () => {
           });
         });
 
-        // ===== FUNCIONES AUXILIARES =====
-        
-        // Función para mostrar overlay de skip
-        const showSkipOverlay = (player, text, direction) => {
-          const overlay = player.el().querySelector('.vjs-overlay');
-          if (overlay) {
-            const skipIndicator = document.createElement('div');
-            skipIndicator.className = 'skip-indicator';
-            skipIndicator.style.cssText = `
-              position: absolute;
-              top: 50%;
-              ${direction === 'left' ? 'left: 20%' : 'right: 20%'};
-              transform: translateY(-50%);
-              background-color: rgba(0, 0, 0, 0.8);
-              color: var(--text-on-primary);
-              padding: var(--space-md) var(--space-lg);
-              border-radius: var(--radius-lg);
-              font-size: var(--font-size-lg);
-              font-weight: var(--font-weight-bold);
-              z-index: 2000;
-              animation: skipFade 1s ease-out forwards;
-            `;
-            skipIndicator.textContent = text;
-            
-            overlay.appendChild(skipIndicator);
-            
-            // Remover después de 1 segundo
-            setTimeout(() => {
-              if (skipIndicator.parentNode) {
-                skipIndicator.parentNode.removeChild(skipIndicator);
-              }
-            }, 1000);
-          }
-        };
+        // ===== EVENT LISTENERS =====
 
         player.on('play', () => {
           setIsPlaying(true);
@@ -596,20 +610,7 @@ const VideoPlayer = () => {
           }
         });
 
-        const handleSkip = (seconds, direction) => {
-          const currentTime = player.currentTime();
-          const duration = player.duration();
-          
-          if (direction === 'backward') {
-            player.currentTime(Math.max(0, currentTime - seconds));
-          } else {
-            player.currentTime(Math.min(duration, currentTime + seconds));
-          }
-          
-          // Mostrar overlay de skip
-          const text = direction === 'backward' ? `⏪ ${seconds}s` : `${seconds}s ⏩`;
-          showSkipOverlay(player, text, direction === 'backward' ? 'left' : 'right');
-        };
+        // Usar la función unificada handleSkipAction ya definida arriba
         
         // ===== CONTROLES PERSONALIZADOS COMO ALTERNATIVA =====
         // Si los botones nativos no funcionan, agregamos controles personalizados
@@ -631,7 +632,7 @@ const VideoPlayer = () => {
               }
               
               handleClick() {
-                handleSkip(10, 'backward');
+                handleSkipAction(10, 'backward');
               }
             }
             
@@ -643,7 +644,7 @@ const VideoPlayer = () => {
               }
               
               handleClick() {
-                handleSkip(10, 'forward');
+                handleSkipAction(10, 'forward');
               }
             }
             
@@ -701,63 +702,14 @@ const VideoPlayer = () => {
                   track.mode = 'showing';
                   console.log('Subtítulos activados:', track.label);
                   
-                  // Configurar listener para cues cargadas
-                  track.addEventListener('cuechange', () => {
-                    const currentTime = player.currentTime();
-                    const activeCues = track.activeCues;
-                    
-                    if (activeCues && activeCues.length > 0) {
-                      const cue = activeCues[0];
-                      console.log('🎬 Cue activa:', cue.text, 'en tiempo:', cue.startTime, 'video en:', currentTime);
-                      
-                      // Detectar desincronización automáticamente con cooldown
-                      const timeDiff = Math.abs(currentTime - cue.startTime);
-                      const isSubtitleLate = currentTime > cue.startTime;
-                      const now = Date.now();
-                      
-                      // Detectar retraso solo si hay un retraso significativo y no hay cooldown activo
-                      if (timeDiff > 0.4 && isSubtitleLate && subtitleOffset === 0 && (now - lastSyncTime > 2000)) {
-                        subtitleOffset = currentTime - cue.startTime;
-                        lastSyncTime = now;
-                        console.log('🎬 Detectado retraso de subtítulos:', subtitleOffset, 'segundos');
-                        
-                        // Aplicar corrección inmediata re-sincronizando el track con cooldown
-                        setTimeout(() => {
-                          const wasShowing = track.mode === 'showing';
-                          track.mode = 'disabled';
-                          setTimeout(() => {
-                            if (wasShowing) {
-                              track.mode = 'showing';
-                              console.log('🎬 Subtítulos re-sincronizados en cuechange');
-                            }
-                          }, 100);
-                        }, 50);
-                      }
-                      
-                      // Log solo para retrasos significativos
-                      if (timeDiff > 0.2) {
-                        console.log('🎬 Sync check:', {
-                          text: cue.text.substring(0, 20) + '...',
-                          expected: cue.startTime,
-                          actual: currentTime,
-                          diff: timeDiff,
-                          late: isSubtitleLate
-                        });
-                      }
-                    }
-                  });
-                  
-                  // Forzar sincronización inmediata con el audio
-                  player.trigger('texttrackchange');
-                  player.trigger('timeupdate');
+                  // Configuración inicial completada
+                  console.log('🎬 Subtítulos activados:', track.label, '- Sin auto-sincronización');
                   break;
                 }
               }
-            }, 200); // Aumentar timeout para mejor carga
+            }, 500); // Timeout para carga inicial
           });
         });
-
-
 
         // Error handling
         player.on('error', (e) => {
@@ -848,50 +800,7 @@ const VideoPlayer = () => {
           {/* Portal para el overlay de controles */}
           {overlayContainerRef.current && movieData && createPortal(
             <VideoPlayerOverlay
-              onSkipBack={() => {
-                if (playerRef.current) {
-                  // Usar la función handleSkip para mantener consistencia con la sincronización
-                  const currentTime = playerRef.current.currentTime();
-                  
-                  // Aplicar el cambio usando el método del player para activar eventos
-                  playerRef.current.currentTime(Math.max(0, currentTime - 10));
-                  
-                  // Activar manualmente los eventos de seeking para sincronización
-                  playerRef.current.trigger('seeking');
-                  setTimeout(() => {
-                    playerRef.current.trigger('seeked');
-                  }, 50);
-                  
-                  const overlay = playerRef.current.el().querySelector('.vjs-overlay');
-                  if (overlay) {
-                    const skipIndicator = document.createElement('div');
-                    skipIndicator.className = 'skip-indicator';
-                    skipIndicator.style.cssText = `
-                      position: absolute;
-                      top: 50%;
-                      left: 20%;
-                      transform: translateY(-50%);
-                      background-color: rgba(0, 0, 0, 0.8);
-                      color: var(--text-on-primary);
-                      padding: var(--space-md) var(--space-lg);
-                      border-radius: var(--radius-lg);
-                      font-size: var(--font-size-lg);
-                      font-weight: var(--font-weight-bold);
-                      z-index: 2000;
-                      animation: skipFade 1s ease-out forwards;
-                    `;
-                    skipIndicator.textContent = '⏪ 10s';
-                    
-                    overlay.appendChild(skipIndicator);
-                    
-                    setTimeout(() => {
-                      if (skipIndicator.parentNode) {
-                        skipIndicator.parentNode.removeChild(skipIndicator);
-                      }
-                    }, 1000);
-                  }
-                }
-              }}
+              onSkipBack={() => handleSkipGlobal(playerRef.current, 10, 'backward')}
               onPlayPause={() => {
                 if (playerRef.current) {
                   if (playerRef.current.paused()) {
@@ -901,51 +810,7 @@ const VideoPlayer = () => {
                   }
                 }
               }}
-              onSkipForward={() => {
-                if (playerRef.current) {
-                  // Usar la función handleSkip para mantener consistencia con la sincronización
-                  const currentTime = playerRef.current.currentTime();
-                  const duration = playerRef.current.duration();
-                  
-                  // Aplicar el cambio usando el método del player para activar eventos
-                  playerRef.current.currentTime(Math.min(duration, currentTime + 10));
-                  
-                  // Activar manualmente los eventos de seeking para sincronización
-                  playerRef.current.trigger('seeking');
-                  setTimeout(() => {
-                    playerRef.current.trigger('seeked');
-                  }, 50);
-                  
-                  const overlay = playerRef.current.el().querySelector('.vjs-overlay');
-                  if (overlay) {
-                    const skipIndicator = document.createElement('div');
-                    skipIndicator.className = 'skip-indicator';
-                    skipIndicator.style.cssText = `
-                      position: absolute;
-                      top: 50%;
-                      right: 20%;
-                      transform: translateY(-50%);
-                      background-color: rgba(0, 0, 0, 0.8);
-                      color: var(--text-on-primary);
-                      padding: var(--space-md) var(--space-lg);
-                      border-radius: var(--radius-lg);
-                      font-size: var(--font-size-lg);
-                      font-weight: var(--font-weight-bold);
-                      z-index: 2000;
-                      animation: skipFade 1s ease-out forwards;
-                    `;
-                    skipIndicator.textContent = '10s ⏩';
-                    
-                    overlay.appendChild(skipIndicator);
-                    
-                    setTimeout(() => {
-                      if (skipIndicator.parentNode) {
-                        skipIndicator.parentNode.removeChild(skipIndicator);
-                      }
-                    }, 1000);
-                  }
-                }
-              }}
+              onSkipForward={() => handleSkipGlobal(playerRef.current, 10, 'forward')}
               isPlaying={isPlaying}
               skipSeconds={10}
             />,
