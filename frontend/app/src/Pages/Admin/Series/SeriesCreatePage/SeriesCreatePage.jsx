@@ -1,7 +1,7 @@
 // ===== SERIES CREATE PAGE - VERSION ACTUALIZADA =====
 // src/Pages/Admin/Series/SeriesCreatePage/SeriesCreatePage.jsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // ===== LAYOUTS Y COMPONENTES =====
@@ -11,15 +11,17 @@ import { Button } from '../../../../components/atoms/Button/Button';
 import { Card, CardHeader, CardBody, CardTitle } from '../../../../components/atoms/Card/Card';
 
 // ===== COMPONENTES ESPECÍFICOS =====
-import { TMDBSearchView } from '../../../../components/organism/TMDBSearchView/TMDBSearchView';
+import { TMDBSearchView } from '../../../../components/organisms/TMDBSearchView/TMDBSearchView';
 import { SeriesFormView } from './components/SeriesFormView';
 
 // ===== SERVICIOS Y HOOKS =====
 import { createSeriesService } from '../../../../services/Series/createSeriesService';
-import { getCategoriesService } from '../../../../services/Categories/getCategoriesService';
 import { tmdbService } from '../../../../services/tmdb/TMDBService';
-import { UploadProgress } from "../../../../components/atoms/UploadProgress/UploadProgress";
+import { Spinner } from "../../../../components/atoms/Spinner/Spinner";
 import { useUploadProgress } from "../../../../hooks/useUploadProgress";
+import { useCategories } from "../../../../hooks/useCategories";
+import { useFormNavigation } from "../../../../hooks/useFormNavigation";
+import { filterEmptyFields } from '../../../../utils/formUtils';
 
 // ===== ESTILOS =====
 import './SeriesCreatePage.css';
@@ -38,81 +40,38 @@ function SeriesCreatePage() {
   const navigate = useNavigate();
 
   // ===== ESTADOS PRINCIPALES =====
-  const [currentView, setCurrentView] = useState('search'); // 'search' | 'form'
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [categories, setCategories] = useState([]);
   const [success, setSuccess] = useState(false);
-  const [hasChanges, setHasChanges] = useState(false);
 
   // ===== ESTADOS DE FORMULARIO =====
   const [formLoading, setFormLoading] = useState(false);
-  const [categoriesLoading, setCategoriesLoading] = useState(false);
-  const [categoriesError, setCategoriesError] = useState(null);
   const [submitError, setSubmitError] = useState(null);
 
+  // ===== HOOKS =====
+  const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
+  const {
+    currentView,
+    selectedItem,
+    hasChanges,
+    handleSelectFromTMDB,
+    handleManualCreate,
+    markAsChanged,
+    resetNavigation
+  } = useFormNavigation();
+
   // ===== ESTADO DE PROGRESO DE SUBIDA =====
-  const { progress, status, message, error: progressError, monitorProgress, resetProgress } = useUploadProgress();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [progressMessage, setProgressMessage] = useState('');
+  const { monitorProgress, resetProgress } = useUploadProgress();
 
-  // ===== CARGAR CATEGORÍAS AL INICIO =====
-  useEffect(() => {
-    const loadCategories = async () => {
-      setCategoriesLoading(true);
-      setCategoriesError(null);
 
-      try {
-        console.log('📂 Cargando categorías...');
-        const response = await getCategoriesService();
-
-        const data = Array.isArray(response) ? response : 
-                     response?.data ? response.data : 
-                     response?.categories ? response.categories : [];
-
-        console.log('📂 Categorías cargadas:', data);
-        setCategories(data);
-
-        if (data.length === 0) {
-          setCategoriesError('No hay categorías disponibles. Ve a Administrar > Categorías para crear una.');
-        }
-      } catch (err) {
-        console.error('❌ Error cargando categorías:', err);
-        setCategoriesError('Error al cargar categorías. Verifica tu conexión.');
-        setCategories([]);
-      } finally {
-        setCategoriesLoading(false);
-      }
-    };
-
-    loadCategories();
-  }, []);
-
-  // ===== HANDLERS DE NAVEGACIÓN =====
-  const handleSelectFromTMDB = (item) => {
-    console.log('📺 Elemento seleccionado de TMDB:', item);
-    setSelectedItem(item);
-    setCurrentView('form');
-    setHasChanges(false);
+  // ===== WRAPPER PARA NAVEGACIÓN CON RESET DE ERRORES =====
+  const handleSelectFromTMDBWithReset = (item) => {
+    handleSelectFromTMDB(item, 'tv');
     setSubmitError(null);
   };
 
-  const handleManualCreate = () => {
-    console.log('✏️ Creación manual iniciada');
-    setSelectedItem(null);
-    setCurrentView('form');
-    setHasChanges(false);
-    setSubmitError(null);
-  };
-
-  const handleBackToSearch = () => {
-    if (hasChanges) {
-      const confirmLeave = window.confirm(
-        '⚠️ Hay cambios sin guardar. ¿Estás seguro de que quieres volver? Se perderán los cambios no guardados.'
-      );
-      if (!confirmLeave) return;
-    }
-
-    setSelectedItem(null);
-    setCurrentView('search');
-    setHasChanges(false);
+  const handleManualCreateWithReset = () => {
+    handleManualCreate();
     setSubmitError(null);
   };
 
@@ -212,41 +171,13 @@ function SeriesCreatePage() {
     return baseData;
   };
 
-  // ===== FUNCIÓN PARA FILTRAR CAMPOS VACÍOS =====
-  const filterEmptyFields = (data) => {
-    const filteredData = {};
-    
-    Object.keys(data).forEach(key => {
-      const value = data[key];
-      
-      // Solo incluir el campo si tiene un valor válido
-      if (value !== null && value !== undefined && value !== '') {
-        // Para archivos, verificar que sea un File válido
-        if (value instanceof File) {
-          filteredData[key] = value;
-        }
-        // Para strings, verificar que no estén vacíos después de trim
-        else if (typeof value === 'string' && value.trim() !== '') {
-          filteredData[key] = value.trim();
-        }
-        // Para números, verificar que sean válidos
-        else if (typeof value === 'number' && !isNaN(value)) {
-          filteredData[key] = value;
-        }
-        // Para otros tipos de datos válidos
-        else if (typeof value !== 'string') {
-          filteredData[key] = value;
-        }
-      }
-    });
-    
-    return filteredData;
-  };
 
   // ===== HANDLER DEL FORMULARIO CON FILTRO DE CAMPOS VACÍOS =====
   const handleFormSubmit = async (seriesData) => {
     setFormLoading(true);
     setSubmitError(null);
+    setIsProcessing(true);
+    setProgressMessage('Subiendo imagen de portada...');
 
     try {
       console.log('📤 Datos originales:', seriesData);
@@ -259,31 +190,34 @@ function SeriesCreatePage() {
 
       console.log('✅ Contenido creado exitosamente:', result);
 
-      setSuccess(true);
-      setHasChanges(false);
-
       const taskId = result?.taskId || result?.task_id || result?.id;
 
       if (taskId) {
+        setProgressMessage('Procesando datos de la serie...');
         monitorProgress(taskId, 'series', null, (finished, err) => {
           if (finished) {
+            setProgressMessage('¡Serie creada exitosamente!');
             setSuccess(true);
-            setHasChanges(false);
+            resetNavigation();
             setTimeout(() => {
+              setIsProcessing(false);
               navigate('/admin/series');
               resetProgress();
-            }, 2000);
+            }, 1500);
           } else if (err) {
+            setIsProcessing(false);
             setSubmitError(err);
             resetProgress();
           }
         });
       } else {
+        setProgressMessage('¡Serie creada exitosamente!');
         setSuccess(true);
-        setHasChanges(false);
+        resetNavigation();
         setTimeout(() => {
+          setIsProcessing(false);
           navigate('/admin/series');
-        }, 2000);
+        }, 1500);
       }
 
     } catch (err) {
@@ -303,6 +237,7 @@ function SeriesCreatePage() {
       }
 
       setSubmitError(errorMessage);
+      setIsProcessing(false);
     } finally {
       setFormLoading(false);
     }
@@ -326,8 +261,8 @@ function SeriesCreatePage() {
           {/* Contenido principal */}
           {currentView === 'search' && (
             <TMDBSearchView
-              onSelectItem={handleSelectFromTMDB}
-              onManualCreate={handleManualCreate}
+              onSelectItem={handleSelectFromTMDBWithReset}
+              onManualCreate={handleManualCreateWithReset}
               contentType="tv"
               title="📺 Buscar en TMDB"
               description="Busca series en The Movie Database para agregar a tu catálogo"
@@ -343,25 +278,26 @@ function SeriesCreatePage() {
               initialData={generateInitialFormData(selectedItem)}
               onSubmit={handleFormSubmit}
               categoryOptions={categories.map(cat => ({ value: cat.id, label: cat.name }))}
-              loading={formLoading}
+              loading={formLoading || isProcessing}
               error={submitError}
-              success={success}
+              success={success && !isProcessing}
               hasChanges={hasChanges}
-              onChange={() => setHasChanges(true)}
+              onChange={markAsChanged}
             />
           )}
 
         </div>
       </Container>
-      {status !== 'idle' && (
-        <div className="series-create-page__progress">
-          <UploadProgress
-            progress={progress}
-            status={status}
-            message={progressError || message}
-            size="md"
-          />
-        </div>
+      
+      {/* Spinner overlay para procesos de subida */}
+      {isProcessing && (
+        <Spinner
+          variant="circle"
+          size="lg"
+          color="primary"
+          message={progressMessage}
+          overlay={true}
+        />
       )}
     </AdminLayout>
   );

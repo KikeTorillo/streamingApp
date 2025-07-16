@@ -1,5 +1,4 @@
 // ===== DATA TABLE ORGANISM - CON COMPONENTES BUTTON =====
-// src/components/organism/DataTable/DataTable.jsx
 
 import React, { useState, useMemo } from 'react';
 import {

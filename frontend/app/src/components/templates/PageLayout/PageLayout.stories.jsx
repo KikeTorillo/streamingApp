@@ -1,7 +1,7 @@
 // PageLayout.stories.jsx
 import React from 'react';
 import { PageLayout } from './PageLayout';
-import { AppHeader } from '../../organism/AppHeader/AppHeader';
+import { AppHeader } from '../../organisms/AppHeader/AppHeader';
 import { FilterBar } from '../../molecules/FilterBar/FilterBar';
 import { ContentSection } from '../../molecules/ContentSection/ContentSection';
 import { ContentCard } from '../../molecules/ContentCard/ContentCard';

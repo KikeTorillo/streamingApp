@@ -16,7 +16,7 @@ export default {
         component: `
 # TMDBSearchView - Organism Reutilizable
 
-El organism **TMDBSearchView** proporciona funcionalidad completa de búsqueda en TMDB (The Movie Database) que puede reutilizarse en diferentes páginas del panel de administración.
+El organismo **TMDBSearchView** proporciona funcionalidad completa de búsqueda en TMDB (The Movie Database) que puede reutilizarse en diferentes páginas del panel de administración.
 
 ## 🎯 Características principales
 

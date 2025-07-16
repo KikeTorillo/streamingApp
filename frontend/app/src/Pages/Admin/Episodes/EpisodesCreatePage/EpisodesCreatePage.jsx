@@ -1,7 +1,7 @@
 // ===== EPISODES CREATE PAGE - CON SISTEMA DE PROGRESO =====
 // src/Pages/Admin/Episodes/EpisodesCreatePage/EpisodesCreatePage.jsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { Container } from '../../../../components/atoms/Container/Container';
@@ -9,21 +9,22 @@ import { DynamicForm } from '../../../../components/molecules/DynamicForm/Dynami
 import { Button } from '../../../../components/atoms/Button/Button';
 import { ProgressModal } from "../../../../components/molecules/ProgressModal/ProgressModal";
 import { useUploadProgress } from "../../../../hooks/useUploadProgress";
+import { useSeries } from "../../../../hooks/useSeries";
+import { useFormNavigation } from "../../../../hooks/useFormNavigation";
+import { filterEmptyFields } from '../../../../utils/formUtils';
 import "./EpisodesCreatePage.css";
 
 // Servicios
 import { createEpisodeService } from '../../../../services/Episodes/createEpisodeService';
-import { getSeriesService } from '../../../../services/Series/getSeriesService';
 
 /**
- * EpisodesCreatePage - CON SISTEMA DE PROGRESO DE CARGA
+ * EpisodesCreatePage - VERSIÓN OPTIMIZADA CON HOOKS REUTILIZABLES
  * 
- * ✅ SISTEMA DE DISEÑO: Solo componentes con stories de Storybook
- * ✅ PATRÓN: Sigue el mismo patrón que MovieCreatePage
+ * ✅ HOOKS REUTILIZABLES: useSeries, useFormNavigation, filterEmptyFields
+ * ✅ CONSISTENCIA: Mismo patrón que MovieCreatePage y SeriesCreatePage
  * ✅ PROGRESO: Sistema completo de monitoreo de transcodificación
- * ✅ BACKEND: Homologado con createEpisodeService existente
- * ✅ CONVENCIONES: Export con función nombrada según reglas del proyecto
- * ✅ FILOSOFÍA: Solución simple y directa sin over-engineering
+ * ✅ SIMPLICIDAD: Código reducido siguiendo principio KISS
+ * ✅ MANTENIBILIDAD: Lógica centralizada en hooks compartidos
  */
 function EpisodesCreatePage() {
   const navigate = useNavigate();
@@ -32,43 +33,12 @@ function EpisodesCreatePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-  const [hasChanges, setHasChanges] = useState(false);
-  
-  // Estados para series (requeridas para episodios)
-  const [series, setSeries] = useState([]);
-  const [seriesLoading, setSeriesLoading] = useState(true);
-  const [seriesError, setSeriesError] = useState(null);
 
-  // ===== HOOK DE PROGRESO DE UPLOAD =====
+  // ===== HOOKS =====
+  const { series, loading: seriesLoading, error: seriesError } = useSeries();
+  const { hasChanges, markAsChanged, resetNavigation } = useFormNavigation();
   const { progress, status, message, error: progressError, monitorProgress, resetProgress } = useUploadProgress();
 
-  // ===== CARGAR SERIES AL MONTAR COMPONENTE =====
-  useEffect(() => {
-    loadSeries();
-  }, []);
-
-  /**
-   * Cargar lista de series disponibles
-   */
-  const loadSeries = async () => {
-    try {
-      setSeriesLoading(true);
-      setSeriesError(null);
-      
-      console.log('📺 Cargando series disponibles...');
-      const response = await getSeriesService();
-      const seriesData = response?.data || response || [];
-      
-      console.log(`✅ Series cargadas: ${seriesData.length} elementos`);
-      setSeries(seriesData);
-      
-    } catch (err) {
-      console.error('❌ Error al cargar series:', err);
-      setSeriesError('Error al cargar las series disponibles');
-    } finally {
-      setSeriesLoading(false);
-    }
-  };
 
   // ===== CONFIGURACIÓN DEL FORMULARIO =====
   
@@ -184,14 +154,7 @@ function EpisodesCreatePage() {
   // ===== FUNCIONES =====
 
   /**
-   * Limpiar errores
-   */
-  const clearError = () => {
-    setError(null);
-  };
-
-  /**
-   * Navegar de vuelta
+   * Navegar de vuelta con confirmación si hay cambios
    */
   const handleGoBack = () => {
     if (hasChanges && !success) {
@@ -212,11 +175,14 @@ function EpisodesCreatePage() {
       if (value instanceof File) return true;
       return value && value.toString().trim() !== '';
     });
-    setHasChanges(hasData);
+    
+    if (hasData) {
+      markAsChanged();
+    }
     
     // Limpiar errores cuando el usuario empiece a escribir
     if (error) {
-      clearError();
+      setError(null);
     }
   };
 
@@ -231,15 +197,16 @@ function EpisodesCreatePage() {
     try {
       console.log('📤 Enviando datos del episodio:', formData);
 
-      // Preparar datos para el backend
-      const episodeData = {
+      // Primero procesar campos numéricos que vienen como strings  
+      const processedData = {
+        ...formData,
         serieId: parseInt(formData.serieId),
         season: parseInt(formData.season),
-        episodeNumber: parseInt(formData.episodeNumber),
-        title: formData.title?.trim() || '',
-        description: formData.description?.trim() || '',
-        video: formData.video
+        episodeNumber: parseInt(formData.episodeNumber)
       };
+      
+      // Luego filtrar campos vacíos (igual que Movies y Series)
+      const episodeData = filterEmptyFields(processedData);
 
       console.log('📤 Datos procesados:', episodeData);
 
@@ -264,7 +231,7 @@ function EpisodesCreatePage() {
             
             if (success) {
               setSuccess(true);
-              setHasChanges(false);
+              resetNavigation();
               
               // Redireccionar después de 3 segundos
               setTimeout(() => {
@@ -287,7 +254,7 @@ function EpisodesCreatePage() {
         // Si no hay taskId, el episodio se creó directamente
         console.log('✅ Episodio creado exitosamente sin transcodificación');
         setSuccess(true);
-        setHasChanges(false);
+        resetNavigation();
         setLoading(false);
 
         // Redireccionar después de 3 segundos

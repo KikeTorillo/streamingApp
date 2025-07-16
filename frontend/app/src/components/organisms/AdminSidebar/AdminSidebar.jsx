@@ -1,5 +1,4 @@
 // ===== ADMINSIDEBAR COMPONENT =====
-// src/components/organism/AdminSidebar/AdminSidebar.jsx
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';

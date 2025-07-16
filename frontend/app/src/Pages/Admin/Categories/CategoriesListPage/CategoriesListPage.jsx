@@ -4,9 +4,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
-import { DataTable } from '../../../../components/organism/DataTable/DataTable';
+import { DataTable } from '../../../../components/organisms/DataTable/DataTable';
 import { Button } from '../../../../components/atoms/Button/Button';
-import { EditModal } from '../../../../components/organism/EditModal/EditModal';
+import { EditModal } from '../../../../components/organisms/EditModal/EditModal';
 import './CategoriesListPage.css';
 
 // Servicios de categorías

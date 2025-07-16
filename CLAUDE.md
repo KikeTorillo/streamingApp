@@ -4,6 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## REGLAS IMPORTANTES
 
+### Principio de Consistencia
+- **FUNDAMENTAL**: SIEMPRE buscar y mantener la consistencia en el código
+- **OBLIGATORIO**: Antes de implementar cualquier funcionalidad, revisar cómo está implementada en componentes similares
+- **OBLIGATORIO**: Seguir exactamente los mismos patrones, estructura y flujo que componentes existentes
+- **OBLIGATORIO**: Si hay diferencias, investigar el motivo antes de crear inconsistencias
+- **EJEMPLO**: MovieCreatePage, SeriesCreatePage y EpisodesCreatePage deben seguir el mismo patrón de hooks, procesamiento de datos y manejo de estados
+
 ### Idioma
 - **OBLIGATORIO**: Todos los comentarios, mensajes de commit, documentación y comunicación con el usuario DEBEN ser en ESPAÑOL
 - **OBLIGATORIO**: Variables, funciones y nombres de archivos pueden estar en inglés (convención técnica)
@@ -219,6 +226,7 @@ This is a **monorepo streaming platform** with the following structure:
 - **Video processing**: Utilities in `backend/app/utils/` for FFmpeg transcoding and quality management
 
 ### Development Workflow
+- **CONSISTENCIA PRIMERO**: Antes de implementar, revisar componentes similares para mantener patrones
 - **Start development**: `npm run dev` (starts all services)
 - **Check logs**: `npm run dev:logs` or service-specific logs
 - **Debug issues**: `npm run health`, `npm run ports`, `npm run status`
@@ -226,6 +234,12 @@ This is a **monorepo streaming platform** with the following structure:
 - **Testing**: `npm run test` for frontend, `npm run test:storybook` for components
 
 ## Development Rules & Constraints
+
+### Regla de Consistencia Global
+- **OBLIGATORIO**: Buscar y revisar implementaciones existentes antes de escribir código nuevo
+- **OBLIGATORIO**: Usar exactamente los mismos patrones que componentes similares (hooks, estados, procesamiento)
+- **OBLIGATORIO**: Si hay diferencias entre componentes similares, normalizarlas para mantener consistencia
+- **EJEMPLO CRÍTICO**: CreatePages (Movie, Series, Episodes) deben usar mismos hooks, misma estructura, mismo flujo
 
 ### Component Usage Rules
 - **MANDATORY**: Only use components that have Storybook stories when building UI
@@ -302,3 +316,65 @@ This is a **monorepo streaming platform** with the following structure:
 - **MANDATORY**: Convert technical errors to user-readable messages
 - **MANDATORY**: Handle common HTTP status codes (400, 401, 403, 409, 413, 500)
 - **FORBIDDEN**: Exposing raw error messages to users
+
+## Principio de "Crear vs Usar" (Build vs Buy)
+
+### Framework de Evaluación para Dependencias Externas
+
+**FILOSOFÍA**: Priorizar creaciones propias para el design system y componentes base reutilizables entre proyectos, pero ser pragmático con librerías complejas.
+
+### Matriz de Decisión
+```
+              │ Complejo │ Simple  
+──────────────┼─────────┼────────
+Crítico       │  Usar   │ Crear  
+              │         │        
+No Crítico    │  Usar   │ Crear  
+```
+
+### 🟢 SIEMPRE crear propio (Prioridad Alta)
+- **Design System & Componentes Base**: Button, Input, Card, Modal, Layout
+- **Business Logic específico**: Hooks (useAuth, useMovies), Services del dominio
+- **Templates reutilizables**: AdminLayout, PlayerLayout, componentes del proyecto
+- **RAZÓN**: Base para todos los futuros proyectos, control total, ventaja competitiva
+
+### 🟡 EVALUAR y consultar (Pregunta: "¿Qué opinas?")
+- **Criterios para evaluar**:
+  - ¿Cuánto tiempo tomaría crear vs usar?
+  - ¿Es crítico para el negocio?
+  - ¿Qué tan complejo es mantenerlo?
+  - ¿Se puede integrar con nuestro design system?
+
+### 🔴 USAR librerías existentes (Cuando Claude recomienda)
+- **Video players**: Video.js, HLS.js (años de optimización, cross-browser)
+- **Date/time**: dayjs, date-fns (timezone, localization complexity)
+- **Crypto/security**: bcrypt, JWT libraries (security-critical)
+- **File processing**: FFmpeg, Sharp (performance-critical)
+- **Complex animations**: Framer Motion (physics, timing)
+
+### Proceso de Evaluación (5 minutos)
+1. **Investigación**: ¿Existe librería madura? (GitHub stars, mantenimiento)
+2. **Proof of Concept**: ¿Funciona básico en 30 min?
+3. **Integración**: ¿Se integra con nuestro design system?
+4. **Decisión**: Si los 3 pasos funcionan → Usar librería
+
+### Señales para Consultar a Claude
+- ⏰ "Esto me está tomando más tiempo del esperado"
+- 🤔 "Siento que estoy reinventando algo"
+- 🔥 "Hay muchas librerías para esto, no sé cuál usar"
+- 🎯 "¿Vale la pena el esfuerzo vs el resultado?"
+
+### Red Flags para NO reinventar
+- **"Es solo un div que..."** → Probablemente es más complejo
+- **"En 2 días lo hago"** → Probablemente tomará 2 semanas  
+- **"Total, es solo JavaScript"** → Cross-browser compatibility
+- **"Así tenemos control total"** → Y responsabilidad total de bugs
+
+### Golden Rule
+> **"Crear design system propio + usar librerías inteligentemente = máxima productividad"**
+
+### Roadmap Evolutivo
+1. **MVP**: Usar librerías + componentes básicos propios
+2. **Optimización**: Extraer design system reutilizable
+3. **Maduración**: Sistema de componentes entre proyectos
+4. **Especialización**: Componentes custom solo cuando sea necesario

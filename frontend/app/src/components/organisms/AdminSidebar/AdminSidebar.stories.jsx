@@ -1,5 +1,4 @@
 // ===== ADMIN SIDEBAR STORIES =====
-// src/components/organism/AdminSidebar/AdminSidebar.stories.jsx
 
 import React, { useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';

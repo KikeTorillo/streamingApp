@@ -1,5 +1,4 @@
 // ===== DATA TABLE STORIES =====
-// src/components/organism/DataTable/DataTable.stories.jsx
 
 import React, { useState } from 'react';
 import { DataTable } from './DataTable';
@@ -21,7 +20,7 @@ Organismo completo para mostrar datos tabulares con funcionalidades avanzadas. *
 
 ## 🎯 Características implementadas
 
-- **✅ Organismo correcto**: Movido de atoms/ a organism/ donde pertenece
+- **✅ Organismo correcto**: Movido de atoms/ a organisms/ donde pertenece
 - **✅ Sistema de diseño**: Usa Button, TextInput, Select y variables CSS
 - **✅ Sin dependencias externas**: Eliminada dependencia de @headlessui/react
 - **✅ TanStack React Table**: Funcionalidades avanzadas de tabla
@@ -55,7 +54,7 @@ DataTable (Organism) 🧬
 ## 🔧 Uso básico
 
 \`\`\`jsx
-import { DataTable } from './organism/DataTable';
+import { DataTable } from './organisms/DataTable';
 
 // Columnas para usuarios
 const userColumns = [

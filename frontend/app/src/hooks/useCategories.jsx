@@ -1,28 +1,44 @@
-// hooks/useCategories.js
+// hooks/useCategories.jsx
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { getCategoriesService } from "../services/Categories/getCategoriesService";
 
 const useCategories = () => {
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const loadCategories = async () => {
+      setLoading(true);
+      setError(null);
+
       try {
-        const response = await axios.get(
-          "http://192.168.0.177:3000/api/v1/category",
-          { withCredentials: true } // Se incluyen las credenciales en la solicitud
-        );
-        setCategories(response.data);
+        console.log('📂 Cargando categorías...');
+        const response = await getCategoriesService();
+
+        const data = Array.isArray(response) ? response : 
+                     response?.data ? response.data : 
+                     response?.categories ? response.categories : [];
+
+        console.log('📂 Categorías cargadas:', data);
+        setCategories(data);
+
+        if (data.length === 0) {
+          setError('No hay categorías disponibles. Ve a Administrar > Categorías para crear una.');
+        }
       } catch (err) {
-        console.error("Error al obtener las categorías:", err);
-        setError("Error al cargar las categorías.");
+        console.error('❌ Error cargando categorías:', err);
+        setError('Error al cargar categorías. Verifica tu conexión.');
+        setCategories([]);
+      } finally {
+        setLoading(false);
       }
     };
-    fetchCategories();
+
+    loadCategories();
   }, []);
 
-  return { categories, error };
+  return { categories, loading, error };
 };
 
 export { useCategories };

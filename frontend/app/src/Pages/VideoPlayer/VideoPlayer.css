@@ -1,19 +1,20 @@
-/* VideoPlayer.css */
+/* ===== VIDEO PLAYER - USANDO SISTEMA DE DISEÑO ===== */
+/* VideoPlayer.css - Adaptado al sistema de diseño del proyecto */
 
 /* ===== BOTÓN DE REGRESAR ===== */
 .back-button {
   position: fixed !important;
-  top: 20px !important;
-  left: 20px !important;
-  z-index: 9999 !important; /* Por encima del reproductor de video */
+  top: var(--space-lg) !important;
+  left: var(--space-lg) !important;
+  z-index: var(--z-modal) !important; /* Usando z-index del sistema */
   backdrop-filter: blur(5px) !important;
 }
 
 /* Responsive para móviles */
 @media (max-width: 768px) {
   .back-button {
-    top: 10px !important;
-    left: 10px !important;
+    top: var(--space-md) !important;
+    left: var(--space-md) !important;
   }
 }
 
@@ -24,92 +25,124 @@
   }
 }
 
-/* Cambia el color principal del reproductor */
+/* ===== ESTILOS DEL REPRODUCTOR - USANDO VARIABLES DEL SISTEMA ===== */
+
+/* Barra de controles principal */
 .video-js .vjs-control-bar {
-  background-color: #333; /* Fondo oscuro */
+  background-color: var(--gray-900); /* Usando variable del sistema */
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
 
-/* Cambia el color de la barra de progreso */
+/* Barra de progreso principal */
 .video-js .vjs-play-progress {
-  background-color: #ff0000; /* Verde brillante */
+  background-color: var(--color-primary); /* Color primario del sistema */
 }
 
-/* Cambia el color del botón de reproducción */
+/* Botón principal de reproducción - OCULTO cuando hay controles overlay */
 .video-js .vjs-big-play-button {
-  background-color: #ff0000; /* Rojo */
-  border-radius: 50%; /* Forma circular */
-  width: 3em; /* Ancho del círculo */
-  height: 3em; /* Altura del círculo */
-  top: calc(50% - .6em);
+  background-color: var(--color-primary); /* Color primario del sistema */
+  border: 0.2rem solid var(--bg-primary);
+  border-radius: var(--radius-full); /* Radio completo del sistema */
+  width: 6.4rem; /* Usando medidas del sistema */
+  height: 6.4rem;
+  top: calc(50% - 3.2rem);
+  left: calc(50% - 3.2rem);
+  box-shadow: var(--shadow-xl); /* Sombra del sistema */
+  transition: all var(--transition-normal);
+  display: none !important; /* Ocultar completamente para evitar conflictos */
 }
 
-/* Aumenta el tamaño del símbolo de play */
+/* Hover del botón de reproducción */
+.video-js .vjs-big-play-button:hover {
+  background-color: var(--color-primary-hover);
+  transform: scale(1.05);
+  box-shadow: var(--shadow-2xl);
+}
+
+/* Ícono del botón de reproducción - CORREGIDO CENTRADO */
 .video-js .vjs-big-play-button .vjs-icon-placeholder:before {
-  font-size: 4em; /* Ajusta el tamaño del ícono */
-  line-height: 1; /* Centra el ícono verticalmente */
-  top: .2em;
+  font-size: 2.4rem; /* Tamaño usando sistema */
+  line-height: 6.4rem; /* Igual a la altura del botón para centrado vertical */
+  top: 0;
+  left: 0.2rem; /* Pequeño ajuste para centrado visual del triángulo */
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-on-primary);
 }
 
-/* Cambia el color del indicador de tiempo actual */
+/* Indicadores de tiempo usando variables del sistema */
 .video-js .vjs-current-time {
-  color: #ffffff; /* Blanco */
+  color: var(--text-on-primary);
+  font-family: var(--font-family-mono);
 }
 
-/* Cambia el color del indicador de duración total */
 .video-js .vjs-duration {
-  color: #cccccc; /* Gris claro */
+  color: var(--text-secondary);
+  font-family: var(--font-family-mono);
 }
 
-/* Cambia el color del indicador de tiempo restante */
 .video-js .vjs-remaining-time {
-  color: #ff0000; /* Rojo */
+  color: var(--color-primary);
+  font-family: var(--font-family-mono);
 }
 
-/* ===== CENTRADO VERTICAL DEL REPRODUCTOR ===== */
+/* ===== LAYOUT PRINCIPAL - USANDO SISTEMA DE DISEÑO ===== */
 .video-player-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 80vh; /* Altura mínima para centrado vertical */
-  padding: 20px;
-  box-sizing: border-box;
+  min-height: 80vh;
+  padding: var(--space-lg);
+  background-color: var(--bg-primary);
+  font-family: var(--font-family-base);
 }
 
 .video-wrapper {
   width: 100%;
-  max-width: 1200px; /* Máximo ancho del video */
+  max-width: 120rem; /* Usando sistema de medidas */
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: var(--space-xl); /* Espaciado del sistema */
 }
 
 .video-info {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: var(--space-lg);
+  padding: var(--space-md);
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  border: 0.1rem solid var(--border-light);
 }
 
 .video-info h2 {
-  margin: 0 0 10px 0;
-  font-size: 1.5rem;
-  color: #333;
+  margin: 0 0 var(--space-sm) 0;
+  font-size: var(--font-size-xl);
+  color: var(--text-primary);
+  font-weight: var(--font-weight-bold);
 }
 
 .video-info p {
-  margin: 5px 0;
-  color: #666;
-  font-size: 0.9rem;
+  margin: var(--space-xs) 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
 }
 
-/* Contenedor del video centrado */
+/* Contenedor del video usando sistema de diseño */
 .video-container {
   width: 100%;
   position: relative;
-  background: #000;
-  border-radius: 8px;
+  background: var(--gray-900);
+  border-radius: var(--radius-xl);
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-2xl);
+  border: 0.1rem solid var(--border-muted);
 }
 
 /* Video responsivo con aspect ratio */
@@ -127,19 +160,27 @@
   height: 100% !important;
 }
 
-/* Ejemplo de ajustes de controles según tamaño de pantalla */
+/* ===== RESPONSIVE - USANDO SISTEMA DE DISEÑO ===== */
 @media (max-width: 480px) {
   .video-player-container {
     min-height: 70vh;
-    padding: 10px;
+    padding: var(--space-md);
+  }
+  
+  .video-info {
+    padding: var(--space-sm);
   }
   
   .video-info h2 {
-    font-size: 1.2rem;
+    font-size: var(--font-size-lg);
   }
   
   .video-info p {
-    font-size: 0.8rem;
+    font-size: var(--font-size-xs);
+  }
+
+  .video-wrapper {
+    gap: var(--space-md);
   }
 
   /* Oculta algunos controles en pantallas pequeñas */
@@ -147,12 +188,10 @@
     display: none !important;
   }
 
-  /*tiempo restante*/
   .vjs-remaining-time {
     display: none !important;
   }
 
-  /*boton para cambiar resoluciones este esta ligado a el boton CC*/
   .vjs-quality-selector {
     display: none !important;
   }
@@ -164,6 +203,242 @@
 
 @media (max-width: 768px) {
   .video-container .video-js {
-    aspect-ratio: 16/9; /* Mantiene 16:9 en móviles */
+    aspect-ratio: 16/9;
+    border-radius: var(--radius-md); /* Radius más pequeño en móviles */
+  }
+  
+  .video-wrapper {
+    gap: var(--space-lg);
+  }
+  
+  .video-info {
+    margin-bottom: var(--space-md);
   }
 }
+
+/* ===== MEJORAS ADICIONALES DEL REPRODUCTOR ===== */
+
+/* Controles del reproductor mejorados */
+.video-js .vjs-control {
+  color: var(--text-on-primary);
+}
+
+.video-js .vjs-control:hover {
+  color: var(--color-primary);
+}
+
+/* Botón de pantalla completa */
+.video-js .vjs-fullscreen-control {
+  border-radius: var(--radius-sm);
+}
+
+/* Selector de calidad personalizado */
+.video-js .vjs-quality-selector {
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  border: 0.1rem solid var(--border-light);
+}
+
+/* Loading spinner mejorado */
+.video-js .vjs-loading-spinner {
+  border-top-color: var(--color-primary);
+}
+
+/* ===== ESTILOS PARA BOTONES DE SKIP NATIVOS DE VIDEOJS 8.x ===== */
+
+/* Botones de skip backward y forward nativos */
+.video-js .vjs-skip-backward,
+.video-js .vjs-skip-forward {
+  background-color: var(--color-primary);
+  color: var(--text-on-primary);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-normal);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.video-js .vjs-skip-backward:hover,
+.video-js .vjs-skip-forward:hover {
+  background-color: var(--color-primary-hover);
+  transform: scale(1.05);
+}
+
+/* Iconos de los botones de skip */
+.video-js .vjs-skip-backward .vjs-icon-placeholder:before,
+.video-js .vjs-skip-forward .vjs-icon-placeholder:before {
+  font-size: var(--font-size-lg);
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .video-js .vjs-skip-backward,
+  .video-js .vjs-skip-forward {
+    font-size: var(--font-size-xs);
+  }
+}
+
+/* ===== BOTONES PERSONALIZADOS DE SKIP (ALTERNATIVA) ===== */
+
+/* Botones personalizados de skip */
+.video-js .custom-skip-backward,
+.video-js .custom-skip-forward {
+  background-color: var(--color-primary);
+  color: var(--text-on-primary);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-normal);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-xs) var(--space-sm);
+  margin: 0 var(--space-xs);
+  border: 0.1rem solid var(--border-light);
+}
+
+.video-js .custom-skip-backward:hover,
+.video-js .custom-skip-forward:hover {
+  background-color: var(--color-primary-hover);
+  transform: scale(1.05);
+  box-shadow: var(--shadow-md);
+}
+
+.video-js .custom-skip-backward:active,
+.video-js .custom-skip-forward:active {
+  transform: scale(0.95);
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .video-js .custom-skip-backward,
+  .video-js .custom-skip-forward {
+    font-size: var(--font-size-xs);
+    padding: var(--space-xs);
+    margin: 0 var(--space-xs);
+  }
+}
+
+/* ===== ANIMACIONES PARA SKIP INDICATORS ===== */
+
+/* Animación para indicadores de skip */
+@keyframes skipFade {
+  0% {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.8);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-50%) scale(1);
+  }
+}
+
+/* Estilos para contenedor del overlay React */
+.video-overlay-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* ===== PERSONALIZACIÓN DE SUBTÍTULOS ===== */
+
+/* Contenedor de subtítulos */
+.video-js .vjs-text-track-display {
+  bottom: 8rem !important; /* Separar de controles */
+  text-align: center;
+  width: 100% !important;
+  left: 0 !important;
+  padding: 0 var(--space-xl) !important;
+  box-sizing: border-box;
+}
+
+/* Estilos de subtítulos individuales */
+.video-js .vjs-text-track-cue {
+  background-color: rgba(0, 0, 0, 0.6) !important; /* Más transparente */
+  color: var(--text-on-primary) !important;
+  font-size: var(--font-size-xl) !important; /* Más grande */
+  font-weight: var(--font-weight-medium) !important;
+  font-family: var(--font-family-base) !important;
+  line-height: 1.4 !important;
+  padding: var(--space-sm) var(--space-md) !important;
+  border-radius: var(--radius-md) !important;
+  margin: var(--space-xs) auto !important;
+  max-width: 80% !important;
+  backdrop-filter: blur(4px) !important;
+  box-shadow: var(--shadow-lg) !important;
+  border: 0.1rem solid rgba(255, 255, 255, 0.1) !important;
+  
+  /* Centrado perfecto del texto */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  min-height: fit-content !important;
+}
+
+/* Estilos específicos para diferentes tipos de cue */
+.video-js .vjs-text-track-cue div {
+  background-color: transparent !important;
+  color: inherit !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  font-family: inherit !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  text-align: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Mejorar legibilidad con outline de texto */
+.video-js .vjs-text-track-cue,
+.video-js .vjs-text-track-cue div {
+  text-shadow: 
+    0.1rem 0.1rem 0.3rem rgba(0, 0, 0, 0.9),
+    -0.1rem -0.1rem 0.3rem rgba(0, 0, 0, 0.9),
+    0.2rem 0.2rem 0.4rem rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .video-js .vjs-text-track-display {
+    bottom: 6rem !important;
+    padding: 0 var(--space-md) !important;
+  }
+  
+  .video-js .vjs-text-track-cue {
+    font-size: var(--font-size-lg) !important;
+    padding: var(--space-xs) var(--space-sm) !important;
+    max-width: 90% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .video-js .vjs-text-track-display {
+    bottom: 5rem !important;
+    padding: 0 var(--space-sm) !important;
+  }
+  
+  .video-js .vjs-text-track-cue {
+    font-size: var(--font-size-md) !important;
+    padding: var(--space-xs) !important;
+    max-width: 95% !important;
+  }
+}
+
+/* Ajustes para fullscreen */
+.video-js.vjs-fullscreen .vjs-text-track-display {
+  bottom: 10rem !important; /* Más espacio en fullscreen */
+}
+
+.video-js.vjs-fullscreen .vjs-text-track-cue {
+  font-size: var(--font-size-2xl) !important; /* Aún más grande en fullscreen */
+  padding: var(--space-md) var(--space-lg) !important;
+}
+

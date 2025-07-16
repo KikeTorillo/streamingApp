@@ -1,5 +1,4 @@
 // ===== TMDB SEARCH VIEW - VERSIÓN ACTUALIZADA CON API REAL =====
-// src/components/organism/TMDBSearchView/TMDBSearchView.jsx
 
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Button } from '../../atoms/Button/Button';

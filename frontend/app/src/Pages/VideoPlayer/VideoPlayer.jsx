@@ -1,19 +1,18 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
 import "videojs-contrib-quality-levels";
-import "videojs-hls-quality-selector/dist/videojs-hls-quality-selector.css";
-import hlsQualitySelector from "videojs-hls-quality-selector";
+import "jb-videojs-hls-quality-selector/dist/videojs-hls-quality-selector.css";
+import "jb-videojs-hls-quality-selector"; // Se auto-registra, no necesitamos el registro manual
+import "videojs-overlay";
+import "videojs-hotkeys";
 import "./VideoPlayer.css";
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { getMovieByHashService } from '../../services/Movies/getMovieByIdService';
 import { getEpisodeByHashService } from '../../services/Episodes/getEpisodeByHashService';
 import { Button } from '../../components/atoms/Button/Button';
-
-// Registra los plugins si aún no están registrados
-if (typeof videojs.getPlugin("hlsQualitySelector") !== "function") {
-  videojs.registerPlugin("hlsQualitySelector", hlsQualitySelector);
-}
+import { VideoPlayerOverlay } from '../../components/organisms/VideoPlayerOverlay/VideoPlayerOverlay';
 
 const VideoPlayer = () => {
   const {movieId} = useParams();
@@ -23,36 +22,15 @@ const VideoPlayer = () => {
   const contentType = searchParams.get('type') || 'movie'; // Default a movie
   const videoRef = useRef(null);
   const playerRef = useRef(null);
+  const overlayContainerRef = useRef(null);
   const [movieData, setMovieData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const cdnUrl = import.meta.env.VITE_CDN_URL || 'http://localhost:8082';
   const baseUrl = `${cdnUrl}/hls/${movieId}/`;
   const subsUrl = `${cdnUrl}/subs/${movieId}/`;
   
-  // Validate required parameters
-  if (!movieId) {
-    return (
-      <div className="video-player-container">
-        <div className="video-info">
-          <h2>Error: ID de video no encontrado</h2>
-          <p>Verifica que la URL sea correcta</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!resolutions) {
-    return (
-      <div className="video-player-container">
-        <div className="video-info">
-          <h2>Error: Resoluciones no encontradas</h2>
-          <p>Verifica que la URL contenga parámetros de resolución</p>
-        </div>
-      </div>
-    );
-  }
-
   const urlComplete = `${baseUrl}_,${resolutions},p.mp4.play/master.m3u8`;
 
   // Función para manejar el botón de regresar
@@ -70,6 +48,8 @@ const VideoPlayer = () => {
     // Navegar hacia atrás
     navigate(-1);
   };
+
+
 
   // Load content data (movie or episode)
   useEffect(() => {
@@ -163,14 +143,31 @@ const VideoPlayer = () => {
           html5: {
             vhs: {
               overrideNative: true,
+              smoothSeekingEnabled: true,
+              enableLowInitialPlaylist: true,
+              fastQualityChange: false,
+              maxPlaylistRetries: 3,
+              seekingEnabled: true,
+              seekingTimeMargin: 30,
+              bandwidth: 4194304,
+              playlistExclusionDuration: 60,
             },
             nativeControlsForTouch: false,
             playsinline: true,
+            nativeTextTracks: false,
+            preloadTextTracks: false,
           },
           pip: true,
           controlBar: {
+            // ===== SKIP BUTTONS NATIVOS DE VIDEOJS 8.x =====
+            skipButtons: {
+              forward: 10,  // Avanzar 10 segundos
+              backward: 10  // Retroceder 10 segundos
+            },
             children: [
               "playToggle",
+              "skipBackward",  // Botón nativo de skip backward
+              "skipForward",   // Botón nativo de skip forward
               "volumePanel",
               "currentTimeDisplay",
               "timeDivider",
@@ -183,6 +180,78 @@ const VideoPlayer = () => {
               "fullscreenToggle",
             ],
           },
+        });
+        
+        // Variables para tracking de seeking
+        let seekStart = null;
+        let previousTime = 0;
+        let seekingTimeout = null;
+        
+        // Función para re-sincronizar subtítulos
+        const resyncSubtitles = () => {
+          const textTracks = player.textTracks();
+          
+          for (let i = 0; i < textTracks.length; i++) {
+            const track = textTracks[i];
+            if (track.getAttribute && track.getAttribute('data-resync') === 'true') {
+              const wasShowing = track.mode === 'showing';
+              track.mode = 'disabled';
+              
+              setTimeout(() => {
+                if (wasShowing) {
+                  track.mode = 'showing';
+                }
+                if (track.removeAttribute) {
+                  track.removeAttribute('data-resync');
+                }
+              }, 50);
+            }
+          }
+        };
+        
+        // Manejar eventos de seeking para sincronización
+        player.on('timeupdate', function() {
+          previousTime = player.currentTime();
+        });
+        
+        player.on('seeking', function() {
+          if (seekStart === null) {
+            seekStart = previousTime;
+          }
+          
+          // Marcar subtítulos para re-sincronización
+          const textTracks = player.textTracks();
+          for (let i = 0; i < textTracks.length; i++) {
+            const track = textTracks[i];
+            if (track.mode === 'showing' && track.setAttribute) {
+              track.setAttribute('data-resync', 'true');
+            }
+          }
+          
+          // Limpiar timeout anterior
+          if (seekingTimeout) {
+            clearTimeout(seekingTimeout);
+          }
+        });
+        
+        player.on('seeked', function() {
+          const currentTime = player.currentTime();
+          const seekDistance = Math.abs(currentTime - (seekStart || 0));
+          
+          // Re-sincronizar subtítulos después de seek significativo
+          if (seekDistance > 2) {
+            seekingTimeout = setTimeout(() => {
+              resyncSubtitles();
+            }, 100);
+          }
+          
+          seekStart = null;
+        });
+        
+        // Manejar cambios de text tracks
+        player.on('texttrackchange', function() {
+          const currentTime = player.currentTime();
+          console.log('Text track changed at time:', currentTime);
         });
         
         // Wait for video metadata to load before adding subtitles
@@ -209,42 +278,270 @@ const VideoPlayer = () => {
           }, 500); // Pequeño delay para asegurar que el reproductor esté completamente inicializado
         });
 
-        // Enable quality selection
-        player.hlsQualitySelector({
-          displayCurrentQuality: true,
+        // Enable quality selection - VideoJS 8.x compatible
+        if (player.hlsQualitySelector) {
+          player.hlsQualitySelector({
+            displayCurrentQuality: true,
+          });
+        }
+
+        // ===== CONFIGURAR PLUGINS =====
+        
+        // Configurar hotkeys estilo Netflix
+        player.ready(() => {
+          player.hotkeys({
+            volumeStep: 0.1,
+            seekStep: 10,
+            enableModifiersForNumbers: false,
+            enableVolumeScroll: false,
+            enableHoverScroll: false,
+            enableFullscreenToggle: true,
+            enableNumbers: false, // Desactivar números para calidad
+            customKeys: {
+              // Espacio para play/pause
+              spaceKey: {
+                key: function(event) {
+                  return (event.which === 32);
+                },
+                handler: function(player, _options, event) {
+                  event.preventDefault();
+                  if (player.paused()) {
+                    player.play();
+                  } else {
+                    player.pause();
+                  }
+                }
+              },
+              // Flecha izquierda: retroceder 10s
+              leftArrow: {
+                key: function(event) {
+                  return (event.which === 37);
+                },
+                handler: function() {
+                  handleSkip(10, 'backward');
+                }
+              },
+              // Flecha derecha: avanzar 10s  
+              rightArrow: {
+                key: function(event) {
+                  return (event.which === 39);
+                },
+                handler: function() {
+                  handleSkip(10, 'forward');
+                }
+              }
+            }
+          });
         });
+
+        // Configurar overlay para controles centrales usando React Portal
+        player.ready(() => {
+          // Crear contenedor para el overlay
+          const overlayContainer = document.createElement('div');
+          overlayContainer.className = 'video-overlay-container';
+          overlayContainer.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+          `;
+          
+          overlayContainerRef.current = overlayContainer;
+          
+          // Usar la API de overlay de Video.js para montar el contenedor
+          player.overlay({
+            overlays: [{
+              content: overlayContainer,
+              start: 0,
+              end: 'end'
+            }]
+          });
+        });
+
+        // ===== FUNCIONES AUXILIARES =====
+        
+        // Función para mostrar overlay de skip
+        const showSkipOverlay = (player, text, direction) => {
+          const overlay = player.el().querySelector('.vjs-overlay');
+          if (overlay) {
+            const skipIndicator = document.createElement('div');
+            skipIndicator.className = 'skip-indicator';
+            skipIndicator.style.cssText = `
+              position: absolute;
+              top: 50%;
+              ${direction === 'left' ? 'left: 20%' : 'right: 20%'};
+              transform: translateY(-50%);
+              background-color: rgba(0, 0, 0, 0.8);
+              color: var(--text-on-primary);
+              padding: var(--space-md) var(--space-lg);
+              border-radius: var(--radius-lg);
+              font-size: var(--font-size-lg);
+              font-weight: var(--font-weight-bold);
+              z-index: 2000;
+              animation: skipFade 1s ease-out forwards;
+            `;
+            skipIndicator.textContent = text;
+            
+            overlay.appendChild(skipIndicator);
+            
+            // Remover después de 1 segundo
+            setTimeout(() => {
+              if (skipIndicator.parentNode) {
+                skipIndicator.parentNode.removeChild(skipIndicator);
+              }
+            }, 1000);
+          }
+        };
+
+        // Manejar eventos de play/pause para actualizar estado
+        player.on('play', () => {
+          setIsPlaying(true);
+        });
+        
+        player.on('pause', () => {
+          setIsPlaying(false);
+        });
+        
+        // Configurar eventos para mostrar/ocultar overlay
+        player.on('useractive', () => {
+          const overlay = overlayContainerRef.current?.querySelector('.video-player-overlay');
+          if (overlay && overlay.showControls) {
+            overlay.showControls();
+          }
+        });
+        
+        player.on('userinactive', () => {
+          const overlay = overlayContainerRef.current?.querySelector('.video-player-overlay');
+          if (overlay && overlay.hideControls) {
+            overlay.hideControls();
+          }
+        });
+        
+        // Mostrar overlay al hacer click en el video
+        player.el().addEventListener('click', (e) => {
+          if (e.target === player.el().querySelector('video')) {
+            const overlay = overlayContainerRef.current?.querySelector('.video-player-overlay');
+            if (overlay && overlay.showControls) {
+              overlay.showControls();
+            }
+          }
+        });
+
+        // Función unificada para skip con overlay
+        const handleSkip = (seconds, direction) => {
+          const currentTime = player.currentTime();
+          const duration = player.duration();
+          
+          if (direction === 'backward') {
+            player.currentTime(Math.max(0, currentTime - seconds));
+          } else {
+            player.currentTime(Math.min(duration, currentTime + seconds));
+          }
+          
+          // Mostrar overlay de skip
+          const text = direction === 'backward' ? `⏪ ${seconds}s` : `${seconds}s ⏩`;
+          showSkipOverlay(player, text, direction === 'backward' ? 'left' : 'right');
+        };
+        
+        // ===== CONTROLES PERSONALIZADOS COMO ALTERNATIVA =====
+        // Si los botones nativos no funcionan, agregamos controles personalizados
+        setTimeout(() => {
+          const skipBackwardButton = player.getChild('controlBar').getChild('skipBackward');
+          const skipForwardButton = player.getChild('controlBar').getChild('skipForward');
+          
+          if (!skipBackwardButton || !skipForwardButton) {
+            console.log('⚠️ Botones nativos de skip no encontrados, usando controles personalizados');
+            
+            // Crear botones personalizados usando la API de VideoJS
+            const Button = videojs.getComponent('Button');
+            
+            // Botón de retroceder 10 segundos
+            class SkipBackwardButton extends Button {
+              constructor(player, options) {
+                super(player, options);
+                this.controlText('Retroceder 10 segundos');
+              }
+              
+              handleClick() {
+                handleSkip(10, 'backward');
+              }
+            }
+            
+            // Botón de avanzar 10 segundos
+            class SkipForwardButton extends Button {
+              constructor(player, options) {
+                super(player, options);
+                this.controlText('Avanzar 10 segundos');
+              }
+              
+              handleClick() {
+                handleSkip(10, 'forward');
+              }
+            }
+            
+            // Registrar los componentes
+            videojs.registerComponent('SkipBackwardButton', SkipBackwardButton);
+            videojs.registerComponent('SkipForwardButton', SkipForwardButton);
+            
+            // Agregar los botones a la barra de controles
+            const controlBar = player.getChild('controlBar');
+            
+            const skipBackward = new SkipBackwardButton(player, {
+              text: '⏪10',
+              className: 'custom-skip-backward'
+            });
+            
+            const skipForward = new SkipForwardButton(player, {
+              text: '10⏩',
+              className: 'custom-skip-forward'
+            });
+            
+            // Insertar después del botón de play
+            controlBar.addChild(skipBackward, {}, 1);
+            controlBar.addChild(skipForward, {}, 2);
+          }
+        }, 1000);
+
+
+
 
         // Add listeners for subtitle events
         player.on('texttrackchange', () => {
           console.log('Text track changed');
         });
 
+
         // Handle subtitle activation and audio tracks after video loads
         player.on("loadedmetadata", () => {
-          // Configure subtitles after metadata is loaded
-          setTimeout(() => {
-            const textTracks = player.textTracks();
-            
-            // Disable all subtitle tracks first
-            for (let i = 0; i < textTracks.length; i++) {
-              const track = textTracks[i];
-              if (track.kind === 'subtitles') {
-                track.mode = 'disabled';
+          // Configure subtitles after metadata is loaded with better timing
+          player.ready(() => {
+            setTimeout(() => {
+              const textTracks = player.textTracks();
+              
+              // Disable all subtitle tracks first
+              for (let i = 0; i < textTracks.length; i++) {
+                const track = textTracks[i];
+                if (track.kind === 'subtitles') {
+                  track.mode = 'disabled';
+                }
               }
-            }
-            
-            // Enable the first Spanish subtitle track (non-forced)
-            for (let i = 0; i < textTracks.length; i++) {
-              const track = textTracks[i];
-              console.log('Text track found:', track.label, 'Mode:', track.mode, 'Language:', track.language);
-              if (track.kind === 'subtitles' && track.language === 'es' && !track.label.includes('Forzado')) {
-                track.mode = 'showing';
-                console.log('Subtítulos activados:', track.label);
-                player.trigger('texttrackchange');
-                break;
+              
+              // Enable the first Spanish subtitle track (non-forced)
+              for (let i = 0; i < textTracks.length; i++) {
+                const track = textTracks[i];
+                console.log('Text track found:', track.label, 'Mode:', track.mode, 'Language:', track.language);
+                if (track.kind === 'subtitles' && track.language === 'es' && !track.label.includes('Forzado')) {
+                  track.mode = 'showing';
+                  console.log('Subtítulos activados:', track.label);
+                  player.trigger('texttrackchange');
+                  break;
+                }
               }
-            }
-          }, 500);
+            }, 200);
+          });
         });
 
 
@@ -271,7 +568,31 @@ const VideoPlayer = () => {
         playerRef.current.dispose();
       }
     };
-  }, [urlComplete, movieData, loading]);
+  }, [urlComplete, movieData, loading, subsUrl]);
+
+
+  // Validate required parameters
+  if (!movieId) {
+    return (
+      <div className="video-player-container">
+        <div className="video-info">
+          <h2>Error: ID de video no encontrado</h2>
+          <p>Verifica que la URL sea correcta</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!resolutions) {
+    return (
+      <div className="video-player-container">
+        <div className="video-info">
+          <h2>Error: Resoluciones no encontradas</h2>
+          <p>Verifica que la URL contenga parámetros de resolución</p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -315,12 +636,101 @@ const VideoPlayer = () => {
               className="video-js vjs-default-skin vjs-big-play-centered"
               controls
               playsInline
-              webkit-playsinline="true"
-              x5-playsinline="true"
             >
               Tu navegador no soporta el elemento de video.
             </video>
           </div>
+          
+          {/* Portal para el overlay de controles */}
+          {overlayContainerRef.current && movieData && createPortal(
+            <VideoPlayerOverlay
+              onSkipBack={() => {
+                if (playerRef.current) {
+                  const currentTime = playerRef.current.currentTime();
+                  playerRef.current.currentTime(Math.max(0, currentTime - 10));
+                  
+                  // Mostrar overlay de skip
+                  const overlay = playerRef.current.el().querySelector('.vjs-overlay');
+                  if (overlay) {
+                    const skipIndicator = document.createElement('div');
+                    skipIndicator.className = 'skip-indicator';
+                    skipIndicator.style.cssText = `
+                      position: absolute;
+                      top: 50%;
+                      left: 20%;
+                      transform: translateY(-50%);
+                      background-color: rgba(0, 0, 0, 0.8);
+                      color: var(--text-on-primary);
+                      padding: var(--space-md) var(--space-lg);
+                      border-radius: var(--radius-lg);
+                      font-size: var(--font-size-lg);
+                      font-weight: var(--font-weight-bold);
+                      z-index: 2000;
+                      animation: skipFade 1s ease-out forwards;
+                    `;
+                    skipIndicator.textContent = '⏪ 10s';
+                    
+                    overlay.appendChild(skipIndicator);
+                    
+                    setTimeout(() => {
+                      if (skipIndicator.parentNode) {
+                        skipIndicator.parentNode.removeChild(skipIndicator);
+                      }
+                    }, 1000);
+                  }
+                }
+              }}
+              onPlayPause={() => {
+                if (playerRef.current) {
+                  if (playerRef.current.paused()) {
+                    playerRef.current.play();
+                  } else {
+                    playerRef.current.pause();
+                  }
+                }
+              }}
+              onSkipForward={() => {
+                if (playerRef.current) {
+                  const currentTime = playerRef.current.currentTime();
+                  const duration = playerRef.current.duration();
+                  playerRef.current.currentTime(Math.min(duration, currentTime + 10));
+                  
+                  // Mostrar overlay de skip
+                  const overlay = playerRef.current.el().querySelector('.vjs-overlay');
+                  if (overlay) {
+                    const skipIndicator = document.createElement('div');
+                    skipIndicator.className = 'skip-indicator';
+                    skipIndicator.style.cssText = `
+                      position: absolute;
+                      top: 50%;
+                      right: 20%;
+                      transform: translateY(-50%);
+                      background-color: rgba(0, 0, 0, 0.8);
+                      color: var(--text-on-primary);
+                      padding: var(--space-md) var(--space-lg);
+                      border-radius: var(--radius-lg);
+                      font-size: var(--font-size-lg);
+                      font-weight: var(--font-weight-bold);
+                      z-index: 2000;
+                      animation: skipFade 1s ease-out forwards;
+                    `;
+                    skipIndicator.textContent = '10s ⏩';
+                    
+                    overlay.appendChild(skipIndicator);
+                    
+                    setTimeout(() => {
+                      if (skipIndicator.parentNode) {
+                        skipIndicator.parentNode.removeChild(skipIndicator);
+                      }
+                    }, 1000);
+                  }
+                }
+              }}
+              isPlaying={isPlaying}
+              skipSeconds={10}
+            />,
+            overlayContainerRef.current
+          )}
         </div>
       </div>
     </div>

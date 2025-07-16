@@ -1,7 +1,7 @@
 // ===== MOVIE CREATE PAGE - VERSIÓN ACTUALIZADA SIN ORIGINAL_TITLE =====
 // src/Pages/Admin/Movies/MovieCreatePage/MovieCreatePage.jsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // ===== LAYOUTS Y COMPONENTES =====
@@ -11,15 +11,17 @@ import { Button } from '../../../../components/atoms/Button/Button';
 import { Card, CardHeader, CardBody, CardTitle } from '../../../../components/atoms/Card/Card';
 
 // ===== COMPONENTES ESPECÍFICOS =====
-import { TMDBSearchView } from '../../../../components/organism/TMDBSearchView/TMDBSearchView';
+import { TMDBSearchView } from '../../../../components/organisms/TMDBSearchView/TMDBSearchView';
 import { MovieFormView } from './components/MovieFormView';
 
 // ===== SERVICIOS Y HOOKS =====
 import { createMovieService } from '../../../../services/Movies/createMovieService';
-import { getCategoriesService } from '../../../../services/Categories/getCategoriesService';
 import { tmdbService } from '../../../../services/tmdb/TMDBService';
 import { ProgressModal } from "../../../../components/molecules/ProgressModal/ProgressModal";
 import { useUploadProgress } from "../../../../hooks/useUploadProgress";
+import { useCategories } from "../../../../hooks/useCategories";
+import { useFormNavigation } from "../../../../hooks/useFormNavigation";
+import { filterEmptyFields } from '../../../../utils/formUtils';
 
 // ===== ESTILOS =====
 import './MovieCreatePage.css';
@@ -38,18 +40,24 @@ function MovieCreatePage() {
   const navigate = useNavigate();
 
   // ===== ESTADOS PRINCIPALES =====
-  const [currentView, setCurrentView] = useState('search'); // 'search' | 'form'
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [categories, setCategories] = useState([]);
   const [success, setSuccess] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [hasChanges, setHasChanges] = useState(false);
 
   // ===== ESTADOS DE FORMULARIO =====
   const [formLoading, setFormLoading] = useState(false);
-  const [categoriesLoading, setCategoriesLoading] = useState(false);
-  const [categoriesError, setCategoriesError] = useState(null);
   const [submitError, setSubmitError] = useState(null);
+
+  // ===== HOOKS =====
+  const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
+  const {
+    currentView,
+    selectedItem,
+    hasChanges,
+    handleSelectFromTMDB,
+    handleManualCreate,
+    markAsChanged,
+    resetNavigation
+  } = useFormNavigation();
 
   // ===== ESTADO DE PROGRESO DE SUBIDA =====
   const { 
@@ -64,66 +72,15 @@ function MovieCreatePage() {
     setMessage
   } = useUploadProgress();
 
-  // ===== CARGAR CATEGORÍAS AL INICIO =====
-  useEffect(() => {
-    const loadCategories = async () => {
-      setCategoriesLoading(true);
-      setCategoriesError(null);
 
-      try {
-        console.log('📂 Cargando categorías...');
-        const response = await getCategoriesService();
-
-        const data = Array.isArray(response) ? response : 
-                     response?.data ? response.data : 
-                     response?.categories ? response.categories : [];
-
-        console.log('📂 Categorías cargadas:', data);
-        setCategories(data);
-
-        if (data.length === 0) {
-          setCategoriesError('No hay categorías disponibles. Ve a Administrar > Categorías para crear una.');
-        }
-      } catch (err) {
-        console.error('❌ Error cargando categorías:', err);
-        setCategoriesError('Error al cargar categorías. Verifica tu conexión.');
-        setCategories([]);
-      } finally {
-        setCategoriesLoading(false);
-      }
-    };
-
-    loadCategories();
-  }, []);
-
-  // ===== HANDLERS DE NAVEGACIÓN =====
-  const handleSelectFromTMDB = (item) => {
-    console.log('🎬 Elemento seleccionado de TMDB:', item);
-    setSelectedItem(item);
-    setCurrentView('form');
-    setHasChanges(false);
+  // ===== WRAPPER PARA NAVEGACIÓN CON RESET DE ERRORES =====
+  const handleSelectFromTMDBWithReset = (item) => {
+    handleSelectFromTMDB(item, 'movie');
     setSubmitError(null);
   };
 
-  const handleManualCreate = () => {
-    console.log('✏️ Creación manual iniciada');
-    setSelectedItem(null);
-    setCurrentView('form');
-    setHasChanges(false);
-    setSubmitError(null);
-  };
-
-  const handleBackToSearch = () => {
-    if (hasChanges) {
-      const confirmLeave = window.confirm(
-        '⚠️ Hay cambios sin guardar. ¿Estás seguro de que quieres volver? Se perderán los cambios no guardados.'
-      );
-      if (!confirmLeave) return;
-    }
-
-    setSelectedItem(null);
-    setCurrentView('search');
-    setHasChanges(false);
+  const handleManualCreateWithReset = () => {
+    handleManualCreate();
     setSubmitError(null);
   };
 
@@ -242,36 +199,6 @@ function MovieCreatePage() {
     return baseData;
   };
 
-  // ===== FUNCIÓN PARA FILTRAR CAMPOS VACÍOS =====
-  const filterEmptyFields = (data) => {
-    const filteredData = {};
-    
-    Object.keys(data).forEach(key => {
-      const value = data[key];
-      
-      // Solo incluir el campo si tiene un valor válido
-      if (value !== null && value !== undefined && value !== '') {
-        // Para archivos, verificar que sea un File válido
-        if (value instanceof File) {
-          filteredData[key] = value;
-        }
-        // Para strings, verificar que no estén vacíos después de trim
-        else if (typeof value === 'string' && value.trim() !== '') {
-          filteredData[key] = value.trim();
-        }
-        // Para números, verificar que sean válidos
-        else if (typeof value === 'number' && !isNaN(value)) {
-          filteredData[key] = value;
-        }
-        // Para otros tipos de datos válidos
-        else if (typeof value !== 'string') {
-          filteredData[key] = value;
-        }
-      }
-    });
-    
-    return filteredData;
-  };
 
   // ===== HANDLER DEL FORMULARIO CON FILTRO DE CAMPOS VACÍOS =====
   const handleFormSubmit = async (movieData) => {
@@ -323,7 +250,7 @@ function MovieCreatePage() {
 
       // ✅ Marcar que está procesando, NO mostrar éxito aún
       setIsProcessing(true);
-      setHasChanges(false);
+      resetNavigation();
 
       const taskId = result?.taskId || result?.task_id || result?.id;
 
@@ -397,8 +324,8 @@ function MovieCreatePage() {
           {/* Contenido principal */}
           {currentView === 'search' && (
             <TMDBSearchView
-              onSelectItem={handleSelectFromTMDB}
-              onManualCreate={handleManualCreate}
+              onSelectItem={handleSelectFromTMDBWithReset}
+              onManualCreate={handleManualCreateWithReset}
               contentType="all"
               title="🎬 Buscar en TMDB"
               description="Busca películas en The Movie Database para agregar a tu catálogo"
@@ -418,7 +345,7 @@ function MovieCreatePage() {
               error={submitError}
               success={success && !isProcessing}
               hasChanges={hasChanges}
-              onChange={() => setHasChanges(true)}
+              onChange={markAsChanged}
               selectedItem={selectedItem} // ✅ AGREGAR: Para detectar si es manual o TMDB
             />
           )}

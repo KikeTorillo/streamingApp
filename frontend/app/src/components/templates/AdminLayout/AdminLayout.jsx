@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { AdminSidebar } from '../../organism/AdminSidebar/AdminSidebar';
+import { AdminSidebar } from '../../organisms/AdminSidebar/AdminSidebar';
 import { Button } from '../../atoms/Button/Button';
 import './AdminLayout.css';
 

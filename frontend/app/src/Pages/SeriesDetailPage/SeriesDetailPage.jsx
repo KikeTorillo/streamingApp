@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useMovieNavigation } from '../../hooks/useMovieNavigation';
 import { Button } from '../../components/atoms/Button/Button';
 import { PageLayout } from '../../components/templates/PageLayout/PageLayout';
-import { AppHeader } from '../../components/organism/AppHeader/AppHeader';
+import { AppHeader } from '../../components/organisms/AppHeader/AppHeader';
 import { ContentSection } from '../../components/molecules/ContentSection/ContentSection';
 import { ContentCard } from '../../components/molecules/ContentCard/ContentCard';
 import { EmptyState } from '../../components/molecules/EmptyState/EmptyState';

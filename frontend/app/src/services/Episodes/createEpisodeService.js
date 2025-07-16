@@ -19,7 +19,7 @@ const createEpisodeService = async (episodeData) => {
     formData.append("serieId", episodeData.serieId);
     formData.append("season", episodeData.season);
     formData.append("episodeNumber", episodeData.episodeNumber);
-    formData.append("title", episodeData.title);
+    formData.append("title", episodeData.title || "");
     formData.append("description", episodeData.description || "");
     formData.append("video", episodeData.video);
 

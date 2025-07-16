@@ -7,7 +7,7 @@ import { useMovieNavigation } from '../../hooks/useMovieNavigation';
 import { transformMovieData } from '../../utils/movieDataTransformer';
 import { Button } from '../../components/atoms/Button/Button';
 import { PageLayout } from '../../components/templates/PageLayout/PageLayout';
-import { AppHeader } from '../../components/organism/AppHeader/AppHeader';
+import { AppHeader } from '../../components/organisms/AppHeader/AppHeader';
 import { FilterBar } from '../../components/molecules/FilterBar/FilterBar';
 import { ContentSection } from '../../components/molecules/ContentSection/ContentSection';
 import { ContentCard } from '../../components/molecules/ContentCard/ContentCard';

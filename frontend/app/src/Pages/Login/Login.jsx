@@ -9,7 +9,7 @@ import { loginService } from "../../services/Auth/loginService";
 import { recoveryService } from "../../services/Auth/recoveryService";
 
 // Componente LoginCard del sistema de diseño
-import { LoginCard } from "../../components/organism/LoginCard/LoginCard";
+import { LoginCard } from "../../components/organisms/LoginCard/LoginCard";
 import './Login.css';
 
 function Login() {
