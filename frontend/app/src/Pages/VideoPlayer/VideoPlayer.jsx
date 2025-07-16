@@ -4,7 +4,7 @@ import videojs from "video.js";
 import "video.js/dist/video-js.css";
 import "videojs-contrib-quality-levels";
 import "jb-videojs-hls-quality-selector/dist/videojs-hls-quality-selector.css";
-import "jb-videojs-hls-quality-selector"; // Se auto-registra, no necesitamos el registro manual
+import "jb-videojs-hls-quality-selector";
 import "videojs-overlay";
 import "videojs-hotkeys";
 import "./VideoPlayer.css";
@@ -40,12 +40,9 @@ const VideoPlayer = () => {
       playerRef.current.exitFullscreen();
     }
     
-    // Pausar el video antes de navegar
     if (playerRef.current) {
       playerRef.current.pause();
     }
-    
-    // Navegar hacia atrás
     navigate(-1);
   };
 
@@ -101,7 +98,6 @@ const VideoPlayer = () => {
         const subtitleTracks = [];
         if (movieData.available_subtitles && movieData.available_subtitles.length > 0) {
           movieData.available_subtitles.forEach(subtitle => {
-            // Determine language and label
             let language = 'es';
             let label = 'Español';
             
@@ -143,14 +139,22 @@ const VideoPlayer = () => {
           html5: {
             vhs: {
               overrideNative: true,
-              smoothSeekingEnabled: true,
-              enableLowInitialPlaylist: true,
+              smoothSeekingEnabled: false,
+              enableLowInitialPlaylist: false,
               fastQualityChange: false,
               maxPlaylistRetries: 3,
               seekingEnabled: true,
-              seekingTimeMargin: 30,
+              seekingTimeMargin: 5,
               bandwidth: 4194304,
               playlistExclusionDuration: 60,
+              maxBufferLength: 30,
+              maxMaxBufferLength: 120,
+              audioBufferLength: 30,
+              bufferBasedABR: true,
+              experimentalBufferBasedABR: false,
+              experimentalLLHLS: false,
+              allowSeeksWithinUnsafeLiveWindow: false,
+              useBandwidthFromLocalStorage: false,
             },
             nativeControlsForTouch: false,
             playsinline: true,
@@ -161,13 +165,13 @@ const VideoPlayer = () => {
           controlBar: {
             // ===== SKIP BUTTONS NATIVOS DE VIDEOJS 8.x =====
             skipButtons: {
-              forward: 10,  // Avanzar 10 segundos
-              backward: 10  // Retroceder 10 segundos
+              forward: 10,
+              backward: 10
             },
             children: [
               "playToggle",
-              "skipBackward",  // Botón nativo de skip backward
-              "skipForward",   // Botón nativo de skip forward
+              "skipBackward",
+              "skipForward",
               "volumePanel",
               "currentTimeDisplay",
               "timeDivider",
@@ -187,7 +191,6 @@ const VideoPlayer = () => {
         let previousTime = 0;
         let seekingTimeout = null;
         
-        // Función para re-sincronizar subtítulos
         const resyncSubtitles = () => {
           const textTracks = player.textTracks();
           
@@ -204,7 +207,7 @@ const VideoPlayer = () => {
                 if (track.removeAttribute) {
                   track.removeAttribute('data-resync');
                 }
-              }, 50);
+              }, 100);
             }
           }
         };
@@ -239,24 +242,111 @@ const VideoPlayer = () => {
           const seekDistance = Math.abs(currentTime - (seekStart || 0));
           
           // Re-sincronizar subtítulos después de seek significativo
-          if (seekDistance > 2) {
+          if (seekDistance > 1) {
             seekingTimeout = setTimeout(() => {
               resyncSubtitles();
-            }, 100);
+              player.trigger('timeupdate');
+            }, 500);
           }
           
           seekStart = null;
         });
         
-        // Manejar cambios de text tracks
+        // Manejar cambios de text tracks con monitoreo de sincronización
         player.on('texttrackchange', function() {
           const currentTime = player.currentTime();
           console.log('Text track changed at time:', currentTime);
+          
+          // Verificar sincronización cada vez que cambian los subtítulos
+          setTimeout(() => {
+            const textTracks = player.textTracks();
+            for (let i = 0; i < textTracks.length; i++) {
+              const track = textTracks[i];
+              if (track.mode === 'showing') {
+                console.log('Subtítulo activo sincronizado a:', currentTime, 'segundos');
+                break;
+              }
+            }
+          }, 50);
+        });
+        
+        // Monitoreo continuo de sincronización audio/video/subtítulos
+        let lastSyncCheck = 0;
+        let videoElement = null;
+        
+        player.on('timeupdate', function() {
+          const currentTime = player.currentTime();
+          
+          // Verificar sincronización cada 3 segundos
+          if (currentTime - lastSyncCheck > 3) {
+            lastSyncCheck = currentTime;
+            
+            // Obtener elemento video para verificar sincronización
+            if (!videoElement) {
+              videoElement = player.el().querySelector('video');
+            }
+            
+            if (videoElement) {
+              const videoTime = videoElement.currentTime;
+              const playerTime = player.currentTime();
+              const timeDiff = Math.abs(videoTime - playerTime);
+              
+              // Si hay desincronización mayor a 100ms, forzar sincronización
+              if (timeDiff > 0.1) {
+                console.log('⚠️ Desincronización detectada:', timeDiff, 'segundos');
+                videoElement.currentTime = playerTime;
+              }
+            }
+            
+            // Verificar si hay subtítulos activos
+            const textTracks = player.textTracks();
+            for (let i = 0; i < textTracks.length; i++) {
+              const track = textTracks[i];
+              if (track.mode === 'showing') {
+                player.trigger('texttrackchange');
+                break;
+              }
+            }
+          }
+        });
+        
+        // Eventos para forzar sincronización en momentos críticos
+        player.on('loadeddata', function() {
+          console.log('🎬 Video data loaded, forzando sincronización inicial');
+          setTimeout(() => {
+            const videoEl = player.el().querySelector('video');
+            if (videoEl && player.currentTime() !== videoEl.currentTime) {
+              videoEl.currentTime = player.currentTime();
+            }
+          }, 100);
+        });
+        
+        player.on('canplay', function() {
+          console.log('🎬 Video can play, verificando sincronización');
+          const videoEl = player.el().querySelector('video');
+          if (videoEl) {
+            const timeDiff = Math.abs(videoEl.currentTime - player.currentTime());
+            if (timeDiff > 0.05) {
+              console.log('⚠️ Ajustando sincronización en canplay:', timeDiff);
+              videoEl.currentTime = player.currentTime();
+            }
+          }
+        });
+        
+        player.on('playing', function() {
+          console.log('🎬 Video playing, sincronizando audio/video');
+          const videoEl = player.el().querySelector('video');
+          if (videoEl) {
+            const timeDiff = Math.abs(videoEl.currentTime - player.currentTime());
+            if (timeDiff > 0.05) {
+              console.log('⚠️ Ajustando sincronización en playing:', timeDiff);
+              videoEl.currentTime = player.currentTime();
+            }
+          }
         });
         
         // Wait for video metadata to load before adding subtitles
         player.ready(() => {
-          // Add subtitles after player is ready and video metadata is loaded
           if (subtitleTracks.length > 0) {
             subtitleTracks.forEach((track) => {
               console.log('Adding subtitle track:', track.label, 'URL:', track.src);
@@ -275,7 +365,7 @@ const VideoPlayer = () => {
                   console.warn('⚠️ No se pudo activar pantalla completa automáticamente:', err.message);
                 });
             }
-          }, 500); // Pequeño delay para asegurar que el reproductor esté completamente inicializado
+          }, 500);
         });
 
         // Enable quality selection - VideoJS 8.x compatible
@@ -286,8 +376,6 @@ const VideoPlayer = () => {
         }
 
         // ===== CONFIGURAR PLUGINS =====
-        
-        // Configurar hotkeys estilo Netflix
         player.ready(() => {
           player.hotkeys({
             volumeStep: 0.1,
@@ -296,9 +384,8 @@ const VideoPlayer = () => {
             enableVolumeScroll: false,
             enableHoverScroll: false,
             enableFullscreenToggle: true,
-            enableNumbers: false, // Desactivar números para calidad
+            enableNumbers: false,
             customKeys: {
-              // Espacio para play/pause
               spaceKey: {
                 key: function(event) {
                   return (event.which === 32);
@@ -312,7 +399,6 @@ const VideoPlayer = () => {
                   }
                 }
               },
-              // Flecha izquierda: retroceder 10s
               leftArrow: {
                 key: function(event) {
                   return (event.which === 37);
@@ -321,7 +407,6 @@ const VideoPlayer = () => {
                   handleSkip(10, 'backward');
                 }
               },
-              // Flecha derecha: avanzar 10s  
               rightArrow: {
                 key: function(event) {
                   return (event.which === 39);
@@ -336,7 +421,6 @@ const VideoPlayer = () => {
 
         // Configurar overlay para controles centrales usando React Portal
         player.ready(() => {
-          // Crear contenedor para el overlay
           const overlayContainer = document.createElement('div');
           overlayContainer.className = 'video-overlay-container';
           overlayContainer.style.cssText = `
@@ -396,7 +480,6 @@ const VideoPlayer = () => {
           }
         };
 
-        // Manejar eventos de play/pause para actualizar estado
         player.on('play', () => {
           setIsPlaying(true);
         });
@@ -405,7 +488,6 @@ const VideoPlayer = () => {
           setIsPlaying(false);
         });
         
-        // Configurar eventos para mostrar/ocultar overlay
         player.on('useractive', () => {
           const overlay = overlayContainerRef.current?.querySelector('.video-player-overlay');
           if (overlay && overlay.showControls) {
@@ -430,7 +512,6 @@ const VideoPlayer = () => {
           }
         });
 
-        // Función unificada para skip con overlay
         const handleSkip = (seconds, direction) => {
           const currentTime = player.currentTime();
           const duration = player.duration();
@@ -514,14 +595,13 @@ const VideoPlayer = () => {
         });
 
 
+
         // Handle subtitle activation and audio tracks after video loads
         player.on("loadedmetadata", () => {
           // Configure subtitles after metadata is loaded with better timing
           player.ready(() => {
             setTimeout(() => {
               const textTracks = player.textTracks();
-              
-              // Disable all subtitle tracks first
               for (let i = 0; i < textTracks.length; i++) {
                 const track = textTracks[i];
                 if (track.kind === 'subtitles') {
@@ -536,13 +616,17 @@ const VideoPlayer = () => {
                 if (track.kind === 'subtitles' && track.language === 'es' && !track.label.includes('Forzado')) {
                   track.mode = 'showing';
                   console.log('Subtítulos activados:', track.label);
+                  
+                  // Forzar sincronización inmediata con el audio
                   player.trigger('texttrackchange');
+                  player.trigger('timeupdate');
                   break;
                 }
               }
-            }, 200);
+            }, 100);
           });
         });
+
 
 
         // Error handling
@@ -606,7 +690,6 @@ const VideoPlayer = () => {
   
   return (
     <div className="video-player-container">
-      {/* Botón de regresar */}
       <Button 
         className="back-button"
         onClick={handleGoBack}
@@ -639,8 +722,6 @@ const VideoPlayer = () => {
                 if (playerRef.current) {
                   const currentTime = playerRef.current.currentTime();
                   playerRef.current.currentTime(Math.max(0, currentTime - 10));
-                  
-                  // Mostrar overlay de skip
                   const overlay = playerRef.current.el().querySelector('.vjs-overlay');
                   if (overlay) {
                     const skipIndicator = document.createElement('div');
@@ -686,7 +767,6 @@ const VideoPlayer = () => {
                   const duration = playerRef.current.duration();
                   playerRef.current.currentTime(Math.min(duration, currentTime + 10));
                   
-                  // Mostrar overlay de skip
                   const overlay = playerRef.current.el().querySelector('.vjs-overlay');
                   if (overlay) {
                     const skipIndicator = document.createElement('div');
