@@ -41,9 +41,10 @@ const VideoPlayer = () => {
   const baseUrl = `${cdnUrl}/hls/${movieId}/`;
   const subsUrl = `${cdnUrl}/subs/${movieId}/`;
   const urlComplete = `${baseUrl}_,${resolutions},p.mp4.play/master.m3u8`;
-  
-  // ===== FUNCIÓN DE SKIP OPTIMIZADA =====
-  const handleSkipOptimized = useCallback((player, seconds, direction) => {
+
+
+  // ===== FUNCIÓN DE SKIP SIMPLIFICADA =====
+  const handleSkip = useCallback((player, seconds, direction) => {
     if (!player || player.readyState() < 1) {
       console.warn('🎬 Player no está listo para seeking');
       return;
@@ -65,6 +66,7 @@ const VideoPlayer = () => {
     }
     
     try {
+      // Usar API oficial - Video.js maneja automáticamente la sincronización
       player.currentTime(newTime);
       console.log(`🎬 Skip ${direction} ${seconds}s: ${currentTime.toFixed(2)}s → ${newTime.toFixed(2)}s`);
     } catch (error) {
@@ -135,6 +137,42 @@ const VideoPlayer = () => {
     }
   }, [movieId]);
 
+  // ===== CONFIGURACIÓN SIMPLIFICADA DE TEXT TRACKS =====
+  const setupTextTracks = useCallback((player, subtitleTracks) => {
+    player.ready(() => {
+      // Esperar a que el metadata esté cargado
+      player.one('loadedmetadata', () => {
+        console.log('🎬 Metadata cargada, configurando text tracks...');
+        
+        // Agregar tracks con configuración estándar
+        subtitleTracks.forEach((track, index) => {
+          console.log('🎬 Añadiendo text track:', track.label);
+          
+          const textTrack = player.addRemoteTextTrack({
+            ...track,
+            mode: index === 0 ? 'showing' : 'disabled' // Primer track activo
+          }, false);
+          
+          // Configurar listeners básicos
+          if (textTrack && textTrack.track) {
+            textTrack.track.addEventListener('load', () => {
+              console.log('🎬 Text track cargado:', track.label);
+            });
+            
+            textTrack.track.addEventListener('error', (error) => {
+              console.error('❌ Error cargando subtítulo:', track.label, error);
+            });
+          }
+        });
+        
+        // Cargar preferencias después de configurar tracks
+        setTimeout(() => {
+          loadPlayerPreferences(player);
+        }, 200);
+      });
+    });
+  }, [loadPlayerPreferences]);
+
   // ===== ANALYTICS Y MÉTRICAS =====
   const initializeAnalytics = useCallback((player) => {
     // Tracking de tiempo visto
@@ -158,8 +196,6 @@ const VideoPlayer = () => {
         rebufferCount: analyticsRef.current.rebufferCount,
         qualityChanges: analyticsRef.current.qualityChanges
       });
-      
-      // Aquí puedes enviar estos datos a tu servicio de analytics
     });
     
     // Tracking de rebuffering
@@ -195,6 +231,9 @@ const VideoPlayer = () => {
     const handleBeforeUnload = () => {
       savePlayerPreferences();
       if (playerRef.current && !playerRef.current.isDisposed()) {
+        if (playerRef.current._cleanupSeeking) {
+          playerRef.current._cleanupSeeking();
+        }
         playerRef.current.dispose();
       }
     };
@@ -270,38 +309,12 @@ const VideoPlayer = () => {
         }
         
         if (playerRef.current) {
+          if (playerRef.current._cleanupSeeking) {
+            playerRef.current._cleanupSeeking();
+          }
           playerRef.current.dispose();
         }
         
-        // Configurar subtítulos
-        const subtitleTracks = [];
-        if (movieData.available_subtitles && movieData.available_subtitles.length > 0) {
-          movieData.available_subtitles.forEach(subtitle => {
-            let language = 'es';
-            let label = 'Español';
-            
-            if (subtitle.includes('eng')) {
-              language = 'en';
-              label = 'English';
-            } else if (subtitle.includes('spa')) {
-              language = 'es';
-              label = 'Español';
-            }
-            
-            if (subtitle.includes('forced')) {
-              label += ' (Forzado)';
-            }
-            
-            subtitleTracks.push({
-              kind: 'subtitles',
-              src: `${subsUrl}${subtitle}.vtt`,
-              srclang: language,
-              label: label,
-              default: false
-            });
-          });
-        }
-
         // ===== CONFIGURACIÓN OPTIMIZADA DEL PLAYER =====
         const player = videojs(videoRef.current, {
           controls: true,
@@ -317,8 +330,6 @@ const VideoPlayer = () => {
           html5: {
             vhs: {
               overrideNative: true,
-              nativeAudioTracks: false,
-              nativeVideoTracks: false,
               enableLowInitialPlaylist: true,
               limitRenditionByPlayerDimensions: true,
               useDevicePixelRatio: true,
@@ -327,20 +338,12 @@ const VideoPlayer = () => {
               maxPlaylistRetries: 3,
               bandwidth: 4194304,
               playlistExclusionDuration: 60,
-              // Mejoras de buffering
-              experimentalBufferBasedABR: true,
-              experimentalLLHLS: true,
-              allowSeeksWithinUnsafeLiveWindow: true,
-              handlePartialData: true,
-              useBandwidthFromLocalStorage: true,
-              maxBufferLength: 30,
-              bufferBasedABR: true,
-              startLevel: -1,
+              maxBufferLength: 30
             },
             nativeControlsForTouch: false,
             playsinline: true,
             nativeTextTracks: false,
-            preloadTextTracks: true,
+            preloadTextTracks: true
           },
           pip: true,
           controlBar: {
@@ -365,101 +368,35 @@ const VideoPlayer = () => {
           },
         });
         
-        // ===== MANEJO ROBUSTO DE EVENTOS SEEKING/SEEKED =====
-        let isSeekingInProgress = false;
-        
-        player.on('seeking', function() {
-          isSeekingInProgress = true;
-          console.log('🎬 Seeking iniciado');
-        });
-        
-        player.on('seeked', function() {
-          isSeekingInProgress = false;
-          console.log('🎬 Seeked completado');
-          
-          // Re-sincronizar text tracks mejorado
-          const textTracks = player.textTracks();
-          const currentTime = player.currentTime();
-          
-          for (let i = 0; i < textTracks.length; i++) {
-            const track = textTracks[i];
-            if (track.mode === 'showing' && track.cues) {
-              // Forzar actualización de cues
-              track.oncuechange = null;
-              track.oncuechange = () => {
-                if (!isSeekingInProgress) {
-                  console.log('🎬 Cue actualizado:', track.label);
-                }
-              };
-              
-              // Buscar cue activo manualmente
-              for (let j = 0; j < track.cues.length; j++) {
-                const cue = track.cues[j];
-                if (currentTime >= cue.startTime && currentTime <= cue.endTime) {
-                  console.log('🎬 Cue activo encontrado:', cue.text);
-                  break;
-                }
-              }
-            }
-          }
-        });
-        
-        // ===== CONFIGURACIÓN DE TEXT TRACKS =====
-        player.ready(() => {
-          if (subtitleTracks.length > 0) {
-            subtitleTracks.forEach((track) => {
-              console.log('🎬 Añadiendo text track:', track.label);
-              const textTrack = player.addRemoteTextTrack(track, false);
-              
-              if (textTrack && textTrack.track) {
-                textTrack.track.addEventListener('load', () => {
-                  console.log('🎬 Text track cargado:', track.label);
-                });
-                
-                textTrack.track.addEventListener('error', (e) => {
-                  console.error('❌ Error cargando subtítulo:', track.label, e);
-                });
-              }
-            });
+        // Configurar subtítulos si están disponibles
+        if (movieData.available_subtitles && movieData.available_subtitles.length > 0) {
+          const subtitleTracks = movieData.available_subtitles.map(subtitle => {
+            let language = 'es';
+            let label = 'Español';
             
-            // Configurar subtítulos por defecto después de cargar metadata
-            player.on('loadedmetadata', () => {
-              const textTracks = player.textTracks();
-              const preferences = JSON.parse(localStorage.getItem('playerPreferences') || '{}');
-              
-              // Deshabilitar todos primero
-              for (let i = 0; i < textTracks.length; i++) {
-                textTracks[i].mode = 'disabled';
-              }
-              
-              // Intentar restaurar subtítulo preferido
-              if (preferences.selectedTextTrack) {
-                for (let i = 0; i < textTracks.length; i++) {
-                  const track = textTracks[i];
-                  if (track.language === preferences.selectedTextTrack.language &&
-                      track.label === preferences.selectedTextTrack.label) {
-                    track.mode = 'showing';
-                    console.log('🎬 Subtítulos preferidos restaurados:', track.label);
-                    return;
-                  }
-                }
-              }
-              
-              // Si no hay preferencia, activar primer subtítulo español no forzado
-              for (let i = 0; i < textTracks.length; i++) {
-                const track = textTracks[i];
-                if (track.kind === 'subtitles' && track.language === 'es' && !track.label.includes('Forzado')) {
-                  track.mode = 'showing';
-                  console.log('🎬 Subtítulos activados por defecto:', track.label);
-                  break;
-                }
-              }
-            });
-          }
+            if (subtitle.includes('eng')) {
+              language = 'en';
+              label = 'English';
+            } else if (subtitle.includes('spa')) {
+              language = 'es';
+              label = 'Español';
+            }
+            
+            if (subtitle.includes('forced')) {
+              label += ' (Forzado)';
+            }
+            
+            return {
+              kind: 'subtitles',
+              src: `${subsUrl}${subtitle}.vtt`,
+              srclang: language,
+              label: label,
+              default: false
+            };
+          });
           
-          // Cargar preferencias del usuario
-          loadPlayerPreferences(player);
-        });
+          setupTextTracks(player, subtitleTracks);
+        }
         
         // ===== MANEJO DE CALIDAD Y BUFFER =====
         player.ready(() => {
@@ -538,7 +475,7 @@ const VideoPlayer = () => {
                   return (event.which === 37);
                 },
                 handler: function(player) {
-                  handleSkipOptimized(player, 10, 'backward');
+                  handleSkip(player, 10, 'backward');
                 }
               },
               rightArrow: {
@@ -546,7 +483,7 @@ const VideoPlayer = () => {
                   return (event.which === 39);
                 },
                 handler: function(player) {
-                  handleSkipOptimized(player, 10, 'forward');
+                  handleSkip(player, 10, 'forward');
                 }
               },
               // Agregar teclas J y L para skip de 10s
@@ -555,7 +492,7 @@ const VideoPlayer = () => {
                   return (event.which === 74); // J
                 },
                 handler: function(player) {
-                  handleSkipOptimized(player, 10, 'backward');
+                  handleSkip(player, 10, 'backward');
                 }
               },
               lKey: {
@@ -563,7 +500,7 @@ const VideoPlayer = () => {
                   return (event.which === 76); // L
                 },
                 handler: function(player) {
-                  handleSkipOptimized(player, 10, 'forward');
+                  handleSkip(player, 10, 'forward');
                 }
               }
             }
@@ -599,7 +536,7 @@ const VideoPlayer = () => {
         let retryCount = 0;
         const maxRetries = 3;
         
-        player.on('error', (e) => {
+        player.on('error', () => {
           const error = player.error();
           console.error('VideoJS Error:', error);
           
@@ -672,12 +609,10 @@ const VideoPlayer = () => {
         // ===== PICTURE-IN-PICTURE MEJORADO =====
         player.on('enterpictureinpicture', () => {
           console.log('📺 Entered PiP mode');
-          // Puedes ajustar controles o UI para PiP aquí
         });
 
         player.on('leavepictureinpicture', () => {
           console.log('📺 Left PiP mode');
-          // Restaurar controles normales
         });
         
         // Guardar preferencias periódicamente
@@ -708,10 +643,13 @@ const VideoPlayer = () => {
     return () => {
       savePlayerPreferences();
       if (playerRef.current && !playerRef.current.isDisposed()) {
+        if (playerRef.current._cleanupSeeking) {
+          playerRef.current._cleanupSeeking();
+        }
         playerRef.current.dispose();
       }
     };
-  }, [urlComplete, movieData, loading, subsUrl, handleSkipOptimized, savePlayerPreferences, loadPlayerPreferences, initializeAnalytics]);
+  }, [urlComplete, movieData, loading, subsUrl, handleSkip, savePlayerPreferences, setupTextTracks, initializeAnalytics]);
 
   // ===== VALIDACIONES =====
   if (!movieId) {
@@ -808,7 +746,7 @@ const VideoPlayer = () => {
           {/* Portal para el overlay de controles */}
           {overlayContainerRef.current && movieData && createPortal(
             <VideoPlayerOverlay
-              onSkipBack={() => handleSkipOptimized(playerRef.current, 10, 'backward')}
+              onSkipBack={() => handleSkip(playerRef.current, 10, 'backward')}
               onPlayPause={() => {
                 if (playerRef.current) {
                   if (playerRef.current.paused()) {
@@ -818,7 +756,7 @@ const VideoPlayer = () => {
                   }
                 }
               }}
-              onSkipForward={() => handleSkipOptimized(playerRef.current, 10, 'forward')}
+              onSkipForward={() => handleSkip(playerRef.current, 10, 'forward')}
               isPlaying={isPlaying}
               skipSeconds={10}
               movieTitle={movieData.title || movieData.name}
