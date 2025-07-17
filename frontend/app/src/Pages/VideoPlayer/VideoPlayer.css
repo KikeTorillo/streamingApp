@@ -283,22 +283,27 @@
 /* Botones personalizados de skip */
 .video-js .custom-skip-backward,
 .video-js .custom-skip-forward {
-  background-color: var(--color-primary);
+  background-color: var(--bg-tertiary);
   color: var(--text-on-primary);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   transition: all var(--transition-normal);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   padding: var(--space-xs) var(--space-sm);
   margin: 0 var(--space-xs);
   border: 0.1rem solid var(--border-light);
+  backdrop-filter: blur(4px);
+  white-space: nowrap;
+  min-width: auto;
+  height: auto;
 }
 
 .video-js .custom-skip-backward:hover,
 .video-js .custom-skip-forward:hover {
-  background-color: var(--color-primary-hover);
+  background-color: var(--color-primary);
   transform: scale(1.05);
   box-shadow: var(--shadow-md);
+  border-color: var(--color-primary);
 }
 
 .video-js .custom-skip-backward:active,

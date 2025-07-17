@@ -197,30 +197,23 @@ const VideoPlayer = () => {
           ],
           html5: {
             vhs: {
-              // Configuración oficial robusta según documentación Video.js VHS
+              // Configuración oficial según documentación Video.js VHS
               overrideNative: true,
               nativeAudioTracks: false,
               nativeVideoTracks: false,
               
-              // Seeking optimization oficial
-              allowSeeksWithinUnsafeLiveWindow: true,
-              liveRangeSafeTimeDelta: 30,
+              // Opciones oficiales documentadas
               enableLowInitialPlaylist: true,
               limitRenditionByPlayerDimensions: true,
               useDevicePixelRatio: true,
               
-              // Buffer optimization oficial para seeking suave
+              // Buffer optimization oficial
               fastQualityChange: true,
               maxPlaylistRetries: 3,
               
-              // Configuraciones de bandwidth oficiales
+              // Configuración de bandwidth oficial
               bandwidth: 4194304,
-              playlistExclusionDuration: 60,
-              useBandwidthFromLocalStorage: true,
-              
-              // Text tracks optimization
-              parse708captions: true,
-              useCueTags: false
+              playlistExclusionDuration: 60
             },
             nativeControlsForTouch: false,
             playsinline: true,
@@ -229,15 +222,8 @@ const VideoPlayer = () => {
           },
           pip: true,
           controlBar: {
-            // ===== SKIP BUTTONS NATIVOS DE VIDEOJS 8.x =====
-            skipButtons: {
-              forward: 10,
-              backward: 10
-            },
             children: [
               "playToggle",
-              "skipBackward",
-              "skipForward",
               "volumePanel",
               "currentTimeDisplay",
               "timeDivider",
@@ -505,6 +491,14 @@ const VideoPlayer = () => {
                   this.controlText('Retroceder 10 segundos');
                 }
                 
+                createEl() {
+                  const el = super.createEl('button', {
+                    innerHTML: '⏪ 10s',
+                    className: 'vjs-control vjs-button custom-skip-backward'
+                  });
+                  return el;
+                }
+                
                 handleClick() {
                   handleSkipAction(10, 'backward');
                 }
@@ -515,6 +509,14 @@ const VideoPlayer = () => {
                 constructor(player, options) {
                   super(player, options);
                   this.controlText('Avanzar 10 segundos');
+                }
+                
+                createEl() {
+                  const el = super.createEl('button', {
+                    innerHTML: '10s ⏩',
+                    className: 'vjs-control vjs-button custom-skip-forward'
+                  });
+                  return el;
                 }
                 
                 handleClick() {
@@ -529,15 +531,9 @@ const VideoPlayer = () => {
               // Agregar los botones a la barra de controles
               const controlBar = player.getChild('controlBar');
               
-              const skipBackward = new SkipBackwardButton(player, {
-                text: '⏪10',
-                className: 'custom-skip-backward'
-              });
+              const skipBackward = new SkipBackwardButton(player, {});
               
-              const skipForward = new SkipForwardButton(player, {
-                text: '10⏩',
-                className: 'custom-skip-forward'
-              });
+              const skipForward = new SkipForwardButton(player, {});
               
               // Insertar después del botón de play
               controlBar.addChild(skipBackward, {}, 1);
