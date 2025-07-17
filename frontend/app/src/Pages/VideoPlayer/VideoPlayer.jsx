@@ -48,10 +48,10 @@ const VideoPlayer = () => {
       newTime = Math.min(duration, currentTime + seconds);
     }
     
-    // Usar API oficial de Video.js para seeking
+    // Usar API oficial de Video.js para seeking optimizado
     player.currentTime(newTime);
     
-    // Mostrar indicador visual inmediatamente
+    // Mostrar indicador visual usando eventos oficiales
     const overlay = player.el().querySelector('.vjs-overlay');
     if (overlay) {
       const skipIndicator = document.createElement('div');
@@ -74,14 +74,15 @@ const VideoPlayer = () => {
       
       overlay.appendChild(skipIndicator);
       
-      setTimeout(() => {
+      // Usar eventos oficiales en lugar de setTimeout
+      player.one('seeked', () => {
         if (skipIndicator.parentNode) {
           skipIndicator.parentNode.removeChild(skipIndicator);
         }
-      }, 1000);
+      });
     }
     
-    console.log('🎬 Skip oficial iniciado:', direction, seconds, 'segundos - esperando evento seeked');
+    console.log('🎬 Skip optimizado iniciado:', direction, seconds, 'segundos - usando eventos oficiales');
   };
 
   // Función para manejar el botón de regresar
@@ -131,7 +132,18 @@ const VideoPlayer = () => {
           return;
         }
         
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        // Esperar a que el DOM esté listo sin setTimeout arbitrario
+        if (!document.body.contains(videoRef.current)) {
+          await new Promise((resolve) => {
+            const observer = new MutationObserver(() => {
+              if (document.body.contains(videoRef.current)) {
+                observer.disconnect();
+                resolve();
+              }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+          });
+        }
         
         if (!videoRef.current) {
           console.error("El elemento <video> no está disponible en el DOM.");
@@ -185,31 +197,30 @@ const VideoPlayer = () => {
           ],
           html5: {
             vhs: {
-              // Configuración oficial robusta según documentación Video.js
+              // Configuración oficial robusta según documentación Video.js VHS
               overrideNative: true,
               nativeAudioTracks: false,
               nativeVideoTracks: false,
               
-              // Seeking optimization
+              // Seeking optimization oficial
               allowSeeksWithinUnsafeLiveWindow: true,
+              liveRangeSafeTimeDelta: 30,
               enableLowInitialPlaylist: true,
               limitRenditionByPlayerDimensions: true,
               useDevicePixelRatio: true,
               
-              // Buffer optimization para seeking suave
-              smoothSeekingEnabled: true,
+              // Buffer optimization oficial para seeking suave
               fastQualityChange: true,
               maxPlaylistRetries: 3,
               
-              // Configuraciones de buffer oficial
+              // Configuraciones de bandwidth oficiales
               bandwidth: 4194304,
               playlistExclusionDuration: 60,
-              bufferBasedABR: true,
-              experimentalBufferBasedABR: false,
-              useBandwidthFromLocalStorage: false,
+              useBandwidthFromLocalStorage: true,
               
-              // Timing preciso experimental
-              experimentalExactManifestTimings: true
+              // Text tracks optimization
+              parse708captions: true,
+              useCueTags: false
             },
             nativeControlsForTouch: false,
             playsinline: true,
@@ -299,43 +310,65 @@ const VideoPlayer = () => {
           console.log('🎬 Video playing - sistema robusto funcionando');
         });
         
-        // Wait for video metadata to load before adding subtitles
+        // Configuración unificada de text tracks usando patrón oficial
         player.ready(() => {
           if (subtitleTracks.length > 0) {
             subtitleTracks.forEach((track) => {
-              console.log('Adding subtitle track:', track.label, 'URL:', track.src);
+              console.log('🎬 Añadiendo text track:', track.label);
               const textTrack = player.addRemoteTextTrack(track, false);
               
               // Configuración oficial de eventos para text tracks
               if (textTrack && textTrack.track) {
                 textTrack.track.addEventListener('load', () => {
-                  console.log('🎬 Subtítulos cargados para:', track.label);
+                  console.log('🎬 Text track cargado:', track.label);
                 });
                 
-                // Evento oficial para cambios de cues (más específico que texttrackchange)
+                // Evento oficial para cambios de cues - sin interferencia con seeking
                 textTrack.track.addEventListener('cuechange', () => {
                   if (!isSeekingInProgress) {
-                    console.log('🎬 Cue change - subtítulos actualizados naturalmente');
+                    console.log('🎬 Cue actualizado naturalmente:', track.label);
                   }
                 });
+              }
+            });
+            
+            // Configuración inicial de subtítulos usando eventos oficiales
+            player.on('loadedmetadata', () => {
+              // Configurar subtítulos después de que metadata esté lista
+              const textTracks = player.textTracks();
+              
+              // Deshabilitar todos primero
+              for (let i = 0; i < textTracks.length; i++) {
+                textTracks[i].mode = 'disabled';
+              }
+              
+              // Activar primer subtítulo español no forzado
+              for (let i = 0; i < textTracks.length; i++) {
+                const track = textTracks[i];
+                if (track.kind === 'subtitles' && track.language === 'es' && !track.label.includes('Forzado')) {
+                  track.mode = 'showing';
+                  console.log('🎬 Subtítulos activados:', track.label);
+                  break;
+                }
               }
             });
           }
         });
         
-        // Entrar automáticamente a pantalla completa cuando el reproductor esté listo
+        // Entrar automáticamente a pantalla completa usando eventos oficiales
         player.ready(() => {
-          setTimeout(() => {
+          // Usar evento oficial canplay para pantalla completa
+          player.one('canplay', () => {
             if (player.requestFullscreen) {
               player.requestFullscreen()
                 .then(() => {
-                  console.log('✅ Pantalla completa activada automáticamente');
+                  console.log('✅ Pantalla completa activada con evento oficial');
                 })
                 .catch((err) => {
                   console.warn('⚠️ No se pudo activar pantalla completa automáticamente:', err.message);
                 });
             }
-          }, 500);
+          });
         });
 
         // Enable quality selection - VideoJS 8.x compatible
@@ -453,62 +486,65 @@ const VideoPlayer = () => {
         
         // ===== CONTROLES PERSONALIZADOS COMO ALTERNATIVA =====
         // Si los botones nativos no funcionan, agregamos controles personalizados
-        setTimeout(() => {
-          const skipBackwardButton = player.getChild('controlBar').getChild('skipBackward');
-          const skipForwardButton = player.getChild('controlBar').getChild('skipForward');
-          
-          if (!skipBackwardButton || !skipForwardButton) {
-            console.log('⚠️ Botones nativos de skip no encontrados, usando controles personalizados');
+        player.ready(() => {
+          // Verificar botones nativos después de que el player esté completamente listo
+          player.one('loadeddata', () => {
+            const skipBackwardButton = player.getChild('controlBar').getChild('skipBackward');
+            const skipForwardButton = player.getChild('controlBar').getChild('skipForward');
             
-            // Crear botones personalizados usando la API de VideoJS
-            const Button = videojs.getComponent('Button');
-            
-            // Botón de retroceder 10 segundos
-            class SkipBackwardButton extends Button {
-              constructor(player, options) {
-                super(player, options);
-                this.controlText('Retroceder 10 segundos');
+            if (!skipBackwardButton || !skipForwardButton) {
+              console.log('⚠️ Botones nativos de skip no encontrados, usando controles personalizados');
+              
+              // Crear botones personalizados usando la API de VideoJS
+              const Button = videojs.getComponent('Button');
+              
+              // Botón de retroceder 10 segundos
+              class SkipBackwardButton extends Button {
+                constructor(player, options) {
+                  super(player, options);
+                  this.controlText('Retroceder 10 segundos');
+                }
+                
+                handleClick() {
+                  handleSkipAction(10, 'backward');
+                }
               }
               
-              handleClick() {
-                handleSkipAction(10, 'backward');
-              }
-            }
-            
-            // Botón de avanzar 10 segundos
-            class SkipForwardButton extends Button {
-              constructor(player, options) {
-                super(player, options);
-                this.controlText('Avanzar 10 segundos');
+              // Botón de avanzar 10 segundos
+              class SkipForwardButton extends Button {
+                constructor(player, options) {
+                  super(player, options);
+                  this.controlText('Avanzar 10 segundos');
+                }
+                
+                handleClick() {
+                  handleSkipAction(10, 'forward');
+                }
               }
               
-              handleClick() {
-                handleSkipAction(10, 'forward');
-              }
+              // Registrar los componentes
+              videojs.registerComponent('SkipBackwardButton', SkipBackwardButton);
+              videojs.registerComponent('SkipForwardButton', SkipForwardButton);
+              
+              // Agregar los botones a la barra de controles
+              const controlBar = player.getChild('controlBar');
+              
+              const skipBackward = new SkipBackwardButton(player, {
+                text: '⏪10',
+                className: 'custom-skip-backward'
+              });
+              
+              const skipForward = new SkipForwardButton(player, {
+                text: '10⏩',
+                className: 'custom-skip-forward'
+              });
+              
+              // Insertar después del botón de play
+              controlBar.addChild(skipBackward, {}, 1);
+              controlBar.addChild(skipForward, {}, 2);
             }
-            
-            // Registrar los componentes
-            videojs.registerComponent('SkipBackwardButton', SkipBackwardButton);
-            videojs.registerComponent('SkipForwardButton', SkipForwardButton);
-            
-            // Agregar los botones a la barra de controles
-            const controlBar = player.getChild('controlBar');
-            
-            const skipBackward = new SkipBackwardButton(player, {
-              text: '⏪10',
-              className: 'custom-skip-backward'
-            });
-            
-            const skipForward = new SkipForwardButton(player, {
-              text: '10⏩',
-              className: 'custom-skip-forward'
-            });
-            
-            // Insertar después del botón de play
-            controlBar.addChild(skipBackward, {}, 1);
-            controlBar.addChild(skipForward, {}, 2);
-          }
-        }, 1000);
+          });
+        });
 
 
 
@@ -520,35 +556,6 @@ const VideoPlayer = () => {
 
 
 
-        // Handle subtitle activation and audio tracks after video loads
-        player.on("loadedmetadata", () => {
-          // Configure subtitles after metadata is loaded with better timing
-          player.ready(() => {
-            setTimeout(() => {
-              const textTracks = player.textTracks();
-              for (let i = 0; i < textTracks.length; i++) {
-                const track = textTracks[i];
-                if (track.kind === 'subtitles') {
-                  track.mode = 'disabled';
-                }
-              }
-              
-              // Enable the first Spanish subtitle track (non-forced)
-              for (let i = 0; i < textTracks.length; i++) {
-                const track = textTracks[i];
-                console.log('Text track found:', track.label, 'Mode:', track.mode, 'Language:', track.language);
-                if (track.kind === 'subtitles' && track.language === 'es' && !track.label.includes('Forzado')) {
-                  track.mode = 'showing';
-                  console.log('Subtítulos activados:', track.label);
-                  
-                  // Configuración inicial completada
-                  console.log('🎬 Subtítulos activados:', track.label, '- Sin auto-sincronización');
-                  break;
-                }
-              }
-            }, 500); // Timeout para carga inicial
-          });
-        });
 
         // Error handling
         player.on('error', (e) => {
