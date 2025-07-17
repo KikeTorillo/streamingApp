@@ -33,41 +33,8 @@ const VideoPlayer = () => {
   
   const urlComplete = `${baseUrl}_,${resolutions},p.mp4.play/master.m3u8`;
   
-  // ===== FUNCIONES GLOBALES PARA REUTILIZACIÓN =====
+  // ===== IMPLEMENTACIÓN OFICIAL ROBUSTA BASADA EN DOCUMENTACIÓN VIDEO.JS =====
   
-  // Función para crear indicadores de skip reutilizable
-  const createSkipIndicatorGlobal = (player, text, direction) => {
-    const overlay = player.el().querySelector('.vjs-overlay');
-    if (!overlay) return;
-    
-    const skipIndicator = document.createElement('div');
-    skipIndicator.className = 'skip-indicator';
-    skipIndicator.style.cssText = `
-      position: absolute;
-      top: 50%;
-      ${direction === 'backward' ? 'left: 20%' : 'right: 20%'};
-      transform: translateY(-50%);
-      background-color: rgba(0, 0, 0, 0.8);
-      color: var(--text-on-primary);
-      padding: var(--space-md) var(--space-lg);
-      border-radius: var(--radius-lg);
-      font-size: var(--font-size-lg);
-      font-weight: var(--font-weight-bold);
-      z-index: 2000;
-      animation: skipFade 1s ease-out forwards;
-    `;
-    skipIndicator.textContent = text;
-    
-    overlay.appendChild(skipIndicator);
-    
-    setTimeout(() => {
-      if (skipIndicator.parentNode) {
-        skipIndicator.parentNode.removeChild(skipIndicator);
-      }
-    }, 1000);
-  };
-  
-  // Función unificada para skip con sincronización global
   const handleSkipGlobal = (player, seconds, direction) => {
     if (!player) return;
     
@@ -81,30 +48,40 @@ const VideoPlayer = () => {
       newTime = Math.min(duration, currentTime + seconds);
     }
     
-    // Aplicar el cambio
+    // Usar API oficial de Video.js para seeking
     player.currentTime(newTime);
     
-    // Activar eventos de sincronización
-    player.trigger('seeking');
-    setTimeout(() => {
-      player.trigger('seeked');
+    // Mostrar indicador visual inmediatamente
+    const overlay = player.el().querySelector('.vjs-overlay');
+    if (overlay) {
+      const skipIndicator = document.createElement('div');
+      skipIndicator.className = 'skip-indicator';
+      skipIndicator.style.cssText = `
+        position: absolute;
+        top: 50%;
+        ${direction === 'backward' ? 'left: 20%' : 'right: 20%'};
+        transform: translateY(-50%);
+        background-color: rgba(0, 0, 0, 0.8);
+        color: var(--text-on-primary);
+        padding: var(--space-md) var(--space-lg);
+        border-radius: var(--radius-lg);
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-bold);
+        z-index: 2000;
+        animation: skipFade 1s ease-out forwards;
+      `;
+      skipIndicator.textContent = direction === 'backward' ? `⏪ ${seconds}s` : `${seconds}s ⏩`;
+      
+      overlay.appendChild(skipIndicator);
+      
       setTimeout(() => {
-        const textTracks = player.textTracks();
-        for (let i = 0; i < textTracks.length; i++) {
-          const track = textTracks[i];
-          if (track.mode === 'showing') {
-            track.mode = 'disabled';
-            setTimeout(() => {
-              track.mode = 'showing';
-              console.log('🎬 Subtítulos re-sincronizados post-skip');
-            }, 20);
-            break;
-          }
+        if (skipIndicator.parentNode) {
+          skipIndicator.parentNode.removeChild(skipIndicator);
         }
-      }, 100);
-    }, 50);
-    const text = direction === 'backward' ? `⏪ ${seconds}s` : `${seconds}s ⏩`;
-    createSkipIndicatorGlobal(player, text, direction);
+      }, 1000);
+    }
+    
+    console.log('🎬 Skip oficial iniciado:', direction, seconds, 'segundos - esperando evento seeked');
   };
 
   // Función para manejar el botón de regresar
@@ -208,23 +185,31 @@ const VideoPlayer = () => {
           ],
           html5: {
             vhs: {
+              // Configuración oficial robusta según documentación Video.js
               overrideNative: true,
-              smoothSeekingEnabled: true,
+              nativeAudioTracks: false,
+              nativeVideoTracks: false,
+              
+              // Seeking optimization
+              allowSeeksWithinUnsafeLiveWindow: true,
               enableLowInitialPlaylist: true,
+              limitRenditionByPlayerDimensions: true,
+              useDevicePixelRatio: true,
+              
+              // Buffer optimization para seeking suave
+              smoothSeekingEnabled: true,
               fastQualityChange: true,
               maxPlaylistRetries: 3,
-              seekingEnabled: true,
-              seekingTimeMargin: 2,
+              
+              // Configuraciones de buffer oficial
               bandwidth: 4194304,
               playlistExclusionDuration: 60,
-              maxBufferLength: 30,
-              maxMaxBufferLength: 120,
-              audioBufferLength: 30,
               bufferBasedABR: true,
               experimentalBufferBasedABR: false,
-              experimentalLLHLS: false,
-              allowSeeksWithinUnsafeLiveWindow: true,
               useBandwidthFromLocalStorage: false,
+              
+              // Timing preciso experimental
+              experimentalExactManifestTimings: true
             },
             nativeControlsForTouch: false,
             playsinline: true,
@@ -256,205 +241,63 @@ const VideoPlayer = () => {
           },
         });
         
-        // Variables para tracking de seeking y sincronización
-        let seekStart = null;
-        let previousTime = 0;
-        let seekingTimeout = null;
-        let syncCheckInterval = null;
-        let isProcessingSeek = false;
-        let subtitleOffset = 0;
-        let lastSyncTime = 0;
-        let lastCorrectionTime = 0;
+        // Variables de estado para manejo robusto según documentación oficial
+        let isSeekingInProgress = false;
         
-        // ===== FUNCIONES DE UTILIDAD UNIFICADAS =====
-        
-        // Función unificada para crear indicadores de skip
-        const createSkipIndicator = (text, direction) => {
-          const overlay = player.el().querySelector('.vjs-overlay');
-          if (!overlay) return;
-          
-          const skipIndicator = document.createElement('div');
-          skipIndicator.className = 'skip-indicator';
-          skipIndicator.style.cssText = `
-            position: absolute;
-            top: 50%;
-            ${direction === 'backward' ? 'left: 20%' : 'right: 20%'};
-            transform: translateY(-50%);
-            background-color: rgba(0, 0, 0, 0.8);
-            color: var(--text-on-primary);
-            padding: var(--space-md) var(--space-lg);
-            border-radius: var(--radius-lg);
-            font-size: var(--font-size-lg);
-            font-weight: var(--font-weight-bold);
-            z-index: 2000;
-            animation: skipFade 1s ease-out forwards;
-          `;
-          skipIndicator.textContent = text;
-          
-          overlay.appendChild(skipIndicator);
-          
-          setTimeout(() => {
-            if (skipIndicator.parentNode) {
-              skipIndicator.parentNode.removeChild(skipIndicator);
-            }
-          }, 1000);
-        };
-        
-        // Función unificada para manejar skip con sincronización
+        // Función interna que usa el patrón oficial
         const handleSkipAction = (seconds, direction) => {
-          const currentTime = player.currentTime();
-          const duration = player.duration();
-          
-          let newTime;
-          if (direction === 'backward') {
-            newTime = Math.max(0, currentTime - seconds);
-          } else {
-            newTime = Math.min(duration, currentTime + seconds);
-          }
-          
-          // Aplicar el cambio
-          player.currentTime(newTime);
-          
-          // Activar eventos de sincronización
-          player.trigger('seeking');
-          setTimeout(() => {
-            player.trigger('seeked');
-          }, 50);
-          
-          // Mostrar indicador
-          const text = direction === 'backward' ? `⏪ ${seconds}s` : `${seconds}s ⏩`;
-          createSkipIndicator(text, direction);
+          handleSkipGlobal(player, seconds, direction);
         };
         
-        // Función simplificada de sincronización solo para seeking
-        const performSeekSynchronization = () => {
-          const videoElement = player.el().querySelector('video');
-          if (!videoElement) return;
-          
-          const playerTime = player.currentTime();
-          const videoTime = videoElement.currentTime;
-          const timeDiff = Math.abs(videoTime - playerTime);
-          
-          // Sincronizar audio-video si hay diferencia significativa
-          if (timeDiff > 0.5) {
-            console.log('⚠️ Sincronizando audio-video post-seek. Diferencia:', timeDiff.toFixed(3), 'segundos');
-            videoElement.currentTime = playerTime;
-          }
-          
-          // Sincronizar subtítulos marcados para re-sync (solo los que necesitan)
-          const textTracks = player.textTracks();
-          for (let i = 0; i < textTracks.length; i++) {
-            const track = textTracks[i];
-            if (track.getAttribute && track.getAttribute('data-resync') === 'true') {
-              const wasShowing = track.mode === 'showing';
-              track.mode = 'disabled';
-              
-              setTimeout(() => {
-                if (wasShowing) {
-                  track.mode = 'showing';
-                  console.log('🎬 Subtítulos re-sincronizados post-seek');
-                }
-                if (track.removeAttribute) {
-                  track.removeAttribute('data-resync');
-                }
-              }, 50);
-            }
-          }
-        };
+        // ===== IMPLEMENTACIÓN OFICIAL DEL PATRÓN SEEKING/SEEKED =====
         
-        // Manejar eventos de seeking para sincronización mejorada
-        player.on('timeupdate', function() {
-          if (!isProcessingSeek) {
-            previousTime = player.currentTime();
-          }
-        });
-        
+        // Manejo robusto de seeking según documentación oficial
         player.on('seeking', function() {
-          isProcessingSeek = true;
-          
-          if (seekStart === null) {
-            seekStart = previousTime;
-          }
-          
-          // Marcar subtítulos para re-sincronización
-          const textTracks = player.textTracks();
-          for (let i = 0; i < textTracks.length; i++) {
-            const track = textTracks[i];
-            if (track.mode === 'showing' && track.setAttribute) {
-              track.setAttribute('data-resync', 'true');
-            }
-          }
-          
-          // Limpiar timeout anterior
-          if (seekingTimeout) {
-            clearTimeout(seekingTimeout);
-          }
+          isSeekingInProgress = true;
+          console.log('🎬 Seeking iniciado - bloqueando operaciones dependientes');
         });
         
         player.on('seeked', function() {
-          const currentTime = player.currentTime();
-          const seekDistance = Math.abs(currentTime - (seekStart || 0));
+          isSeekingInProgress = false;
+          console.log('🎬 Seeked completado - sincronizando text tracks');
           
-          // Re-sincronizar después de seek
-          seekingTimeout = setTimeout(() => {
-            isProcessingSeek = false;
-            
-            // Forzar sincronización solo después del seek
-            performSeekSynchronization();
-            
-            if (seekDistance > 0.5) {
-              console.log('🎬 Re-sincronización completa por seek de', seekDistance.toFixed(2), 'segundos');
-            }
-            
-            player.trigger('timeupdate');
-          }, 200);
-          
-          seekStart = null;
-        });
-        
-        // Manejar cambios de text tracks sin auto-sincronización
-        player.on('texttrackchange', function() {
-          console.log('Text track changed');
-        });
-        
-        // No hay monitoreo periódico - solo sincronización manual
-        let syncAnimationFrame; // Mantener variable para cleanup
-        
-        // Sincronización inicial solo al cargar
-        player.on('loadeddata', function() {
-          console.log('🎬 Video data loaded - sincronización inicial');
-        });
-        
-        player.on('playing', function() {
-          console.log('🎬 Video playing - sin auto-sincronización');
-        });
-        
-        // Cleanup mejorado para evitar memory leaks
-        const originalDispose = player.dispose;
-        player.dispose = function() {
-          // Limpiar todos los intervalos y timeouts
-          if (syncCheckInterval) {
-            clearInterval(syncCheckInterval);
-          }
-          if (syncAnimationFrame) {
-            cancelAnimationFrame(syncAnimationFrame);
-          }
-          if (seekingTimeout) {
-            clearTimeout(seekingTimeout);
-          }
-          
-          // Limpiar event listeners personalizados
+          // Re-sincronizar text tracks usando API oficial
           const textTracks = player.textTracks();
           for (let i = 0; i < textTracks.length; i++) {
             const track = textTracks[i];
-            if (track.removeEventListener) {
-              track.removeEventListener('cuechange', () => {});
-              track.removeEventListener('load', () => {});
+            if (track.mode === 'showing') {
+              // Forzar recálculo de cues activos (patrón oficial)
+              track.activeCues; // Acceso dispara recálculo interno
+              console.log('🎬 Text track re-sincronizado:', track.label);
+              break;
             }
           }
-          
-          originalDispose.call(this);
-        };
+        });
+        
+        // Actualizar UI solo cuando sea seguro (patrón oficial)
+        player.on('timeupdate', function() {
+          if (!isSeekingInProgress) {
+            // UI updates seguros durante reproducción normal
+            // Cualquier update de UI personalizado iría aquí
+          }
+        });
+        
+        // Manejo de cambios de text tracks
+        player.on('texttrackchange', function() {
+          console.log('🎬 Text track changed - sin interferencia con seeking');
+          if (!isSeekingInProgress) {
+            console.log('🎬 Seguro para actualizar subtítulos');
+          }
+        });
+        
+        // Sincronización inicial
+        player.on('loadeddata', function() {
+          console.log('🎬 Video data loaded - patrón oficial activo');
+        });
+        
+        player.on('playing', function() {
+          console.log('🎬 Video playing - sistema robusto funcionando');
+        });
         
         // Wait for video metadata to load before adding subtitles
         player.ready(() => {
@@ -463,29 +306,25 @@ const VideoPlayer = () => {
               console.log('Adding subtitle track:', track.label, 'URL:', track.src);
               const textTrack = player.addRemoteTextTrack(track, false);
               
-              // Monitorear la carga de subtítulos para ajustar sincronización
+              // Configuración oficial de eventos para text tracks
               if (textTrack && textTrack.track) {
                 textTrack.track.addEventListener('load', () => {
                   console.log('🎬 Subtítulos cargados para:', track.label);
-                  
-                  // Aplicar offset si se ha detectado desincronización
-                  if (subtitleOffset !== 0) {
-                    console.log('🎬 Aplicando offset de', subtitleOffset, 'segundos a subtítulos');
-                    const cues = textTrack.track.cues;
-                    if (cues) {
-                      for (let i = 0; i < cues.length; i++) {
-                        const cue = cues[i];
-                        cue.startTime += subtitleOffset;
-                        cue.endTime += subtitleOffset;
-                      }
-                    }
+                });
+                
+                // Evento oficial para cambios de cues (más específico que texttrackchange)
+                textTrack.track.addEventListener('cuechange', () => {
+                  if (!isSeekingInProgress) {
+                    console.log('🎬 Cue change - subtítulos actualizados naturalmente');
                   }
                 });
               }
             });
           }
-          
-          // Entrar automáticamente a pantalla completa cuando el reproductor esté listo
+        });
+        
+        // Entrar automáticamente a pantalla completa cuando el reproductor esté listo
+        player.ready(() => {
           setTimeout(() => {
             if (player.requestFullscreen) {
               player.requestFullscreen()
