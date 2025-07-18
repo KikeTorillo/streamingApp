@@ -321,6 +321,7 @@ const VideoPlayer = () => {
           autoplay: true,
           preload: "auto",
           fluid: true,
+          playbackRates: [0.5, 1, 1.25, 1.5, 2],
           sources: [
             {
               src: urlComplete,
@@ -337,6 +338,8 @@ const VideoPlayer = () => {
               smoothQualityChange: true,
               maxPlaylistRetries: 3,
               bandwidth: 4194304,
+              initialBandwidth: 2000000,
+              allowSeeksWithinUnsafeLiveWindow: true,
               playlistExclusionDuration: 60,
               maxBufferLength: 30
             },
@@ -356,6 +359,7 @@ const VideoPlayer = () => {
               "durationDisplay",
               "progressControl",
               "remainingTimeDisplay",
+              "playbackRateMenuButton",
               "audioTrackButton",
               "subsCapsButton",
               "pictureInPictureToggle",
