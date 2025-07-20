@@ -46,7 +46,7 @@
 }
 
 /* Ajuste cuando el sidebar está colapsado */
-.admin-layout--sidebar-collapsed .admin-layout__main {
+.admin-layout--collapsed .admin-layout__main {
   margin-left: 7.2rem; /* 72px sidebar colapsado */
 }
 
@@ -55,6 +55,9 @@
   /* Layout */
   padding: var(--space-lg) var(--space-xl);
   border-bottom: 0.1rem solid var(--border-default);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
   
   /* Colores */
   background-color: var(--bg-secondary);
@@ -66,6 +69,15 @@
   z-index: 100;
 }
 
+/* Botón de menú móvil - oculto por defecto */
+.admin-layout__mobile-menu-button {
+  display: none;
+  width: 4rem;
+  height: 4rem;
+  font-size: var(--font-size-lg);
+  flex-shrink: 0;
+}
+
 .admin-layout__header-content {
   /* Layout */
   display: flex;
@@ -73,6 +85,7 @@
   gap: var(--space-md);
   max-width: 144rem; /* 1440px */
   margin: 0 auto;
+  flex: 1; /* Para ocupar el espacio restante */
 }
 
 /* ===== BREADCRUMBS ===== */
@@ -402,7 +415,7 @@
     margin-left: 24rem; /* Sidebar más estrecho */
   }
   
-  .admin-layout--sidebar-collapsed .admin-layout__main {
+  .admin-layout--collapsed .admin-layout__main {
     margin-left: 6.4rem;
   }
   
@@ -425,12 +438,17 @@
     margin-left: 0; /* Sin margen en móvil */
   }
   
-  .admin-layout--sidebar-collapsed .admin-layout__main {
+  .admin-layout--collapsed .admin-layout__main {
     margin-left: 0;
   }
   
+  /* Mostrar botón de menú móvil */
+  .admin-layout__mobile-menu-button {
+    display: flex;
+  }
+  
   /* Overlay visible cuando sidebar no está colapsado */
-  .admin-layout:not(.admin-layout--sidebar-collapsed) .admin-layout__overlay {
+  .admin-layout:not(.admin-layout--collapsed) .admin-layout__overlay {
     display: block;
   }
   

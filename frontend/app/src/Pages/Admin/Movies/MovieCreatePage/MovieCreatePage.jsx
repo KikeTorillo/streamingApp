@@ -266,11 +266,11 @@ function MovieCreatePage() {
             <TMDBSearchView
               onSelectItem={handleSelectFromTMDBWithReset}
               onManualCreate={handleManualCreateWithReset}
-              contentType="all"
-              title="🎬 Buscar en TMDB"
+              contentType="movie"
+              title="🎬 Buscar Películas en TMDB"
               description="Busca películas en The Movie Database para agregar a tu catálogo"
-              placeholder="Ej: Avatar, Breaking Bad, Inception..."
-              helperText="Busca por título, año o palabras clave"
+              placeholder="Ej: Avatar, Inception, Avengers..."
+              helperText="Busca películas por título, año o palabras clave"
               showManualCreate={true}
             />
           )}

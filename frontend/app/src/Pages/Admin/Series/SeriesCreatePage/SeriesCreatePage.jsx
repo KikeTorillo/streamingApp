@@ -233,10 +233,10 @@ function SeriesCreatePage() {
               onSelectItem={handleSelectFromTMDBWithReset}
               onManualCreate={handleManualCreateWithReset}
               contentType="tv"
-              title="📺 Buscar en TMDB"
+              title="📺 Buscar Series en TMDB"
               description="Busca series en The Movie Database para agregar a tu catálogo"
               placeholder="Ej: Breaking Bad, Game of Thrones, The Office..."
-              helperText="Busca por título, año o palabras clave"
+              helperText="Busca series por título, año o palabras clave"
               showManualCreate={true}
             />
           )}

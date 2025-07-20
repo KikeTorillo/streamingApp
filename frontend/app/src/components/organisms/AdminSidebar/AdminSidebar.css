@@ -417,19 +417,19 @@
 }
 
 /* Mobile */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .admin-sidebar {
-    transform: translateX(-100%);
     width: 100vw;
     max-width: 32rem;
+    transform: translateX(0); /* Visible por defecto */
   }
   
-  .admin-sidebar--open {
-    transform: translateX(0);
+  .admin-sidebar--collapsed {
+    transform: translateX(-100%); /* Oculto solo cuando está colapsado */
   }
   
-  /* Overlay para móvil */
-  .admin-sidebar--open::before {
+  /* Overlay para móvil cuando sidebar está visible */
+  .admin-sidebar:not(.admin-sidebar--collapsed)::before {
     content: '';
     position: fixed;
     top: 0;

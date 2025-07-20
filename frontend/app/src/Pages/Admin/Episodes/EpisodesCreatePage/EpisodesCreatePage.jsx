@@ -233,25 +233,37 @@ function EpisodesCreatePage() {
 
       if (result.success) {
         console.log('✅ [EpisodesCreatePage] Episodio creado exitosamente');
-        triggerSuccess('¡Episodio creado exitosamente!');
+        
+        // ✅ Limpiar navegación
         resetNavigation();
 
-        // Si hay taskId, iniciar monitoreo
         if (result.taskId) {
+          // ✅ Hay procesamiento asíncrono - monitorear progreso
           console.log('🔄 [EpisodesCreatePage] Iniciando monitoreo de progreso:', result.taskId);
+          
           monitorProgress(
             result.taskId,
             'episodes',
             (status, progress, message) => {
               console.log(`📊 [EpisodesCreatePage] Estado: ${status} - ${progress}% - ${message}`);
             },
-            (success, error) => {
-              console.log('🏁 [EpisodesCreatePage] Proceso terminado:', { success, error });
-              // La redirección ya está manejada por el hook useSuccessRedirect
+            (finished, err) => {
+              if (finished) {
+                console.log('✅ [EpisodesCreatePage] Procesamiento completado');
+                triggerSuccess('¡Episodio creado exitosamente!');
+                resetCreationState();
+              } else if (err) {
+                console.error('❌ [EpisodesCreatePage] Error en procesamiento:', err);
+                resetCreationState();
+              }
             }
           );
+        } else {
+          // ✅ Procesamiento inmediato completado
+          console.log('✅ [EpisodesCreatePage] Procesamiento inmediato completado');
+          triggerSuccess('¡Episodio creado exitosamente!');
+          resetCreationState();
         }
-        // La redirección ya está manejada por el hook useSuccessRedirect
       } else {
         console.error('❌ [EpisodesCreatePage] Error al crear episodio:', result.error);
       }

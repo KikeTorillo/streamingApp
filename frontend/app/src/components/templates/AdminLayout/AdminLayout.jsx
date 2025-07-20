@@ -220,6 +220,17 @@ function AdminLayout({
       <div className="admin-layout__main">
         {/* ===== HEADER ===== */}
         <header className="admin-layout__header">
+          {/* Botón de menú móvil */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleSidebarToggle}
+            className="admin-layout__mobile-menu-button"
+            aria-label={isCollapsed ? 'Abrir menú' : 'Cerrar menú'}
+          >
+            ☰
+          </Button>
+
           {/* Título de página */}
           <div className="admin-layout__header-content">
             <div className="admin-layout__header-text">
