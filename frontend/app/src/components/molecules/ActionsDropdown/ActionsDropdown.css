@@ -347,20 +347,19 @@ table .actions-dropdown__menu,
 /* Móviles pequeños */
 @media (max-width: 480px) {
   .actions-dropdown__menu {
-    /* En móviles pequeños, centrar más */
-    left: 50%;
-    transform: translateX(-50%);
-    right: auto;
+    /* CORRECCIÓN: Mantener posicionamiento como desktop, no centrar */
+    /* Eliminar centrado forzado para mantener consistencia */
   }
   
+  /* Mantener transform-origin original según posición */
   .actions-dropdown__menu--bottom-right,
   .actions-dropdown__menu--bottom-left {
-    transform-origin: top center;
+    transform-origin: top;
   }
   
   .actions-dropdown__menu--top-right,
   .actions-dropdown__menu--top-left {
-    transform-origin: bottom center;
+    transform-origin: bottom;
   }
 }
 

@@ -145,6 +145,150 @@ This is a **monorepo streaming platform** with the following structure:
 - **Una responsabilidad**: Cada función/componente debe hacer una sola cosa bien
 - **Debugging fácil**: Si es difícil de debuggear, probablemente es muy complejo
 
+## Principio Mobile-First
+
+**REGLA FUNDAMENTAL**: DISEÑAR PRIMERO PARA MÓVIL
+- **OBLIGATORIO**: Comenzar siempre con estilos móvil como base
+- **OBLIGATORIO**: Usar `min-width` en media queries (mobile-first) NO `max-width` (desktop-first)
+- **OBLIGATORIO**: Touch targets mínimo 44px (4.4rem) para elementos interactivos
+- **OBLIGATORIO**: Optimizar para thumbs (pulgares) en pantallas pequeñas
+- **OBLIGATORIO**: Priorizar contenido esencial en móvil
+
+## Metodología de Resolución de Problemas CSS
+
+**PRINCIPIO FUNDAMENTAL**: Investigar → Entender → Solucionar Simple e Inteligente
+
+### Proceso de Resolución (Ejemplo: DataTable Scroll)
+
+#### 1. **INVESTIGACIÓN PROFUNDA**
+- **OBLIGATORIO**: Investigar la librería/framework antes de escribir CSS
+- **OBLIGATORIO**: Entender cómo funciona internamente (ej: TanStack Table)
+- **OBLIGATORIO**: Identificar la causa raíz, no solo los síntomas
+- **EJEMPLO**: TanStack Table aplica `style={{ width: header.getSize() }}` inline que sobrescribe CSS
+
+#### 2. **IDENTIFICAR EL PROBLEMA REAL**
+- **OBLIGATORIO**: Distinguir entre problemas de CSS vs configuración de librería
+- **OBLIGATORIO**: Verificar si hay estilos inline que sobrescriben
+- **OBLIGATORIO**: Revisar contenedores padre que puedan limitar
+- **EJEMPLO**: `overflow-x: hidden` en AdminLayout bloqueaba scroll del DataTable
+
+#### 3. **SOLUCIÓN SIMPLE E INTELIGENTE**
+- **PREFERIR**: Soluciones que trabajen CON la librería, no contra ella
+- **PREFERIR**: CSS inteligente vs fuerza bruta con `!important`
+- **PREFERIR**: Contenido natural + contenedor limitado vs anchos fijos
+- **EJEMPLO**: `max-width: 100vw` + `width: max-content` = scroll automático
+
+### Reglas de CSS Inteligente
+
+#### ✅ **HACER (Smart CSS)**
+```css
+/* Contenido natural + límites inteligentes */
+.wrapper {
+  max-width: 100vw; /* Limita a pantalla */
+}
+
+.content {
+  width: max-content; /* Respeta contenido natural */
+  min-width: 100%; /* Mínimo del contenedor */
+}
+```
+
+#### ❌ **EVITAR (Brute Force CSS)**
+```css
+/* Anchos fijos que rompen flexibilidad */
+.content {
+  width: 100rem !important; /* Demasiado rígido */
+  table-layout: fixed !important; /* Pierde adaptabilidad */
+}
+```
+
+### Metodología de Debugging
+
+#### 1. **Orden de Investigación**
+1. Revisar documentación de librería/framework
+2. Inspeccionar DOM para estilos inline inesperados
+3. Verificar contenedores padre (AdminLayout, etc.)
+4. Verificar viewport y meta tags
+5. Probar en dispositivos reales vs simulados
+
+#### 2. **Preguntas Clave**
+- ¿La librería está aplicando estilos que no esperamos?
+- ¿Hay un contenedor padre limitando el comportamiento?
+- ¿Estamos peleando contra el comportamiento natural?
+- ¿Podemos trabajar CON la librería en lugar de contra ella?
+
+#### 3. **Validación de Solución**
+- **OBLIGATORIO**: La solución debe funcionar en TODOS los casos (users, movies, series, etc.)
+- **OBLIGATORIO**: Debe ser mantenible y no frágil
+- **OBLIGATORIO**: Debe seguir principios mobile-first
+- **OBLIGATORIO**: Menos código CSS = mejor (simplicidad > complejidad)
+
+### Ejemplo de Éxito: DataTable Scroll
+```css
+/* ❌ ANTES: Fuerza bruta */
+.data-table__table {
+  width: 100rem !important; /* Rígido */
+  table-layout: fixed !important; /* Pierde flexibilidad */
+}
+
+/* ✅ DESPUÉS: Inteligente */
+.data-table {
+  max-width: 100vw; /* Límite inteligente */
+}
+
+.data-table__table {
+  width: max-content; /* Contenido natural */
+  min-width: 100%; /* Mínimo del contenedor */
+}
+```
+
+**Resultado**: Scroll automático cuando es necesario, tabla normal cuando no.
+
+### Reglas de CSS Mobile-First
+```css
+/* ✅ CORRECTO: Base móvil */
+.component {
+  /* Estilos móvil por defecto */
+  font-size: var(--font-size-sm);
+  padding: var(--space-sm);
+}
+
+/* ✅ CORRECTO: Tablet (min-width) */
+@media (min-width: 768px) {
+  .component {
+    font-size: var(--font-size-base);
+    padding: var(--space-md);
+  }
+}
+
+/* ✅ CORRECTO: Desktop (min-width) */
+@media (min-width: 1024px) {
+  .component {
+    font-size: var(--font-size-lg);
+    padding: var(--space-lg);
+  }
+}
+
+/* ❌ INCORRECTO: Desktop-first */
+@media (max-width: 767px) {
+  .component {
+    /* Esto es un parche, no mobile-first */
+  }
+}
+```
+
+### Breakpoints Estándar Mobile-First
+- **Base**: Móvil (320px - 767px) - ESTILOS POR DEFECTO
+- **Tablet**: `@media (min-width: 768px)` 
+- **Desktop**: `@media (min-width: 1024px)`
+- **Large Desktop**: `@media (min-width: 1200px)`
+
+### UX Mobile-First para Componentes
+- **DataTable**: Cards en móvil, tabla en desktop
+- **Navigation**: Hamburger menu en móvil, horizontal en desktop
+- **Forms**: Stack vertical en móvil, grid en desktop
+- **Modals**: Full-screen en móvil, centered en desktop
+
 ## Testing
 
 ### Frontend Testing Architecture

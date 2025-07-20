@@ -315,7 +315,6 @@ function DataTable({
                     key={header.id}
                     className={`data-table__th ${header.column.getCanSort() ? 'data-table__th--sortable' : ''
                       }`}
-                    style={{ width: header.getSize() }}
                   >
                     {header.isPlaceholder ? null : (
                       header.column.getCanSort() ? (

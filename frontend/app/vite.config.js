@@ -37,7 +37,7 @@ export default defineConfig(({ command, mode }) => {
       },
       hmr: {
         port: 8080,
-        host: 'localhost',
+        host: 'localhost',  // HMR solo para desarrollo local
         clientPort: 8080,
       },
       fs: {

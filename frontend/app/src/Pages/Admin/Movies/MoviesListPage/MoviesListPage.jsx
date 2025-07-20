@@ -113,7 +113,6 @@ function MoviesListPage() {
       id: 'category',
       accessorKey: 'category_name',
       header: 'Categoría',
-      size: 150,
       cell: ({ getValue, row }) => {
         const categoryName = getValue();
         const categoryId = row.original.category_id;
@@ -133,7 +132,6 @@ function MoviesListPage() {
       id: 'release_year',
       accessorKey: 'release_year',
       header: 'Año',
-      size: 100,
       cell: ({ getValue }) => (
         <span>
           {getValue()}
@@ -145,7 +143,6 @@ function MoviesListPage() {
       id: 'created_at',
       accessorKey: 'created_at',
       header: 'Fecha Agregada',
-      size: 140,
       cell: ({ getValue }) => {
         const date = new Date(getValue());
         const timeDisplay = formatMovieDate(getValue());

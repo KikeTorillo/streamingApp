@@ -68,7 +68,6 @@ function CategoriesListContent() {
     {
       accessorKey: 'id',
       header: 'ID',
-      size: 80,
       cell: ({ row }) => (
         <span>
           {row.original.id}
@@ -92,7 +91,6 @@ function CategoriesListContent() {
     {
       accessorKey: 'createdAt',
       header: 'Fecha de Creación',
-      size: 180,
       cell: ({ row }) => (
         <span>
           {formatCategoryDate(row.original.createdAt)}
@@ -102,7 +100,6 @@ function CategoriesListContent() {
     {
       accessorKey: 'updatedAt',
       header: 'Última Actualización',
-      size: 180,
       cell: ({ row }) => (
         <span>
           {formatCategoryDate(row.original.updatedAt)}

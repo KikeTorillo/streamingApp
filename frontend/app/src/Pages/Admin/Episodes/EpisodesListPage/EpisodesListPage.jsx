@@ -50,7 +50,6 @@ function EpisodesListPage() {
       id: 'id',
       accessorKey: 'id',
       header: 'ID',
-      size: 60,
       cell: ({ getValue }) => (
         <span>
           #{getValue()}
@@ -61,7 +60,6 @@ function EpisodesListPage() {
       id: 'title',
       accessorKey: 'title',
       header: 'Título del Episodio',
-      size: 250,
       cell: ({ getValue }) => {
         const title = getValue();
 
@@ -78,7 +76,6 @@ function EpisodesListPage() {
       id: 'serie_name',
       accessorKey: 'serie_name',
       header: 'Serie',
-      size: 200,
       cell: ({ getValue, row }) => {
         const serieName = getValue();
         const serieId = row.original.serie_id;
@@ -98,7 +95,6 @@ function EpisodesListPage() {
       id: 'season_episode',
       accessorKey: 'season',
       header: 'Temporada/Episodio',
-      size: 150,
       cell: ({ getValue, row }) => {
         const season = getValue();
         const episodeNumber = row.original.episode_number;
@@ -118,7 +114,6 @@ function EpisodesListPage() {
       id: 'created_at',
       accessorKey: 'created_at',
       header: 'Fecha Agregada',
-      size: 140,
       cell: ({ getValue }) => {
         const dateString = getValue();
         const date = new Date(dateString);

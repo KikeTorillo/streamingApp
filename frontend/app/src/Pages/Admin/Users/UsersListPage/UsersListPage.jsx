@@ -107,7 +107,6 @@ function UsersListPage() {
     {
       accessorKey: 'id',
       header: 'ID',
-      size: 80,
       cell: ({ getValue }) => (
         <span>
           #{getValue()}
@@ -135,7 +134,6 @@ function UsersListPage() {
     {
       accessorKey: 'roleName',
       header: 'Rol',
-      size: 120,
       cell: ({ getValue, row }) => {
         const role = getValue();
         const roleId = row.original.roleId;
@@ -157,7 +155,6 @@ function UsersListPage() {
     {
       accessorKey: 'createdAt',
       header: 'Fecha de Registro',
-      size: 150,
       cell: ({ getValue }) => (
         <span>
           {formatUserDate(getValue())}

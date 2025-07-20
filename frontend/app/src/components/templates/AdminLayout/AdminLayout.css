@@ -255,6 +255,10 @@
   
   /* Fondo */
   background-color: var(--bg-primary);
+  
+  /* CRÍTICO: Permitir overflow horizontal para DataTable */
+  min-width: 0; /* Permitir que el contenido se encoja */
+  overflow-x: auto; /* Permitir scroll horizontal cuando sea necesario */
 }
 
 .admin-layout__content-wrapper {
@@ -268,6 +272,10 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
+  
+  /* CRÍTICO: Prevenir scroll horizontal en toda la pantalla */
+  overflow-x: hidden;
+  min-width: 0;
 }
 
 /* ===== FOOTER ===== */

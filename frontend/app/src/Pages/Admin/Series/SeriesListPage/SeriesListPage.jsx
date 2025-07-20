@@ -45,7 +45,6 @@ function SeriesListPage() {
       id: 'id',
       accessorKey: 'id',
       header: 'ID',
-      size: 60,
       cell: ({ getValue }) => (
         <span>
           #{getValue()}
@@ -57,7 +56,6 @@ function SeriesListPage() {
       accessorKey: 'cover_image',
       header: 'Portada',
       enableSorting: false,
-      size: 80,
       cell: ({ getValue, row }) => {
         const coverImage = getValue();
         const title = row.original.title;
@@ -82,7 +80,6 @@ function SeriesListPage() {
       id: 'title',
       accessorKey: 'title',
       header: 'Título',
-      size: 200,
       cell: ({ getValue }) => {
         const title = getValue();
         
@@ -106,7 +103,6 @@ function SeriesListPage() {
       id: 'category',
       accessorKey: 'category_name',
       header: 'Categoría',
-      size: 150,
       cell: ({ getValue, row }) => {
         const categoryName = getValue();
         const categoryId = row.original.category_id;
@@ -126,7 +122,6 @@ function SeriesListPage() {
       id: 'release_year',
       accessorKey: 'release_year',
       header: 'Año',
-      size: 100,
       cell: ({ getValue }) => (
         <span>
           {getValue()}
@@ -138,7 +133,6 @@ function SeriesListPage() {
       id: 'episodes_count',
       accessorKey: 'episodes_count',
       header: 'Episodios',
-      size: 100,
       cell: ({ getValue }) => {
         const count = getValue() || 0;
         
@@ -157,7 +151,6 @@ function SeriesListPage() {
       id: 'created_at',
       accessorKey: 'created_at',
       header: 'Fecha Agregada',
-      size: 140,
       cell: ({ getValue }) => {
         const date = new Date(getValue());
         const now = new Date();
