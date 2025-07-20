@@ -10,14 +10,17 @@ import { Card, CardHeader, CardBody, CardTitle } from '../../../../components/at
 import { ContentImage } from '../../../../components/atoms/ContentImage/ContentImage';
 import './MovieEditPage.css';
 
-// Servicios
-import { getMovieByIdService } from '../../../../services/Movies/getMovieByIdService';
-import { updateMovieService } from '../../../../services/Movies/updateMovieService';
-import { getCategoriesService } from '../../../../services/Categories/getCategoriesService';
+// Hooks y contextos
+import { useMovies } from '../../../../app/context/MoviesContext';
+import { useCategories } from '../../../../hooks/useCategories';
 
 /**
- * MovieEditPage - Página de edición de películas
+ * MovieEditPage - VERSIÓN REFACTORIZADA CON MOVIESCONTEXT
  * 
+ * ✅ REFACTORIZACIÓN: Toda la lógica migrada a MoviesContext
+ * ✅ SIMPLICIDAD: Solo maneja UI y navegación
+ * ✅ CONSISTENCIA: Usa estados centralizados del contexto
+ * ✅ REUTILIZACIÓN: Lógica compartida entre componentes
  * ✅ CAMPOS EDITABLES: Solo portada, título, categoría y año
  * ✅ SISTEMA DE DISEÑO: Usa componentes con stories de Storybook
  * ✅ BACKEND: Homologado con campos reales del backend
@@ -28,16 +31,26 @@ function MovieEditPage() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  // ===== ESTADOS =====
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(null);
+  // ===== ESTADOS LOCALES =====
   const [success, setSuccess] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
-  const [movieData, setMovieData] = useState(null);
   const [initialData, setInitialData] = useState(null);
-  const [categories, setCategories] = useState([]);
   const [imagePreview, setImagePreview] = useState(null);
+  const [localError, setLocalError] = useState(null);
+
+  // ===== CONTEXTOS =====
+  const { 
+    currentMovie, 
+    loadingMovie, 
+    editing, 
+    error: contextError, 
+    loadMovieById, 
+    updateMovie, 
+    getMovieCoverUrl,
+    clearCurrentMovie 
+  } = useMovies();
+  
+  const { categories, loading: categoriesLoading } = useCategories();
 
   // ===== CONFIGURACIÓN DEL FORMULARIO =====
   
@@ -94,68 +107,46 @@ function MovieEditPage() {
     ];
   };
 
-  // ===== FUNCIONES DE DATOS =====
+  // ===== FUNCIONES DE DATOS SIMPLIFICADAS =====
   
   /**
-   * Cargar datos de la película desde el backend
+   * Cargar datos de la película usando el contexto
    */
   const loadMovieData = async () => {
     try {
-      setLoading(true);
-      setError(null);
+      setLocalError(null);
       
-      console.log('📥 Cargando datos de la película ID:', id);
+      console.log('📥 [MovieEditPage] Cargando datos de la película ID:', id);
       
-      // Cargar película y categorías en paralelo
-      const [movieResponse, categoriesResponse] = await Promise.all([
-        getMovieByIdService(id),
-        getCategoriesService()
-      ]);
+      // ✅ USAR FUNCIÓN DEL CONTEXTO
+      const result = await loadMovieById(id);
       
-      console.log('📋 Respuesta película:', movieResponse);
-      console.log('📂 Respuesta categorías:', categoriesResponse);
-      
-      // Manejar respuesta de la película
-      let movieInfo = null;
-      if (movieResponse.success) {
-        movieInfo = movieResponse.data;
-      } else if (movieResponse.id) {
-        movieInfo = movieResponse; // Respuesta directa
+      if (result.success) {
+        const movieInfo = result.data;
+        console.log('✅ [MovieEditPage] Película cargada exitosamente:', movieInfo);
+        
+        // ✅ USAR FUNCIÓN DEL CONTEXTO PARA PORTADA
+        if (movieInfo.cover_image) {
+          const currentImageUrl = getMovieCoverUrl(movieInfo.cover_image);
+          setImagePreview(currentImageUrl);
+        }
+        
+        // Configurar datos iniciales
+        setInitialData({ 
+          title: movieInfo.title || '',
+          categoryId: movieInfo.category_id || '',
+          releaseYear: movieInfo.release_year || new Date().getFullYear(),
+          // coverImage no se incluye en initialData porque es un archivo
+        });
+        
       } else {
-        throw new Error('Formato de respuesta inesperado del backend');
+        console.error('❌ [MovieEditPage] Error del contexto:', result.error);
+        setLocalError(result.error || 'Error al cargar datos de la película');
       }
-
-      // Manejar respuesta de categorías
-      let categoriesData = [];
-      if (Array.isArray(categoriesResponse)) {
-        categoriesData = categoriesResponse;
-      } else if (categoriesResponse.success && Array.isArray(categoriesResponse.data)) {
-        categoriesData = categoriesResponse.data;
-      }
-
-      console.log('✅ Película normalizada:', movieInfo);
-      console.log('✅ Categorías normalizadas:', categoriesData);
-      
-      // Configurar imagen preview actual
-      if (movieInfo.cover_image) {
-        const currentImageUrl = `${import.meta.env.VITE_CDN_URL || 'http://localhost:8082'}/covers/${movieInfo.cover_image}/cover.jpg`;
-        setImagePreview(currentImageUrl);
-      }
-      
-      setMovieData(movieInfo);
-      setCategories(categoriesData);
-      setInitialData({ 
-        title: movieInfo.title || '',
-        categoryId: movieInfo.category_id || '',
-        releaseYear: movieInfo.release_year || new Date().getFullYear(),
-        // coverImage no se incluye en initialData porque es un archivo
-      });
       
     } catch (error) {
-      console.error('💥 Error cargando datos de la película:', error);
-      setError(error.message || 'Error al cargar datos de la película');
-    } finally {
-      setLoading(false);
+      console.error('💥 [MovieEditPage] Error en loadMovieData:', error);
+      setLocalError(error.message || 'Error al cargar datos de la película');
     }
   };
 
@@ -180,16 +171,15 @@ function MovieEditPage() {
   };
 
   /**
-   * Manejar envío del formulario
+   * Manejar envío del formulario usando el contexto
    */
   const handleSubmit = async (formData) => {
     try {
-      setSaving(true);
-      setError(null);
+      setLocalError(null);
 
-      console.log('📤 Enviando actualización:', formData);
+      console.log('📤 [MovieEditPage] Enviando actualización:', formData);
 
-      // Preparar datos para el backend (solo campos que cambiaron)
+      // ✅ MIGRADO: Preparar datos para el backend (solo campos que cambiaron)
       const updateData = {};
       
       if (formData.title !== initialData.title) {
@@ -208,43 +198,41 @@ function MovieEditPage() {
         updateData.coverImage = formData.coverImage;
       }
 
-      // Si no hay cambios reales, no enviar
-      if (Object.keys(updateData).length === 0) {
-        alert('No hay cambios para guardar');
-        return;
+      console.log('📤 [MovieEditPage] Datos a actualizar:', updateData);
+
+      // ✅ USAR FUNCIÓN DEL CONTEXTO
+      const result = await updateMovie(id, updateData);
+
+      if (result.success) {
+        console.log('✅ [MovieEditPage] Película actualizada exitosamente:', result);
+        
+        // Éxito
+        setSuccess(true);
+        setHasChanges(false);
+
+        // Recargar datos actualizados
+        setTimeout(() => {
+          loadMovieData();
+        }, 1000);
+
+        // Redirigir después de un delay
+        setTimeout(() => {
+          navigate('/admin/movies');
+        }, 2500);
+        
+      } else {
+        console.error('❌ [MovieEditPage] Error del contexto:', result.error);
+        
+        if (result.error === 'No hay cambios para guardar') {
+          alert('No hay cambios para guardar');
+        } else {
+          setLocalError(result.error || 'Error al actualizar película');
+        }
       }
-
-      console.log('📤 Datos a actualizar:', updateData);
-
-      const response = await updateMovieService(id, updateData);
-
-      console.log('📥 Respuesta del backend:', response);
-
-      if (!response || (response.error && !response.success)) {
-        throw new Error(response?.error || 'Error al actualizar película');
-      }
-
-      // Éxito
-      setSuccess(true);
-      setHasChanges(false);
-      
-      console.log('✅ Película actualizada exitosamente');
-
-      // Recargar datos actualizados
-      setTimeout(() => {
-        loadMovieData();
-      }, 1000);
-
-      // Redirigir después de un delay
-      setTimeout(() => {
-        navigate('/admin/movies');
-      }, 2500);
 
     } catch (err) {
-      console.error('💥 Error actualizando película:', err);
-      setError(err.message || 'Error al actualizar película');
-    } finally {
-      setSaving(false);
+      console.error('💥 [MovieEditPage] Error en handleSubmit:', err);
+      setLocalError(err.message || 'Error al actualizar película');
     }
   };
 
@@ -268,14 +256,19 @@ function MovieEditPage() {
     if (id) {
       loadMovieData();
     } else {
-      setError('ID de película no proporcionado');
-      setLoading(false);
+      setLocalError('ID de película no proporcionado');
     }
+    
+    // Cleanup al desmontar
+    return () => {
+      clearCurrentMovie();
+    };
   }, [id]);
 
   // ===== RENDER =====
   
-  if (loading) {
+  // ✅ USAR ESTADOS DEL CONTEXTO
+  if (loadingMovie || categoriesLoading) {
     return (
       <AdminLayout
         title="Editar Película"
@@ -294,7 +287,9 @@ function MovieEditPage() {
     );
   }
 
-  if (error && !movieData) {
+  // ✅ USAR ESTADOS DEL CONTEXTO Y LOCALES
+  const errorToShow = contextError || localError;
+  if (errorToShow && !currentMovie) {
     return (
       <AdminLayout
         title="Error"
@@ -308,7 +303,7 @@ function MovieEditPage() {
         <div className="movie-edit__error">
           <div className="movie-edit__error-icon">❌</div>
           <h2>Error al cargar película</h2>
-          <p>{error}</p>
+          <p>{errorToShow}</p>
           <Button onClick={() => navigate('/admin/movies')} variant="primary">
             Volver a la lista
           </Button>
@@ -319,12 +314,12 @@ function MovieEditPage() {
 
   return (
     <AdminLayout
-      title={`Editar: ${movieData?.title || 'Película'}`}
-      subtitle={`${movieData?.release_year || ''} • ${categories.find(c => c.id === movieData?.category_id)?.name || 'Sin categoría'}`}
+      title={`Editar: ${currentMovie?.title || 'Película'}`}
+      subtitle={`${currentMovie?.release_year || ''} • ${categories.find(c => c.id === currentMovie?.category_id)?.name || 'Sin categoría'}`}
       breadcrumbs={[
         { label: 'Admin', href: '/admin' },
         { label: 'Películas', href: '/admin/movies' },
-        { label: movieData?.title || 'Editar' }
+        { label: currentMovie?.title || 'Editar' }
       ]}
       headerActions={
         <div className="movie-edit__header-actions">
@@ -332,7 +327,7 @@ function MovieEditPage() {
             variant="outline"
             size="sm"
             onClick={handleCancel}
-            disabled={saving}
+            disabled={editing}
           >
             Cancelar
           </Button>
@@ -340,11 +335,11 @@ function MovieEditPage() {
             variant="primary"
             size="sm"
             onClick={() => document.getElementById('movie-edit-form')?.requestSubmit()}
-            loading={saving}
-            disabled={!hasChanges || saving}
+            loading={editing}
+            disabled={!hasChanges || editing}
             leftIcon="💾"
           >
-            {saving ? 'Guardando...' : 'Guardar Cambios'}
+            {editing ? 'Guardando...' : 'Guardar Cambios'}
           </Button>
         </div>
       }
@@ -362,12 +357,12 @@ function MovieEditPage() {
           </div>
         )}
 
-        {error && (
+        {errorToShow && (
           <div className="movie-edit__error-message">
             <div className="movie-edit__error-icon">⚠️</div>
             <div className="movie-edit__error-content">
               <h4>Error al guardar</h4>
-              <p>{error}</p>
+              <p>{errorToShow}</p>
             </div>
           </div>
         )}
@@ -383,21 +378,21 @@ function MovieEditPage() {
                 <div className="movie-edit__info-left">
                   <div className="movie-edit__current-info-item">
                     <span className="movie-edit__current-info-label">ID:</span>
-                    <span className="movie-edit__current-info-value">{movieData?.id}</span>
+                    <span className="movie-edit__current-info-value">{currentMovie?.id}</span>
                   </div>
                   <div className="movie-edit__current-info-item">
                     <span className="movie-edit__current-info-label">Título:</span>
-                    <span className="movie-edit__current-info-value">{movieData?.title}</span>
+                    <span className="movie-edit__current-info-value">{currentMovie?.title}</span>
                   </div>
                   <div className="movie-edit__current-info-item">
                     <span className="movie-edit__current-info-label">Categoría:</span>
                     <span className="movie-edit__current-info-value">
-                      {categories.find(c => c.id === movieData?.category_id)?.name || 'Sin categoría'}
+                      {categories.find(c => c.id === currentMovie?.category_id)?.name || 'Sin categoría'}
                     </span>
                   </div>
                   <div className="movie-edit__current-info-item">
                     <span className="movie-edit__current-info-label">Año:</span>
-                    <span className="movie-edit__current-info-value">{movieData?.release_year}</span>
+                    <span className="movie-edit__current-info-value">{currentMovie?.release_year}</span>
                   </div>
                 </div>
                 
@@ -408,7 +403,7 @@ function MovieEditPage() {
                     {imagePreview ? (
                       <ContentImage
                         src={imagePreview}
-                        alt={`Portada de ${movieData?.title}`}
+                        alt={`Portada de ${currentMovie?.title}`}
                         aspectRatio="2/3"
                         contentType="movie"
                         placeholder="🎬"
@@ -437,26 +432,26 @@ function MovieEditPage() {
               <p>Modifica los campos que necesites. Solo se enviarán los campos que cambies.</p>
             </CardHeader>
             <CardBody>
-              {movieData && (
+              {currentMovie && (
                 <DynamicForm
                   id="movie-edit-form"
                   fields={getEditFormFields()}
                   initialData={{
-                    title: movieData.title || '',
-                    categoryId: movieData.category_id || '',
-                    releaseYear: movieData.release_year || new Date().getFullYear()
+                    title: currentMovie.title || '',
+                    categoryId: currentMovie.category_id || '',
+                    releaseYear: currentMovie.release_year || new Date().getFullYear()
                     // coverImage no se incluye porque es un archivo
                   }}
                   onSubmit={handleSubmit}
                   onChange={handleFormChange}
-                  loading={saving}
-                  disabled={saving || success}
+                  loading={editing}
+                  disabled={editing || success}
                   columnsPerRow={2}
                   tabletColumns={1}
                   mobileColumns={1}
                   fieldSize="md"
                   fieldRounded="md"
-                  submitText={saving ? 'Guardando...' : 'Guardar Cambios'}
+                  submitText={editing ? 'Guardando...' : 'Guardar Cambios'}
                   submitVariant="primary"
                   submitSize="md"
                   submitIcon="💾"
@@ -469,15 +464,15 @@ function MovieEditPage() {
                       variant: 'outline',
                       text: 'Cancelar',
                       onClick: handleCancel,
-                      disabled: saving
+                      disabled: editing
                     },
                     {
                       key: 'save',
                       type: 'submit',
                       variant: 'primary',
-                      text: saving ? 'Guardando...' : 'Guardar Cambios',
-                      loading: saving,
-                      disabled: !hasChanges || saving,
+                      text: editing ? 'Guardando...' : 'Guardar Cambios',
+                      loading: editing,
+                      disabled: !hasChanges || editing,
                       leftIcon: '💾'
                     }
                   ]}

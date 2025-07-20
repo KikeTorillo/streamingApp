@@ -1,135 +1,77 @@
 // ===== USERS LIST PAGE - HOMOLOGADO CON BACKEND =====
 // src/Pages/Admin/Users/UsersListPage/UsersListPage.jsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { DataTable } from '../../../../components/organisms/DataTable/DataTable';
 import { Button } from '../../../../components/atoms/Button/Button';
 import { Badge } from '../../../../components/atoms/Badge/Badge';
+import { useUsers } from '../../../../app/context/UserContext';
+import { useAlertContext } from '../../../../app/context/AlertContext';
 import './UsersListPage.css';
 
 // Servicios de usuarios
-import { getUsersService } from '../../../../services/Users/getUsersService';
-import { deleteUserService } from '../../../../services/Users/deleteUserService';
+// deleteUserService ahora se maneja en UserContext
 
 /**
- * UsersListPage - Página de gestión de usuarios HOMOLOGADA
+ * UsersListPage - Página de gestión de usuarios REFACTORIZADA
  * 
- * ✅ CORREGIDO: Mapeo correcto de campos del backend
- * ✅ CORREGIDO: Manejo de respuestas estructuradas
- * ✅ CORREGIDO: Estados y roles correctos
- * ✅ AÑADIDO: Logs de debugging
- * ✅ AÑADIDO: Manejo de sesión expirada
+ * ✅ MIGRADO: Usa UserContext para gestión de estado
+ * ✅ SIMPLIFICADO: Lógica centralizada en el contexto
+ * ✅ MANTENIDO: Funcionalidad completa
  */
 function UsersListPage() {
   const navigate = useNavigate();
+  
+  // ===== CONTEXTO DE USUARIOS =====
+  const {
+    users,
+    loading,
+    error,
+    deleting,
+    loadUsers,
+    refreshUsers,
+    deleteUser,
+    formatUserDate,
+    isCurrentUser,
+    getUserStats
+  } = useUsers();
 
-  // ===== ESTADOS =====
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [deleting, setDeleting] = useState(null);
-
-  // ===== FUNCIONES AUXILIARES =====
-
-  /**
-   * ✅ CORREGIDO: Formatear fechas
-   */
-  const formatDate = (dateString) => {
-    if (!dateString) return 'No disponible';
-
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('es-ES', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    } catch (error) {
-      return 'Fecha inválida';
-    }
-  };
-
-  /**
-   * ✅ NUEVO: Verificar si es el usuario actual
-   */
-  const isCurrentUser = (userId) => {
-    try {
-      const sessionUser = JSON.parse(sessionStorage.getItem('sessionUser') || '{}');
-      return sessionUser.sub === userId;
-    } catch {
-      return false;
-    }
-  };
-
-  // ===== FUNCIONES DE DATOS =====
-
-  /**
-   * ✅ CORREGIDO: Cargar usuarios con SOLO campos reales del backend
-   */
-  const loadUsers = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      console.log('📥 Cargando usuarios...');
-      const response = await getUsersService();
-
-      // ✅ MANEJAR respuesta estructurada
-      if (response.message === 'session expired' && response.error) {
-        console.log('🔒 Sesión expirada, redirigiendo...');
-        sessionStorage.clear();
-        navigate('/login');
-        return;
-      }
-
-      if (!response.success) {
-        throw new Error(response.error || 'Error al cargar usuarios');
-      }
-
-      const rawUsers = Array.isArray(response.data) ? response.data : [];
-      // ✅ MAPEAR SOLO CAMPOS QUE EXISTEN EN EL BACKEND
-      const mappedUsers = rawUsers.map(user => ({
-        createdAt: user.createdAt,
-        email: user.email,
-        id: user.id,
-        roleId: user.roleId,
-        roleName: user.roleName,
-        updatedAt: user.updated_at,
-        userName: user.userName,
-      }));
-
-      setUsers(mappedUsers);
-
-    } catch (error) {
-      console.error('💥 Error loading users:', error);
-      setError(error.message || 'Error al cargar usuarios');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { showInfo } = useAlertContext();
 
   // ===== EFECTOS =====
   useEffect(() => {
     loadUsers();
   }, []);
 
+  // ===== MANEJO DE SESIÓN EXPIRADA =====
+  useEffect(() => {
+    if (error === 'SESSION_EXPIRED') {
+      navigate('/login');
+    }
+  }, [error, navigate]);
+
   // ===== FUNCIONES DE MANEJO =====
 
   /**
-   * ✅ CORREGIDO: Ver usuario
+   * Ver usuario - TODO: Implementar modal de detalles
    */
-  const handleViewUser = async (user) => {
+  const handleViewUser = (user) => {
     console.log('👁️ Ver usuario:', user);
-    // TODO: Implementar modal de detalles o navegar a página de detalle
-    alert(`Ver detalles de ${user.userName}\n\nID: ${user.id}\nEmail: ${user.email}\nRol: ${user.roleName}\nEstado: ${user.status}`);
+    showInfo(
+      `<strong>ID:</strong> ${user.id}<br/>` +
+      `<strong>Email:</strong> ${user.email}<br/>` +
+      `<strong>Rol:</strong> ${user.roleName}`,
+      {
+        title: `Detalles de ${user.userName}`,
+        size: 'md'
+      }
+    );
   };
 
   /**
-   * ✅ CORREGIDO: Editar usuario
+   * Editar usuario
    */
   const handleEditUser = (user) => {
     console.log('✏️ Editar usuario:', user);
@@ -137,62 +79,13 @@ function UsersListPage() {
   };
 
   /**
-   * ✅ CORREGIDO: Eliminar usuario con validaciones
+   * Eliminar usuario - Usa función del contexto
    */
-  const handleDeleteUser = async (user) => {
-    console.log('🗑️ Eliminar usuario:', user);
-
-    // ✅ VERIFICAR: No eliminar usuario actual
-    if (isCurrentUser(user.id)) {
-      alert('❌ No puedes eliminar tu propia cuenta.');
-      return;
-    }
-
-    // ✅ VERIFICAR: No eliminar último admin
-    const adminCount = users.filter(u => u.roleId === 1).length;
-    if (user.roleId === 1 && adminCount <= 1) {
-      alert('❌ No puedes eliminar el último administrador del sistema.');
-      return;
-    }
-
-    const confirmDelete = window.confirm(
-      `¿Estás seguro de que deseas eliminar el usuario "${user.userName}"?\n\n` +
-      `Email: ${user.email}\n` +
-      `Rol: ${user.roleName}\n\n` +
-      `Esta acción no se puede deshacer.`
-    );
-
-    if (!confirmDelete) return;
-
-    try {
-      setDeleting(user.id);
-      console.log('🔄 Eliminando usuario:', user.id);
-
-      const response = await deleteUserService(user.id);
-
-      // ✅ MANEJAR respuesta estructurada
-      if (response.message === 'session expired' && response.error) {
-        sessionStorage.clear();
-        navigate('/login');
-        return;
-      }
-
-      if (!response.success) {
-        throw new Error(response.error || 'Error al eliminar usuario');
-      }
-
-      // ✅ ACTUALIZAR lista local
-      setUsers(prevUsers => prevUsers.filter(u => u.id !== user.id));
-
-      console.log('✅ Usuario eliminado exitosamente');
-      alert(`✅ Usuario "${user.userName}" eliminado correctamente.`);
-
-    } catch (err) {
-      console.error('💥 Error deleting user:', err);
-      alert(`❌ Error al eliminar el usuario: ${err.message}`);
-    } finally {
-      setDeleting(null);
-    }
+  const handleDeleteUser = (user) => {
+    console.log('🗑️ [UsersListPage] Solicitud de eliminación:', user);
+    
+    // El contexto maneja toda la lógica de confirmación y mensajes
+    deleteUser(user);
   };
 
   /**
@@ -203,10 +96,10 @@ function UsersListPage() {
   };
 
   /**
-   * Refrescar lista
+   * Refrescar lista - Usa función del contexto
    */
   const handleRefresh = () => {
-    loadUsers();
+    refreshUsers();
   };
 
   // ===== CONFIGURACIÓN DE COLUMNAS (SOLO CAMPOS REALES) =====
@@ -267,21 +160,14 @@ function UsersListPage() {
       size: 150,
       cell: ({ getValue }) => (
         <span>
-          {formatDate(getValue())}
+          {formatUserDate(getValue())}
         </span>
       )
     },
   ];
 
-  // ===== ESTADÍSTICAS (SOLO DATOS REALES) =====
-  const stats = {
-    total: users.length,
-    admins: users.filter(u => u.roleId === 1).length,
-    editors: users.filter(u => u.roleId === 2).length,
-    regularUsers: users.filter(u => u.roleId === 3).length,
-    withEmail: users.filter(u => u.email).length,
-    withoutEmail: users.filter(u => !u.email).length
-  };
+  // ===== ESTADÍSTICAS - USA FUNCIÓN DEL CONTEXTO =====
+  const stats = getUserStats();
 
   // ===== RENDER =====
   return (

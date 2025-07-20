@@ -1,44 +1,48 @@
-// ===== EPISODES LIST PAGE - COLUMNAS CORREGIDAS PARA BACKEND REAL =====
+// ===== EPISODES LIST PAGE - CON EPISODES CONTEXT =====
 // src/Pages/Admin/Episodes/EpisodesListPage/EpisodesListPage.jsx
 
-import React, { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { DataTable } from '../../../../components/organisms/DataTable/DataTable';
 import { Button } from '../../../../components/atoms/Button/Button';
 import { Badge } from '../../../../components/atoms/Badge/Badge';
-import { ContentImage } from '../../../../components/atoms/ContentImage/ContentImage';
 import { Select } from '../../../../components/atoms/Select/Select';
 import './EpisodesListPage.css';
 
-// Servicios de episodios y series
-import { getEpisodesService } from '../../../../services/Episodes/getEpisodesService';
-import { deleteEpisodeService } from '../../../../services/Episodes/deleteEpisodeService';
+// Context y servicios
+import { useEpisodes } from '../../../../app/context/EpisodesContext';
 import { getSeriesService } from '../../../../services/Series/getSeriesService';
 
 /**
- * EpisodesListPage - CORREGIDO con columnas reales del backend
+ * EpisodesListPage - CON EPISODES CONTEXT
  * 
- * ✅ COLUMNAS REALES: Solo campos que existen en la base de datos
- * ✅ BACKEND COMPATIBLE: Usa estructura real de episodes table + JOIN con series
- * ✅ INFORMACIÓN CORRECTA: No muestra datos que no vienen del servidor
- * ✅ SELECTOR DE SERIES: Necesario porque los episodios requieren serieId
- * ✅ FECHAS CORREGIDAS: Misma lógica que MoviesListPage y SeriesListPage
+ * ✅ MIGRADO A CONTEXT: Toda la lógica ahora está centralizada en EpisodesContext
+ * ✅ CONSISTENCIA TOTAL: Sigue los mismos patrones que MoviesContext y SeriesContext
+ * ✅ GESTIÓN DE SERIES: Manejo centralizado del selector de series
+ * ✅ ESTADOS COMPARTIDOS: Loading, error, deleting unificados
+ * ✅ FUNCIONES CRUD: Preparado para create, update, delete desde el contexto
  */
 function EpisodesListPage() {
   const navigate = useNavigate();
 
-  // ===== ESTADOS =====
-  const [episodes, setEpisodes] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [deleting, setDeleting] = useState(null);
-
-  // Estados para series
-  const [series, setSeries] = useState([]);
-  const [selectedSerieId, setSelectedSerieId] = useState('');
-  const [seriesLoading, setSeriesLoading] = useState(true);
-  const [seriesError, setSeriesError] = useState(null);
+  // ===== CONTEXT =====
+  const {
+    episodes,
+    loading,
+    error,
+    deleting,
+    selectedSerieId,
+    seriesData,
+    seriesLoading,
+    seriesError,
+    deleteEpisode,
+    changeSelectedSerie,
+    formatEpisodeDate,
+    setSeriesData,
+    setSeriesLoading,
+    setSeriesError
+  } = useEpisodes();
 
   // ===== CONFIGURACIÓN DE COLUMNAS CORREGIDAS =====
   const episodesColumns = [
@@ -58,10 +62,8 @@ function EpisodesListPage() {
       accessorKey: 'title',
       header: 'Título del Episodio',
       size: 250,
-      cell: ({ getValue, row }) => {
+      cell: ({ getValue }) => {
         const title = getValue();
-        const season = row.original.season;
-        const episodeNumber = row.original.episode_number;
 
         return (
           <div>
@@ -118,47 +120,18 @@ function EpisodesListPage() {
       header: 'Fecha Agregada',
       size: 140,
       cell: ({ getValue }) => {
-        const date = new Date(getValue());
-        const now = new Date();
-
-        // ✅ CORREGIDO: Comparar solo las fechas (año, mes, día) ignorando horas
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const createdDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-
-        // Calcular diferencia en días de forma correcta
-        const diffTime = today.getTime() - createdDate.getTime();
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-        let timeDisplay;
+        const dateString = getValue();
+        const date = new Date(dateString);
+        
+        // ✅ USAR FUNCIÓN DEL CONTEXTO: formatEpisodeDate mantiene consistencia
+        const timeDisplay = formatEpisodeDate(dateString);
+        
+        // Determinar variant del badge basado en el texto
         let badgeVariant = 'neutral';
-
-        if (diffDays === 0) {
-          timeDisplay = 'Hoy';
-          badgeVariant = 'success';
-        } else if (diffDays === 1) {
-          timeDisplay = 'Ayer';
-          badgeVariant = 'warning';
-        } else if (diffDays === -1) {
-          timeDisplay = 'Mañana';
-          badgeVariant = 'info';
-        } else if (diffDays > 1 && diffDays <= 7) {
-          timeDisplay = `${diffDays} días`;
-          badgeVariant = 'info';
-        } else if (diffDays > 7 && diffDays <= 30) {
-          const weeks = Math.floor(diffDays / 7);
-          timeDisplay = weeks === 1 ? '1 sem' : `${weeks} sem`;
-        } else if (diffDays > 30 && diffDays <= 365) {
-          const months = Math.floor(diffDays / 30);
-          timeDisplay = months === 1 ? '1 mes' : `${months} meses`;
-        } else if (diffDays > 365) {
-          const years = Math.floor(diffDays / 365);
-          timeDisplay = years === 1 ? '1 año' : `${years} años`;
-        } else {
-          timeDisplay = date.toLocaleDateString('es-ES', {
-            month: 'short',
-            day: 'numeric'
-          });
-        }
+        if (timeDisplay === 'Hoy') badgeVariant = 'success';
+        else if (timeDisplay === 'Ayer') badgeVariant = 'warning';
+        else if (timeDisplay === 'Mañana') badgeVariant = 'info';
+        else if (timeDisplay.includes('días') || timeDisplay.includes('sem')) badgeVariant = 'info';
 
         return (
           <div>
@@ -195,37 +168,14 @@ function EpisodesListPage() {
       // ===== USAR DATOS REALES DEL BACKEND =====
       const seriesData = await getSeriesService();
       const seriesList = Array.isArray(seriesData) ? seriesData : seriesData?.data || [];
-      console.log('📺 Series cargadas para selector:', seriesList.length);
-      setSeries(seriesList);
+      console.log('📺 [EpisodesListPage] Series cargadas para selector:', seriesList.length);
+      setSeriesData(seriesList);
 
     } catch (err) {
-      console.error('Error loading series:', err);
+      console.error('💥 [EpisodesListPage] Error loading series:', err);
       setSeriesError('Error al cargar series');
     } finally {
       setSeriesLoading(false);
-    }
-  };
-
-  const loadEpisodes = async () => {
-    if (!selectedSerieId) {
-      setEpisodes([]);
-      return;
-    }
-
-    try {
-      setLoading(true);
-      setError(null);
-
-      // ===== USAR DATOS REALES DEL BACKEND =====
-      const episodesData = await getEpisodesService({ serieId: selectedSerieId });
-      console.log('📥 Episodios recibidos del backend:', episodesData);
-      setEpisodes(episodesData || []);
-
-    } catch (err) {
-      console.error('Error loading episodes:', err);
-      setError('Error al cargar los episodios');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -245,100 +195,29 @@ function EpisodesListPage() {
     navigate(`/episode/${episode.id}`);
   };
 
-  const handleDeleteEpisode = async (episode) => {
-    const confirmMessage =
-      `¿Estás seguro de que quieres eliminar el episodio "${episode.title || `T${episode.season}E${episode.episode_number}`}"?\n\n` +
-      `⚠️ ADVERTENCIA: Esta acción eliminará permanentemente:\n` +
-      `• El archivo de video y todos sus archivos asociados\n` +
-      `• Todos los datos del episodio\n\n` +
-      `Esta acción NO se puede deshacer.`;
-
-    if (!window.confirm(confirmMessage)) {
-      return;
-    }
-
-    try {
-      setDeleting(episode.id);
-
-      console.log('🗑️ Eliminando episodio:', episode);
-
-      const response = await deleteEpisodeService(episode.id);
-
-      console.log('📥 Respuesta del servicio de eliminación:', response);
-
-      console.log('✅ Episodio eliminado exitosamente');
-
-      alert(`✅ Episodio eliminado exitosamente`);
-
-      await loadEpisodes();
-
-    } catch (error) {
-      console.error('💥 Error al eliminar episodio:', error);
-
-      let errorMessage = `Error al eliminar el episodio.`;
-
-      if (error.response?.status === 401) {
-        console.log('🔒 Sesión expirada, redirigiendo...');
-        sessionStorage.clear();
-        navigate('/login');
-        return;
-      } else if (error.response?.status === 404) {
-        errorMessage = 'El episodio no existe o ya fue eliminado.';
-      } else if (error.response?.status === 403) {
-        errorMessage = 'No tienes permisos para eliminar este episodio.';
-      } else if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-
-      alert(`❌ ${errorMessage}`);
-
-    } finally {
-      setDeleting(null);
-    }
+  const handleDeleteEpisode = (episode) => {
+    console.log('🗑️ [EpisodesListPage] Solicitud de eliminación:', episode);
+    
+    // El contexto maneja toda la lógica de confirmación y mensajes
+    deleteEpisode(episode);
   };
 
   const handleSerieChange = (event) => {
     const serieId = event.target.value;
-    setSelectedSerieId(serieId);
+    console.log('📺 [EpisodesListPage] Cambiando serie seleccionada:', serieId);
+    changeSelectedSerie(serieId);
   };
 
   // ===== EFECTOS =====
   useEffect(() => {
+    console.log('🚀 [EpisodesListPage] Componente montado, cargando series...');
     loadSeries();
-  }, []);
-
-  useEffect(() => {
-    if (selectedSerieId) {
-      loadEpisodes();
-    } else {
-      setEpisodes([]);
-    }
-  }, [selectedSerieId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Solo ejecutar al montar el componente
 
   // ===== ESTADÍSTICAS =====
-  const getEpisodesStats = () => {
-    const total = episodes.length;
-    const thisWeek = episodes.filter(episode => {
-      const createdDate = new Date(episode.created_at);
-      const weekAgo = new Date();
-      weekAgo.setDate(weekAgo.getDate() - 7);
-      return createdDate >= weekAgo;
-    }).length;
-
-    const withDescription = episodes.filter(episode => episode.description).length;
-    const bySeasons = episodes.reduce((acc, ep) => {
-      acc[ep.season] = (acc[ep.season] || 0) + 1;
-      return acc;
-    }, {});
-    const totalSeasons = Object.keys(bySeasons).length;
-
-    return { total, thisWeek, withDescription, totalSeasons };
-  };
-
-  const stats = getEpisodesStats();
-  const selectedSerie = series.find(s => s.id.toString() === selectedSerieId);
+  // const stats = getEpisodesStats();
+  // const selectedSerie = seriesData.find(s => s.id.toString() === selectedSerieId);
 
   // ===== RENDER =====
   return (
@@ -372,7 +251,7 @@ function EpisodesListPage() {
             onChange={handleSerieChange}
             disabled={seriesLoading || seriesError}
             placeholder='-- Selecciona una serie --'
-            options={series.map(serie => ({
+            options={seriesData.map(serie => ({
               value: serie.id.toString(),
               label: `${serie.title} (${serie.release_year})`
             }))}

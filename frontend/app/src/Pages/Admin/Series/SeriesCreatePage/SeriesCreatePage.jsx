@@ -1,4 +1,4 @@
-// ===== SERIES CREATE PAGE - VERSION ACTUALIZADA =====
+// ===== SERIES CREATE PAGE - USANDO CONTEXTO =====
 // src/Pages/Admin/Series/SeriesCreatePage/SeriesCreatePage.jsx
 
 import React, { useState } from 'react';
@@ -14,20 +14,18 @@ import { Card, CardHeader, CardBody, CardTitle } from '../../../../components/at
 import { TMDBSearchView } from '../../../../components/organisms/TMDBSearchView/TMDBSearchView';
 import { SeriesFormView } from './components/SeriesFormView';
 
-// ===== SERVICIOS Y HOOKS =====
-import { createSeriesService } from '../../../../services/Series/createSeriesService';
+// ===== CONTEXTO Y HOOKS =====
+import { useSeries } from '../../../../app/context/SeriesContext';
 import { tmdbService } from '../../../../services/tmdb/TMDBService';
 import { Spinner } from "../../../../components/atoms/Spinner/Spinner";
-import { useUploadProgress } from "../../../../hooks/useUploadProgress";
 import { useCategories } from "../../../../hooks/useCategories";
 import { useFormNavigation } from "../../../../hooks/useFormNavigation";
-import { filterEmptyFields } from '../../../../utils/formUtils';
 
 // ===== ESTILOS =====
 import './SeriesCreatePage.css';
 
 /**
- * SeriesCreatePage - VERSIÓN ACTUALIZADA SIN ORIGINAL_TITLE
+ * SeriesCreatePage - USANDO CONTEXTO DE SERIES
  * ✅ CAMPO REMOVIDO: original_title eliminado del formulario
  * ✅ FILTRO DE CAMPOS: Solo envía campos con valores al backend
  * ✅ INTEGRACIÓN TMDB: Conecta con la API real usando VITE_TMDB_API_KEY
@@ -35,16 +33,25 @@ import './SeriesCreatePage.css';
  * ✅ FORMULARIO OPTIMIZADO: Campos correctos según el sistema de diseño
  * ✅ MANEJO DE ERRORES: Validaciones y estados de error mejorados
  * ✅ UX MEJORADA: Estados de carga, confirmaciones, navegación fluida
+ * ✅ CONTEXTO: Usa SeriesContext para toda la lógica de creación
  */
 function SeriesCreatePage() {
   const navigate = useNavigate();
 
-  // ===== ESTADOS PRINCIPALES =====
-  const [success, setSuccess] = useState(false);
+  // ===== CONTEXTO DE SERIES =====
+  const {
+    creating,
+    processing,
+    uploadProgress,
+    uploadStatus,
+    error: contextError,
+    createSeries,
+    resetCreationState
+  } = useSeries();
 
-  // ===== ESTADOS DE FORMULARIO =====
-  const [formLoading, setFormLoading] = useState(false);
-  const [submitError, setSubmitError] = useState(null);
+  // ===== ESTADOS LOCALES =====
+  const [success, setSuccess] = useState(false);
+  const [progressMessage, setProgressMessage] = useState('');
 
   // ===== HOOKS =====
   const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
@@ -58,21 +65,16 @@ function SeriesCreatePage() {
     resetNavigation
   } = useFormNavigation();
 
-  // ===== ESTADO DE PROGRESO DE SUBIDA =====
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [progressMessage, setProgressMessage] = useState('');
-  const { monitorProgress, resetProgress } = useUploadProgress();
-
 
   // ===== WRAPPER PARA NAVEGACIÓN CON RESET DE ERRORES =====
   const handleSelectFromTMDBWithReset = (item) => {
     handleSelectFromTMDB(item, 'tv');
-    setSubmitError(null);
+    resetCreationState(); // Reset del contexto
   };
 
   const handleManualCreateWithReset = () => {
     handleManualCreate();
-    setSubmitError(null);
+    resetCreationState(); // Reset del contexto
   };
 
   // ===== GENERACIÓN DE CAMPOS DEL FORMULARIO (SIN ORIGINAL_TITLE) =====
@@ -172,74 +174,40 @@ function SeriesCreatePage() {
   };
 
 
-  // ===== HANDLER DEL FORMULARIO CON FILTRO DE CAMPOS VACÍOS =====
+  // ===== CALLBACK PARA PROGRESO DEL CONTEXTO =====
+  const handleProgressCallback = (progress, status, message) => {
+    console.log(`📈 Progreso: ${progress}% - ${status} - ${message}`);
+    setProgressMessage(message);
+    
+    if (status === 'completed') {
+      setSuccess(true);
+      resetNavigation();
+      setTimeout(() => {
+        navigate('/admin/series');
+      }, 1500);
+    }
+  };
+
+  // ===== HANDLER DEL FORMULARIO USANDO CONTEXTO =====
   const handleFormSubmit = async (seriesData) => {
-    setFormLoading(true);
-    setSubmitError(null);
-    setIsProcessing(true);
-    setProgressMessage('Subiendo imagen de portada...');
-
     try {
-      console.log('📤 Datos originales:', seriesData);
+      console.log('📤 Datos del formulario:', seriesData);
       
-      // Filtrar campos vacíos antes de enviar
-      const filteredData = filterEmptyFields(seriesData);
-      console.log('📤 Datos filtrados (sin campos vacíos):', filteredData);
+      setProgressMessage('Iniciando creación de la serie...');
+      
+      const result = await createSeries(seriesData, handleProgressCallback);
 
-      const result = await createSeriesService(filteredData);
+      console.log('📥 Respuesta del contexto:', result);
 
-      console.log('✅ Contenido creado exitosamente:', result);
-
-      const taskId = result?.taskId || result?.task_id || result?.id;
-
-      if (taskId) {
-        setProgressMessage('Procesando datos de la serie...');
-        monitorProgress(taskId, 'series', null, (finished, err) => {
-          if (finished) {
-            setProgressMessage('¡Serie creada exitosamente!');
-            setSuccess(true);
-            resetNavigation();
-            setTimeout(() => {
-              setIsProcessing(false);
-              navigate('/admin/series');
-              resetProgress();
-            }, 1500);
-          } else if (err) {
-            setIsProcessing(false);
-            setSubmitError(err);
-            resetProgress();
-          }
-        });
-      } else {
-        setProgressMessage('¡Serie creada exitosamente!');
-        setSuccess(true);
-        resetNavigation();
-        setTimeout(() => {
-          setIsProcessing(false);
-          navigate('/admin/series');
-        }, 1500);
+      if (!result.success) {
+        throw new Error(result.error || 'Error al crear serie');
       }
+
+      console.log('✅ Serie creada exitosamente desde contexto');
 
     } catch (err) {
-      console.error('❌ Error al crear contenido:', err);
-
-      let errorMessage = 'Error desconocido al crear el contenido.';
-      if (err.response?.status === 400) {
-        errorMessage = err.response.data?.message || 'Datos inválidos en el formulario.';
-      } else if (err.response?.status === 401) {
-        errorMessage = 'Sesión expirada. Inicia sesión nuevamente.';
-      } else if (err.response?.status === 403) {
-        errorMessage = 'No tienes permisos para crear contenido.';
-      } else if (err.response?.status >= 500) {
-        errorMessage = 'Error del servidor. Intenta más tarde.';
-      } else if (err.message) {
-        errorMessage = err.message;
-      }
-
-      setSubmitError(errorMessage);
-      setIsProcessing(false);
-    } finally {
-      setFormLoading(false);
+      console.error('💥 Error creando serie:', err);
+      // El error ya se maneja en el contexto
     }
   };
 
@@ -278,9 +246,9 @@ function SeriesCreatePage() {
               initialData={generateInitialFormData(selectedItem)}
               onSubmit={handleFormSubmit}
               categoryOptions={categories.map(cat => ({ value: cat.id, label: cat.name }))}
-              loading={formLoading || isProcessing}
-              error={submitError}
-              success={success && !isProcessing}
+              loading={creating || processing}
+              error={contextError}
+              success={success && !creating && !processing}
               hasChanges={hasChanges}
               onChange={markAsChanged}
             />
@@ -290,12 +258,12 @@ function SeriesCreatePage() {
       </Container>
       
       {/* Spinner overlay para procesos de subida */}
-      {isProcessing && (
+      {(creating || processing) && (
         <Spinner
           variant="circle"
           size="lg"
           color="primary"
-          message={progressMessage}
+          message={progressMessage || `Progreso: ${uploadProgress}%`}
           overlay={true}
         />
       )}

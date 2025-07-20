@@ -18,6 +18,7 @@ class AuthService {
     const payload = {
       sub: user.id, // Identificador único del usuario
       role: user.role, // Rol del usuario
+      userName: user.user_name, // Nombre de usuario para mostrar en UI
     };
     // Genera el token JWT usando la clave secreta y el payload
     const token = jwt.sign(

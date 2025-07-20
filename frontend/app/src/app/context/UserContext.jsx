@@ -1,359 +1,600 @@
-// ===== USER CONTEXT ACTUALIZADO SIMPLE =====
-// src/app/context/UserContext.jsx (REEMPLAZAR EL EXISTENTE)
+// ===== USER CONTEXT - GESTI�N CENTRALIZADA DE USUARIOS =====
+// src/app/context/UserContext.jsx
 
-import React, { useState, useEffect, createContext, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { createContext, useContext, useState } from 'react';
 
-// ✅ USAR SERVICIOS CORREGIDOS (manteniendo imports individuales como ya tienes)
+// Servicios de usuarios
 import { getUsersService } from '../../services/Users/getUsersService';
-import { createUserService } from '../../services/Users/createUserService';
-import { updateUserService } from '../../services/Users/updateUserService';
 import { deleteUserService } from '../../services/Users/deleteUserService';
+import { createUserService } from '../../services/Users/createUserService';
+import { getUserByIdService } from '../../services/Users/getUserByIdService';
+import { updateUserService } from '../../services/Users/updateUserService';
 
-// ===== CREAR CONTEXTOS =====
+// Utilidades de formularios
+import { validatePasswordsMatch, prepareUserData } from '../../utils/formUtils';
+
+// Hook para alerts
+import { useAlertContext } from './AlertContext';
+
+// ===== CONTEXTO =====
 const UserContext = createContext();
-const UserAuthContext = createContext();
 
-// ===== HOOKS PERSONALIZADOS =====
-export const useUsers = () => {
-    const context = useContext(UserContext);
-    if (!context) {
-        throw new Error('useUsers debe usarse dentro de UserProvider');
+/**
+ * UsersProvider - Proveedor del contexto de usuarios
+ * 
+ * Centraliza toda la l�gica de gesti�n de usuarios:
+ * - Estados de usuarios, loading, errores
+ * - Funciones CRUD principales
+ * - Utilidades de validaci�n y formato
+ * - Manejo de sesi�n expirada
+ */
+function UsersProvider({ children }) {
+  // ===== HOOKS =====
+  const { showDeleteConfirm, showSuccess, showError } = useAlertContext();
+  
+  // ===== ESTADOS PRINCIPALES =====
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [deleting, setDeleting] = useState(null);
+
+  // ===== FUNCIONES AUXILIARES =====
+
+  /**
+   * Formatear fechas en formato espa�ol
+   */
+  const formatUserDate = (dateString) => {
+    if (!dateString) return 'No disponible';
+
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (error) {
+      return 'Fecha inv�lida';
     }
-    return context;
-};
+  };
 
-export const useAuth = () => {
-    const context = useContext(UserAuthContext);
-    if (!context) {
-        throw new Error('useAuth debe usarse dentro de UserProvider');
+  /**
+   * Verificar si es el usuario actual
+   */
+  const isCurrentUser = (userId) => {
+    try {
+      const sessionUser = JSON.parse(sessionStorage.getItem('sessionUser') || '{}');
+      return sessionUser.sub === userId;
+    } catch {
+      return false;
     }
-    return context;
-};
+  };
 
-// ===== PROVIDER PRINCIPAL =====
-function UserProvider({ children }) {
-    const navigate = useNavigate();
-
-    // ===== ESTADOS DE GESTIÓN DE USUARIOS =====
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [totalUsers, setTotalUsers] = useState(0);
-    
-    // Estados específicos para operaciones
-    const [creating, setCreating] = useState(false);
-    const [updating, setUpdating] = useState(false);
-    const [deleting, setDeleting] = useState(null);
-
-    // ===== ESTADOS DE AUTENTICACIÓN =====
-    const [currentUser, setCurrentUser] = useState(null);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [authLoading, setAuthLoading] = useState(true);
-
-    // ===== EFECTOS =====
-    useEffect(() => {
-        initializeAuth();
-    }, []);
-
-    useEffect(() => {
-        if (isAuthenticated) {
-            loadUsers();
-        }
-    }, [isAuthenticated]);
-
-    // ===== FUNCIONES DE AUTENTICACIÓN =====
-    const initializeAuth = () => {
-        setAuthLoading(true);
-        try {
-            const sessionUser = sessionStorage.getItem('sessionUser');
-            if (sessionUser) {
-                const userData = JSON.parse(sessionUser);
-                setCurrentUser(userData);
-                setIsAuthenticated(true);
-            }
-        } catch (error) {
-            console.error('Error al inicializar autenticación:', error);
-            logout();
-        } finally {
-            setAuthLoading(false);
-        }
+  /**
+   * Obtener nombre del rol por ID
+   */
+  const getRoleName = (roleId) => {
+    const roles = {
+      1: 'Administrador',
+      2: 'Editor', 
+      3: 'Usuario Regular'
     };
+    return roles[roleId] || 'Desconocido';
+  };
 
-    const updateCurrentUser = (userData) => {
-        setCurrentUser(userData);
-        sessionStorage.setItem('sessionUser', JSON.stringify(userData));
-        setIsAuthenticated(true);
-    };
+  // ===== FUNCIONES PRINCIPALES =====
 
-    const logout = () => {
-        setCurrentUser(null);
-        setIsAuthenticated(false);
-        sessionStorage.removeItem('sessionUser');
-        setUsers([]);
-        navigate('/login');
-    };
+  /**
+   * Cargar usuarios desde el backend
+   */
+  const loadUsers = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-    // ===== FUNCIONES DE GESTIÓN DE USUARIOS =====
-    
-    /**
-     * Cargar lista de usuarios
-     * ✅ USAR SERVICIO CORREGIDO
-     */
-    const loadUsers = async () => {
-        try {
-            setLoading(true);
-            setError(null);
-            
-            const response = await getUsersService();
-            
-            // ✅ USAR NUEVA ESTRUCTURA DE RESPUESTA
-            if (response.message === 'session expired' && response.error) {
-                logout();
-                return;
-            }
-            
-            if (response.success) {
-                setUsers(response.data);
-                setTotalUsers(response.count);
-            } else {
-                throw new Error(response.error || 'Error al cargar usuarios');
-            }
-        } catch (err) {
-            console.error('Error loading users:', err);
-            setError(err.message || 'Error al cargar usuarios');
-        } finally {
-            setLoading(false);
-        }
-    };
+      console.log('=� [UserContext] Cargando usuarios...');
+      const response = await getUsersService();
 
-    /**
-     * Crear nuevo usuario
-     * ✅ USAR SERVICIO CORREGIDO
-     */
-    const createUser = async (userData) => {
-        try {
-            setCreating(true);
-            setError(null);
-            
-            const response = await createUserService(userData);
-            
-            if (response.success) {
-                await loadUsers(); // Recargar lista
-                return {
-                    success: true,
-                    message: 'Usuario creado exitosamente',
-                    user: response.data
-                };
-            } else {
-                return {
-                    success: false,
-                    error: response.error,
-                    code: response.code
-                };
-            }
-        } catch (err) {
-            console.error('Error creating user:', err);
-            return {
-                success: false,
-                error: err.message || 'Error al crear usuario'
-            };
-        } finally {
-            setCreating(false);
-        }
-    };
+      // Manejar sesi�n expirada
+      if (response.message === 'session expired' && response.error) {
+        console.log('= [UserContext] Sesi�n expirada');
+        sessionStorage.clear();
+        // Nota: La navegaci�n se manejar� en el componente que use el hook
+        throw new Error('SESSION_EXPIRED');
+      }
 
-    /**
-     * Actualizar usuario existente
-     * ✅ USAR SERVICIO CORREGIDO
-     */
-    const updateUser = async (id, userData) => {
-        try {
-            setUpdating(true);
-            setError(null);
-            
-            const response = await updateUserService(id, userData);
-            
-            if (response.message === 'session expired' && response.error) {
-                logout();
-                return { success: false, error: 'Sesión expirada' };
-            }
-            
-            if (response.success) {
-                await loadUsers(); // Recargar lista
-                
-                // Si es el usuario actual, actualizar sesión
-                if (currentUser && currentUser.sub === id) {
-                    updateCurrentUser({
-                        ...currentUser,
-                        ...response.data
-                    });
-                }
-                
-                return {
-                    success: true,
-                    message: 'Usuario actualizado exitosamente',
-                    user: response.data
-                };
-            } else {
-                return {
-                    success: false,
-                    error: response.error
-                };
-            }
-        } catch (err) {
-            console.error('Error updating user:', err);
-            return {
-                success: false,
-                error: err.message || 'Error al actualizar usuario'
-            };
-        } finally {
-            setUpdating(false);
-        }
-    };
+      if (!response.success) {
+        throw new Error(response.error || 'Error al cargar usuarios');
+      }
 
-    /**
-     * Eliminar usuario
-     * ✅ USAR SERVICIO CORREGIDO
-     */
-    const deleteUser = async (id) => {
-        try {
-            setDeleting(id);
-            setError(null);
-            
-            // Verificar que no sea el usuario actual
-            if (currentUser && currentUser.sub === id) {
-                return {
-                    success: false,
-                    error: 'No puedes eliminar tu propia cuenta'
-                };
-            }
-            
-            const response = await deleteUserService(id);
-            
-            if (response.message === 'session expired' && response.error) {
-                logout();
-                return { success: false, error: 'Sesión expirada' };
-            }
-            
-            if (response.success) {
-                await loadUsers(); // Recargar lista
-                return {
-                    success: true,
-                    message: 'Usuario eliminado exitosamente'
-                };
-            } else {
-                return {
-                    success: false,
-                    error: response.error
-                };
-            }
-        } catch (err) {
-            console.error('Error deleting user:', err);
-            return {
-                success: false,
-                error: err.message || 'Error al eliminar usuario'
-            };
-        } finally {
-            setDeleting(null);
-        }
-    };
+      const rawUsers = Array.isArray(response.data) ? response.data : [];
+      
+      // Mapear campos del backend
+      const mappedUsers = rawUsers.map(user => ({
+        createdAt: user.createdAt,
+        email: user.email,
+        id: user.id,
+        roleId: user.roleId,
+        roleName: user.roleName,
+        updatedAt: user.updated_at,
+        userName: user.userName,
+      }));
 
-    // ===== HANDLERS PARA UI =====
-    const handleViewUser = (user) => {
-        navigate(`/admin/users/${user.id}`);
-    };
+      setUsers(mappedUsers);
+      console.log(` [UserContext] ${mappedUsers.length} usuarios cargados`);
 
-    const handleEditUser = (user) => {
-        navigate(`/admin/users/${user.id}/edit`);
-    };
+    } catch (error) {
+      console.error('=� [UserContext] Error loading users:', error);
+      setError(error.message || 'Error al cargar usuarios');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const handleDeleteUser = async (user) => {
-        const confirmDelete = window.confirm(
-            `¿Estás seguro de que quieres eliminar al usuario "${user.username}"?\n\nEsta acción no se puede deshacer.`
-        );
-        
-        if (confirmDelete) {
-            const result = await deleteUser(user.id);
-            if (result.success) {
-                alert(`✅ ${result.message}`);
-            } else {
-                alert(`❌ ${result.error}`);
-            }
-        }
-    };
+  /**
+   * Refrescar lista de usuarios
+   */
+  const refreshUsers = () => {
+    console.log('= [UserContext] Refrescando usuarios...');
+    loadUsers();
+  };
 
-    const refreshUsers = () => {
-        loadUsers();
-    };
+  /**
+   * Limpiar estado de usuarios (�til para logout)
+   */
+  const clearUsers = () => {
+    console.log('>� [UserContext] Limpiando estado de usuarios');
+    setUsers([]);
+    setError(null);
+    setDeleting(null);
+  };
 
-    // ===== VALORES DEL CONTEXTO =====
-    const userContextValue = {
-        // Datos
-        users,
-        totalUsers,
-        
-        // Estados
-        loading,
-        error,
-        creating,
-        updating,
-        deleting,
-        
-        // Funciones CRUD
-        loadUsers,
-        createUser,
-        updateUser,
-        deleteUser,
-        
-        // Handlers para UI
-        handleViewUser,
-        handleEditUser,
-        handleDeleteUser,
-        refreshUsers,
-        
-        // Utilidades
-        clearError: () => setError(null)
+  /**
+   * Obtener estad�sticas de usuarios
+   */
+  const getUserStats = () => {
+    return {
+      total: users.length,
+      admins: users.filter(u => u.roleId === 1).length,
+      editors: users.filter(u => u.roleId === 2).length,
+      regularUsers: users.filter(u => u.roleId === 3).length,
+      withEmail: users.filter(u => u.email).length,
+      withoutEmail: users.filter(u => !u.email).length
     };
-    
-    const authContextValue = {
-        // Estado de autenticación
-        currentUser,
-        isAuthenticated,
-        authLoading,
-        
-        // Funciones de autenticación
-        updateCurrentUser,
-        logout,
-        
-        // Utilidades de permisos
-        isAdmin: currentUser?.role === 1,
-        isEditor: currentUser?.role === 2,
-        canManageUsers: currentUser?.role === 1,
-        
-        // Datos del usuario actual
-        currentUserData: currentUser ? {
-            id: currentUser.sub,
-            username: currentUser.username || currentUser.userName,
-            email: currentUser.email,
-            role: currentUser.role,
-            roleId: currentUser.role
-        } : null
-    };
+  };
 
-    return (
-        <UserAuthContext.Provider value={authContextValue}>
-            <UserContext.Provider value={userContextValue}>
-                {children}
-            </UserContext.Provider>
-        </UserAuthContext.Provider>
+  /**
+   * Eliminar usuario con validaciones completas
+   */
+  const deleteUser = (user) => {
+    console.log('🗑️ [UserContext] Iniciando eliminación de usuario:', user);
+
+    // ===== VALIDACIONES DE NEGOCIO =====
+    try {
+      // Validación 1: No eliminar usuario actual
+      if (isCurrentUser(user.id)) {
+        const error = 'No puedes eliminar tu propia cuenta.';
+        console.warn('❌ [UserContext] Validación fallida:', error);
+        throw new Error(error);
+      }
+
+      // Validación 2: No eliminar último administrador
+      const adminCount = users.filter(u => u.roleId === 1).length;
+      if (user.roleId === 1 && adminCount <= 1) {
+        const error = 'No puedes eliminar el último administrador del sistema.';
+        console.warn('❌ [UserContext] Validación fallida:', error);
+        throw new Error(error);
+      }
+    } catch (error) {
+      setError(error.message);
+      showError(error.message);
+      return;
+    }
+
+    // ===== CONFIRMACIÓN CON ALERT PROVIDER =====
+    // Usar AlertProvider en lugar de window.confirm
+    console.log('🔍 [UserContext] Llamando showDeleteConfirm...', { showDeleteConfirm });
+    showDeleteConfirm(
+      user.userName,
+      async () => {
+        console.log('✅ [UserContext] Confirmación aceptada, ejecutando eliminación...');
+        await performDeleteUser(user);
+      },
+      {
+        title: 'Confirmar eliminación',
+        confirmText: 'Eliminar usuario',
+        cancelText: 'Cancelar'
+      }
     );
+    console.log('📤 [UserContext] showDeleteConfirm llamado');
+  };
+
+  /**
+   * Ejecutar eliminación de usuario (función interna)
+   */
+  const performDeleteUser = async (user) => {
+    try {
+
+      // ===== PROCESO DE ELIMINACIÓN =====
+      setDeleting(user.id);
+      console.log('🔄 [UserContext] Eliminando usuario del backend:', user.id);
+
+      const response = await deleteUserService(user.id);
+
+      // Manejar sesión expirada
+      if (response.message === 'session expired' && response.error) {
+        console.log('🔒 [UserContext] Sesión expirada durante eliminación');
+        sessionStorage.clear();
+        throw new Error('SESSION_EXPIRED');
+      }
+
+      if (!response.success) {
+        throw new Error(response.error || 'Error al eliminar usuario');
+      }
+
+      // ===== ACTUALIZAR ESTADO LOCAL =====
+      setUsers(prevUsers => {
+        const updatedUsers = prevUsers.filter(u => u.id !== user.id);
+        console.log(`✅ [UserContext] Usuario eliminado. Usuarios restantes: ${updatedUsers.length}`);
+        return updatedUsers;
+      });
+
+      console.log('✅ [UserContext] Usuario eliminado exitosamente');
+      
+      // Mostrar mensaje de éxito con AlertProvider
+      showSuccess(`Usuario "${user.userName}" eliminado correctamente.`);
+
+    } catch (error) {
+      console.error('💥 [UserContext] Error deleting user:', error);
+      setError(error.message || 'Error al eliminar usuario');
+      
+      // Mostrar mensaje de error con AlertProvider
+      showError(error.message || 'Error al eliminar usuario');
+    } finally {
+      setDeleting(null);
+    }
+  };
+
+  // ===== FUNCIONES CRUD FUTURAS =====
+
+  /**
+   * Crear nuevo usuario con validaciones completas
+   */
+  const createUser = async (formData) => {
+    try {
+      console.log('🏗️ [UserContext] Iniciando creación de usuario:', formData);
+      setLoading(true);
+      setError(null);
+
+      // ===== VALIDACIONES DE NEGOCIO =====
+      
+      // Validación 1: Contraseñas coinciden
+      if (!validatePasswordsMatch(formData.password, formData.confirmPassword)) {
+        const error = 'Las contraseñas no coinciden';
+        console.warn('❌ [UserContext] Validación fallida:', error);
+        throw new Error(error);
+      }
+
+      // Validación 2: Username único (verificar en lista actual)
+      const existingUser = users.find(user => 
+        user.userName.toLowerCase() === formData.username.toLowerCase()
+      );
+      if (existingUser) {
+        const error = 'El nombre de usuario ya está registrado';
+        console.warn('❌ [UserContext] Validación fallida:', error);
+        throw new Error(error);
+      }
+
+      // Validación 3: Email único si se proporciona
+      if (formData.email && formData.email.trim() !== '') {
+        const existingEmail = users.find(user => 
+          user.email && user.email.toLowerCase() === formData.email.toLowerCase()
+        );
+        if (existingEmail) {
+          const error = 'El email ya está registrado';
+          console.warn('❌ [UserContext] Validación fallida:', error);
+          throw new Error(error);
+        }
+      }
+
+      // ===== PREPARAR DATOS =====
+      const userData = prepareUserData(formData);
+      console.log('📤 [UserContext] Datos preparados para envío:', userData);
+
+      // ===== PROCESO DE CREACIÓN =====
+      const response = await createUserService(userData);
+
+      // Manejar sesión expirada
+      if (response.message === 'session expired' && response.error) {
+        console.log('🔒 [UserContext] Sesión expirada durante creación');
+        sessionStorage.clear();
+        throw new Error('SESSION_EXPIRED');
+      }
+
+      if (!response.success) {
+        throw new Error(response.error || 'Error al crear usuario');
+      }
+
+      // ===== ACTUALIZAR ESTADO LOCAL =====
+      // Agregar nuevo usuario al estado local para evitar recarga
+      const newUser = {
+        id: response.data.id,
+        userName: response.data.userName,
+        email: response.data.email || null,
+        roleId: response.data.roleId,
+        roleName: response.data.roleId === 1 ? 'Administrador' : 'Usuario Regular',
+        createdAt: response.data.createdAt || new Date().toISOString(),
+        updatedAt: response.data.updatedAt || new Date().toISOString()
+      };
+
+      setUsers(prevUsers => {
+        const updatedUsers = [...prevUsers, newUser];
+        console.log(`✅ [UserContext] Usuario creado. Total usuarios: ${updatedUsers.length}`);
+        return updatedUsers;
+      });
+
+      console.log('✅ [UserContext] Usuario creado exitosamente');
+      return { 
+        success: true, 
+        data: newUser,
+        message: `Usuario "${userData.username}" creado correctamente.` 
+      };
+
+    } catch (error) {
+      console.error('💥 [UserContext] Error creating user:', error);
+      setError(error.message || 'Error al crear usuario');
+      return { 
+        success: false, 
+        error: error.message || 'Error al crear usuario' 
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
+   * Actualizar usuario existente con validaciones completas
+   */
+  const updateUser = async (userId, formData, initialData) => {
+    try {
+      console.log('✏️ [UserContext] Iniciando actualización de usuario:', userId, formData);
+      setLoading(true);
+      setError(null);
+
+      // ===== VALIDACIONES DE NEGOCIO =====
+      
+      // Validación 1: Usuario existe en la lista local
+      const existingUser = users.find(user => user.id.toString() === userId.toString());
+      if (!existingUser) {
+        const error = 'Usuario no encontrado';
+        console.warn('❌ [UserContext] Validación fallida:', error);
+        throw new Error(error);
+      }
+
+      // Validación 2: Email único si se cambió
+      if (formData.email && formData.email !== initialData.email) {
+        const emailExists = users.find(user => 
+          user.id.toString() !== userId.toString() && 
+          user.email && 
+          user.email.toLowerCase() === formData.email.toLowerCase()
+        );
+        if (emailExists) {
+          const error = 'El email ya está registrado por otro usuario';
+          console.warn('❌ [UserContext] Validación fallida:', error);
+          throw new Error(error);
+        }
+      }
+
+      // ===== PREPARAR DATOS =====
+      // Solo enviar campos que realmente cambiaron
+      const updateData = {};
+      
+      if (formData.email !== initialData.email) {
+        updateData.email = formData.email?.trim() || null;
+      }
+      
+      if (formData.password && formData.password.trim() !== '') {
+        updateData.password = formData.password.trim();
+      }
+      
+      if (parseInt(formData.roleId) !== initialData.roleId) {
+        updateData.roleId = parseInt(formData.roleId);
+      }
+
+      // Validación 3: Debe haber al menos un cambio
+      if (Object.keys(updateData).length === 0) {
+        const error = 'No hay cambios para guardar';
+        console.warn('❌ [UserContext] Validación fallida:', error);
+        throw new Error(error);
+      }
+
+      console.log('📤 [UserContext] Datos preparados para actualización:', updateData);
+
+      // ===== PROCESO DE ACTUALIZACIÓN =====
+      const response = await updateUserService(userId, updateData);
+
+      // Manejar sesión expirada
+      if (response.message === 'session expired' && response.error) {
+        console.log('🔒 [UserContext] Sesión expirada durante actualización');
+        sessionStorage.clear();
+        throw new Error('SESSION_EXPIRED');
+      }
+
+      if (!response.success) {
+        throw new Error(response.error || 'Error al actualizar usuario');
+      }
+
+      // ===== ACTUALIZAR ESTADO LOCAL =====
+      setUsers(prevUsers => {
+        const updatedUsers = prevUsers.map(user => {
+          if (user.id.toString() === userId.toString()) {
+            // Crear usuario actualizado con los nuevos datos
+            const updatedUser = {
+              ...user,
+              ...updateData,
+              updatedAt: new Date().toISOString()
+            };
+            
+            // Si se cambió el rol, actualizar el roleName
+            if (updateData.roleId) {
+              updatedUser.roleName = updateData.roleId === 1 ? 'Administrador' : 
+                                    updateData.roleId === 2 ? 'Editor' : 'Usuario Regular';
+            }
+            
+            console.log('✅ [UserContext] Usuario actualizado en estado local:', updatedUser);
+            return updatedUser;
+          }
+          return user;
+        });
+        
+        console.log(`✅ [UserContext] Estado actualizado. Total usuarios: ${updatedUsers.length}`);
+        return updatedUsers;
+      });
+
+      console.log('✅ [UserContext] Usuario actualizado exitosamente');
+      return { 
+        success: true, 
+        data: response.data,
+        message: `Usuario actualizado correctamente.` 
+      };
+
+    } catch (error) {
+      console.error('💥 [UserContext] Error updating user:', error);
+      setError(error.message || 'Error al actualizar usuario');
+      return { 
+        success: false, 
+        error: error.message || 'Error al actualizar usuario' 
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
+   * Obtener usuario por ID desde estado local
+   */
+  const getUserById = (userId) => {
+    console.log('🔍 [UserContext] Buscar usuario por ID en estado local:', userId);
+    return users.find(user => user.id.toString() === userId.toString()) || null;
+  };
+
+  /**
+   * Cargar usuario individual desde backend (para edición)
+   */
+  const loadUserById = async (userId) => {
+    try {
+      console.log('📥 [UserContext] Cargando usuario individual desde backend:', userId);
+      setLoading(true);
+      setError(null);
+
+      const response = await getUserByIdService(userId);
+
+      // Manejar sesión expirada
+      if (response.message === 'session expired' && response.error) {
+        console.log('🔒 [UserContext] Sesión expirada');
+        sessionStorage.clear();
+        throw new Error('SESSION_EXPIRED');
+      }
+
+      // Manejar errores estructurados
+      if (!response.success && response.error) {
+        throw new Error(response.error);
+      }
+
+      // Normalizar datos del usuario (misma lógica que UserEditPage)
+      let rawUser = null;
+      
+      if (response.data) {
+        rawUser = response.data;
+      } else if (response.success === undefined && response.id) {
+        rawUser = response;
+      } else {
+        throw new Error('Formato de respuesta inesperado del backend');
+      }
+
+      const normalizedUser = {
+        id: rawUser.id,
+        username: rawUser.userName || rawUser.username || rawUser.user_name || '',
+        email: rawUser.email || '',
+        roleId: rawUser.roleId || rawUser.role_id || 3,
+        roleName: rawUser.roleName || getRoleName(rawUser.roleId || rawUser.role_id || 3),
+        createdAt: rawUser.createdAt || rawUser.created_at || null,
+        updatedAt: rawUser.updatedAt || rawUser.updated_at || null
+      };
+
+      // Validación de datos mínimos
+      if (!normalizedUser.id || !normalizedUser.username) {
+        throw new Error('Datos de usuario incompletos recibidos del backend');
+      }
+
+      console.log('✅ [UserContext] Usuario individual cargado:', normalizedUser);
+      return { 
+        success: true, 
+        data: normalizedUser 
+      };
+
+    } catch (error) {
+      console.error('💥 [UserContext] Error loading user by ID:', error);
+      setError(error.message || 'Error al cargar usuario');
+      return { 
+        success: false, 
+        error: error.message || 'Error al cargar usuario' 
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ===== VALOR DEL CONTEXTO =====
+  const value = {
+    // Estados
+    users,
+    loading,
+    error,
+    deleting,
+
+    // Funciones principales
+    loadUsers,
+    refreshUsers,
+    clearUsers,
+    deleteUser,
+
+    // Funciones CRUD futuras
+    createUser,
+    updateUser,
+    getUserById,
+    loadUserById,
+
+    // Utilidades
+    formatUserDate,
+    isCurrentUser,
+    getRoleName,
+    getUserStats,
+
+    // Estados internos para funciones futuras
+    setUsers,
+    setDeleting,
+    setError
+  };
+
+  return (
+    <UserContext.Provider value={value}>
+      {children}
+    </UserContext.Provider>
+  );
 }
 
-export { 
-    UserContext, 
-    UserAuthContext, 
-    UserProvider,
-    useUsers,
-    useAuth 
-};
+/**
+ * Hook personalizado para usar el contexto de usuarios
+ */
+function useUsers() {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error('useUsers debe usarse dentro de UsersProvider');
+  }
+  return context;
+}
+
+export { UserContext, UsersProvider, useUsers };

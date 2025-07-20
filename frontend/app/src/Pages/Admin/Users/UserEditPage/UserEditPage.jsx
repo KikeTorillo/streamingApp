@@ -1,63 +1,57 @@
 // ===== USER EDIT PAGE - SIGUIENDO SISTEMA DE DISEÑO (CORREGIDO) =====
 // src/Pages/Admin/Users/UserEditPage/UserEditPage.jsx
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
 import { Button } from '../../../../components/atoms/Button/Button';
+import { useUsers } from '../../../../app/context/UserContext';
 import './UserEditPage.css';
 
-// Servicios de usuarios
-import { getUserByIdService } from '../../../../services/Users/getUserByIdService';
-import { updateUserService } from '../../../../services/Users/updateUserService';
-
 /**
- * UserEditPage - Página de edición de usuarios
+ * UserEditPage - REFACTORIZADO CON USERCONTEXT
  * 
+ * ✅ MIGRADO: Usa UserContext para gestión de estado
  * ✅ SISTEMA DE DISEÑO: Solo componentes con stories de Storybook
+ * ✅ SIMPLIFICADO: Lógica centralizada en el contexto
  * ✅ BACKEND: Homologado con campos reales del backend
- * ✅ VALIDACIONES: Según esquemas del backend
- * ✅ UX: Estados de loading, error y success consistentes
- * ✅ CORREGIDO: Mapeo correcto de campos del backend
  */
 function UserEditPage() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  // ===== ESTADOS =====
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(null);
+  // ===== CONTEXTO DE USUARIOS =====
+  const { 
+    loading, 
+    error, 
+    updateUser,
+    loadUserById,
+    isCurrentUser,
+    getRoleName,
+    setError 
+  } = useUsers();
+
+  // ===== ESTADOS LOCALES =====
   const [success, setSuccess] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [userData, setUserData] = useState(null);
   const [initialData, setInitialData] = useState(null);
 
+  // ===== MANEJO DE SESIÓN EXPIRADA =====
+  useEffect(() => {
+    if (error === 'SESSION_EXPIRED') {
+      navigate('/login');
+    }
+  }, [error, navigate]);
+
   // ===== FUNCIONES AUXILIARES =====
   
   /**
-   * ✅ AÑADIDO: Función auxiliar para mapear roles
+   * Verificar si es usuario actual - Usa función del contexto
    */
-  const getRoleName = (roleId) => {
-    const roles = {
-      1: 'Administrador',
-      2: 'Editor', 
-      3: 'Usuario'
-    };
-    return roles[roleId] || 'Desconocido';
-  };
-
-  /**
-   * ✅ VERIFICAR SI ES USUARIO ACTUAL
-   */
-  const isCurrentUser = () => {
-    try {
-      const sessionUser = JSON.parse(sessionStorage.getItem('sessionUser') || '{}');
-      return sessionUser.sub?.toString() === id;
-    } catch {
-      return false;
-    }
+  const isEditingSelf = () => {
+    return isCurrentUser(id);
   };
 
   // ===== CONFIGURACIÓN DEL FORMULARIO =====
@@ -67,7 +61,7 @@ function UserEditPage() {
    * Según requerimientos: email, roleId, password
    */
   const getEditFormFields = () => {
-    const isEditingSelf = isCurrentUser();
+    const editingSelf = isEditingSelf();
     
     return [
       {
@@ -102,8 +96,8 @@ function UserEditPage() {
         label: 'Rol del Usuario',
         required: true,
         leftIcon: '👥',
-        disabled: isEditingSelf, // No permitir cambiar su propio rol
-        helperText: isEditingSelf 
+        disabled: editingSelf, // No permitir cambiar su propio rol
+        helperText: editingSelf 
           ? 'No puedes cambiar tu propio rol por seguridad'
           : 'Define los permisos del usuario en el sistema',
         options: [
@@ -119,85 +113,31 @@ function UserEditPage() {
   // ===== FUNCIONES DE DATOS =====
   
   /**
-   * ✅ CORREGIDO: Cargar datos del usuario desde el backend
+   * Cargar datos del usuario - Usa función del contexto
    */
   const loadUserData = async () => {
+    console.log('📥 [UserEditPage] Cargando datos del usuario ID:', id);
+
     try {
-      setLoading(true);
-      setError(null);
-      
-      console.log('📥 Cargando datos del usuario ID:', id);
-      const response = await getUserByIdService(id);
-      
-      console.log('📋 Respuesta raw del backend:', response);
-      
-      // Manejar sesión expirada
-      if (response.message === 'session expired' && response.error) {
-        console.log('🔒 Sesión expirada, redirigiendo...');
-        sessionStorage.clear();
-        navigate('/login');
-        return;
-      }
+      const result = await loadUserById(id);
 
-      // Manejar errores estructurados
-      if (!response.success && response.error) {
-        throw new Error(response.error);
-      }
-
-      // ✅ CORREGIDO: Obtener datos del usuario desde diferentes estructuras de respuesta
-      let rawUser = null;
-      
-      // El backend puede devolver la data de diferentes formas:
-      if (response.data) {
-        rawUser = response.data; // Respuesta estructurada: { success: true, data: {...} }
-      } else if (response.success === undefined && response.id) {
-        rawUser = response; // Respuesta directa: { id, userName, email, ... }
+      if (result.success) {
+        const normalizedUserData = result.data;
+        console.log('✅ [UserEditPage] Usuario cargado:', normalizedUserData);
+        
+        setUserData(normalizedUserData);
+        setInitialData({ 
+          email: normalizedUserData.email,
+          password: '', // La contraseña siempre empieza vacía
+          roleId: normalizedUserData.roleId
+        });
       } else {
-        throw new Error('Formato de respuesta inesperado del backend');
+        console.error('❌ [UserEditPage] Error al cargar usuario:', result.error);
+        // El error ya se maneja en el contexto
       }
-
-      console.log('📋 Usuario raw extraído:', rawUser);
-
-      // ✅ SOLUCIONADO: Mapeo robusto que maneja TODOS los formatos posibles del backend
-      const normalizedUserData = {
-        id: rawUser.id,
-        
-        // ✅ CORREGIDO: Mapear username desde diferentes campos posibles
-        username: rawUser.userName || rawUser.username || rawUser.user_name || '',
-        
-        // ✅ CORREGIDO: Email con fallback
-        email: rawUser.email || '',
-        
-        // ✅ CORREGIDO: Role ID desde diferentes formatos
-        roleId: rawUser.roleId || rawUser.role_id || 3,
-        
-        // ✅ CORREGIDO: Role name calculado
-        roleName: rawUser.roleName || getRoleName(rawUser.roleId || rawUser.role_id || 3),
-        
-        // ✅ CORREGIDO: Fechas desde diferentes formatos
-        createdAt: rawUser.createdAt || rawUser.created_at || null,
-        updatedAt: rawUser.updatedAt || rawUser.updated_at || null
-      };
-
-      console.log('✅ Datos del usuario normalizados:', normalizedUserData);
-      
-      // ✅ VALIDACIÓN: Verificar que tenemos datos mínimos
-      if (!normalizedUserData.id || !normalizedUserData.username) {
-        throw new Error('Datos de usuario incompletos recibidos del backend');
-      }
-      
-      setUserData(normalizedUserData);
-      setInitialData({ 
-        email: normalizedUserData.email,
-        password: '', // La contraseña siempre empieza vacía
-        roleId: normalizedUserData.roleId
-      });
-      
     } catch (error) {
-      console.error('💥 Error loading user data:', error);
-      setError(error.message || 'Error al cargar datos del usuario');
-    } finally {
-      setLoading(false);
+      console.error('💥 [UserEditPage] Error en carga:', error);
+      // El error ya se maneja en el contexto
     }
   };
 
@@ -221,74 +161,35 @@ function UserEditPage() {
   };
 
   /**
-   * Manejar envío del formulario
+   * Manejar envío del formulario - Usa función del contexto
    */
   const handleSubmit = async (formData) => {
+    console.log('📤 [UserEditPage] Solicitud de actualización:', formData);
+
     try {
-      setSaving(true);
-      setError(null);
+      const result = await updateUser(id, formData, initialData);
 
-      console.log('📤 Enviando actualización:', formData);
+      if (result.success) {
+        console.log('✅ [UserEditPage] Usuario actualizado:', result.data);
+        setSuccess(true);
+        setHasChanges(false);
 
-      // Preparar datos para el backend (solo campos que cambiaron)
-      const updateData = {};
-      
-      if (formData.email !== initialData.email) {
-        updateData.email = formData.email?.trim() || null;
+        // Recargar datos actualizados
+        setTimeout(() => {
+          loadUserData();
+        }, 1000);
+
+        // Redirigir después de un delay
+        setTimeout(() => {
+          navigate('/admin/users');
+        }, 2500);
+      } else {
+        console.error('❌ [UserEditPage] Error en actualización:', result.error);
+        // El error ya se maneja en el contexto
       }
-      
-      if (formData.password && formData.password.trim() !== '') {
-        updateData.password = formData.password.trim();
-      }
-      
-      if (parseInt(formData.roleId) !== initialData.roleId) {
-        updateData.roleId = parseInt(formData.roleId);
-      }
-
-      // Si no hay cambios reales, no enviar
-      if (Object.keys(updateData).length === 0) {
-        alert('No hay cambios para guardar');
-        return;
-      }
-
-      console.log('📤 Datos a actualizar:', updateData);
-
-      const response = await updateUserService(id, updateData);
-
-      console.log('📥 Respuesta del backend:', response);
-
-      // Manejar sesión expirada
-      if (response.message === 'session expired' && response.error) {
-        sessionStorage.clear();
-        navigate('/login');
-        return;
-      }
-
-      if (!response.success) {
-        throw new Error(response.error || 'Error al actualizar usuario');
-      }
-
-      // Éxito
-      setSuccess(true);
-      setHasChanges(false);
-      
-      console.log('✅ Usuario actualizado exitosamente');
-
-      // Recargar datos actualizados
-      setTimeout(() => {
-        loadUserData();
-      }, 1000);
-
-      // Redirigir después de un delay
-      setTimeout(() => {
-        navigate('/admin/users');
-      }, 2500);
-
-    } catch (err) {
-      console.error('💥 Error updating user:', err);
-      setError(err.message || 'Error al actualizar usuario');
-    } finally {
-      setSaving(false);
+    } catch (error) {
+      console.error('💥 [UserEditPage] Error en actualización:', error);
+      // El error ya se maneja en el contexto
     }
   };
 
@@ -376,7 +277,7 @@ function UserEditPage() {
             variant="outline"
             size="sm"
             onClick={handleCancel}
-            disabled={saving}
+            disabled={loading}
           >
             Cancelar
           </Button>
@@ -384,11 +285,11 @@ function UserEditPage() {
             variant="primary"
             size="sm"
             onClick={() => document.getElementById('user-edit-form')?.requestSubmit()}
-            loading={saving}
-            disabled={!hasChanges || saving}
+            loading={loading}
+            disabled={!hasChanges || loading}
             leftIcon="💾"
           >
-            {saving ? 'Guardando...' : 'Guardar Cambios'}
+            {loading ? 'Guardando...' : 'Guardar Cambios'}
           </Button>
         </div>
       }
@@ -459,7 +360,7 @@ function UserEditPage() {
               </div>
             </div>
             
-            {isCurrentUser() && (
+            {isEditingSelf() && (
               <div className="user-edit__warning">
                 <span className="user-edit__warning-icon">⚠️</span>
                 <span>Estás editando tu propia cuenta. Ten cuidado con los cambios.</span>
@@ -488,14 +389,14 @@ function UserEditPage() {
               }}
               onSubmit={handleSubmit}
               onChange={handleFormChange}
-              loading={saving}
-              disabled={saving || success}
+              loading={loading}
+              disabled={loading || success}
               columnsPerRow={2}
               tabletColumns={1}
               mobileColumns={1}
               fieldSize="md"
               fieldRounded="md"
-              submitText={saving ? 'Guardando...' : 'Guardar Cambios'}
+              submitText={loading ? 'Guardando...' : 'Guardar Cambios'}
               submitVariant="primary"
               submitSize="md"
               submitIcon="💾"

@@ -29,7 +29,7 @@
   margin: 0;
   font-size: var(--font-size-base);
   line-height: var(--line-height-base);
-  color: var(--color-text-primary);
+  color: var(--text-primary);
 }
 
 .alert-modal__actions {

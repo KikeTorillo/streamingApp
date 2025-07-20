@@ -10,9 +10,11 @@ import './AlertModal.css';
  * 
  * ✅ MIGRACIÓN: Reemplaza alert() con mejor UX
  * ✅ CONSISTENCIA: Basado en Modal existente
- * ✅ TIPOS: info, success, error, confirm
+ * ✅ TIPOS: info, success, error, confirm, delete, permission
  * ✅ ACCESIBILIDAD: Hereda de Modal
  * ✅ REUTILIZABLE: Para toda la aplicación
+ * ✅ HTML: Soporte para HTML en mensajes
+ * ✅ AUTO-CLOSE: Cierre automático para éxitos
  */
 function AlertModal({
   // Control básico
@@ -20,7 +22,7 @@ function AlertModal({
   onClose = null,
   
   // Tipo de alerta
-  type = 'info', // 'info', 'success', 'error', 'confirm'
+  type = 'info', // 'info', 'success', 'error', 'confirm', 'delete', 'permission'
   
   // Contenido
   title = '',
@@ -62,6 +64,16 @@ function AlertModal({
       icon: '❓',
       variant: 'primary',
       defaultTitle: 'Confirmación'
+    },
+    delete: {
+      icon: '🗑️',
+      variant: 'danger',
+      defaultTitle: 'Eliminar'
+    },
+    permission: {
+      icon: '🔒',
+      variant: 'danger',
+      defaultTitle: 'Permisos insuficientes'
     }
   };
   
@@ -108,14 +120,15 @@ function AlertModal({
           <span className="alert-modal__icon" role="img" aria-label={type}>
             {config.icon}
           </span>
-          <p className="alert-modal__text">
-            {message}
-          </p>
+          <div 
+            className="alert-modal__text"
+            dangerouslySetInnerHTML={{ __html: message }}
+          />
         </div>
         
         {/* Botones */}
         <div className="alert-modal__actions">
-          {type === 'confirm' ? (
+          {(type === 'confirm' || type === 'delete') ? (
             // Modo confirmación: Cancelar + Confirmar
             <>
               <Button

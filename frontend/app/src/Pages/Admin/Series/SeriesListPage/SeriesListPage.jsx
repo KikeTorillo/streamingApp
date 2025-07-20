@@ -1,7 +1,7 @@
 // ===== SERIES LIST PAGE - COLUMNAS CORREGIDAS PARA BACKEND REAL =====
 // src/Pages/Admin/Series/SeriesListPage/SeriesListPage.jsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { DataTable } from '../../../../components/organisms/DataTable/DataTable';
@@ -10,9 +10,8 @@ import { Badge } from '../../../../components/atoms/Badge/Badge';
 import { ContentImage } from '../../../../components/atoms/ContentImage/ContentImage';
 import './SeriesListPage.css';
 
-// Servicios de series
-import { getSeriesService } from '../../../../services/Series/getSeriesService';
-import { deleteSeriesService } from '../../../../services/Series/deleteSeriesService';
+// Contexto de series
+import { useSeries } from '../../../../app/context/SeriesContext';
 
 /**
  * SeriesListPage - CORREGIDO con columnas reales del backend
@@ -21,15 +20,24 @@ import { deleteSeriesService } from '../../../../services/Series/deleteSeriesSer
  * ✅ BACKEND COMPATIBLE: Usa estructura real de series table
  * ✅ INFORMACIÓN CORRECTA: No muestra datos que no vienen del servidor
  * ✅ FECHAS CORREGIDAS: Misma lógica que MoviesListPage
+ * ✅ MIGRACIÓN: Usa AlertProvider en lugar de alert() nativo
  */
 function SeriesListPage() {
   const navigate = useNavigate();
+  
+  // Los mensajes son manejados por el contexto internamente
 
-  // ===== ESTADOS =====
-  const [series, setSeries] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [deleting, setDeleting] = useState(null);
+  // ===== CONTEXTO DE SERIES =====
+  const {
+    series,
+    loading,
+    error,
+    deleting,
+    loadSeries,
+    deleteSeries,
+    getSeriesStats,
+    getSeriesCoverUrl
+  } = useSeries();
 
   // ===== CONFIGURACIÓN DE COLUMNAS CORREGIDAS =====
   const seriesColumns = [
@@ -54,8 +62,8 @@ function SeriesListPage() {
         const coverImage = getValue();
         const title = row.original.title;
         
-        // Construir URL completa para la imagen (igual que en MoviesListPage)
-        const imageUrl = coverImage ? `${import.meta.env.VITE_CDN_URL || 'http://localhost:8082'}/covers/${coverImage}/cover.jpg` : null;
+        // Construir URL completa para la imagen usando el contexto
+        const imageUrl = getSeriesCoverUrl(coverImage);
         
         return (
           <ContentImage
@@ -227,24 +235,6 @@ function SeriesListPage() {
   ];
 
   // ===== FUNCIONES =====
-  
-  const loadSeries = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // ===== USAR DATOS REALES DEL BACKEND =====
-      const seriesData = await getSeriesService();
-      console.log('📥 Datos recibidos del backend (series):', seriesData);
-      setSeries(seriesData || []);
-      
-    } catch (err) {
-      console.error('Error loading series:', err);
-      setError('Error al cargar las series');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleCreateSeries = () => {
     navigate('/admin/series/create');
@@ -258,61 +248,11 @@ function SeriesListPage() {
     navigate(`/series/${seriesItem.id}`);
   };
 
-  const handleDeleteSeries = async (seriesItem) => {
-    const confirmMessage = 
-      `¿Estás seguro de que quieres eliminar "${seriesItem.title}"?\n\n` +
-      `⚠️ ADVERTENCIA: Esta acción eliminará permanentemente:\n` +
-      `• Todos los episodios y videos asociados\n` +
-      `• La imagen de portada\n` +
-      `• Todos los datos de la serie\n\n` +
-      `Esta acción NO se puede deshacer.`;
-      
-    if (!window.confirm(confirmMessage)) {
-      return;
-    }
-
-    try {
-      setDeleting(seriesItem.id);
-      
-      console.log('🗑️ Eliminando serie:', seriesItem);
-      
-      const response = await deleteSeriesService(seriesItem.id);
-      
-      console.log('📥 Respuesta del servicio de eliminación:', response);
-      
-      console.log('✅ Serie eliminada exitosamente');
-      
-      alert(`✅ Serie "${seriesItem.title}" eliminada exitosamente`);
-      
-      await loadSeries();
-      
-    } catch (error) {
-      console.error('💥 Error al eliminar serie:', error);
-      
-      let errorMessage = `Error al eliminar la serie "${seriesItem.title}".`;
-      
-      if (error.response?.status === 401) {
-        console.log('🔒 Sesión expirada, redirigiendo...');
-        sessionStorage.clear();
-        navigate('/login');
-        return;
-      } else if (error.response?.status === 404) {
-        errorMessage = 'La serie no existe o ya fue eliminada.';
-      } else if (error.response?.status === 403) {
-        errorMessage = 'No tienes permisos para eliminar esta serie.';
-      } else if (error.response?.status === 409) {
-        errorMessage = 'No se puede eliminar la serie porque tiene episodios asociados.';
-      } else if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-      
-      alert(`❌ ${errorMessage}`);
-      
-    } finally {
-      setDeleting(null);
-    }
+  const handleDeleteSeries = (seriesItem) => {
+    console.log('🗑️ [SeriesListPage] Solicitud de eliminación:', seriesItem);
+    
+    // El contexto maneja toda la lógica de confirmación y mensajes
+    deleteSeries(seriesItem);
   };
 
   // ===== EFECTOS =====
@@ -320,23 +260,7 @@ function SeriesListPage() {
     loadSeries();
   }, []);
 
-  // ===== ESTADÍSTICAS MEJORADAS =====
-  const getSeriesStats = () => {
-    const total = series.length;
-    const thisWeek = series.filter(seriesItem => {
-      const createdDate = new Date(seriesItem.created_at);
-      const weekAgo = new Date();
-      weekAgo.setDate(weekAgo.getDate() - 7);
-      return createdDate >= weekAgo;
-    }).length;
-    
-    const withCategory = series.filter(seriesItem => seriesItem.category_name).length;
-    const withEpisodes = series.filter(seriesItem => (seriesItem.episodes_count || 0) > 0).length;
-    const totalEpisodes = series.reduce((sum, seriesItem) => sum + (parseInt(seriesItem.episodes_count) || 0), 0);
-    
-    return { total, thisWeek, withCategory, withEpisodes, totalEpisodes };
-  };
-
+  // ===== ESTADÍSTICAS DESDE EL CONTEXTO =====
   const stats = getSeriesStats();
 
   // ===== RENDER =====

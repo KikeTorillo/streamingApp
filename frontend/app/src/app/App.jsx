@@ -2,6 +2,12 @@
 import React from "react";
 import { useRoutes, BrowserRouter } from "react-router-dom";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
+import { UsersProvider } from "./context/UserContext";
+import { MoviesProvider } from "./context/MoviesContext";
+import { SeriesProvider } from "./context/SeriesContext";
+import { EpisodesProvider } from "./context/EpisodesContext";
+import { CategoriesProvider } from "./context/CategoriesContext";
+import { AlertProvider } from "./context/AlertContext";
 import { Button } from "../components/atoms/Button/Button";
 
 // Páginas existentes
@@ -37,6 +43,7 @@ import { EpisodesCreatePage } from '../Pages/Admin/Episodes/EpisodesCreatePage/E
 import { EpisodeEditPage } from '../Pages/Admin/Episodes/EpisodeEditPage/EpisodeEditPage';
 
 import { SeriesDetailPage } from "../Pages/SeriesDetailPage/SeriesDetailPage";
+import { MoviesDetailPage } from "../Pages/MoviesDetailPage/MoviesDetailPage";
 
 import "./App.css";
 
@@ -121,6 +128,10 @@ function AppRoutes() {
     {
       path: "/series/:id",
       element: <SeriesDetailPage />
+    },
+    {
+      path: "/movies/:id",
+      element: <MoviesDetailPage />
     },
 
     // ===== RUTAS ADMIN PROTEGIDAS =====
@@ -304,9 +315,21 @@ function AppRoutes() {
 function App() {
   return (
     <ThemeProvider>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
+      <AlertProvider>
+        <UsersProvider>
+          <CategoriesProvider>
+            <MoviesProvider>
+              <SeriesProvider>
+                <EpisodesProvider>
+                  <BrowserRouter>
+                    <AppRoutes />
+                  </BrowserRouter>
+                </EpisodesProvider>
+              </SeriesProvider>
+            </MoviesProvider>
+          </CategoriesProvider>
+        </UsersProvider>
+      </AlertProvider>
     </ThemeProvider>
   );
 }

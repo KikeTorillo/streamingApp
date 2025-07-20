@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMovieNavigation } from '../../hooks/useMovieNavigation';
+import { useAlertContext } from '../../app/context/AlertContext';
 import { transformMovieData } from '../../utils/movieDataTransformer';
 import { Button } from '../../components/atoms/Button/Button';
 import { PageLayout } from '../../components/templates/PageLayout/PageLayout';
@@ -24,6 +25,7 @@ import { logoutService } from '../../services/Auth/logoutService';
 function MainPage() {
     const navigate = useNavigate();
     const { handleContentCardClick, handleContentCardPlay } = useMovieNavigation();
+    const { showPermissionError, showConfirm } = useAlertContext();
 
     // Estados
     const [searchTerm, setSearchTerm] = useState('');
@@ -105,17 +107,10 @@ function MainPage() {
     // ===== FUNCIONES DE MANEJO =====
 
     /**
-     * ✅ CORREGIDO: Función para ir al Admin Panel
+     * Ir al Admin Panel (solo se ejecuta si el usuario es admin)
      */
     const handleGoToAdmin = () => {
-        // Verificar si el usuario es administrador
-        const isAdmin = user?.roleId === 1 || user?.role === 'admin';
-
-        if (isAdmin) {
-            navigate('/admin');
-        } else {
-            alert('⚠️ No tienes permisos de administrador para acceder al panel admin.');
-        }
+        navigate('/admin');
     };
 
     /**
@@ -126,13 +121,19 @@ function MainPage() {
         try {
             console.log('🚪 Usuario solicitando logout...');
             
-            // Mostrar mensaje de confirmación opcional
-            const confirmLogout = window.confirm('¿Estás seguro de que quieres cerrar sesión?');
-            
-            if (confirmLogout) {
-                await logoutService();
-                // logoutService ya maneja la redirección automáticamente
-            }
+            // Mostrar mensaje de confirmación usando nuestro sistema
+            showConfirm(
+                '¿Estás seguro de que quieres cerrar sesión?',
+                async () => {
+                    await logoutService();
+                    // logoutService ya maneja la redirección automáticamente
+                },
+                {
+                    title: 'Confirmar logout',
+                    confirmText: 'Cerrar sesión',
+                    cancelText: 'Cancelar'
+                }
+            );
         } catch (error) {
             console.error('❌ Error en handleLogout:', error);
             // En caso de error, forzar limpieza y redirigir
@@ -165,7 +166,8 @@ function MainPage() {
 
     const handleMovieClick = (movie) => {
         console.log('🎬 Click movie:', movie.title);
-        handleContentCardClick(movie); // ✅ Usa el método inteligente
+        // Redirigir a página de detalle de película
+        navigate(`/movies/${movie.id}`);
     };
 
     const handlePlaySeries = (series) => {
@@ -347,7 +349,7 @@ function MainPage() {
             header={
                 <AppHeader
                     appTitle="🎬 StreamApp"
-                    userName={user.username || user.sub || user.name || 'Usuario'}
+                    userName={user.userName || user.username || user.name || user.email || 'Usuario'}
                     searchValue={searchTerm}
                     onSearchChange={handleSearchChange}
                     searchPlaceholder="Buscar películas y series..."
@@ -378,7 +380,7 @@ function MainPage() {
                                 variant="outline"
                                 size="md"
                                 leftIcon="📤"
-                                onClick={() => alert('🔒 Solo los administradores pueden subir contenido')}
+                                onClick={() => showPermissionError('Solo los administradores pueden subir contenido')}
                             >
                                 Solicitar Acceso
                             </Button>
@@ -420,11 +422,7 @@ function MainPage() {
                         <Button variant="primary" onClick={handleGoToAdmin}>
                             Ir al Admin Panel
                         </Button>
-                    ) : (
-                        <Button variant="outline" onClick={() => alert('Contacta al administrador')}>
-                            Solicitar contenido
-                        </Button>
-                    )
+                    ) : null
                 }
                 variant="default"
                 size="md"
@@ -436,7 +434,7 @@ function MainPage() {
                         key={`movie-${movie.id}`}
                         content={movie}
                         onPlay={() => handlePlayMovie(movie)}
-                        onClick={() => handlePlayMovie(movie)}
+                        onClick={() => handleMovieClick(movie)}
                         onFavorite={() => handleFavoriteMovie(movie)}
                         size="md"
                         showRating={true}
@@ -477,11 +475,7 @@ function MainPage() {
                         <Button variant="primary" onClick={handleGoToAdmin}>
                             Ir al Admin Panel
                         </Button>
-                    ) : (
-                        <Button variant="outline" onClick={() => alert('Contacta al administrador')}>
-                            Solicitar serie
-                        </Button>
-                    )
+                    ) : null
                 }
                 variant="default"
                 size="md"
@@ -492,8 +486,8 @@ function MainPage() {
                     <ContentCard
                         key={`series-${serie.id}`}
                         content={serie}
-                        onPlay={() => handlePlayMovie(serie)}
-                        onClick={() => handleMovieClick(serie)}
+                        onPlay={() => handlePlaySeries(serie)}
+                        onClick={() => handleSeriesClick(serie)}
                         onFavorite={() => handleFavoriteMovie(serie)}
                         size="md"
                         showRating={true}

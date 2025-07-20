@@ -1,4 +1,4 @@
-// ===== SERIES EDIT PAGE - SOLO CAMPOS PERMITIDOS =====
+// ===== SERIES EDIT PAGE - USANDO CONTEXTO =====
 // src/Pages/Admin/Series/SeriesEditPage/SeriesEditPage.jsx
 
 import React, { useState, useEffect } from 'react';
@@ -10,9 +10,10 @@ import { Card, CardHeader, CardBody, CardTitle } from '../../../../components/at
 import { ContentImage } from '../../../../components/atoms/ContentImage/ContentImage';
 import './SeriesEditPage.css';
 
-// Servicios
-import { getSerieByIdService } from '../../../../services/Series/getSerieByIdService';
-import { updateSeriesService } from '../../../../services/Series/updateSeriesService';
+// Contexto
+import { useSeries } from '../../../../app/context/SeriesContext';
+
+// Servicios (solo para categorías)
 import { getCategoriesService } from '../../../../services/Categories/getCategoriesService';
 
 /**
@@ -23,18 +24,27 @@ import { getCategoriesService } from '../../../../services/Categories/getCategor
  * ✅ BACKEND: Homologado con campos reales del backend
  * ✅ UX: Estados de loading, error y success consistentes
  * ✅ VALIDACIONES: Según esquemas del backend
+ * ✅ CONTEXTO: Usa SeriesContext para toda la lógica
  */
 function SeriesEditPage() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  // ===== ESTADOS =====
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(null);
+  // ===== CONTEXTO DE SERIES =====
+  const {
+    currentSeries,
+    loadingSeries,
+    editing,
+    error: contextError,
+    loadSeriesById,
+    updateSeries,
+    clearCurrentSeries,
+    getSeriesCoverUrl
+  } = useSeries();
+
+  // ===== ESTADOS LOCALES =====
   const [success, setSuccess] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
-  const [seriesData, setSeriesData] = useState(null);
   const [initialData, setInitialData] = useState(null);
   const [categories, setCategories] = useState([]);
   const [imagePreview, setImagePreview] = useState(null);
@@ -97,32 +107,23 @@ function SeriesEditPage() {
   // ===== FUNCIONES DE DATOS =====
   
   /**
-   * Cargar datos de la serie desde el backend
+   * Cargar datos de la serie desde el contexto
    */
   const loadSeriesData = async () => {
     try {
-      setLoading(true);
-      setError(null);
-      
       console.log('📥 Cargando datos de la serie ID:', id);
       
       // Cargar serie y categorías en paralelo
       const [seriesResponse, categoriesResponse] = await Promise.all([
-        getSerieByIdService(id),
+        loadSeriesById(id),
         getCategoriesService()
       ]);
       
-      console.log('📋 Respuesta serie:', seriesResponse);
+      console.log('📋 Respuesta serie desde contexto:', seriesResponse);
       console.log('📂 Respuesta categorías:', categoriesResponse);
       
-      // Manejar respuesta de la serie
-      let seriesInfo = null;
-      if (seriesResponse.success) {
-        seriesInfo = seriesResponse.data;
-      } else if (seriesResponse.id) {
-        seriesInfo = seriesResponse; // Respuesta directa
-      } else {
-        throw new Error('Formato de respuesta inesperado del backend');
+      if (!seriesResponse.success) {
+        throw new Error(seriesResponse.error || 'Error al cargar datos de la serie');
       }
 
       // Manejar respuesta de categorías
@@ -133,29 +134,24 @@ function SeriesEditPage() {
         categoriesData = categoriesResponse.data;
       }
 
-      console.log('✅ Serie normalizada:', seriesInfo);
       console.log('✅ Categorías normalizadas:', categoriesData);
       
-      // Configurar imagen preview actual
-      if (seriesInfo.cover_image) {
-        const currentImageUrl = `${import.meta.env.VITE_CDN_URL || 'http://localhost:8082'}/covers/${seriesInfo.cover_image}/cover.jpg`;
+      // Configurar imagen preview actual usando función del contexto
+      if (currentSeries?.cover_image) {
+        const currentImageUrl = getSeriesCoverUrl(currentSeries.cover_image);
         setImagePreview(currentImageUrl);
       }
       
-      setSeriesData(seriesInfo);
       setCategories(categoriesData);
       setInitialData({ 
-        title: seriesInfo.title || '',
-        categoryId: seriesInfo.category_id || '',
-        releaseYear: seriesInfo.release_year || new Date().getFullYear(),
+        title: currentSeries?.title || '',
+        categoryId: currentSeries?.category_id || '',
+        releaseYear: currentSeries?.release_year || new Date().getFullYear(),
         // coverImage no se incluye en initialData porque es un archivo
       });
       
     } catch (error) {
       console.error('💥 Error cargando datos de la serie:', error);
-      setError(error.message || 'Error al cargar datos de la serie');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -180,12 +176,11 @@ function SeriesEditPage() {
   };
 
   /**
-   * Manejar envío del formulario
+   * Manejar envío del formulario usando el contexto
    */
   const handleSubmit = async (formData) => {
     try {
-      setSaving(true);
-      setError(null);
+      setSuccess(false);
 
       console.log('📤 Enviando actualización:', formData);
 
@@ -216,12 +211,12 @@ function SeriesEditPage() {
 
       console.log('📤 Datos a actualizar:', updateData);
 
-      const response = await updateSeriesService(id, updateData);
+      const response = await updateSeries(id, updateData);
 
-      console.log('📥 Respuesta del backend:', response);
+      console.log('📥 Respuesta del contexto:', response);
 
-      if (!response || (response.error && !response.success)) {
-        throw new Error(response?.error || 'Error al actualizar serie');
+      if (!response.success) {
+        throw new Error(response.error || 'Error al actualizar serie');
       }
 
       // Éxito
@@ -242,9 +237,6 @@ function SeriesEditPage() {
 
     } catch (err) {
       console.error('💥 Error actualizando serie:', err);
-      setError(err.message || 'Error al actualizar serie');
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -267,15 +259,34 @@ function SeriesEditPage() {
   useEffect(() => {
     if (id) {
       loadSeriesData();
-    } else {
-      setError('ID de serie no proporcionado');
-      setLoading(false);
     }
+    
+    // Limpiar al desmontar el componente
+    return () => {
+      clearCurrentSeries();
+    };
   }, [id]);
+
+  // Efecto para actualizar datos cuando se carga la serie desde el contexto
+  useEffect(() => {
+    if (currentSeries) {
+      // Configurar imagen preview actual usando función del contexto
+      if (currentSeries.cover_image) {
+        const currentImageUrl = getSeriesCoverUrl(currentSeries.cover_image);
+        setImagePreview(currentImageUrl);
+      }
+      
+      setInitialData({ 
+        title: currentSeries.title || '',
+        categoryId: currentSeries.category_id || '',
+        releaseYear: currentSeries.release_year || new Date().getFullYear(),
+      });
+    }
+  }, [currentSeries]);
 
   // ===== RENDER =====
   
-  if (loading) {
+  if (loadingSeries) {
     return (
       <AdminLayout
         title="Editar Serie"
@@ -294,7 +305,7 @@ function SeriesEditPage() {
     );
   }
 
-  if (error && !seriesData) {
+  if (contextError && !currentSeries) {
     return (
       <AdminLayout
         title="Error"
@@ -308,7 +319,7 @@ function SeriesEditPage() {
         <div className="series-edit__error">
           <div className="series-edit__error-icon">❌</div>
           <h2>Error al cargar serie</h2>
-          <p>{error}</p>
+          <p>{contextError}</p>
           <Button onClick={() => navigate('/admin/series')} variant="primary">
             Volver a la lista
           </Button>
@@ -319,12 +330,12 @@ function SeriesEditPage() {
 
   return (
     <AdminLayout
-      title={`Editar: ${seriesData?.title || 'Serie'}`}
-      subtitle={`${seriesData?.release_year || ''} • ${categories.find(c => c.id === seriesData?.category_id)?.name || 'Sin categoría'}`}
+      title={`Editar: ${currentSeries?.title || 'Serie'}`}
+      subtitle={`${currentSeries?.release_year || ''} • ${categories.find(c => c.id === currentSeries?.category_id)?.name || 'Sin categoría'}`}
       breadcrumbs={[
         { label: 'Admin', href: '/admin' },
         { label: 'Series', href: '/admin/series' },
-        { label: seriesData?.title || 'Editar' }
+        { label: currentSeries?.title || 'Editar' }
       ]}
       headerActions={
         <div className="series-edit__header-actions">
@@ -332,7 +343,7 @@ function SeriesEditPage() {
             variant="outline"
             size="sm"
             onClick={handleCancel}
-            disabled={saving}
+            disabled={editing}
           >
             Cancelar
           </Button>
@@ -340,11 +351,11 @@ function SeriesEditPage() {
             variant="primary"
             size="sm"
             onClick={() => document.getElementById('series-edit-form')?.requestSubmit()}
-            loading={saving}
-            disabled={!hasChanges || saving}
+            loading={editing}
+            disabled={!hasChanges || editing}
             leftIcon="💾"
           >
-            {saving ? 'Guardando...' : 'Guardar Cambios'}
+            {editing ? 'Guardando...' : 'Guardar Cambios'}
           </Button>
         </div>
       }
@@ -362,12 +373,12 @@ function SeriesEditPage() {
           </div>
         )}
 
-        {error && (
+        {contextError && (
           <div className="series-edit__error-message">
             <div className="series-edit__error-icon">⚠️</div>
             <div className="series-edit__error-content">
               <h4>Error al guardar</h4>
-              <p>{error}</p>
+              <p>{contextError}</p>
             </div>
           </div>
         )}
@@ -383,21 +394,21 @@ function SeriesEditPage() {
                 <div className="series-edit__info-left">
                   <div className="series-edit__current-info-item">
                     <span className="series-edit__current-info-label">ID:</span>
-                    <span className="series-edit__current-info-value">{seriesData?.id}</span>
+                    <span className="series-edit__current-info-value">{currentSeries?.id}</span>
                   </div>
                   <div className="series-edit__current-info-item">
                     <span className="series-edit__current-info-label">Título:</span>
-                    <span className="series-edit__current-info-value">{seriesData?.title}</span>
+                    <span className="series-edit__current-info-value">{currentSeries?.title}</span>
                   </div>
                   <div className="series-edit__current-info-item">
                     <span className="series-edit__current-info-label">Categoría:</span>
                     <span className="series-edit__current-info-value">
-                      {categories.find(c => c.id === seriesData?.category_id)?.name || 'Sin categoría'}
+                      {categories.find(c => c.id === currentSeries?.category_id)?.name || 'Sin categoría'}
                     </span>
                   </div>
                   <div className="series-edit__current-info-item">
                     <span className="series-edit__current-info-label">Año:</span>
-                    <span className="series-edit__current-info-value">{seriesData?.release_year}</span>
+                    <span className="series-edit__current-info-value">{currentSeries?.release_year}</span>
                   </div>
                 </div>
                 
@@ -408,7 +419,7 @@ function SeriesEditPage() {
                     {imagePreview ? (
                       <ContentImage
                         src={imagePreview}
-                        alt={`Portada de ${seriesData?.title}`}
+                        alt={`Portada de ${currentSeries?.title}`}
                         aspectRatio="2/3"
                         contentType="series"
                         placeholder="📺"
@@ -437,26 +448,26 @@ function SeriesEditPage() {
               <p>Modifica los campos que necesites. Solo se enviarán los campos que cambies.</p>
             </CardHeader>
             <CardBody>
-              {seriesData && (
+              {currentSeries && (
                 <DynamicForm
                   id="series-edit-form"
                   fields={getEditFormFields()}
                   initialData={{
-                    title: seriesData.title || '',
-                    categoryId: seriesData.category_id || '',
-                    releaseYear: seriesData.release_year || new Date().getFullYear()
+                    title: currentSeries.title || '',
+                    categoryId: currentSeries.category_id || '',
+                    releaseYear: currentSeries.release_year || new Date().getFullYear()
                     // coverImage no se incluye porque es un archivo
                   }}
                   onSubmit={handleSubmit}
                   onChange={handleFormChange}
-                  loading={saving}
-                  disabled={saving || success}
+                  loading={editing}
+                  disabled={editing || success}
                   columnsPerRow={2}
                   tabletColumns={1}
                   mobileColumns={1}
                   fieldSize="md"
                   fieldRounded="md"
-                  submitText={saving ? 'Guardando...' : 'Guardar Cambios'}
+                  submitText={editing ? 'Guardando...' : 'Guardar Cambios'}
                   submitVariant="primary"
                   submitSize="md"
                   submitIcon="💾"
@@ -469,15 +480,15 @@ function SeriesEditPage() {
                       variant: 'outline',
                       text: 'Cancelar',
                       onClick: handleCancel,
-                      disabled: saving
+                      disabled: editing
                     },
                     {
                       key: 'save',
                       type: 'submit',
                       variant: 'primary',
-                      text: saving ? 'Guardando...' : 'Guardar Cambios',
-                      loading: saving,
-                      disabled: !hasChanges || saving,
+                      text: editing ? 'Guardando...' : 'Guardar Cambios',
+                      loading: editing,
+                      disabled: !hasChanges || editing,
                       leftIcon: '💾'
                     }
                   ]}

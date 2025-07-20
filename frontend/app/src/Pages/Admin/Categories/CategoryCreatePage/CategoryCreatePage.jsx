@@ -1,16 +1,16 @@
 // ===== CATEGORY CREATE PAGE - MIGRADO A CONTAINER COMPONENT =====
 // src/Pages/Admin/Categories/CategoryCreatePage/CategoryCreatePage.jsx
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
-import { Container } from '../../../../components/atoms/Container/Container'; // ← NUEVA IMPORTACIÓN
+import { Container } from '../../../../components/atoms/Container/Container';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
 import { Button } from '../../../../components/atoms/Button/Button';
 import './CategoryCreatePage.css';
 
-// Importar servicio para crear categorías
-import { createCategoryService } from '../../../../services/Categories/createCategoryService';
+// Contexto de categorías
+import { useCategories } from '../../../../app/context/CategoriesContext';
 import { filterEmptyFields } from '../../../../utils/formUtils';
 
 /**
@@ -25,11 +25,20 @@ import { filterEmptyFields } from '../../../../utils/formUtils';
 function CategoryCreatePage() {
   const navigate = useNavigate();
 
-  // ===== ESTADOS =====
-  const [loading, setLoading] = useState(false);
+  // ===== CONTEXTO DE CATEGORÍAS =====
+  const {
+    creating,
+    error: contextError,
+    createCategory
+  } = useCategories();
+
+  // ===== ESTADOS LOCALES =====
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+
+  // Usar loading del contexto
+  const loading = creating;
 
   // ===== CONFIGURACIÓN HOMOLOGADA CON BACKEND =====
   
@@ -106,12 +115,11 @@ function CategoryCreatePage() {
   };
 
   /**
-   * Enviar formulario - HOMOLOGADO CON BACKEND
+   * Enviar formulario - USANDO CONTEXTO
    */
   const handleSubmit = async (formData) => {
     // Limpiar estados previos
     setError(null);
-    setLoading(true);
 
     try {
       console.log('📤 Enviando datos al backend:', formData);
@@ -119,28 +127,42 @@ function CategoryCreatePage() {
       // Preparar datos para el backend usando utility
       const categoryData = filterEmptyFields(formData);
 
-      const result = await createCategoryService(categoryData);
+      const result = await createCategory(categoryData);
 
-      console.log('✅ Categoría creada exitosamente:', result);
+      if (result.success) {
+        console.log('✅ Categoría creada exitosamente:', result);
 
-      // Marcar como exitoso
-      setSuccess(true);
-      setHasChanges(false);
+        // Marcar como exitoso
+        setSuccess(true);
+        setHasChanges(false);
 
-      // Redireccionar después de 3 segundos
-      setTimeout(() => {
-        navigate('/admin/categories');
-      }, 3000);
+        // Redireccionar después de 3 segundos
+        setTimeout(() => {
+          navigate('/admin/categories');
+        }, 3000);
+
+      } else if (result.error === 'SESSION_EXPIRED') {
+        console.log('🔒 Sesión expirada, redirigiendo...');
+        navigate('/login');
+        return;
+      } else {
+        // Error del contexto
+        throw new Error(result.error || 'Error inesperado al crear la categoría');
+      }
 
     } catch (err) {
       console.error('❌ Error al crear categoría:', err);
       
+      if (err.message === 'SESSION_EXPIRED') {
+        console.log('🔒 Sesión expirada, redirigiendo...');
+        navigate('/login');
+        return;
+      }
+      
       // Formatear error para el usuario
       let errorMessage = 'Error inesperado al crear la categoría';
       
-      if (err.response?.data?.message) {
-        errorMessage = err.response.data.message;
-      } else if (err.message) {
+      if (err.message) {
         errorMessage = err.message;
       }
 
@@ -154,8 +176,6 @@ function CategoryCreatePage() {
       }
       
       setError(errorMessage);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -189,12 +209,12 @@ function CategoryCreatePage() {
           </Button>
   
         {/* Mensaje de Error */}
-        {error && (
+        {(error || contextError) && (
           <div className="status-message status-message--error">
             <span className="status-message__icon">⚠️</span>
             <div className="status-message__content">
               <strong>Error al crear categoría</strong>
-              <span>{error}</span>
+              <span>{error || contextError}</span>
             </div>
           </div>
         )}
@@ -251,9 +271,9 @@ function CategoryCreatePage() {
           <div className="info-card">
             <h4>💡 Consejos para crear categorías</h4>
             <ul>
-              <li><strong>Nombres claros:</strong> Usa términos conocidos como "Acción", "Drama", "Comedia"</li>
+              <li><strong>Nombres claros:</strong> Usa términos conocidos como &quot;Acción&quot;, &quot;Drama&quot;, &quot;Comedia&quot;</li>
               <li><strong>Evita duplicados:</strong> Revisa las categorías existentes antes de crear nuevas</li>
-              <li><strong>Sé específico:</strong> "Documentales de Naturaleza" es mejor que solo "Documentales"</li>
+              <li><strong>Sé específico:</strong> &quot;Documentales de Naturaleza&quot; es mejor que solo &quot;Documentales&quot;</li>
               <li><strong>Mantén consistencia:</strong> Usa un criterio similar al nombrar categorías relacionadas</li>
             </ul>
           </div>

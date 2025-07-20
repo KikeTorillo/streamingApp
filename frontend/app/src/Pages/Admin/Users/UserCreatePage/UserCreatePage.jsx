@@ -1,32 +1,44 @@
 // ===== USER CREATE PAGE - MIGRADO A CONTAINER COMPONENT =====
 // src/Pages/Admin/Users/UserCreatePage/UserCreatePage.jsx
 
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
-import { Container } from '../../../../components/atoms/Container/Container'; // ← NUEVA IMPORTACIÓN
+import { Container } from '../../../../components/atoms/Container/Container';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
 import { Button } from '../../../../components/atoms/Button/Button';
+import { useUsers } from '../../../../app/context/UserContext';
 import './UserCreatePage.css';
-import { createUserService } from '../../../../services/Users/createUserService';
-import { validatePasswordsMatch, prepareUserData } from '../../../../utils/formUtils';
 
 /**
- * UserCreatePage - MIGRADO A CONTAINER COMPONENT
+ * UserCreatePage - REFACTORIZADO CON USERCONTEXT
  * 
+ * ✅ MIGRADO: Usa UserContext para gestión de estado
  * ✅ CONTAINER: Usa <Container size="md" /> en lugar de layout personalizado
- * ✅ EQUIVALENCIA: Container MD = 800px = max-width actual
- * ✅ SISTEMA: Homologado con el resto de componentes
+ * ✅ SIMPLIFICADO: Lógica centralizada en el contexto
  * ✅ BACKEND: Campos reales según esquemas del backend
  */
 function UserCreatePage() {
   const navigate = useNavigate();
 
-  // ===== ESTADOS =====
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  // ===== CONTEXTO DE USUARIOS =====
+  const { 
+    loading, 
+    error, 
+    createUser,
+    setError 
+  } = useUsers();
+
+  // ===== ESTADOS LOCALES =====
   const [success, setSuccess] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+
+  // ===== MANEJO DE SESIÓN EXPIRADA =====
+  useEffect(() => {
+    if (error === 'SESSION_EXPIRED') {
+      navigate('/login');
+    }
+  }, [error, navigate]);
 
   // ===== CONFIGURACIÓN HOMOLOGADA CON BACKEND =====
 
@@ -93,38 +105,30 @@ function UserCreatePage() {
   // ===== HANDLERS =====
 
   /**
-   * Manejar envío del formulario
+   * Manejar envío del formulario - Usa función del contexto
    */
   const handleSubmit = async (formData) => {
-    setLoading(true);
-    setError(null);
+    console.log('🏗️ [UserCreatePage] Solicitud de creación:', formData);
 
     try {
-      // Validar contraseñas coinciden usando utility
-      if (!validatePasswordsMatch(formData.password, formData.confirmPassword)) {
-        throw new Error('Las contraseñas no coinciden');
+      const result = await createUser(formData);
+
+      if (result.success) {
+        console.log('✅ [UserCreatePage] Usuario creado:', result.data);
+        setSuccess(true);
+        setHasChanges(false);
+
+        // Redireccionar después de 3 segundos
+        setTimeout(() => {
+          navigate('/admin/users');
+        }, 3000);
+      } else {
+        console.error('❌ [UserCreatePage] Error en creación:', result.error);
+        // El error ya se maneja en el contexto
       }
-
-      // Limpiar datos para envío usando utility
-      const userData = prepareUserData(formData);
-
-      // Crear usuario
-      const result = await createUserService(userData);
-
-      console.log('Usuario creado exitosamente:', result);
-      setSuccess(true);
-      setHasChanges(false);
-
-      // Redireccionar después de 3 segundos
-      setTimeout(() => {
-        navigate('/admin/users');
-      }, 3000);
-
-    } catch (err) {
-      console.error('Error creando usuario:', err);
-      setError(err.message || 'Error al crear el usuario');
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      console.error('💥 [UserCreatePage] Error en creación:', error);
+      // El error ya se maneja en el contexto
     }
   };
 
@@ -150,7 +154,7 @@ function UserCreatePage() {
   };
 
   /**
-   * Limpiar error
+   * Limpiar error del contexto
    */
   const handleClearError = () => {
     setError(null);

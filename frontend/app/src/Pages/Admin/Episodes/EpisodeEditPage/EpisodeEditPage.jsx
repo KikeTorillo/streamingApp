@@ -1,7 +1,7 @@
-// ===== EPISODE EDIT PAGE - SOLO CAMPOS PERMITIDOS =====
+// ===== EPISODE EDIT PAGE - CON EPISODES CONTEXT =====
 // src/Pages/Admin/Episodes/EpisodeEditPage/EpisodeEditPage.jsx
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
@@ -10,33 +10,45 @@ import { Card, CardHeader, CardBody, CardTitle } from '../../../../components/at
 import { Badge } from '../../../../components/atoms/Badge/Badge';
 import './EpisodeEditPage.css';
 
-// Servicios
-import { getEpisodeByIdService } from '../../../../services/Episodes/getEpisodeByIdService';
-import { updateEpisodeService } from '../../../../services/Episodes/updateEpisodeService';
-import { getSeriesService } from '../../../../services/Series/getSeriesService';
+// Context
+import { useEpisodes } from '../../../../app/context/EpisodesContext';
 
 /**
- * EpisodeEditPage - Página de edición de episodios
+ * EpisodeEditPage - CON EPISODES CONTEXT
  * 
- * ✅ CAMPOS EDITABLES: título, serie, temporada y número de episodio
+ * ✅ CONTEXT CENTRALIZADO: Usa EpisodesContext para toda la lógica
+ * ✅ CONSISTENCIA TOTAL: Mismo patrón que Movies/Series EditPage
+ * ✅ CAMPOS EDITABLES: título, serie, temporada y número de episodio  
  * ✅ SISTEMA DE DISEÑO: Usa componentes con stories de Storybook
- * ✅ BACKEND: Homologado con campos reales del backend
- * ✅ UX: Estados de loading, error y success consistentes
- * ✅ VALIDACIONES: Según esquemas del backend
+ * ✅ ESTADOS COMPARTIDOS: Loading, error, editing desde el contexto
+ * ✅ FUNCIONES CENTRALIZADAS: loadEpisodeById, updateEpisode del contexto
  */
 function EpisodeEditPage() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  // ===== ESTADOS =====
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(null);
+  // ===== ESTADOS LOCALES =====
   const [success, setSuccess] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
-  const [episodeData, setEpisodeData] = useState(null);
   const [initialData, setInitialData] = useState(null);
-  const [series, setSeries] = useState([]);
+
+  // ===== CONTEXT =====
+  const {
+    // Estados principales
+    currentEpisode,
+    loadingEpisode,
+    editing,
+    error,
+    
+    // Estados de series
+    seriesData,
+    
+    // Funciones
+    loadSeries,
+    loadEpisodeById,
+    updateEpisode,
+    clearCurrentEpisode
+  } = useEpisodes();
 
   // ===== CONFIGURACIÓN DEL FORMULARIO =====
   
@@ -63,7 +75,7 @@ function EpisodeEditPage() {
         required: true,
         leftIcon: '📺',
         helperText: 'Serie a la que pertenece este episodio',
-        options: series.map(serie => ({
+        options: seriesData.map(serie => ({
           value: serie.id,
           label: serie.title
         })),
@@ -107,59 +119,34 @@ function EpisodeEditPage() {
   // ===== FUNCIONES DE DATOS =====
   
   /**
-   * Cargar datos del episodio desde el backend
+   * Cargar datos del episodio usando el contexto
    */
   const loadEpisodeData = async () => {
     try {
-      setLoading(true);
-      setError(null);
+      console.log('📥 [EpisodeEditPage] Cargando datos del episodio ID:', id);
       
-      console.log('📥 Cargando datos del episodio ID:', id);
-      
-      // Cargar episodio y series en paralelo
-      const [episodeResponse, seriesResponse] = await Promise.all([
-        getEpisodeByIdService(id),
-        getSeriesService()
+      // Cargar episodio y series usando el contexto
+      const [episodeResult] = await Promise.all([
+        loadEpisodeById(id),
+        loadSeries()
       ]);
       
-      console.log('📋 Respuesta episodio:', episodeResponse);
-      console.log('📂 Respuesta series:', seriesResponse);
-      
-      // Manejar respuesta del episodio
-      let episodeInfo = null;
-      if (episodeResponse.success) {
-        episodeInfo = episodeResponse.data;
-      } else if (episodeResponse.id) {
-        episodeInfo = episodeResponse; // Respuesta directa
+      if (episodeResult.success && episodeResult.data) {
+        const episodeInfo = episodeResult.data;
+        console.log('✅ [EpisodeEditPage] Episodio cargado:', episodeInfo);
+        
+        setInitialData({ 
+          title: episodeInfo.title || '',
+          serieId: episodeInfo.serie_id || '',
+          season: episodeInfo.season || 1,
+          episodeNumber: episodeInfo.episode_number || 1,
+        });
       } else {
-        throw new Error('Formato de respuesta inesperado del backend');
+        console.error('💥 [EpisodeEditPage] Error al cargar episodio:', episodeResult.error);
       }
-
-      // Manejar respuesta de series
-      let seriesData = [];
-      if (Array.isArray(seriesResponse)) {
-        seriesData = seriesResponse;
-      } else if (seriesResponse.success && Array.isArray(seriesResponse.data)) {
-        seriesData = seriesResponse.data;
-      }
-
-      console.log('✅ Episodio normalizado:', episodeInfo);
-      console.log('✅ Series normalizadas:', seriesData);
-      
-      setEpisodeData(episodeInfo);
-      setSeries(seriesData);
-      setInitialData({ 
-        title: episodeInfo.title || '',
-        serieId: episodeInfo.serie_id || '',
-        season: episodeInfo.season || 1,
-        episodeNumber: episodeInfo.episode_number || 1,
-      });
       
     } catch (error) {
-      console.error('💥 Error cargando datos del episodio:', error);
-      setError(error.message || 'Error al cargar datos del episodio');
-    } finally {
-      setLoading(false);
+      console.error('💥 [EpisodeEditPage] Error inesperado:', error);
     }
   };
 
@@ -184,14 +171,11 @@ function EpisodeEditPage() {
   };
 
   /**
-   * Manejar envío del formulario
+   * Manejar envío del formulario usando el contexto
    */
   const handleSubmit = async (formData) => {
     try {
-      setSaving(true);
-      setError(null);
-
-      console.log('📤 Enviando actualización:', formData);
+      console.log('📤 [EpisodeEditPage] Enviando actualización:', formData);
 
       // Preparar datos para el backend (solo campos que cambiaron)
       const updateData = {};
@@ -218,37 +202,31 @@ function EpisodeEditPage() {
         return;
       }
 
-      console.log('📤 Datos a actualizar:', updateData);
+      console.log('📤 [EpisodeEditPage] Datos a actualizar:', updateData);
 
-      const response = await updateEpisodeService(id, updateData);
+      // Usar updateEpisode del contexto
+      const result = await updateEpisode(id, updateData);
 
-      console.log('📥 Respuesta del backend:', response);
+      if (result.success) {
+        console.log('✅ [EpisodeEditPage] Episodio actualizado exitosamente');
+        setSuccess(true);
+        setHasChanges(false);
 
-      if (!response || (response.error && !response.success)) {
-        throw new Error(response?.error || 'Error al actualizar episodio');
+        // Recargar datos actualizados
+        setTimeout(() => {
+          loadEpisodeData();
+        }, 1000);
+
+        // Redirigir después de un delay
+        setTimeout(() => {
+          navigate('/admin/episodes');
+        }, 2500);
+      } else {
+        console.error('💥 [EpisodeEditPage] Error al actualizar:', result.error);
       }
 
-      // Éxito
-      setSuccess(true);
-      setHasChanges(false);
-      
-      console.log('✅ Episodio actualizado exitosamente');
-
-      // Recargar datos actualizados
-      setTimeout(() => {
-        loadEpisodeData();
-      }, 1000);
-
-      // Redirigir después de un delay
-      setTimeout(() => {
-        navigate('/admin/episodes');
-      }, 2500);
-
     } catch (err) {
-      console.error('💥 Error actualizando episodio:', err);
-      setError(err.message || 'Error al actualizar episodio');
-    } finally {
-      setSaving(false);
+      console.error('💥 [EpisodeEditPage] Error inesperado:', err);
     }
   };
 
@@ -271,15 +249,18 @@ function EpisodeEditPage() {
   useEffect(() => {
     if (id) {
       loadEpisodeData();
-    } else {
-      setError('ID de episodio no proporcionado');
-      setLoading(false);
     }
+    
+    // Limpiar episodio actual al desmontar
+    return () => {
+      clearCurrentEpisode();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   // ===== RENDER =====
   
-  if (loading) {
+  if (loadingEpisode) {
     return (
       <AdminLayout
         title="Editar Episodio"
@@ -298,7 +279,7 @@ function EpisodeEditPage() {
     );
   }
 
-  if (error && !episodeData) {
+  if (error && !currentEpisode) {
     return (
       <AdminLayout
         title="Error"
@@ -321,16 +302,16 @@ function EpisodeEditPage() {
     );
   }
 
-  const currentSeries = series.find(s => s.id === episodeData?.serie_id);
+  const currentSeries = seriesData.find(s => s.id === currentEpisode?.serie_id);
 
   return (
     <AdminLayout
-      title={`Editar: ${episodeData?.title || `T${episodeData?.season}E${episodeData?.episode_number}`}`}
-      subtitle={`${currentSeries?.title || 'Serie'} • Temporada ${episodeData?.season} • Episodio ${episodeData?.episode_number}`}
+      title={`Editar: ${currentEpisode?.title || `T${currentEpisode?.season}E${currentEpisode?.episode_number}`}`}
+      subtitle={`${currentSeries?.title || 'Serie'} • Temporada ${currentEpisode?.season} • Episodio ${currentEpisode?.episode_number}`}
       breadcrumbs={[
         { label: 'Admin', href: '/admin' },
         { label: 'Episodios', href: '/admin/episodes' },
-        { label: episodeData?.title || 'Editar' }
+        { label: currentEpisode?.title || 'Editar' }
       ]}
       headerActions={
         <div className="episode-edit__header-actions">
@@ -338,7 +319,7 @@ function EpisodeEditPage() {
             variant="outline"
             size="sm"
             onClick={handleCancel}
-            disabled={saving}
+            disabled={editing}
           >
             Cancelar
           </Button>
@@ -346,11 +327,11 @@ function EpisodeEditPage() {
             variant="primary"
             size="sm"
             onClick={() => document.getElementById('episode-edit-form')?.requestSubmit()}
-            loading={saving}
-            disabled={!hasChanges || saving}
+            loading={editing}
+            disabled={!hasChanges || editing}
             leftIcon="💾"
           >
-            {saving ? 'Guardando...' : 'Guardar Cambios'}
+            {editing ? 'Guardando...' : 'Guardar Cambios'}
           </Button>
         </div>
       }
@@ -388,11 +369,11 @@ function EpisodeEditPage() {
               <div className="episode-edit__info-grid">
                 <div className="episode-edit__current-info-item">
                   <span className="episode-edit__current-info-label">ID:</span>
-                  <span className="episode-edit__current-info-value">{episodeData?.id}</span>
+                  <span className="episode-edit__current-info-value">{currentEpisode?.id}</span>
                 </div>
                 <div className="episode-edit__current-info-item">
                   <span className="episode-edit__current-info-label">Título:</span>
-                  <span className="episode-edit__current-info-value">{episodeData?.title}</span>
+                  <span className="episode-edit__current-info-value">{currentEpisode?.title}</span>
                 </div>
                 <div className="episode-edit__current-info-item">
                   <span className="episode-edit__current-info-label">Serie:</span>
@@ -404,7 +385,7 @@ function EpisodeEditPage() {
                   <span className="episode-edit__current-info-label">Temporada:</span>
                   <span className="episode-edit__current-info-value">
                     <Badge variant="info" size="sm" style="soft">
-                      T{episodeData?.season}
+                      T{currentEpisode?.season}
                     </Badge>
                   </span>
                 </div>
@@ -412,14 +393,14 @@ function EpisodeEditPage() {
                   <span className="episode-edit__current-info-label">Episodio:</span>
                   <span className="episode-edit__current-info-value">
                     <Badge variant="success" size="sm" style="soft">
-                      E{episodeData?.episode_number}
+                      E{currentEpisode?.episode_number}
                     </Badge>
                   </span>
                 </div>
                 <div className="episode-edit__current-info-item">
                   <span className="episode-edit__current-info-label">Duración:</span>
                   <span className="episode-edit__current-info-value">
-                    {episodeData?.duration ? `${episodeData.duration} min` : 'No disponible'}
+                    {currentEpisode?.duration ? `${currentEpisode.duration} min` : 'No disponible'}
                   </span>
                 </div>
               </div>
@@ -435,26 +416,26 @@ function EpisodeEditPage() {
               <p>Modifica los campos que necesites. Solo se enviarán los campos que cambies.</p>
             </CardHeader>
             <CardBody>
-              {episodeData && (
+              {currentEpisode && (
                 <DynamicForm
                   id="episode-edit-form"
                   fields={getEditFormFields()}
                   initialData={{
-                    title: episodeData.title || '',
-                    serieId: episodeData.serie_id || '',
-                    season: episodeData.season || 1,
-                    episodeNumber: episodeData.episode_number || 1
+                    title: currentEpisode.title || '',
+                    serieId: currentEpisode.serie_id || '',
+                    season: currentEpisode.season || 1,
+                    episodeNumber: currentEpisode.episode_number || 1
                   }}
                   onSubmit={handleSubmit}
                   onChange={handleFormChange}
-                  loading={saving}
-                  disabled={saving || success}
+                  loading={editing}
+                  disabled={editing || success}
                   columnsPerRow={2}
                   tabletColumns={1}
                   mobileColumns={1}
                   fieldSize="md"
                   fieldRounded="md"
-                  submitText={saving ? 'Guardando...' : 'Guardar Cambios'}
+                  submitText={editing ? 'Guardando...' : 'Guardar Cambios'}
                   submitVariant="primary"
                   submitSize="md"
                   submitIcon="💾"
@@ -467,15 +448,15 @@ function EpisodeEditPage() {
                       variant: 'outline',
                       text: 'Cancelar',
                       onClick: handleCancel,
-                      disabled: saving
+                      disabled: editing
                     },
                     {
                       key: 'save',
                       type: 'submit',
                       variant: 'primary',
-                      text: saving ? 'Guardando...' : 'Guardar Cambios',
-                      loading: saving,
-                      disabled: !hasChanges || saving,
+                      text: editing ? 'Guardando...' : 'Guardar Cambios',
+                      loading: editing,
+                      disabled: !hasChanges || editing,
                       leftIcon: '💾'
                     }
                   ]}

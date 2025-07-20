@@ -14,6 +14,7 @@ import './AppHeader.css';
 function AppHeader({
   // Título de la app
   appTitle = 'StreamApp',
+  onTitleClick = null,
   
   // Usuario
   userName = null,
@@ -46,7 +47,13 @@ function AppHeader({
     <header className={headerClasses} {...restProps}>
       {/* Brand/Logo */}
       <div className="app-header__brand">
-        <h1 className="app-header__title">{appTitle}</h1>
+        <h1 
+          className={`app-header__title ${onTitleClick ? 'app-header__title--clickable' : ''}`}
+          onClick={onTitleClick}
+          style={onTitleClick ? { cursor: 'pointer' } : {}}
+        >
+          {appTitle}
+        </h1>
       </div>
 
       {/* Búsqueda */}

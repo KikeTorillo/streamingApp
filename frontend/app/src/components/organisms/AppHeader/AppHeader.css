@@ -31,8 +31,18 @@
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
   margin: 0;
-  text-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.2);
+  text-shadow: var(--shadow-sm);
   color: var(--text-white);
+  transition: all 0.2s ease;
+}
+
+.app-header__title--clickable {
+  cursor: pointer;
+}
+
+.app-header__title--clickable:hover {
+  opacity: 0.8;
+  transform: scale(1.02);
 }
 
 /* ===== BÚSQUEDA ===== */
@@ -46,14 +56,28 @@
   width: 100%;
 }
 
-/* Override del TextInput para el header */
+/* Override del TextInput para el header - Usando sistema de diseño */
 .app-header .search-input input {
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: var(--bg-primary);
   color: var(--text-primary);
+  font-weight: var(--font-weight-medium);
+  border-color: var(--border-light);
 }
 
 .app-header .search-input input::placeholder {
-  color: var(--text-muted);
+  color: var(--text-placeholder);
+  opacity: 1;
+}
+
+.app-header .search-input input:focus {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border-color: var(--border-focus);
+}
+
+.app-header .search-input input:focus::placeholder {
+  color: var(--text-placeholder);
+  opacity: 0.7;
 }
 
 /* ===== USUARIO ===== */
@@ -73,12 +97,14 @@
 
 .logout-button {
   color: var(--text-white) !important;
-  border-color: rgba(255, 255, 255, 0.3) !important;
+  border-color: var(--border-light) !important;
+  opacity: 0.9;
 }
 
 .logout-button:hover {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  border-color: rgba(255, 255, 255, 0.5) !important;
+  background-color: var(--bg-hover) !important;
+  border-color: var(--border-default) !important;
+  opacity: 1;
 }
 
 /* ===== TAMAÑOS ===== */
@@ -133,8 +159,9 @@
 
 /* Variante transparente */
 .app-header--variant-transparent {
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(1rem);
+  background-color: var(--bg-secondary);
+  opacity: 0.95;
+  backdrop-filter: blur(var(--space-lg));
 }
 
 /* Variante oscura */

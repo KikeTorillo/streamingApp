@@ -1,44 +1,64 @@
-// ===== EPISODES CREATE PAGE - CON SISTEMA DE PROGRESO =====
+// ===== EPISODES CREATE PAGE - CON EPISODES CONTEXT =====
 // src/Pages/Admin/Episodes/EpisodesCreatePage/EpisodesCreatePage.jsx
 
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { Container } from '../../../../components/atoms/Container/Container';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
 import { Button } from '../../../../components/atoms/Button/Button';
 import { ProgressModal } from "../../../../components/molecules/ProgressModal/ProgressModal";
-import { useUploadProgress } from "../../../../hooks/useUploadProgress";
-import { useSeries } from "../../../../hooks/useSeries";
 import { useFormNavigation } from "../../../../hooks/useFormNavigation";
-import { filterEmptyFields } from '../../../../utils/formUtils';
 import "./EpisodesCreatePage.css";
 
-// Servicios
-import { createEpisodeService } from '../../../../services/Episodes/createEpisodeService';
+// Context
+import { useEpisodes } from '../../../../app/context/EpisodesContext';
 
 /**
- * EpisodesCreatePage - VERSIÓN OPTIMIZADA CON HOOKS REUTILIZABLES
+ * EpisodesCreatePage - CON EPISODES CONTEXT
  * 
- * ✅ HOOKS REUTILIZABLES: useSeries, useFormNavigation, filterEmptyFields
- * ✅ CONSISTENCIA: Mismo patrón que MovieCreatePage y SeriesCreatePage
- * ✅ PROGRESO: Sistema completo de monitoreo de transcodificación
- * ✅ SIMPLICIDAD: Código reducido siguiendo principio KISS
- * ✅ MANTENIBILIDAD: Lógica centralizada en hooks compartidos
+ * ✅ CONTEXT CENTRALIZADO: Toda la lógica en EpisodesContext
+ * ✅ CONSISTENCIA TOTAL: Mismo patrón que MoviesContext y SeriesContext
+ * ✅ PROGRESO INTEGRADO: Sistema de monitoreo desde el contexto
+ * ✅ SIMPLICIDAD MÁXIMA: Código mínimo siguiendo principio KISS
+ * ✅ MANTENIBILIDAD: Lógica centralizada y reutilizable
  */
 function EpisodesCreatePage() {
   const navigate = useNavigate();
 
-  // ===== ESTADOS =====
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  // ===== ESTADOS LOCALES =====
   const [success, setSuccess] = useState(false);
 
+  // ===== CONTEXT =====
+  const {
+    // Estados principales
+    creating,
+    processing,
+    uploadProgress,
+    uploadStatus,
+    error,
+    
+    // Estados de series
+    seriesData,
+    seriesLoading,
+    seriesError,
+    
+    // Funciones
+    loadSeries,
+    createEpisode,
+    monitorProgress,
+    resetCreationState
+  } = useEpisodes();
+  
   // ===== HOOKS =====
-  const { series, loading: seriesLoading, error: seriesError } = useSeries();
   const { hasChanges, markAsChanged, resetNavigation } = useFormNavigation();
-  const { progress, status, message, error: progressError, monitorProgress, resetProgress } = useUploadProgress();
 
+  // ===== EFECTOS =====
+  useEffect(() => {
+    console.log('🚀 [EpisodesCreatePage] Componente montado, cargando series...');
+    loadSeries();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Solo ejecutar al montar el componente
 
   // ===== CONFIGURACIÓN DEL FORMULARIO =====
   
@@ -53,17 +73,17 @@ function EpisodesCreatePage() {
       label: (() => {
         if (seriesLoading) return '⏳ Cargando series...';
         if (seriesError) return '❌ Error al cargar series';
-        if (series.length === 0) return '📺 Sin series disponibles - Ve a Administrar > Series para crear una.';
-        return `📺 Serie * (${series.length} disponibles)`;
+        if (seriesData.length === 0) return '📺 Sin series disponibles - Ve a Administrar > Series para crear una.';
+        return `📺 Serie * (${seriesData.length} disponibles)`;
       })(),
       placeholder: seriesLoading ? 'Cargando series...' : 'Selecciona la serie',
       required: true,
       leftIcon: '📺',
-      options: series.map(serie => ({
+      options: seriesData.map(serie => ({
         value: serie.id,
         label: `${serie.title} (${serie.release_year || 'Sin año'})`
       })),
-      disabled: seriesLoading || series.length === 0,
+      disabled: seriesLoading || seriesData.length === 0,
       helperText: seriesError || 'Serie a la que pertenece este episodio',
       validation: {
         required: { value: true, message: 'Debes seleccionar una serie' }
@@ -182,20 +202,16 @@ function EpisodesCreatePage() {
     
     // Limpiar errores cuando el usuario empiece a escribir
     if (error) {
-      setError(null);
+      resetCreationState();
     }
   };
 
   /**
-   * Enviar formulario con sistema de progreso
+   * Enviar formulario usando el contexto
    */
   const handleSubmit = async (formData) => {
-    setError(null);
-    setLoading(true);
-    resetProgress(); // Resetear progreso anterior
-
     try {
-      console.log('📤 Enviando datos del episodio:', formData);
+      console.log('📤 [EpisodesCreatePage] Enviando datos del episodio:', formData);
 
       // Primero procesar campos numéricos que vienen como strings  
       const processedData = {
@@ -204,90 +220,51 @@ function EpisodesCreatePage() {
         season: parseInt(formData.season),
         episodeNumber: parseInt(formData.episodeNumber)
       };
-      
-      // Luego filtrar campos vacíos (igual que Movies y Series)
-      const episodeData = filterEmptyFields(processedData);
 
-      console.log('📤 Datos procesados:', episodeData);
+      console.log('📤 [EpisodesCreatePage] Datos procesados:', processedData);
 
-      const result = await createEpisodeService(episodeData);
+      // Usar createEpisode del contexto con callback de progreso
+      const result = await createEpisode(processedData, (progress, status, message) => {
+        console.log(`📊 [EpisodesCreatePage] Progreso: ${progress}% - ${status} - ${message}`);
+      });
 
-      console.log('✅ Respuesta del backend:', result);
-
-      // ===== MANEJO DE PROGRESO =====
-      if (result?.taskId) {
-        console.log('🔄 TaskId recibido, iniciando monitoreo:', result.taskId);
-        
-        // Iniciar monitoreo del progreso
-        const cancelMonitoring = monitorProgress(
-          result.taskId,
-          'episodes', // Tipo de contenido
-          (newStatus) => {
-            console.log('📊 Cambio de estado:', newStatus);
-          },
-          (success, error) => {
-            console.log('🏁 Proceso terminado:', { success, error });
-            setLoading(false);
-            
-            if (success) {
-              setSuccess(true);
-              resetNavigation();
-              
-              // Redireccionar después de 3 segundos
-              setTimeout(() => {
-                navigate('/admin/episodes');
-              }, 3000);
-            } else {
-              setError(error || 'Error en el procesamiento del video');
-            }
-          }
-        );
-
-        // Limpiar el monitoreo cuando el componente se desmonte
-        return () => {
-          if (cancelMonitoring) {
-            cancelMonitoring();
-          }
-        };
-
-      } else {
-        // Si no hay taskId, el episodio se creó directamente
-        console.log('✅ Episodio creado exitosamente sin transcodificación');
+      if (result.success) {
+        console.log('✅ [EpisodesCreatePage] Episodio creado exitosamente');
         setSuccess(true);
         resetNavigation();
-        setLoading(false);
 
-        // Redireccionar después de 3 segundos
-        setTimeout(() => {
-          navigate('/admin/episodes');
-        }, 3000);
+        // Si hay taskId, iniciar monitoreo
+        if (result.taskId) {
+          console.log('🔄 [EpisodesCreatePage] Iniciando monitoreo de progreso:', result.taskId);
+          monitorProgress(
+            result.taskId,
+            'episodes',
+            (status, progress, message) => {
+              console.log(`📊 [EpisodesCreatePage] Estado: ${status} - ${progress}% - ${message}`);
+            },
+            (success, error) => {
+              console.log('🏁 [EpisodesCreatePage] Proceso terminado:', { success, error });
+              
+              if (success) {
+                // Redireccionar después de 3 segundos
+                setTimeout(() => {
+                  navigate('/admin/episodes');
+                }, 3000);
+              }
+            }
+          );
+        } else {
+          // Redireccionar inmediatamente si no hay procesamiento
+          setTimeout(() => {
+            navigate('/admin/episodes');
+          }, 3000);
+        }
+      } else {
+        console.error('❌ [EpisodesCreatePage] Error al crear episodio:', result.error);
       }
 
     } catch (err) {
-      console.error('❌ Error al crear episodio:', err);
-      setLoading(false);
-      
-      // Formatear error para el usuario
-      let errorMessage = 'Error inesperado al crear el episodio';
-      
-      if (err.response?.data?.message) {
-        errorMessage = err.response.data.message;
-      } else if (err.message) {
-        errorMessage = err.message;
-      }
-
-      // Manejo específico de errores comunes
-      if (errorMessage.includes('duplicate') || errorMessage.includes('ya existe')) {
-        errorMessage = 'Ya existe un episodio con esa temporada y número en la serie seleccionada.';
-      } else if (errorMessage.includes('validation')) {
-        errorMessage = 'Los datos ingresados no son válidos. Revisa el formulario.';
-      } else if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
-        errorMessage = 'Error de conexión. Verifica tu internet e inténtalo de nuevo.';
-      } else if (errorMessage.includes('file') || errorMessage.includes('video')) {
-        errorMessage = 'Error al procesar el archivo de video. Verifica el formato y tamaño.';
-      }
-      
-      setError(errorMessage);
+      console.error('💥 [EpisodesCreatePage] Error inesperado:', err);
     }
   };
 
@@ -306,7 +283,7 @@ function EpisodesCreatePage() {
       <Container 
         size="lg" 
         variant="default"
-        className={`${status !== 'idle' ? 'episodes-create--loading' : ''}`}
+        className={`${uploadStatus !== 'idle' ? 'episodes-create--loading' : ''}`}
       >
         
         {/* Header Actions */}
@@ -315,7 +292,7 @@ function EpisodesCreatePage() {
             size="sm"
             leftIcon="←"
             onClick={handleGoBack}
-            disabled={loading || status !== 'idle'}
+            disabled={creating || processing || uploadStatus !== 'idle'}
           >
             Volver a Episodios
           </Button>
@@ -361,17 +338,17 @@ function EpisodesCreatePage() {
           initialData={initialData}
           onSubmit={handleSubmit}
           onChange={handleFormChange}
-          loading={loading || status !== 'idle'}
-          disabled={loading || success || status !== 'idle'}
+          loading={creating || processing || uploadStatus !== 'idle'}
+          disabled={creating || processing || success || uploadStatus !== 'idle'}
           columnsPerRow={2}
           tabletColumns={1}
           mobileColumns={1}
           fieldSize="md"
           fieldRounded="md"
           submitText={
-            status === 'processing' ? "Procesando..." :
-            status === 'transcoding' ? "Transcodificando..." :
-            loading ? "Creando Episodio..." : 
+            uploadStatus === 'processing' ? "Procesando..." :
+            uploadStatus === 'transcoding' ? "Transcodificando..." :
+            creating ? "Creando Episodio..." : 
             "Crear Episodio"
           }
           submitVariant="primary"
@@ -379,7 +356,7 @@ function EpisodesCreatePage() {
           submitIcon="🎬"
           validateOnBlur={true}
           validateOnChange={false}
-          showSubmit={!success && status !== 'completed'}
+          showSubmit={!success && uploadStatus !== 'completed'}
           className={`episode-form ${success ? 'form--success' : ''}`}
         />
 
@@ -410,10 +387,10 @@ function EpisodesCreatePage() {
       </Container>
 
       <ProgressModal
-        isVisible={status !== 'idle'}
-        progress={progress}
-        status={status}
-        message={progressError || message}
+        isVisible={uploadStatus !== 'idle'}
+        progress={uploadProgress}
+        status={uploadStatus}
+        message={error || 'Procesando episodio...'}
         size="lg"
       />
     </AdminLayout>

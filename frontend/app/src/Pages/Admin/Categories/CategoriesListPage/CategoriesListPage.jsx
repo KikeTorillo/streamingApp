@@ -1,18 +1,17 @@
 // ===== CATEGORIES LIST PAGE - HOMOLOGADO CON BACKEND Y USERS LIST =====
 // src/Pages/Admin/Categories/CategoriesListPage/CategoriesListPage.jsx
 
-import React, { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { DataTable } from '../../../../components/organisms/DataTable/DataTable';
 import { Button } from '../../../../components/atoms/Button/Button';
 import { EditModal } from '../../../../components/organisms/EditModal/EditModal';
+import { AlertProvider, useAlertContext } from '../../../../app/context/AlertContext';
 import './CategoriesListPage.css';
 
-// Servicios de categorías
-import { getCategoriesService } from '../../../../services/Categories/getCategoriesService';
-import { deleteCategoryService } from '../../../../services/Categories/deleteCategoryService';
-import { updateCategoryService } from '../../../../services/Categories/updateCategoryService';
+// Contexto de categorías
+import { useCategories } from '../../../../app/context/CategoriesContext';
 
 /**
  * CategoriesListPage - Página de gestión de categorías COMPLETA
@@ -22,42 +21,43 @@ import { updateCategoryService } from '../../../../services/Categories/updateCat
  * ✅ PATRÓN: Sigue exactamente el mismo patrón que UsersListPage
  * ✅ UX: Estados de loading, error y success consistentes
  * ✅ CRUD: Operaciones de Ver, Editar y Eliminar implementadas
+ * ✅ MIGRACIÓN: Usa AlertProvider en lugar de alert() nativo
  */
 function CategoriesListPage() {
-  const navigate = useNavigate();
+  return (
+    <AlertProvider>
+      <CategoriesListContent />
+    </AlertProvider>
+  );
+}
 
-  // ===== ESTADOS =====
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [deleting, setDeleting] = useState(null);
+function CategoriesListContent() {
+  const navigate = useNavigate();
   
-  // Estados para el modal de edición
-  const [editModal, setEditModal] = useState({ isOpen: false, category: null });
-  const [editing, setEditing] = useState(false);
-  const [editError, setEditError] = useState(null);
+  // ===== HOOKS DE ALERTAS =====
+  const { showInfo, showSuccess, showError } = useAlertContext();
+
+  // ===== CONTEXTO DE CATEGORÍAS =====
+  const {
+    categories,
+    loading,
+    error,
+    deleting,
+    editing,
+    editModal,
+    editError,
+    loadCategories,
+    deleteCategory,
+    openEditModal,
+    closeEditModal,
+    saveFromModal,
+    formatCategoryDate
+    // getCategoriesStats - disponible para uso futuro
+  } = useCategories();
 
   // ===== FUNCIONES AUXILIARES =====
   
-  /**
-   * ✅ Formatear fechas (adaptado para categorías)
-   */
-  const formatDate = (dateString) => {
-    if (!dateString) return 'No disponible';
-    
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('es-ES', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    } catch (error) {
-      return 'Fecha inválida';
-    }
-  };
+  // Formatear fechas se obtiene del contexto como formatCategoryDate
 
   // ===== CONFIGURACIÓN DE COLUMNAS =====
   
@@ -95,7 +95,7 @@ function CategoriesListPage() {
       size: 180,
       cell: ({ row }) => (
         <span>
-          {formatDate(row.original.createdAt)}
+          {formatCategoryDate(row.original.createdAt)}
         </span>
       )
     },
@@ -105,7 +105,7 @@ function CategoriesListPage() {
       size: 180,
       cell: ({ row }) => (
         <span>
-          {formatDate(row.original.updatedAt)}
+          {formatCategoryDate(row.original.updatedAt)}
         </span>
       )
     }
@@ -113,68 +113,12 @@ function CategoriesListPage() {
 
   // ===== ESTADÍSTICAS CALCULADAS =====
   
-  /**
-   * ✅ Calcular estadísticas de categorías
-   */
-  const stats = {
-    total: categories.length,
-    // Agregar más estadísticas específicas de categorías si es necesario
-    withLongNames: categories.filter(cat => cat.name && cat.name.length > 10).length,
-    withShortNames: categories.filter(cat => cat.name && cat.name.length <= 10).length,
-    recentlyCreated: categories.filter(cat => {
-      if (!cat.createdAt) return false;
-      const weekAgo = new Date();
-      weekAgo.setDate(weekAgo.getDate() - 7);
-      return new Date(cat.createdAt) > weekAgo;
-    }).length
-  };
+  // Estadísticas se obtienen del contexto (disponible para uso futuro)
+  // const stats = getCategoriesStats();
 
   // ===== FUNCIONES DE DATOS =====
   
-  /**
-   * ✅ Cargar categorías usando el servicio existente
-   */
-  const loadCategories = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      console.log('📥 Cargando categorías...');
-      const response = await getCategoriesService();
-      
-      console.log('📋 Respuesta del servicio:', response);
-      
-      // ✅ El servicio existente devuelve directamente un array o lanza error
-      const categoriesArray = Array.isArray(response) ? response : [];
-      
-      // ✅ Normalizar datos de categorías
-      const normalizedCategories = categoriesArray.map(category => ({
-        id: category.id,
-        name: category.name || 'Sin nombre',
-        createdAt: category.created_at || category.createdAt || null,
-        updatedAt: category.updated_at || category.updatedAt || null
-      }));
-
-      console.log('✅ Categorías normalizadas:', normalizedCategories);
-      
-      setCategories(normalizedCategories);
-      
-    } catch (error) {
-      console.error('💥 Error al cargar categorías:', error);
-      
-      // ✅ Manejar sesión expirada
-      if (error.response?.status === 401) {
-        console.log('🔒 Sesión expirada, redirigiendo...');
-        sessionStorage.clear();
-        navigate('/login');
-        return;
-      }
-      
-      setError(error.message || 'Error al cargar categorías');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // loadCategories se obtiene del contexto
 
   // ===== FUNCIONES DE ACCIONES =====
   
@@ -184,7 +128,14 @@ function CategoriesListPage() {
   const handleViewCategory = (category) => {
     console.log('👁️ Ver categoría:', category);
     // TODO: Implementar modal de detalles o navegar a página de detalles
-    alert(`Ver detalles de categoría: ${category.name}`);
+    showInfo(`
+      <strong>Detalles de categoría: ${category.name}</strong><br/>
+      <br/>
+      <strong>ID:</strong> ${category.id}<br/>
+      <strong>Nombre:</strong> ${category.name}<br/>
+      <strong>Creado:</strong> ${formatCategoryDate(category.createdAt)}<br/>
+      <strong>Actualizado:</strong> ${formatCategoryDate(category.updatedAt)}
+    `, { title: 'Información de Categoría' });
   };
 
   /**
@@ -192,128 +143,45 @@ function CategoriesListPage() {
    */
   const handleEditCategory = (category) => {
     console.log('✏️ Editar categoría:', category);
-    setEditModal({ isOpen: true, category });
-    setEditError(null);
+    openEditModal(category);
   };
   
   /**
    * Guardar cambios en categoría
    */
   const handleSaveCategory = async (newName) => {
-    setEditing(true);
-    setEditError(null);
-    
     try {
-      console.log('📝 Actualizando categoría:', { id: editModal.category.id, name: newName });
+      const result = await saveFromModal(newName);
       
-      const response = await updateCategoryService(editModal.category.id, newName);
-      
-      console.log('📥 Respuesta del servicio de actualización:', response);
-      
-      // Actualizar la categoría en el estado local
-      setCategories(prev => 
-        prev.map(cat => 
-          cat.id === editModal.category.id 
-            ? { ...cat, name: newName }
-            : cat
-        )
-      );
-      
-      // Cerrar modal
-      setEditModal({ isOpen: false, category: null });
-      
-      console.log('✅ Categoría actualizada exitosamente');
-      
-    } catch (error) {
-      console.error('💥 Error al actualizar categoría:', error);
-      
-      let errorMessage = 'Error al actualizar la categoría.';
-      
-      if (error.response?.status === 401) {
+      if (result.success) {
+        console.log('✅ Categoría actualizada exitosamente');
+      } else if (result.error === 'SESSION_EXPIRED') {
         console.log('🔒 Sesión expirada, redirigiendo...');
-        sessionStorage.clear();
         navigate('/login');
-        return;
-      } else if (error.response?.status === 404) {
-        errorMessage = 'La categoría no existe.';
-      } else if (error.response?.status === 403) {
-        errorMessage = 'No tienes permisos para editar esta categoría.';
-      } else if (error.response?.status === 409) {
-        errorMessage = 'Ya existe una categoría con este nombre.';
-      } else if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.message) {
-        errorMessage = error.message;
       }
       
-      setEditError(errorMessage);
-      
-    } finally {
-      setEditing(false);
+    } catch (error) {
+      if (error.message === 'SESSION_EXPIRED') {
+        console.log('🔒 Sesión expirada, redirigiendo...');
+        navigate('/login');
+      }
     }
   };
 
   /**
-   * ✅ Eliminar categoría - IMPLEMENTADO CON SERVICIO REAL
+   * Eliminar categoría usando el contexto
    */
-  const handleDeleteCategory = async (category) => {
-    // Confirmación con información detallada
-    const confirmMessage = 
-      `¿Estás seguro de que quieres eliminar la categoría "${category.name}"?\n\n` +
-      `⚠️ ADVERTENCIA: Esta acción no se puede deshacer y puede afectar contenido multimedia asociado.`;
-      
-    if (!window.confirm(confirmMessage)) {
-      return;
-    }
-
+  const handleDeleteCategory = (category) => {
     try {
-      setDeleting(category.id);
-      
-      console.log('🗑️ Eliminando categoría:', category);
-      
-      // ✅ USAR SERVICIO REAL
-      const response = await deleteCategoryService(category.id);
-      
-      console.log('📥 Respuesta del servicio de eliminación:', response);
-      
-      // ✅ El servicio devuelve directamente la data o lanza error
-      // Si llegamos aquí, la eliminación fue exitosa
-      
-      console.log('✅ Categoría eliminada exitosamente');
-      
-      // Mostrar notificación de éxito
-      alert(`✅ Categoría "${category.name}" eliminada exitosamente`);
-      
-      // Recargar lista para reflejar los cambios
-      await loadCategories();
-      
+      // deleteCategory maneja su propia confirmación y resultado
+      deleteCategory(category);
     } catch (error) {
-      console.error('💥 Error al eliminar categoría:', error);
-      
-      // ✅ Manejar errores específicos del backend
-      let errorMessage = `Error al eliminar la categoría "${category.name}".`;
-      
-      if (error.response?.status === 401) {
-        // Sesión expirada
+      if (error.message === 'SESSION_EXPIRED') {
         console.log('🔒 Sesión expirada, redirigiendo...');
-        sessionStorage.clear();
         navigate('/login');
-        return;
-      } else if (error.response?.status === 404) {
-        errorMessage = 'La categoría no existe o ya fue eliminada.';
-      } else if (error.response?.status === 403) {
-        errorMessage = 'No tienes permisos para eliminar esta categoría.';
-      } else if (error.response?.status === 409) {
-        errorMessage = 'No se puede eliminar la categoría porque tiene contenido asociado.';
-      } else if (error.message) {
-        errorMessage = error.message;
+      } else {
+        showError(`Error inesperado: ${error.message}`);
       }
-      
-      // Mostrar error al usuario
-      alert(`❌ ${errorMessage}`);
-      
-    } finally {
-      setDeleting(null);
     }
   };
 
@@ -334,7 +202,7 @@ function CategoriesListPage() {
   // ===== EFECTOS =====
   useEffect(() => {
     loadCategories();
-  }, []);
+  }, [loadCategories]);
 
   // ===== RENDER =====
   
@@ -403,7 +271,7 @@ function CategoriesListPage() {
       {/* Modal de edición */}
       <EditModal
         isOpen={editModal.isOpen}
-        onClose={() => setEditModal({ isOpen: false, category: null })}
+        onClose={closeEditModal}
         onSave={handleSaveCategory}
         title="Editar Categoría"
         fieldLabel="Nombre de la Categoría"

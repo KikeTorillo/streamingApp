@@ -22,6 +22,7 @@ function SeriesDetailPage() {
     const [serie, setSerie] = useState(null);
     const [episodes, setEpisodes] = useState([]);
     const [selectedSeason, setSelectedSeason] = useState(1);
+    const [user, setUser] = useState(null);
     
     // Estados de carga
     const [loadingSerie, setLoadingSerie] = useState(true);
@@ -30,6 +31,23 @@ function SeriesDetailPage() {
     // Estados de error
     const [serieError, setSerieError] = useState(null);
     const [episodesError, setEpisodesError] = useState(null);
+
+    // ===== VERIFICAR AUTENTICACIÓN =====
+    useEffect(() => {
+        const sessionUser = sessionStorage.getItem('sessionUser');
+        if (!sessionUser) {
+            navigate('/login');
+            return;
+        }
+
+        try {
+            const userData = JSON.parse(sessionUser);
+            setUser(userData);
+        } catch (err) {
+            console.error('Error parsing user data:', err);
+            navigate('/login');
+        }
+    }, [navigate]);
 
     // ===== CARGAR DATOS DE LA SERIE =====
     useEffect(() => {
@@ -54,10 +72,10 @@ function SeriesDetailPage() {
             }
         };
 
-        if (id) {
+        if (id && user) {
             fetchSerie();
         }
-    }, [id]);
+    }, [id, user]);
 
     // ===== CARGAR EPISODIOS =====
     useEffect(() => {
@@ -83,10 +101,10 @@ function SeriesDetailPage() {
             }
         };
 
-        if (id) {
+        if (id && user) {
             fetchEpisodes();
         }
-    }, [id]);
+    }, [id, user]);
 
     // ===== HANDLERS =====
     const handlePlayEpisode = (episode) => {
@@ -123,6 +141,17 @@ function SeriesDetailPage() {
 
     const handleBackToSeries = () => {
         navigate('/main-page');
+    };
+
+    const handleLogout = async () => {
+        try {
+            // Limpiar sesión y redirigir
+            sessionStorage.removeItem('sessionUser');
+            navigate('/login');
+        } catch (error) {
+            console.error('Error en logout:', error);
+            window.location.href = '/login';
+        }
     };
 
     const handleRetry = () => {
@@ -198,7 +227,19 @@ function SeriesDetailPage() {
     if (serieError) {
         return (
             <PageLayout
-                header={<AppHeader showBackButton onBackClick={handleBackToSeries} />}
+                header={
+                    <AppHeader
+                        appTitle="🎬 StreamApp"
+                        onTitleClick={handleBackToSeries}
+                        userName={user?.userName || user?.username || user?.name || user?.email || 'Usuario'}
+                        showSearch={false}
+                        showBackButton
+                        onBackClick={handleBackToSeries}
+                        onLogout={handleLogout}
+                        variant="default"
+                        size="lg"
+                    />
+                }
             >
                 <div
                     style={{
@@ -233,9 +274,15 @@ function SeriesDetailPage() {
         <PageLayout
             header={
                 <AppHeader
+                    appTitle="🎬 StreamApp"
+                    onTitleClick={handleBackToSeries}
+                    userName={user?.userName || user?.username || user?.name || user?.email || 'Usuario'}
+                    showSearch={false}
                     showBackButton
                     onBackClick={handleBackToSeries}
-                    title={serie?.title || 'Cargando...'}
+                    onLogout={handleLogout}
+                    variant="default"
+                    size="lg"
                 />
             }
         >
@@ -348,7 +395,7 @@ function SeriesDetailPage() {
 
                     {/* ===== LISTA DE EPISODIOS ===== */}
                     <ContentSection
-                        title={`📺 Episodios${availableSeasons.length > 1 ? ` - Temporada ${selectedSeason}` : ''}`}
+                        title={`Episodios${availableSeasons.length > 1 ? ` - Temporada ${selectedSeason}` : ''}`}
                         icon="🎬"
                         loading={loadingEpisodes}
                         error={episodesError}

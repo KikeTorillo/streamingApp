@@ -40,7 +40,7 @@ router.post(
 router.get(
   '/',
   authenticateJwt,
-  checkRoles(['admin']),
+  checkRoles(['admin','editor','user']),
   async (req, res, next) => {
     try {
       const series = await service.find();

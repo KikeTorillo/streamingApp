@@ -1,36 +1,49 @@
 // ===== MOVIES LIST PAGE - COLUMNAS CORREGIDAS PARA BACKEND REAL =====
 // src/Pages/Admin/Movies/MoviesListPage/MoviesListPage.jsx
 
-import React, { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { DataTable } from '../../../../components/organisms/DataTable/DataTable';
 import { Button } from '../../../../components/atoms/Button/Button';
 import { Badge } from '../../../../components/atoms/Badge/Badge';
 import { ContentImage } from '../../../../components/atoms/ContentImage/ContentImage';
+import { useMovies } from '../../../../app/context/MoviesContext';
+import { useMovieNavigation } from '../../../../hooks/useMovieNavigation';
 import './MoviesListPage.css';
 
-// Importar servicios
-import { getMoviesService } from '../../../../services/Movies/getMoviesService';
-import { deleteMovieService } from '../../../../services/Movies/deleteMovieService';
-import { useMovieNavigation } from '../../../../hooks/useMovieNavigation';
-
 /**
- * MoviesListPage - CORREGIDO con columnas reales del backend
+ * MoviesListPage - REFACTORIZADO CON MOVIESCONTEXT
  * 
- * ✅ COLUMNAS REALES: Solo campos que existen en la base de datos
+ * ✅ MIGRADO: Usa MoviesContext para gestión de estado
+ * ✅ SIMPLIFICADO: Lógica centralizada en el contexto
  * ✅ BACKEND COMPATIBLE: Usa estructura real de movies table
- * ✅ INFORMACIÓN CORRECTA: No muestra datos que no vienen del servidor
+ * ✅ MANTENIDO: Funcionalidad completa
  */
 function MoviesListPage() {
   const navigate = useNavigate();
   const { navigateToPlayer } = useMovieNavigation();
 
-  // ===== ESTADOS =====
-  const [movies, setMovies] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [deleting, setDeleting] = useState(null);
+  // ===== CONTEXTO DE PELÍCULAS =====
+  const {
+    movies,
+    loading,
+    error,
+    deleting,
+    loadMovies,
+    refreshMovies,
+    deleteMovie,
+    formatMovieDate,
+    getMovieCoverUrl,
+    getMoviesStats
+  } = useMovies();
+
+  // ===== MANEJO DE SESIÓN EXPIRADA =====
+  useEffect(() => {
+    if (error === 'SESSION_EXPIRED') {
+      navigate('/login');
+    }
+  }, [error, navigate]);
 
   // ===== CONFIGURACIÓN DE COLUMNAS CORREGIDAS =====
   const movieColumns = [
@@ -55,8 +68,8 @@ function MoviesListPage() {
         const coverImage = getValue();
         const title = row.original.title;
 
-        // Construir URL completa para la imagen (igual que en MainPage)
-        const imageUrl = coverImage ? `${import.meta.env.VITE_CDN_URL || 'http://localhost:8082'}/covers/${coverImage}/cover.jpg` : null;
+        // Usar función del contexto para construir URL
+        const imageUrl = getMovieCoverUrl(coverImage);
 
         return (
           <ContentImage
@@ -135,53 +148,16 @@ function MoviesListPage() {
       size: 140,
       cell: ({ getValue }) => {
         const date = new Date(getValue());
-        const now = new Date();
-
-        // ✅ CORREGIDO: Comparar solo las fechas (año, mes, día) ignorando horas
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const createdDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-
-        // Calcular diferencia en días de forma correcta
-        const diffTime = today.getTime() - createdDate.getTime();
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-        let timeDisplay;
+        const timeDisplay = formatMovieDate(getValue());
+        
+        // Determinar variante del badge basado en el texto
         let badgeVariant = 'neutral';
-
-        if (diffDays === 0) {
-          // Mismo día = HOY
-          timeDisplay = 'Hoy';
+        if (timeDisplay === 'Hoy') {
           badgeVariant = 'success';
-        } else if (diffDays === 1) {
-          // 1 día de diferencia = AYER
-          timeDisplay = 'Ayer';
+        } else if (timeDisplay === 'Ayer') {
           badgeVariant = 'warning';
-        } else if (diffDays === -1) {
-          // Fecha futura (edge case)
-          timeDisplay = 'Mañana';
+        } else if (timeDisplay.includes('días') || timeDisplay.includes('sem')) {
           badgeVariant = 'info';
-        } else if (diffDays > 1 && diffDays <= 7) {
-          // Entre 2-7 días
-          timeDisplay = `${diffDays} días`;
-          badgeVariant = 'info';
-        } else if (diffDays > 7 && diffDays <= 30) {
-          // Entre 1-4 semanas
-          const weeks = Math.floor(diffDays / 7);
-          timeDisplay = weeks === 1 ? '1 sem' : `${weeks} sem`;
-        } else if (diffDays > 30 && diffDays <= 365) {
-          // Entre 1-12 meses
-          const months = Math.floor(diffDays / 30);
-          timeDisplay = months === 1 ? '1 mes' : `${months} meses`;
-        } else if (diffDays > 365) {
-          // Más de 1 año
-          const years = Math.floor(diffDays / 365);
-          timeDisplay = years === 1 ? '1 año' : `${years} años`;
-        } else {
-          // Fecha muy reciente (menos de 1 día)
-          timeDisplay = date.toLocaleDateString('es-ES', {
-            month: 'short',
-            day: 'numeric'
-          });
         }
 
         return (
@@ -209,25 +185,7 @@ function MoviesListPage() {
     }
   ];
 
-  // ===== FUNCIONES (mantienen la misma lógica) =====
-
-  const loadMovies = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // ===== USAR DATOS REALES DEL BACKEND =====
-      const moviesData = await getMoviesService();
-      console.log('📥 Datos recibidos del backend:', moviesData);
-      setMovies(moviesData || []);
-
-    } catch (err) {
-      console.error('Error loading movies:', err);
-      setError('Error al cargar las películas');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // ===== FUNCIONES SIMPLIFICADAS =====
 
   const handleCreateMovie = () => {
     navigate('/admin/movies/create');
@@ -238,7 +196,7 @@ function MoviesListPage() {
   };
 
   const handleViewMovie = (movie) => {
-    console.log('🎬 Ver película:', movie);
+    console.log('🎬 [MoviesListPage] Ver película:', movie);
     
     // Transformar datos de película para el hook de navegación
     const movieData = {
@@ -250,61 +208,15 @@ function MoviesListPage() {
     navigateToPlayer(movieData);
   };
 
-  const handleDeleteMovie = async (movie) => {
-    const confirmMessage =
-      `¿Estás seguro de que quieres eliminar "${movie.title}"?\n\n` +
-      `⚠️ ADVERTENCIA: Esta acción eliminará permanentemente:\n` +
-      `• El archivo de video y todos sus archivos asociados\n` +
-      `• La imagen de portada\n` +
-      `• Todos los datos de la película\n\n` +
-      `Esta acción NO se puede deshacer.`;
+  const handleDeleteMovie = (movie) => {
+    console.log('🗑️ [MoviesListPage] Solicitud de eliminación:', movie);
+    
+    // El contexto maneja toda la lógica de confirmación y mensajes
+    deleteMovie(movie);
+  };
 
-    if (!window.confirm(confirmMessage)) {
-      return;
-    }
-
-    try {
-      setDeleting(movie.id);
-
-      console.log('🗑️ Eliminando película:', movie);
-
-      const response = await deleteMovieService(movie.id);
-
-      console.log('📥 Respuesta del servicio de eliminación:', response);
-
-      console.log('✅ Película eliminada exitosamente');
-
-      alert(`✅ Película "${movie.title}" eliminada exitosamente`);
-
-      await loadMovies();
-
-    } catch (error) {
-      console.error('💥 Error al eliminar película:', error);
-
-      let errorMessage = `Error al eliminar la película "${movie.title}".`;
-
-      if (error.response?.status === 401) {
-        console.log('🔒 Sesión expirada, redirigiendo...');
-        sessionStorage.clear();
-        navigate('/login');
-        return;
-      } else if (error.response?.status === 404) {
-        errorMessage = 'La película no existe o ya fue eliminada.';
-      } else if (error.response?.status === 403) {
-        errorMessage = 'No tienes permisos para eliminar esta película.';
-      } else if (error.response?.status === 409) {
-        errorMessage = 'No se puede eliminar la película porque tiene datos asociados.';
-      } else if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-
-      alert(`❌ ${errorMessage}`);
-
-    } finally {
-      setDeleting(null);
-    }
+  const handleRefresh = () => {
+    refreshMovies();
   };
 
   // ===== EFECTOS =====
@@ -312,23 +224,7 @@ function MoviesListPage() {
     loadMovies();
   }, []);
 
-  // ===== ESTADÍSTICAS MEJORADAS =====
-  const getMoviesStats = () => {
-    const total = movies.length;
-    const thisWeek = movies.filter(movie => {
-      const createdDate = new Date(movie.created_at);
-      const weekAgo = new Date();
-      weekAgo.setDate(weekAgo.getDate() - 7);
-      return createdDate >= weekAgo;
-    }).length;
-
-    const withCategory = movies.filter(movie => movie.category_name).length;
-    const moviesCount = movies.filter(movie => !movie.media_type || movie.media_type === 'movie').length;
-    const seriesCount = movies.filter(movie => movie.media_type === 'tv').length;
-
-    return { total, thisWeek, withCategory, moviesCount, seriesCount };
-  };
-
+  // ===== ESTADÍSTICAS - USA FUNCIÓN DEL CONTEXTO =====
   const stats = getMoviesStats();
 
   // ===== RENDER =====
@@ -337,6 +233,16 @@ function MoviesListPage() {
       title="Gestión de Películas"
       headerActions={
         <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
+          <Button
+            variant="outline"
+            size="sm"
+            leftIcon="🔄"
+            onClick={handleRefresh}
+            loading={loading}
+            disabled={loading}
+          >
+            Actualizar
+          </Button>
           <Button
             variant="primary"
             size="sm"

@@ -15,21 +15,20 @@ import { TMDBSearchView } from '../../../../components/organisms/TMDBSearchView/
 import { MovieFormView } from './components/MovieFormView';
 
 // ===== SERVICIOS Y HOOKS =====
-import { createMovieService } from '../../../../services/Movies/createMovieService';
-import { tmdbService } from '../../../../services/tmdb/TMDBService';
 import { ProgressModal } from "../../../../components/molecules/ProgressModal/ProgressModal";
-import { useUploadProgress } from "../../../../hooks/useUploadProgress";
 import { useCategories } from "../../../../hooks/useCategories";
 import { useFormNavigation } from "../../../../hooks/useFormNavigation";
-import { filterEmptyFields } from '../../../../utils/formUtils';
+import { useMovies } from "../../../../app/context/MoviesContext";
 
 // ===== ESTILOS =====
 import './MovieCreatePage.css';
 
 /**
- * MovieCreatePage - VERSIÓN ACTUALIZADA SIN ORIGINAL_TITLE
- * ✅ CAMPO REMOVIDO: original_title eliminado del formulario
- * ✅ FILTRO DE CAMPOS: Solo envía campos con valores al backend
+ * MovieCreatePage - VERSIÓN REFACTORIZADA CON MOVIESCONTEXT
+ * ✅ REFACTORIZACIÓN: Toda la lógica migrada a MoviesContext
+ * ✅ SIMPLICIDAD: Solo maneja UI y navegación
+ * ✅ CONSISTENCIA: Usa estados centralizados del contexto
+ * ✅ REUTILIZACIÓN: Lógica compartida entre componentes
  * ✅ INTEGRACIÓN TMDB: Conecta con la API real usando VITE_TMDB_API_KEY
  * ✅ BÚSQUEDA FUNCIONAL: Películas y series desde TMDB
  * ✅ FORMULARIO OPTIMIZADO: Campos correctos según el sistema de diseño
@@ -41,10 +40,6 @@ function MovieCreatePage() {
 
   // ===== ESTADOS PRINCIPALES =====
   const [success, setSuccess] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
-
-  // ===== ESTADOS DE FORMULARIO =====
-  const [formLoading, setFormLoading] = useState(false);
   const [submitError, setSubmitError] = useState(null);
 
   // ===== HOOKS =====
@@ -59,18 +54,17 @@ function MovieCreatePage() {
     resetNavigation
   } = useFormNavigation();
 
-  // ===== ESTADO DE PROGRESO DE SUBIDA =====
+  // ===== CONTEXTO DE PELÍCULAS =====
   const { 
-    progress, 
-    status, 
-    message, 
-    error: progressError, 
-    monitorProgress, 
-    resetProgress,
-    setProgress,
-    setStatus,
-    setMessage
-  } = useUploadProgress();
+    createMovie,
+    monitorProgress,
+    resetCreationState,
+    creating,
+    processing,
+    uploadProgress,
+    uploadStatus,
+    error: contextError
+  } = useMovies();
 
 
   // ===== WRAPPER PARA NAVEGACIÓN CON RESET DE ERRORES =====
@@ -200,109 +194,58 @@ function MovieCreatePage() {
   };
 
 
-  // ===== HANDLER DEL FORMULARIO CON FILTRO DE CAMPOS VACÍOS =====
+  // ===== HANDLER DEL FORMULARIO SIMPLIFICADO =====
   const handleFormSubmit = async (movieData) => {
-    setFormLoading(true);
     setSubmitError(null);
 
-    // ✅ NUEVO: Mostrar feedback inmediato durante el upload
-    resetProgress();
-    setProgress(0);
-    setStatus('uploading');
-    setMessage('Preparando archivos para subir...');
-
-    // ✅ NUEVO: Escuchar eventos de progreso de upload
-    const handleUploadProgress = (event) => {
-      const { progress } = event.detail;
-      // Upload toma 0-50% del progreso total
-      const adjustedProgress = Math.round(progress * 0.5);
-      setProgress(adjustedProgress);
-      
-      if (progress < 10) {
-        setMessage('Iniciando subida del video...');
-      } else if (progress < 100) {
-        setMessage('Subiendo video al servidor...');
-      } else {
-        setMessage('Upload completado, validando archivo...');
-      }
-    };
-
-    window.addEventListener('uploadProgress', handleUploadProgress);
-
     try {
-      console.log('📤 Datos originales:', movieData);
+      console.log('📤 [MovieCreatePage] Enviando datos al contexto:', movieData);
       
-      // Filtrar campos vacíos antes de enviar
-      const filteredData = filterEmptyFields(movieData);
-      console.log('📤 Datos filtrados (sin campos vacíos):', filteredData);
+      // ✅ USAR FUNCIÓN DEL CONTEXTO (lógica migrada)
+      const result = await createMovie(movieData);
 
-      const result = await createMovieService(filteredData);
+      if (result.success) {
+        console.log('✅ [MovieCreatePage] Película creada exitosamente:', result);
+        
+        // ✅ Limpiar navegación
+        resetNavigation();
 
-      // ✅ Limpiar listener de upload
-      window.removeEventListener('uploadProgress', handleUploadProgress);
-
-      console.log('✅ Contenido creado exitosamente:', result);
-
-      // ✅ Cambiar a estado de procesamiento (continuar desde 50%)
-      setProgress(50);
-      setMessage('Analizando propiedades del video...');
-      setStatus('processing');
-
-      // ✅ Marcar que está procesando, NO mostrar éxito aún
-      setIsProcessing(true);
-      resetNavigation();
-
-      const taskId = result?.taskId || result?.task_id || result?.id;
-
-      if (taskId) {
-        monitorProgress(taskId, 'movies', null, (finished, err) => {
-          if (finished) {
-            // ✅ AHORA sí mostrar éxito cuando realmente termine
-            setIsProcessing(false);
-            setSuccess(true);
-            setTimeout(() => {
-              navigate('/admin/movies');
-              resetProgress();
-            }, 2000);
-          } else if (err) {
-            setIsProcessing(false);
-            setSubmitError(err);
-            resetProgress();
-          }
-        });
+        if (result.taskId) {
+          // ✅ Hay procesamiento asíncrono - monitorear progreso
+          console.log('🔄 [MovieCreatePage] Iniciando monitoreo de progreso:', result.taskId);
+          
+          monitorProgress(result.taskId, 'movies', null, (finished, err) => {
+            if (finished) {
+              console.log('✅ [MovieCreatePage] Procesamiento completado');
+              setSuccess(true);
+              setTimeout(() => {
+                navigate('/admin/movies');
+                resetCreationState();
+              }, 2000);
+            } else if (err) {
+              console.error('❌ [MovieCreatePage] Error en procesamiento:', err);
+              setSubmitError(err);
+              resetCreationState();
+            }
+          });
+        } else {
+          // ✅ Procesamiento inmediato completado
+          console.log('✅ [MovieCreatePage] Procesamiento inmediato completado');
+          setSuccess(true);
+          setTimeout(() => {
+            navigate('/admin/movies');
+            resetCreationState();
+          }, 2000);
+        }
       } else {
-        // ✅ Solo si no hay taskId (procesamiento inmediato)
-        setIsProcessing(false);
-        setSuccess(true);
-        setTimeout(() => {
-          navigate('/admin/movies');
-        }, 2000);
+        // ✅ Error del contexto
+        console.error('❌ [MovieCreatePage] Error del contexto:', result.error);
+        setSubmitError(result.error || 'Error desconocido al crear el contenido.');
       }
 
     } catch (err) {
-      // ✅ Limpiar listener en caso de error
-      window.removeEventListener('uploadProgress', handleUploadProgress);
-      
-      console.error('❌ Error al crear contenido:', err);
-
-      let errorMessage = 'Error desconocido al crear el contenido.';
-      if (err.response?.status === 400) {
-        errorMessage = err.response.data?.message || 'Datos inválidos en el formulario.';
-      } else if (err.response?.status === 401) {
-        errorMessage = 'Sesión expirada. Inicia sesión nuevamente.';
-      } else if (err.response?.status === 403) {
-        errorMessage = 'No tienes permisos para crear contenido.';
-      } else if (err.response?.status >= 500) {
-        errorMessage = 'Error del servidor. Intenta más tarde.';
-      } else if (err.message) {
-        errorMessage = err.message;
-      }
-
-      setSubmitError(errorMessage);
-      setIsProcessing(false); // ✅ Limpiar estado de procesamiento
-      resetProgress(); // ✅ Resetear progreso en caso de error
-    } finally {
-      setFormLoading(false);
+      console.error('❌ [MovieCreatePage] Error en handleFormSubmit:', err);
+      setSubmitError(err.message || 'Error desconocido al crear el contenido.');
     }
   };
 
@@ -341,9 +284,9 @@ function MovieCreatePage() {
               initialData={generateInitialFormData(selectedItem)}
               onSubmit={handleFormSubmit}
               categoryOptions={categories.map(cat => ({ value: cat.id, label: cat.name }))}
-              loading={formLoading || isProcessing}
-              error={submitError}
-              success={success && !isProcessing}
+              loading={creating || processing}
+              error={submitError || contextError}
+              success={success && !processing}
               hasChanges={hasChanges}
               onChange={markAsChanged}
               selectedItem={selectedItem} // ✅ AGREGAR: Para detectar si es manual o TMDB
@@ -353,10 +296,13 @@ function MovieCreatePage() {
         </div>
       </Container>
       <ProgressModal
-        isVisible={status !== 'idle'}
-        progress={progress}
-        status={status}
-        message={progressError || message}
+        isVisible={uploadStatus !== 'idle'}
+        progress={uploadProgress}
+        status={uploadStatus}
+        message={contextError || (uploadStatus === 'uploading' ? 'Subiendo video...' : 
+                uploadStatus === 'processing' ? 'Procesando video...' : 
+                uploadStatus === 'completed' ? 'Procesamiento completado' : 
+                'Preparando...')}
         size="lg"
       />
     </AdminLayout>
