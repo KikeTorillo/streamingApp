@@ -82,9 +82,13 @@
 .data-table__wrapper {
   /* Scroll horizontal en móvil */
   overflow-x: auto;
+  overflow-y: visible;
   
   /* Para shadow en scroll */
   position: relative;
+  
+  /* Mejorar scroll en iOS */
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ===== TABLA PRINCIPAL ===== */
@@ -383,8 +387,36 @@
 .data-table__pagination {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--space-md);
   flex-shrink: 0;
+  padding: var(--space-lg);
+  background-color: var(--bg-tertiary);
+  border-top: 0.1rem solid var(--border-default);
+}
+
+.data-table__pagination-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.data-table__pagination-text {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+}
+
+.data-table__pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+.data-table__pagination-current {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  margin: 0 var(--space-sm);
 }
 
 .data-table__page-info {
@@ -454,13 +486,22 @@
     min-width: auto;
   }
   
+  .data-table__wrapper {
+    /* Forzar scroll horizontal en móvil */
+    overflow-x: scroll;
+  }
+  
   .data-table__table {
     font-size: var(--font-size-xs);
+    /* Ancho mínimo para mantener legibilidad */
+    min-width: 60rem;
   }
   
   .data-table__th,
   .data-table__td {
     padding: var(--space-xs) var(--space-sm);
+    /* Evitar que las celdas se compriman demasiado */
+    min-width: 8rem;
   }
   
   .data-table__header-button {
@@ -474,6 +515,21 @@
   }
   
   .data-table__pagination {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+  
+  .data-table__pagination-info {
+    order: 2;
+    width: 100%;
+    text-align: center;
+    margin-top: var(--space-sm);
+  }
+  
+  .data-table__pagination-controls {
+    order: 1;
+    flex-wrap: wrap;
     justify-content: center;
   }
   

@@ -304,7 +304,7 @@ function DataTable({
       )}
 
       {/* ===== TABLA ===== */}
-      <div className="data-table__container">
+      <div className="data-table__wrapper">
         <table className="data-table__table">
           {/* ===== HEADER CON COMPONENTE BUTTON ===== */}
           <thead className="data-table__thead">
