@@ -35,7 +35,7 @@ function CategoriesListContent() {
   const navigate = useNavigate();
   
   // ===== HOOKS DE ALERTAS =====
-  const { showInfo, showSuccess, showError } = useAlertContext();
+  const { showInfo, showError } = useAlertContext();
 
   // ===== CONTEXTO DE CATEGORÍAS =====
   const {

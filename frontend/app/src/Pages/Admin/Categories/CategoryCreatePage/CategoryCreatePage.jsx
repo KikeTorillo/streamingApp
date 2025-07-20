@@ -7,6 +7,7 @@ import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminL
 import { Container } from '../../../../components/atoms/Container/Container';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
 import { Button } from '../../../../components/atoms/Button/Button';
+import { useSuccessRedirect } from '../../../../hooks/useSuccessRedirect';
 import './CategoryCreatePage.css';
 
 // Contexto de categorías
@@ -34,8 +35,10 @@ function CategoryCreatePage() {
 
   // ===== ESTADOS LOCALES =====
   const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+
+  // ===== HOOK DE ÉXITO HOMOLOGADO =====
+  const { triggerSuccess } = useSuccessRedirect('/admin/categories');
 
   // Usar loading del contexto
   const loading = creating;
@@ -89,7 +92,7 @@ function CategoryCreatePage() {
    * Navegar de vuelta
    */
   const handleGoBack = () => {
-    if (hasChanges && !success) {
+    if (hasChanges) {
       const confirmed = window.confirm(
         '¿Estás seguro de que quieres salir? Los cambios no guardados se perderán.'
       );
@@ -132,14 +135,9 @@ function CategoryCreatePage() {
       if (result.success) {
         console.log('✅ Categoría creada exitosamente:', result);
 
-        // Marcar como exitoso
-        setSuccess(true);
+        // Usar hook homologado de éxito
+        triggerSuccess('¡Categoría creada exitosamente!');
         setHasChanges(false);
-
-        // Redireccionar después de 3 segundos
-        setTimeout(() => {
-          navigate('/admin/categories');
-        }, 3000);
 
       } else if (result.error === 'SESSION_EXPIRED') {
         console.log('🔒 Sesión expirada, redirigiendo...');
@@ -194,7 +192,6 @@ function CategoryCreatePage() {
       <Container 
         size="lg" 
         variant="default"
-        className={`${success ? 'category-create--loading' : ''}`}
       >
         
         {/* Header Actions */}
@@ -207,6 +204,7 @@ function CategoryCreatePage() {
           >
             Volver a Categorías
           </Button>
+
   
         {/* Mensaje de Error */}
         {(error || contextError) && (
@@ -215,17 +213,6 @@ function CategoryCreatePage() {
             <div className="status-message__content">
               <strong>Error al crear categoría</strong>
               <span>{error || contextError}</span>
-            </div>
-          </div>
-        )}
-
-        {/* Mensaje de Éxito */}
-        {success && (
-          <div className="status-message status-message--success">
-            <span className="status-message__icon">✅</span>
-            <div className="status-message__content">
-              <strong>¡Categoría creada exitosamente!</strong>
-              <span>Redirigiendo al listado en unos segundos...</span>
             </div>
           </div>
         )}
@@ -250,7 +237,7 @@ function CategoryCreatePage() {
           onSubmit={handleSubmit}
           onChange={handleFormChange}
           loading={loading}
-          disabled={loading || success}
+          disabled={loading}
           columnsPerRow={1}
           tabletColumns={1}
           mobileColumns={1}
@@ -262,8 +249,7 @@ function CategoryCreatePage() {
           submitIcon="🎭"
           validateOnBlur={true}
           validateOnChange={false}
-          showSubmit={!success} // Ocultar botón cuando hay éxito
-          className={`category-form ${success ? 'form--success' : ''}`}
+          className="category-form"
         />
 
         {/* Información adicional sobre categorías */}

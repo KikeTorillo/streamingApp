@@ -20,6 +20,7 @@ import { tmdbService } from '../../../../services/tmdb/TMDBService';
 import { Spinner } from "../../../../components/atoms/Spinner/Spinner";
 import { useCategories } from "../../../../hooks/useCategories";
 import { useFormNavigation } from "../../../../hooks/useFormNavigation";
+import { useSuccessRedirect } from "../../../../hooks/useSuccessRedirect";
 
 // ===== ESTILOS =====
 import './SeriesCreatePage.css';
@@ -50,7 +51,6 @@ function SeriesCreatePage() {
   } = useSeries();
 
   // ===== ESTADOS LOCALES =====
-  const [success, setSuccess] = useState(false);
   const [progressMessage, setProgressMessage] = useState('');
 
   // ===== HOOKS =====
@@ -64,6 +64,9 @@ function SeriesCreatePage() {
     markAsChanged,
     resetNavigation
   } = useFormNavigation();
+
+  // ===== HOOK DE ÉXITO HOMOLOGADO =====
+  const { triggerSuccess } = useSuccessRedirect('/admin/series');
 
 
   // ===== WRAPPER PARA NAVEGACIÓN CON RESET DE ERRORES =====
@@ -180,11 +183,8 @@ function SeriesCreatePage() {
     setProgressMessage(message);
     
     if (status === 'completed') {
-      setSuccess(true);
+      triggerSuccess('¡Serie creada exitosamente!');
       resetNavigation();
-      setTimeout(() => {
-        navigate('/admin/series');
-      }, 1500);
     }
   };
 
@@ -226,6 +226,7 @@ function SeriesCreatePage() {
               Volver a Series
             </Button>
 
+
           {/* Contenido principal */}
           {currentView === 'search' && (
             <TMDBSearchView
@@ -248,7 +249,6 @@ function SeriesCreatePage() {
               categoryOptions={categories.map(cat => ({ value: cat.id, label: cat.name }))}
               loading={creating || processing}
               error={contextError}
-              success={success && !creating && !processing}
               hasChanges={hasChanges}
               onChange={markAsChanged}
             />

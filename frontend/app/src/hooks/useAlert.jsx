@@ -22,7 +22,8 @@ const useAlert = () => {
     cancelText: 'Cancelar',
     size: 'sm',
     autoClose: false,
-    autoCloseDelay: 3000
+    autoCloseDelay: 3000,
+    onAutoClose: null
   });
 
   // Cerrar alert
@@ -40,7 +41,8 @@ const useAlert = () => {
       size: options.size || 'sm',
       autoClose: type === 'success' || options.autoClose,
       autoCloseDelay: options.autoCloseDelay || 3000,
-      onConfirm: null
+      onConfirm: null,
+      onAutoClose: options.onAutoClose || null
     };
 
     setAlertState(config);
@@ -49,6 +51,10 @@ const useAlert = () => {
     if (config.autoClose) {
       setTimeout(() => {
         hideAlert();
+        // Ejecutar callback onAutoClose si existe
+        if (config.onAutoClose) {
+          config.onAutoClose();
+        }
       }, config.autoCloseDelay);
     }
   }, [hideAlert]);

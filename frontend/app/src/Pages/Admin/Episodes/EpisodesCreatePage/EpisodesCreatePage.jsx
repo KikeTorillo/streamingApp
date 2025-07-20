@@ -1,7 +1,7 @@
 // ===== EPISODES CREATE PAGE - CON EPISODES CONTEXT =====
 // src/Pages/Admin/Episodes/EpisodesCreatePage/EpisodesCreatePage.jsx
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { Container } from '../../../../components/atoms/Container/Container';
@@ -9,6 +9,7 @@ import { DynamicForm } from '../../../../components/molecules/DynamicForm/Dynami
 import { Button } from '../../../../components/atoms/Button/Button';
 import { ProgressModal } from "../../../../components/molecules/ProgressModal/ProgressModal";
 import { useFormNavigation } from "../../../../hooks/useFormNavigation";
+import { useSuccessRedirect } from "../../../../hooks/useSuccessRedirect";
 import "./EpisodesCreatePage.css";
 
 // Context
@@ -27,7 +28,6 @@ function EpisodesCreatePage() {
   const navigate = useNavigate();
 
   // ===== ESTADOS LOCALES =====
-  const [success, setSuccess] = useState(false);
 
   // ===== CONTEXT =====
   const {
@@ -52,6 +52,9 @@ function EpisodesCreatePage() {
   
   // ===== HOOKS =====
   const { hasChanges, markAsChanged, resetNavigation } = useFormNavigation();
+
+  // ===== HOOK DE ÉXITO HOMOLOGADO =====
+  const { triggerSuccess } = useSuccessRedirect('/admin/episodes');
 
   // ===== EFECTOS =====
   useEffect(() => {
@@ -177,7 +180,7 @@ function EpisodesCreatePage() {
    * Navegar de vuelta con confirmación si hay cambios
    */
   const handleGoBack = () => {
-    if (hasChanges && !success) {
+    if (hasChanges) {
       const confirmed = window.confirm(
         '¿Estás seguro de que quieres salir? Los cambios no guardados se perderán.'
       );
@@ -230,7 +233,7 @@ function EpisodesCreatePage() {
 
       if (result.success) {
         console.log('✅ [EpisodesCreatePage] Episodio creado exitosamente');
-        setSuccess(true);
+        triggerSuccess('¡Episodio creado exitosamente!');
         resetNavigation();
 
         // Si hay taskId, iniciar monitoreo
@@ -244,21 +247,11 @@ function EpisodesCreatePage() {
             },
             (success, error) => {
               console.log('🏁 [EpisodesCreatePage] Proceso terminado:', { success, error });
-              
-              if (success) {
-                // Redireccionar después de 3 segundos
-                setTimeout(() => {
-                  navigate('/admin/episodes');
-                }, 3000);
-              }
+              // La redirección ya está manejada por el hook useSuccessRedirect
             }
           );
-        } else {
-          // Redireccionar inmediatamente si no hay procesamiento
-          setTimeout(() => {
-            navigate('/admin/episodes');
-          }, 3000);
         }
+        // La redirección ya está manejada por el hook useSuccessRedirect
       } else {
         console.error('❌ [EpisodesCreatePage] Error al crear episodio:', result.error);
       }
@@ -297,6 +290,7 @@ function EpisodesCreatePage() {
             Volver a Episodios
           </Button>
 
+
         {/* Mensaje de Error */}
         {error && (
           <div className="status-message status-message--error">
@@ -304,17 +298,6 @@ function EpisodesCreatePage() {
             <div className="status-message__content">
               <strong>Error al crear episodio</strong>
               <span>{error}</span>
-            </div>
-          </div>
-        )}
-
-        {/* Mensaje de Éxito */}
-        {success && (
-          <div className="status-message status-message--success">
-            <span className="status-message__icon">✅</span>
-            <div className="status-message__content">
-              <strong>¡Episodio creado exitosamente!</strong>
-              <span>Redirigiendo al listado en unos segundos...</span>
             </div>
           </div>
         )}
@@ -339,7 +322,7 @@ function EpisodesCreatePage() {
           onSubmit={handleSubmit}
           onChange={handleFormChange}
           loading={creating || processing || uploadStatus !== 'idle'}
-          disabled={creating || processing || success || uploadStatus !== 'idle'}
+          disabled={creating || processing || uploadStatus !== 'idle'}
           columnsPerRow={2}
           tabletColumns={1}
           mobileColumns={1}
@@ -356,8 +339,8 @@ function EpisodesCreatePage() {
           submitIcon="🎬"
           validateOnBlur={true}
           validateOnChange={false}
-          showSubmit={!success && uploadStatus !== 'completed'}
-          className={`episode-form ${success ? 'form--success' : ''}`}
+          showSubmit={uploadStatus !== 'completed'}
+          className="episode-form"
         />
 
         {/* Información adicional sobre episodios */}

@@ -23,9 +23,9 @@ import './ContentCard.css';
  * @param {number} [props.content.seasons] - Temporadas (series)
  * @param {number} [props.content.episodes] - Episodios (series)
  * @param {'sm'|'md'|'lg'|'xl'} [props.size='md'] - Tamaño de la card
- * @param {function} [props.onClick] - Callback al hacer click en la card
- * @param {function} [props.onPlay] - Callback al hacer click en reproducir
- * @param {function} [props.onFavorite] - Callback para agregar a favoritos
+ * @param {function} [props.onClick] - Callback al hacer click en la card (acción principal)
+ * @param {function} [props.onPlay] - Callback al hacer click en reproducir (obsoleto - usar onClick)
+ * @param {function} [props.onFavorite] - Callback para agregar a favoritos (obsoleto - funcionalidad no implementada)
  * @param {boolean} [props.showRating=true] - Mostrar rating
  * @param {boolean} [props.showMeta=true] - Mostrar metadatos (duración/temporadas)
  * @param {boolean} [props.showCategory=true] - Mostrar categoría
@@ -115,17 +115,7 @@ const ContentCard = ({
     onClick?.(content);
   };
 
-  const handlePlayClick = (e) => {
-    e.stopPropagation(); // Evitar que se active el onClick de la card
-    if (disabled || loading) return;
-    onPlay?.(content);
-  };
 
-  const handleFavoriteClick = (e) => {
-    e.stopPropagation();
-    if (disabled || loading) return;
-    onFavorite?.(content);
-  };
 
   const handleImageError = (e) => {
     // ContentImage ya maneja los errores automáticamente
@@ -161,33 +151,6 @@ const ContentCard = ({
           className="content-card__image"
         />
         
-        {/* Overlay con controles */}
-        <div className="content-card__overlay">
-          <div className="content-card__controls">
-            <Button
-              variant="primary"
-              size={size === 'sm' ? 'xs' : 'sm'}
-              leftIcon="▶️"
-              onClick={handlePlayClick}
-              className="content-card__play-button"
-              disabled={disabled || loading}
-            >
-              {type === 'movie' ? 'Ver' : 'Reproducir'}
-            </Button>
-            
-            {onFavorite && (
-              <Button
-                variant="ghost"
-                size={size === 'sm' ? 'xs' : 'sm'}
-                leftIcon="❤️"
-                onClick={handleFavoriteClick}
-                className="content-card__favorite-button"
-                disabled={disabled || loading}
-                aria-label="Agregar a favoritos"
-              />
-            )}
-          </div>
-        </div>
 
         {/* Badge de tipo en esquina superior */}
         <div className="content-card__type-badge">

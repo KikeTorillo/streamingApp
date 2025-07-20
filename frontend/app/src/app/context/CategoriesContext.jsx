@@ -180,6 +180,9 @@ function CategoriesProvider({ children }) {
         return updatedCategories;
       });
 
+      // Mostrar mensaje de éxito con AlertProvider
+      showSuccess(`Categoría "${category.name}" eliminada exitosamente.`);
+
       return { 
         success: true, 
         message: `Categoría "${category.name}" eliminada exitosamente.` 

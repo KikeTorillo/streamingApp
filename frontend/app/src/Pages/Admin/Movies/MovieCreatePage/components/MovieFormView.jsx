@@ -210,18 +210,6 @@ function MovieFormView({
             />
           </div>
 
-          {/* ===== MENSAJE DE ÉXITO ===== */}
-          {success && (
-            <div className="movie-form-view__success">
-              <div className="movie-form-view__success-icon">✅</div>
-              <h4 className="movie-form-view__success-title">
-                ¡Contenido creado exitosamente!
-              </h4>
-              <p className="movie-form-view__success-message">
-                Tu contenido ha sido guardado y procesado correctamente.
-              </p>
-            </div>
-          )}
 
           {/* ===== MENSAJE DE ERROR ===== */}
           {error && (

@@ -414,6 +414,7 @@ function MoviesProvider({ children }) {
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: 'include', // ✅ ARREGLO: Incluir cookies de autenticación
           timeout: 10000, // 10 segundos timeout
         });
         

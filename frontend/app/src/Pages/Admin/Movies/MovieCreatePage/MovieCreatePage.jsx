@@ -1,14 +1,13 @@
 // ===== MOVIE CREATE PAGE - VERSIÓN ACTUALIZADA SIN ORIGINAL_TITLE =====
 // src/Pages/Admin/Movies/MovieCreatePage/MovieCreatePage.jsx
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // ===== LAYOUTS Y COMPONENTES =====
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { Container } from '../../../../components/atoms/Container/Container';
 import { Button } from '../../../../components/atoms/Button/Button';
-import { Card, CardHeader, CardBody, CardTitle } from '../../../../components/atoms/Card/Card';
 
 // ===== COMPONENTES ESPECÍFICOS =====
 import { TMDBSearchView } from '../../../../components/organisms/TMDBSearchView/TMDBSearchView';
@@ -19,6 +18,7 @@ import { ProgressModal } from "../../../../components/molecules/ProgressModal/Pr
 import { useCategories } from "../../../../hooks/useCategories";
 import { useFormNavigation } from "../../../../hooks/useFormNavigation";
 import { useMovies } from "../../../../app/context/MoviesContext";
+import { useSuccessRedirect } from "../../../../hooks/useSuccessRedirect";
 
 // ===== ESTILOS =====
 import './MovieCreatePage.css';
@@ -39,7 +39,6 @@ function MovieCreatePage() {
   const navigate = useNavigate();
 
   // ===== ESTADOS PRINCIPALES =====
-  const [success, setSuccess] = useState(false);
   const [submitError, setSubmitError] = useState(null);
 
   // ===== HOOKS =====
@@ -65,6 +64,9 @@ function MovieCreatePage() {
     uploadStatus,
     error: contextError
   } = useMovies();
+
+  // ===== HOOK DE ÉXITO HOMOLOGADO =====
+  const { triggerSuccess } = useSuccessRedirect('/admin/movies');
 
 
   // ===== WRAPPER PARA NAVEGACIÓN CON RESET DE ERRORES =====
@@ -217,11 +219,8 @@ function MovieCreatePage() {
           monitorProgress(result.taskId, 'movies', null, (finished, err) => {
             if (finished) {
               console.log('✅ [MovieCreatePage] Procesamiento completado');
-              setSuccess(true);
-              setTimeout(() => {
-                navigate('/admin/movies');
-                resetCreationState();
-              }, 2000);
+              triggerSuccess('¡Película creada exitosamente!');
+              resetCreationState();
             } else if (err) {
               console.error('❌ [MovieCreatePage] Error en procesamiento:', err);
               setSubmitError(err);
@@ -231,11 +230,8 @@ function MovieCreatePage() {
         } else {
           // ✅ Procesamiento inmediato completado
           console.log('✅ [MovieCreatePage] Procesamiento inmediato completado');
-          setSuccess(true);
-          setTimeout(() => {
-            navigate('/admin/movies');
-            resetCreationState();
-          }, 2000);
+          triggerSuccess('¡Película creada exitosamente!');
+          resetCreationState();
         }
       } else {
         // ✅ Error del contexto
@@ -264,6 +260,7 @@ function MovieCreatePage() {
               Volver a Películas
             </Button>
 
+
           {/* Contenido principal */}
           {currentView === 'search' && (
             <TMDBSearchView
@@ -286,7 +283,6 @@ function MovieCreatePage() {
               categoryOptions={categories.map(cat => ({ value: cat.id, label: cat.name }))}
               loading={creating || processing}
               error={submitError || contextError}
-              success={success && !processing}
               hasChanges={hasChanges}
               onChange={markAsChanged}
               selectedItem={selectedItem} // ✅ AGREGAR: Para detectar si es manual o TMDB

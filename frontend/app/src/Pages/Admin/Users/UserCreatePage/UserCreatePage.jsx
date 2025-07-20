@@ -8,6 +8,7 @@ import { Container } from '../../../../components/atoms/Container/Container';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
 import { Button } from '../../../../components/atoms/Button/Button';
 import { useUsers } from '../../../../app/context/UserContext';
+import { useSuccessRedirect } from '../../../../hooks/useSuccessRedirect';
 import './UserCreatePage.css';
 
 /**
@@ -30,8 +31,10 @@ function UserCreatePage() {
   } = useUsers();
 
   // ===== ESTADOS LOCALES =====
-  const [success, setSuccess] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+
+  // ===== HOOK DE ÉXITO HOMOLOGADO =====
+  const { triggerSuccess } = useSuccessRedirect('/admin/users');
 
   // ===== MANEJO DE SESIÓN EXPIRADA =====
   useEffect(() => {
@@ -115,13 +118,8 @@ function UserCreatePage() {
 
       if (result.success) {
         console.log('✅ [UserCreatePage] Usuario creado:', result.data);
-        setSuccess(true);
+        triggerSuccess('¡Usuario creado exitosamente!');
         setHasChanges(false);
-
-        // Redireccionar después de 3 segundos
-        setTimeout(() => {
-          navigate('/admin/users');
-        }, 3000);
       } else {
         console.error('❌ [UserCreatePage] Error en creación:', result.error);
         // El error ya se maneja en el contexto
@@ -174,7 +172,7 @@ function UserCreatePage() {
       {/* 🎯 CONTENEDOR PRINCIPAL - MIGRADO A CONTAINER COMPONENT */}
       <Container
         size="lg"
-        className={`${loading ? 'user-create--loading' : ''} ${success ? 'user-create--success' : ''}`}
+        className={`${loading ? 'user-create--loading' : ''}`}
       >
 
         <Button
@@ -186,6 +184,7 @@ function UserCreatePage() {
         >
           Volver a Usuarios
         </Button>
+
 
         {/* ❌ MENSAJE DE ERROR - SISTEMA DE DISEÑO */}
         {error && (
@@ -202,17 +201,6 @@ function UserCreatePage() {
             >
               ×
             </button>
-          </div>
-        )}
-
-        {/* ✅ MENSAJE DE ÉXITO - SISTEMA DE DISEÑO */}
-        {success && (
-          <div className="status-message status-message--success">
-            <span className="status-message__icon">✅</span>
-            <div className="status-message__content">
-              <strong>¡Usuario creado exitosamente!</strong>
-              <span>Redirigiendo al listado en unos segundos...</span>
-            </div>
           </div>
         )}
 
@@ -236,13 +224,13 @@ function UserCreatePage() {
           submitVariant="primary"
           submitSize="lg"
           loading={loading}
-          disabled={loading || success}
+          disabled={loading}
           columnsPerRow={2}
           tabletColumns={1}
           mobileColumns={1}
           validateOnChange={true}
           validateOnBlur={true}
-          className={success ? 'form--success' : ''}
+          className=""
         />
 
         {/* Información adicional */}

@@ -274,8 +274,12 @@ function EpisodesProvider({ children }) {
 
       console.log('✅ [EpisodesContext] Episodio eliminado exitosamente');
       
+      // Resetear estado de progreso
+      setUploadProgress(0);
+      setUploadStatus('idle');
+      
       // Mostrar mensaje de éxito con AlertProvider
-      showSuccess(`Episodio "${episodeTitle}" eliminado exitosamente.`);
+      showSuccess(`Episodio "${episode.title}" eliminado exitosamente.`);
 
     } catch (error) {
       console.error('💥 [EpisodesContext] Error deleting episode:', error);
@@ -303,6 +307,8 @@ function EpisodesProvider({ children }) {
       showError(errorMessage);
     } finally {
       setDeleting(null);
+      setUploadProgress(0);
+      setUploadStatus('idle');
     }
   };
 
@@ -494,6 +500,7 @@ function EpisodesProvider({ children }) {
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: 'include',
           timeout: 10000,
         });
         

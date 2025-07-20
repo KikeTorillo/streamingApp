@@ -1,30 +1,56 @@
-// ===== ALERT CONTEXT - GESTIÓN CENTRALIZADA DE ALERTS =====
+// ===== ALERT CONTEXT - GESTIÓN CENTRALIZADA DE ALERTS + TOASTS =====
 // src/app/context/AlertContext.jsx
 
 import { createContext, useContext } from 'react';
 import { AlertModal } from '../../components/molecules/AlertModal/AlertModal';
+import { ToastContainer } from '../../components/molecules/ToastContainer/ToastContainer';
 import { useAlert } from '../../hooks/useAlert';
+import { useToast } from '../../hooks/useToast';
 
 // ===== CONTEXTO =====
 const AlertContext = createContext();
 
 /**
- * AlertProvider - Proveedor del contexto de alerts
+ * AlertProvider - Proveedor del contexto de alerts y toasts
  * 
- * Centraliza toda la lógica de alerts:
- * - Estado de modales de confirmación
- * - Funciones showAlert, showConfirm, showSuccess, showError
- * - Renderizado automático del AlertModal
- * - Reemplazo de alert() y confirm() nativos
+ * Centraliza toda la lógica de notificaciones:
+ * - MODALES: Para confirmaciones que requieren decisión
+ * - TOASTS: Para notificaciones de éxito/error/info
+ * - API UNIFICADA: showDeleteConfirm() → Modal, showSuccess() → Toast
+ * - RENDERIZADO: AlertModal + ToastContainer automáticos
  */
 function AlertProvider({ children }) {
   const alertHook = useAlert();
+  const toastHook = useToast();
   const { alertState, hideAlert } = alertHook;
+  const { toasts, removeToast } = toastHook;
+
+  // Combinar APIs de alert y toast en una sola interfaz
+  const combinedValue = {
+    // ===== API DE MODALES (para confirmaciones) =====
+    ...alertHook,
+    
+    // ===== API DE TOASTS (para notificaciones) =====
+    ...toastHook,
+    
+    // ===== OVERRIDE PARA USAR TOAST EN LUGAR DE MODAL =====
+    // Estos métodos ahora usan Toast en lugar de Modal
+    showSuccess: toastHook.showSuccess,
+    showError: toastHook.showError,
+    showInfo: toastHook.showInfo,
+    showWarning: toastHook.showWarning,
+    showSuccessWithRedirect: toastHook.showSuccessWithRedirect,
+    showSuccessWithAction: toastHook.showSuccessWithAction,
+    
+    // Mantener showDeleteConfirm como Modal (requiere decisión)
+    showDeleteConfirm: alertHook.showDeleteConfirm
+  };
 
   return (
-    <AlertContext.Provider value={alertHook}>
+    <AlertContext.Provider value={combinedValue}>
       {children}
       
+      {/* Modal para confirmaciones */}
       <AlertModal
         isOpen={alertState.isOpen}
         onClose={hideAlert}
@@ -35,6 +61,13 @@ function AlertProvider({ children }) {
         confirmText={alertState.confirmText}
         cancelText={alertState.cancelText}
         size={alertState.size}
+      />
+      
+      {/* Toast container para notificaciones */}
+      <ToastContainer
+        toasts={toasts}
+        position="top-right"
+        onRemoveToast={removeToast}
       />
     </AlertContext.Provider>
   );

@@ -157,31 +157,20 @@ function MainPage() {
     };
 
     /**
-     * Manejar reproducción de película o serie
+     * Manejar click en película - redirige a página de detalle
      */
-    const handlePlayMovie = (movie) => {
-        console.log('🎬 Play movie:', movie.title);
-        handleContentCardPlay(movie); // ✅ Usa el método inteligente
-    };
-
     const handleMovieClick = (movie) => {
         console.log('🎬 Click movie:', movie.title);
         // Redirigir a página de detalle de película
         navigate(`/movies/${movie.id}`);
     };
 
-    const handlePlaySeries = (series) => {
-        console.log('📺 Play series:', series.title);
-        handleContentCardPlay(series); // ✅ Usa el método inteligente
-    };
-
+    /**
+     * Manejar click en serie - usa navegación inteligente
+     */
     const handleSeriesClick = (series) => {
         console.log('📺 Click series:', series.title);
         handleContentCardClick(series); // ✅ Usa el método inteligente
-    };
-
-    const handleFavoriteMovie = (content) => {
-        console.log('Favorito:', content.title);
     };
 
     /**
@@ -433,9 +422,7 @@ function MainPage() {
                     <ContentCard
                         key={`movie-${movie.id}`}
                         content={movie}
-                        onPlay={() => handlePlayMovie(movie)}
                         onClick={() => handleMovieClick(movie)}
-                        onFavorite={() => handleFavoriteMovie(movie)}
                         size="md"
                         showRating={true}
                         variant="elevated"
@@ -486,9 +473,7 @@ function MainPage() {
                     <ContentCard
                         key={`series-${serie.id}`}
                         content={serie}
-                        onPlay={() => handlePlaySeries(serie)}
                         onClick={() => handleSeriesClick(serie)}
-                        onFavorite={() => handleFavoriteMovie(serie)}
                         size="md"
                         showRating={true}
                         variant="elevated"

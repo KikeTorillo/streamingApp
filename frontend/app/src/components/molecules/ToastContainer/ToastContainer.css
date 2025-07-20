@@ -1,0 +1,161 @@
+/* ===== TOAST CONTAINER MOLECULE STYLES ===== */
+/* src/components/molecules/ToastContainer/ToastContainer.css */
+
+.toast-container {
+  /* Posicionamiento */
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none; /* Permite clicks en contenido debajo */
+}
+
+/* ===== POSICIONES ===== */
+
+.toast-container--top-right {
+  top: 0;
+  right: 0;
+}
+
+.toast-container--top-left {
+  top: 0;
+  left: 0;
+}
+
+.toast-container--bottom-right {
+  bottom: 0;
+  right: 0;
+}
+
+.toast-container--bottom-left {
+  bottom: 0;
+  left: 0;
+}
+
+/* ===== ITEMS INDIVIDUALES ===== */
+
+.toast-container__item {
+  position: absolute;
+  pointer-events: auto; /* Restaura interactividad para toasts */
+  
+  /* Animación de entrada escalonada */
+  animation: toast-stack-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+/* ===== GAPS ENTRE TOASTS ===== */
+
+.toast-container--gap-sm .toast-container__item {
+  margin-bottom: var(--space-sm);
+}
+
+.toast-container--gap-md .toast-container__item {
+  margin-bottom: var(--space-md);
+}
+
+.toast-container--gap-lg .toast-container__item {
+  margin-bottom: var(--space-lg);
+}
+
+/* Para posiciones bottom, el margen va arriba */
+.toast-container--bottom-right .toast-container__item,
+.toast-container--bottom-left .toast-container__item {
+  margin-bottom: 0;
+}
+
+.toast-container--bottom-right.toast-container--gap-sm .toast-container__item,
+.toast-container--bottom-left.toast-container--gap-sm .toast-container__item {
+  margin-top: var(--space-sm);
+}
+
+.toast-container--bottom-right.toast-container--gap-md .toast-container__item,
+.toast-container--bottom-left.toast-container--gap-md .toast-container__item {
+  margin-top: var(--space-md);
+}
+
+.toast-container--bottom-right.toast-container--gap-lg .toast-container__item,
+.toast-container--bottom-left.toast-container--gap-lg .toast-container__item {
+  margin-top: var(--space-lg);
+}
+
+/* ===== ANIMACIONES ===== */
+
+@keyframes toast-stack-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Animación de salida para reorganización */
+.toast-container__item--removing {
+  animation: toast-stack-out 0.2s ease-in forwards;
+}
+
+@keyframes toast-stack-out {
+  to {
+    opacity: 0;
+    transform: scale(0.9) translateY(-10px);
+  }
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 640px) {
+  .toast-container {
+    /* En móviles, usar todo el ancho disponible */
+    left: 0 !important;
+    right: 0 !important;
+    padding: 0 var(--space-sm);
+  }
+  
+  .toast-container__item {
+    /* Centrar toasts en móviles */
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* ===== ESTADOS ESPECIALES ===== */
+
+/* Efecto hover para stack de toasts */
+.toast-container:hover .toast-container__item {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+}
+
+.toast-container:hover .toast-container__item:hover {
+  transform: translateY(-4px);
+  z-index: 10000 !important;
+}
+
+/* ===== ACCESIBILIDAD ===== */
+
+@media (prefers-reduced-motion: reduce) {
+  .toast-container__item {
+    animation: none;
+  }
+  
+  .toast-container:hover .toast-container__item {
+    transform: none;
+  }
+}
+
+/* ===== OVERFLOW HANDLING ===== */
+
+/* Cuando hay muchos toasts, los más antiguos se desvanecen */
+.toast-container__item:nth-child(n+6) {
+  opacity: 0.7;
+  transform: scale(0.95);
+}
+
+.toast-container__item:nth-child(n+8) {
+  opacity: 0.4;
+  transform: scale(0.9);
+}
+
+.toast-container__item:nth-child(n+10) {
+  display: none; /* Ocultar completamente después de 10 */
+}
