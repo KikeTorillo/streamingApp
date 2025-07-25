@@ -277,22 +277,49 @@ async function completeInfoUser(req, res, next) {
         
         // Validar URL
         if (!isValidImageUrl(data.coverImageUrl)) {
-          throw new Error('URL de imagen no válida o dominio no permitido');
+          return res.status(400).json({
+            success: false,
+            message: 'URL de imagen no válida o dominio no permitido',
+            error: 'INVALID_IMAGE_URL'
+          });
         }
         
-        // Descargar imagen y crear archivo temporal
-        const tempImagePath = await downloadImageFromUrl(data.coverImageUrl);
-        data.coverImage = tempImagePath;
+        // Descargar imagen con sistema de reintentos
+        console.log('🔄 Iniciando descarga de imagen con reintentos...');
+        const downloadResult = await downloadImageFromUrl(data.coverImageUrl);
+        
+        if (!downloadResult.success) {
+          // Error definitivo después de todos los reintentos
+          console.error('💥 Error definitivo descargando imagen:', downloadResult.error);
+          
+          return res.status(500).json({
+            success: false,
+            message: `No se pudo descargar la imagen: ${downloadResult.error}`,
+            error: 'IMAGE_DOWNLOAD_FAILED',
+            details: {
+              url: data.coverImageUrl,
+              reason: downloadResult.error
+            }
+          });
+        }
+        
+        // Éxito en la descarga
+        data.coverImage = downloadResult.filePath;
         data.isTemporaryCoverImage = true; // Flag para limpieza posterior
         
-        console.log('✅ Imagen descargada como archivo temporal:', tempImagePath);
+        console.log('✅ Imagen descargada exitosamente con reintentos:', downloadResult.filePath);
         
         // Limpiar coverImageUrl ya que ahora tenemos el archivo
         delete data.coverImageUrl;
         
       } catch (error) {
-        console.error('❌ Error descargando imagen:', error);
-        return next(new Error(`Error descargando imagen: ${error.message}`));
+        console.error('💥 Error inesperado en descarga de imagen:', error);
+        return res.status(500).json({
+          success: false,
+          message: 'Error inesperado al procesar la descarga de imagen',
+          error: 'UNEXPECTED_DOWNLOAD_ERROR',
+          details: error.message
+        });
       }
     } else {
       // Si no hay ninguno de los dos, será manejado por la validación

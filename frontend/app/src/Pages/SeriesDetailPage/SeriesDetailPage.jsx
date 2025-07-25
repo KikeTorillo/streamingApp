@@ -16,7 +16,7 @@ import { getEpisodesBySerieService } from '../../services/Episodes/getEpisodesBy
 function SeriesDetailPage() {
     const { id } = useParams(); // ID de la serie
     const navigate = useNavigate();
-    const { navigateToPlayer } = useMovieNavigation();
+    const { navigateToPlayer, navigateToPlayerWithPlaylist } = useMovieNavigation();
     
     // Estados
     const [serie, setSerie] = useState(null);
@@ -130,8 +130,14 @@ function SeriesDetailPage() {
             available_resolutions: episode.available_resolutions || [480, 720, 1080]
         };
         
-        console.log('🎬 Datos transformados para navigateToPlayer:', episodeData);
-        navigateToPlayer(episodeData);
+        // ===== NUEVA: USAR PLAYLIST PARA CONTINUACIÓN AUTOMÁTICA =====
+        if (episodes && episodes.length > 1) {
+            console.log('📋 Navegando con playlist de episodios');
+            navigateToPlayerWithPlaylist(episodeData, episodes, id);
+        } else {
+            console.log('🎬 Navegando sin playlist (episodio único)');
+            navigateToPlayer(episodeData);
+        }
     };
 
     const handleEpisodeClick = (episode) => {

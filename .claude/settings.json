@@ -1,0 +1,37 @@
+{
+  "hooks": {
+    "userPromptSubmit": {
+      "enabled": true,
+      "script": "./.claude/hooks/context-enhancer.js",
+      "description": "Enriquece automáticamente el contexto para debugging del VideoPlayer"
+    }
+  },
+  "contextEnhancement": {
+    "videoPlayer": {
+      "enabled": true,
+      "autoDetectKeywords": [
+        "videoplayer", "video player", "video.js", "videojs",
+        "hls", "streaming", "subtitulos", "playlist", "episodios",
+        "calidad", "buffer", "autoplay", "fullscreen", "hotkeys",
+        "safari", "chrome", "firefox", "cross-browser", "codec"
+      ],
+      "includeEnvironmentInfo": true,
+      "includeLogs": true,
+      "maxLogLines": 20
+    }
+  },
+  "debuggingPresets": {
+    "videoLoadError": {
+      "template": "El video no carga. Error: {{error}}. URL: {{urlComplete}}. CDN Status: {{cdnStatus}}. Browser: {{browser}}",
+      "requiredContext": ["error", "urlComplete", "cdnStatus", "browser"]
+    },
+    "crossBrowserIssue": {
+      "template": "Problema cross-browser en {{browser}}. Componente: VideoPlayer. Comportamiento esperado: {{expected}}. Comportamiento actual: {{actual}}",
+      "requiredContext": ["browser", "expected", "actual"]
+    },
+    "playlistAdvance": {
+      "template": "Auto-advance no funciona. Episode index: {{currentIndex}}. Total episodes: {{totalEpisodes}}. Autoadvance delay: {{delay}}. Plugin status: {{pluginStatus}}",
+      "requiredContext": ["currentIndex", "totalEpisodes", "delay", "pluginStatus"]
+    }
+  }
+}

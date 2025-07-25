@@ -1,55 +1,31 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback, forwardRef, useImperativeHandle } from 'react';
 import PropTypes from 'prop-types';
 import './VideoPlayerOverlay.css';
 
-const VideoPlayerOverlay = ({ 
+const VideoPlayerOverlay = forwardRef(({ 
   onSkipBack, 
   onPlayPause, 
   onSkipForward,
   isPlaying = false,
   className = '',
   skipSeconds = 10
-}) => {
+}, ref) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [hideTimeout, setHideTimeout] = useState(null);
 
+  // Métodos simples para mostrar/ocultar (controlados por Video.js events)
   const showControls = useCallback(() => {
     setIsVisible(true);
-    
-    // Limpiar timeout anterior
-    if (hideTimeout) {
-      clearTimeout(hideTimeout);
-    }
-    
-    // Ocultar después de 3 segundos
-    const timeout = setTimeout(() => {
-      setIsVisible(false);
-    }, 3000);
-    
-    setHideTimeout(timeout);
-  }, [hideTimeout]);
+  }, []);
 
   const hideControls = useCallback(() => {
     setIsVisible(false);
   }, []);
 
-  // Limpiar timeout al desmontar
-  useEffect(() => {
-    return () => {
-      if (hideTimeout) {
-        clearTimeout(hideTimeout);
-      }
-    };
-  }, [hideTimeout]);
-
-  // Exponer métodos para el componente padre
-  useEffect(() => {
-    const overlay = document.querySelector('.video-player-overlay');
-    if (overlay) {
-      overlay.showControls = showControls;
-      overlay.hideControls = hideControls;
-    }
-  }, [showControls, hideControls]);
+  // Exponer métodos via ref para Video.js events
+  useImperativeHandle(ref, () => ({
+    showControls,
+    hideControls
+  }), [showControls, hideControls]);
 
   return (
     <div 
@@ -57,10 +33,11 @@ const VideoPlayerOverlay = ({
       style={{
         opacity: isVisible ? 1 : 0,
         visibility: isVisible ? 'visible' : 'hidden',
+        transition: 'opacity 0.3s ease',
         pointerEvents: isVisible ? 'all' : 'none'
       }}
       onClick={(e) => {
-        // Si el click es en el fondo, mostrar controles
+        // Click en fondo muestra controles brevemente
         if (e.target === e.currentTarget) {
           showControls();
         }
@@ -96,7 +73,9 @@ const VideoPlayerOverlay = ({
       </div>
     </div>
   );
-};
+});
+
+VideoPlayerOverlay.displayName = 'VideoPlayerOverlay';
 
 VideoPlayerOverlay.propTypes = {
   onSkipBack: PropTypes.func.isRequired,

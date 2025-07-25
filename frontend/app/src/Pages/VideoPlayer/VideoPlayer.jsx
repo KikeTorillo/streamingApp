@@ -7,10 +7,14 @@ import "jb-videojs-hls-quality-selector/dist/videojs-hls-quality-selector.css";
 import "jb-videojs-hls-quality-selector";
 import "videojs-overlay";
 import "videojs-hotkeys";
+import "videojs-playlist";
+import "videojs-playlist-ui";
 import "./VideoPlayer.css";
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { getMovieByHashService } from '../../services/Movies/getMovieByIdService';
 import { getEpisodeByHashService } from '../../services/Episodes/getEpisodeByHashService';
+import { getEpisodesBySerieService } from '../../services/Episodes/getEpisodesBySerieService';
+import { getSerieByIdService } from '../../services/Series/getSerieByIdService';
 import { Button } from '../../components/atoms/Button/Button';
 import { VideoPlayerOverlay } from '../../components/organisms/VideoPlayerOverlay/VideoPlayerOverlay';
 
@@ -20,9 +24,11 @@ const VideoPlayer = () => {
   const navigate = useNavigate();
   const resolutions = searchParams.get('resolutions');
   const contentType = searchParams.get('type') || 'movie';
+  const playlistKey = searchParams.get('playlist');
   const videoRef = useRef(null);
   const playerRef = useRef(null);
   const overlayContainerRef = useRef(null);
+  const overlayRef = useRef(null);
   const analyticsRef = useRef({
     watchTime: 0,
     lastTime: 0,
@@ -36,17 +42,38 @@ const VideoPlayer = () => {
   const [currentQuality, setCurrentQuality] = useState('Auto');
   const [bufferPercentage, setBufferPercentage] = useState(0);
   const [error, setError] = useState(null);
+  
+  // ===== ESTADOS PARA PLAYLIST =====
+  const [playlistData, setPlaylistData] = useState(null);
+  const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(0);
 
   const cdnUrl = import.meta.env.VITE_CDN_URL || 'http://localhost:8082';
-  const baseUrl = `${cdnUrl}/hls/${movieId}/`;
-  const subsUrl = `${cdnUrl}/subs/${movieId}/`;
-  const urlComplete = `${baseUrl}_,${resolutions},p.mp4.play/master.m3u8`;
+  // URLs dinámicas que se actualizan según el episodio actual
+  const getCurrentHash = () => {
+    if (playlistData && playlistData.episodes[currentEpisodeIndex]) {
+      return playlistData.episodes[currentEpisodeIndex].file_hash;
+    }
+    return movieId;
+  };
+  
+  const getCurrentResolutions = () => {
+    if (playlistData && playlistData.episodes[currentEpisodeIndex]) {
+      const episode = playlistData.episodes[currentEpisodeIndex];
+      return episode.available_resolutions?.sort((a, b) => a - b).join(',') || resolutions;
+    }
+    return resolutions;
+  };
+  
+  const currentHash = getCurrentHash();
+  const currentResolutions = getCurrentResolutions();
+  const baseUrl = `${cdnUrl}/hls/${currentHash}/`;
+  const subsUrl = `${cdnUrl}/subs/${currentHash}/`;
+  const urlComplete = `${baseUrl}_,${currentResolutions},p.mp4.play/master.m3u8`;
 
 
   // ===== FUNCIÓN DE SKIP SIMPLIFICADA =====
   const handleSkip = useCallback((player, seconds, direction) => {
     if (!player || player.readyState() < 1) {
-      console.warn('🎬 Player no está listo para seeking');
       return;
     }
     
@@ -54,7 +81,6 @@ const VideoPlayer = () => {
     const duration = player.duration();
     
     if (!duration || duration === Infinity) {
-      console.warn('🎬 Duración no disponible para seeking');
       return;
     }
     
@@ -66,11 +92,9 @@ const VideoPlayer = () => {
     }
     
     try {
-      // Usar API oficial - Video.js maneja automáticamente la sincronización
       player.currentTime(newTime);
-      console.log(`🎬 Skip ${direction} ${seconds}s: ${currentTime.toFixed(2)}s → ${newTime.toFixed(2)}s`);
     } catch (error) {
-      console.error('🎬 Error en seeking:', error);
+      console.error('Error en seeking:', error);
     }
   }, []);
 
@@ -128,7 +152,7 @@ const VideoPlayer = () => {
           if (savedPosition.position > 10 && 
               savedPosition.position < savedPosition.duration * 0.9) {
             player.currentTime(savedPosition.position);
-            console.log(`📍 Posición restaurada: ${savedPosition.position}s`);
+            // Posición restaurada correctamente
           }
         }
       }
@@ -142,11 +166,8 @@ const VideoPlayer = () => {
     player.ready(() => {
       // Esperar a que el metadata esté cargado
       player.one('loadedmetadata', () => {
-        console.log('🎬 Metadata cargada, configurando text tracks...');
-        
         // Agregar tracks con configuración estándar
         subtitleTracks.forEach((track, index) => {
-          console.log('🎬 Añadiendo text track:', track.label);
           
           const textTrack = player.addRemoteTextTrack({
             ...track,
@@ -155,12 +176,8 @@ const VideoPlayer = () => {
           
           // Configurar listeners básicos
           if (textTrack && textTrack.track) {
-            textTrack.track.addEventListener('load', () => {
-              console.log('🎬 Text track cargado:', track.label);
-            });
-            
             textTrack.track.addEventListener('error', (error) => {
-              console.error('❌ Error cargando subtítulo:', track.label, error);
+              console.error('Error cargando subtítulo:', track.label, error);
             });
           }
         });
@@ -172,6 +189,12 @@ const VideoPlayer = () => {
       });
     });
   }, [loadPlayerPreferences]);
+
+  // ===== FUNCIONES DE PLAYLIST SIMPLIFICADAS =====
+  // La lógica de avance automático es manejada por el plugin oficial videojs-playlist
+  // Ya no necesitamos lógica manual compleja
+
+  // handlePlaylistItemChange ya no es necesario - el plugin maneja los cambios automáticamente
 
   // ===== ANALYTICS Y MÉTRICAS =====
   const initializeAnalytics = useCallback((player) => {
@@ -186,31 +209,114 @@ const VideoPlayer = () => {
     
     // Tracking de completado
     player.on('ended', () => {
-      const sessionDuration = (Date.now() - analyticsRef.current.sessionStartTime) / 1000;
-      const completionRate = (analyticsRef.current.watchTime / player.duration()) * 100;
+      // Video completado - analytics registradas
       
-      console.log('📊 Analytics - Video completado:', {
-        watchTime: analyticsRef.current.watchTime.toFixed(2) + 's',
-        sessionDuration: sessionDuration.toFixed(2) + 's',
-        completionRate: completionRate.toFixed(2) + '%',
-        rebufferCount: analyticsRef.current.rebufferCount,
-        qualityChanges: analyticsRef.current.qualityChanges
-      });
+      // AUTO-ADVANCE HÍBRIDO: PLUGIN + FALLBACK MANUAL
+      if (playlistData) {
+        const currentIdx = player.playlist.currentIndex();
+        const totalItems = player.playlist().length;
+        const hasNextEpisode = currentIdx < totalItems - 1;
+        
+        console.log('🔍 [DEBUG] Video ended - Estado inicial:', {
+          currentIndex: currentIdx,
+          totalItems: totalItems,
+          hasNextEpisode: hasNextEpisode,
+          autoadvanceDelay: typeof player.playlist.autoadvance === 'function' ? player.playlist.autoadvance() : 'no disponible'
+        });
+        
+        // Verificar si el plugin avanza automáticamente
+        setTimeout(() => {
+          const newIndex = player.playlist.currentIndex();
+          
+          console.log('🔍 [DEBUG] 2 segundos después:', {
+            indexAnterior: currentIdx,
+            indexActual: newIndex,
+            pluginAvanzó: newIndex !== currentIdx,
+            currentSrc: player.currentSrc()
+          });
+          
+          // FALLBACK: Si el plugin no avanzó y hay siguiente episodio, avanzar manualmente
+          if (newIndex === currentIdx && hasNextEpisode) {
+            console.log('🚨 USANDO FALLBACK MANUAL - Plugin nativo no avanzó');
+            
+            try {
+              // Avanzar manualmente usando el método next()
+              if (player.playlist.next) {
+                player.playlist.next();
+                console.log('✅ Avance manual con playlist.next()');
+              } else {
+                // Alternativa: cambiar al siguiente ítem directamente
+                player.playlist.currentItem(currentIdx + 1);
+                console.log('✅ Avance manual con currentItem(' + (currentIdx + 1) + ')');
+              }
+              
+              // Reproducir el nuevo video
+              setTimeout(() => {
+                if (!player.isDisposed() && player.paused()) {
+                  player.play().catch(error => {
+                    console.error('Error reproduciendo siguiente episodio:', error);
+                  });
+                }
+              }, 500);
+              
+            } catch (error) {
+              console.error('Error en fallback manual:', error);
+            }
+          } else if (newIndex !== currentIdx) {
+            console.log('✅ PLUGIN NATIVO FUNCIONÓ CORRECTAMENTE');
+          } else if (!hasNextEpisode) {
+            console.log('📋 Serie completada - último episodio');
+          }
+        }, 2000);
+      }
     });
     
     // Tracking de rebuffering
     player.on('waiting', () => {
       analyticsRef.current.rebufferCount++;
-      console.log(`⏳ Rebuffering #${analyticsRef.current.rebufferCount}`);
     });
     
     // Tracking de pausas
     player.on('pause', () => {
-      if (!player.seeking()) {
-        console.log('⏸️ Video pausado en:', player.currentTime().toFixed(2) + 's');
-      }
+      // Video pausado
     });
-  }, []);
+    
+    // ===== EVENTOS OFICIALES DE PLAYLIST =====
+    if (playlistData) {
+      
+      // Evento disparado cuando cambia el item de la playlist
+      player.on('playlistitem', () => {
+        const currentIndex = player.playlist.currentIndex();
+        
+        console.log('🔍 [DEBUG] Evento playlistitem - Índice actual:', currentIndex);
+        
+        // Actualizar URL del navegador sin cambiar estado React para evitar re-renders
+        if (currentIndex !== currentEpisodeIndex && currentIndex >= 0) {
+          if (playlistData.episodes[currentIndex]) {
+            const currentEpisode = playlistData.episodes[currentIndex];
+            const newUrl = `/player/${currentEpisode.file_hash}?type=episode&resolutions=${currentEpisode.available_resolutions?.join(',') || resolutions}&playlist=${playlistKey}`;
+            window.history.replaceState(null, '', newUrl);
+            console.log('🔍 [DEBUG] URL actualizada:', newUrl);
+          }
+        }
+      });
+      
+      // Evento cuando la playlist termina completamente
+      player.on('playlistend', () => {
+        console.log('🔍 [DEBUG] Evento playlistend - Todos los episodios completados');
+      });
+      
+      // Eventos adicionales para debugging
+      player.on('loadstart', () => {
+        console.log('🔍 [DEBUG] loadstart - Nuevo video cargando, índice:', player.playlist.currentIndex());
+      });
+      
+      player.on('play', () => {
+        console.log('🔍 [DEBUG] play - Reprodución iniciada, índice:', player.playlist.currentIndex());
+      });
+    }
+  }, [playlistData, currentEpisodeIndex, resolutions, playlistKey]);
+
 
   // ===== MANEJO DEL BOTÓN DE REGRESAR =====
   const handleGoBack = useCallback(() => {
@@ -259,8 +365,6 @@ const VideoPlayer = () => {
       try {
         setLoading(true);
         setError(null);
-        console.log(`🎬 Loading ${contentType} with hash:`, movieId);
-        
         let contentData;
         if (contentType === 'episode') {
           contentData = await getEpisodeByHashService(movieId);
@@ -269,7 +373,68 @@ const VideoPlayer = () => {
         }
         
         setMovieData(contentData);
-        console.log(`✅ ${contentType} data loaded:`, contentData);
+
+        // ===== CARGAR PLAYLIST SI EXISTE PLAYLIST KEY =====
+        if (playlistKey && contentType === 'episode') {
+          try {
+            const savedPlaylistData = sessionStorage.getItem(playlistKey);
+            
+            if (savedPlaylistData) {
+              const parsedPlaylistData = JSON.parse(savedPlaylistData);
+              
+              // Adaptar la estructura de datos del hook a nuestro componente
+              const adaptedPlaylistData = {
+                serie: { 
+                  id: parsedPlaylistData.seriesId,
+                  title: `Serie ${parsedPlaylistData.seriesId}` // Título temporal
+                },
+                episodes: parsedPlaylistData.episodes,
+                totalEpisodes: parsedPlaylistData.episodes.length
+              };
+              
+              setPlaylistData(adaptedPlaylistData);
+              setCurrentEpisodeIndex(parsedPlaylistData.currentIndex || 0);
+              
+              // Playlist cargada desde sessionStorage
+              
+            } else {
+              console.warn('📋 No se encontró playlist en sessionStorage con key:', playlistKey);
+              
+              // Fallback: cargar desde API si no está en sessionStorage
+              if (contentData.serie_id) {
+                // Fallback: cargando playlist desde API
+                
+                const serieResponse = await getSerieByIdService(contentData.serie_id);
+                const episodesResponse = await getEpisodesBySerieService(contentData.serie_id);
+                
+                if (serieResponse.success && episodesResponse.success) {
+                  const episodesList = episodesResponse.data;
+                  
+                  const sortedEpisodes = episodesList.sort((a, b) => {
+                    if (a.season_number !== b.season_number) {
+                      return a.season_number - b.season_number;
+                    }
+                    return a.episode_number - b.episode_number;
+                  });
+                  
+                  const currentIndex = sortedEpisodes.findIndex(ep => ep.file_hash === movieId);
+                  
+                  setPlaylistData({
+                    serie: serieResponse.data,
+                    episodes: sortedEpisodes,
+                    totalEpisodes: sortedEpisodes.length
+                  });
+                  
+                  setCurrentEpisodeIndex(currentIndex >= 0 ? currentIndex : 0);
+                }
+              }
+            }
+          } catch (playlistError) {
+            console.error('❌ Error cargando playlist:', playlistError);
+            // No fallar la carga del video, solo log del error
+          }
+        }
+        
       } catch (error) {
         console.error(`❌ Error loading ${contentType} data:`, error);
         setError('Error al cargar el contenido. Por favor, intenta de nuevo.');
@@ -281,7 +446,7 @@ const VideoPlayer = () => {
     if (movieId) {
       loadContentData();
     }
-  }, [movieId, contentType]);
+  }, [movieId, contentType, playlistKey]);
 
   // ===== INICIALIZAR PLAYER =====
   useEffect(() => {
@@ -319,15 +484,19 @@ const VideoPlayer = () => {
         const player = videojs(videoRef.current, {
           controls: true,
           autoplay: true,
+          muted: true, // Necesario para autoplay en navegadores modernos
           preload: "auto",
           fluid: true,
           playbackRates: [0.5, 1, 1.25, 1.5, 2],
-          sources: [
-            {
-              src: urlComplete,
-              type: "application/x-mpegURL",
-            },
-          ],
+          // NO configurar sources aquí si tenemos playlist - let playlist handle it
+          ...(playlistData && playlistData.episodes.length > 0 ? {} : {
+            sources: [
+              {
+                src: urlComplete,
+                type: "application/x-mpegURL",
+              },
+            ]
+          }),
           html5: {
             vhs: {
               overrideNative: true,
@@ -372,6 +541,142 @@ const VideoPlayer = () => {
           },
         });
         
+        // ===== CONFIGURAR PLAYLIST SI ESTÁ DISPONIBLE =====
+        if (playlistData && playlistData.episodes.length > 0) {
+          // Crear array de items para la playlist con URLs absolutas completas
+          const playlistItems = playlistData.episodes.map((episode) => {
+            const episodeHash = episode.file_hash;
+            const episodeResolutions = episode.available_resolutions?.sort((a, b) => a - b).join(',') || resolutions;
+            
+            const episodeUrl = `${cdnUrl}/hls/${episodeHash}/_,${episodeResolutions},p.mp4.play/master.m3u8`;
+            
+            return {
+              sources: [{
+                src: episodeUrl,
+                type: 'application/x-mpegURL'
+              }],
+              name: `T${episode.season_number}E${episode.episode_number} - ${episode.title || 'Sin título'}`,
+              description: episode.overview || '',
+              thumbnail: episode.poster_path ? `${cdnUrl}/images/${episode.poster_path}` : null
+            };
+          });
+          
+          // Configurar playlist y navegar al episodio correcto
+          player.playlist(playlistItems);
+          player.playlist.currentItem(currentEpisodeIndex);
+          
+          console.log('🔍 [DEBUG] Playlist configurada:', {
+            totalItems: playlistItems.length,
+            currentItemIndex: currentEpisodeIndex,
+            playlistMethods: Object.getOwnPropertyNames(player.playlist).filter(name => typeof player.playlist[name] === 'function'),
+            hasAutoadvance: typeof player.playlist.autoadvance === 'function',
+            hasSetAutoadvanceDelay: typeof player.playlist.setAutoadvanceDelay === 'function',
+            hasSetDelay: typeof player.playlist.setDelay === 'function',
+            hasGetDelay: typeof player.playlist.getDelay === 'function'
+          });
+          
+          // Configurar autoadvance una vez que el player esté listo
+          player.ready(() => {
+            // Intentar configurar autoadvance con reintentos
+            let attempts = 0;
+            const maxAttempts = 5;
+            
+            const configureAutoadvance = () => {
+              attempts++;
+              
+              try {
+                if (!player.playlist) {
+                  if (attempts < maxAttempts) {
+                    setTimeout(configureAutoadvance, 200);
+                  }
+                  return;
+                }
+                
+                // Probar múltiples APIs disponibles
+                let configSuccess = false;
+                
+                if (typeof player.playlist.setDelay === 'function') {
+                  // API del AutoAdvance class (más probable)
+                  player.playlist.setDelay(0);
+                  const currentDelay = typeof player.playlist.getDelay === 'function' ? player.playlist.getDelay() : 'no verificable';
+                  console.log('🔍 [DEBUG] setDelay(0) ejecutado, delay actual:', currentDelay);
+                  configSuccess = true;
+                } else if (typeof player.playlist.setAutoadvanceDelay === 'function') {
+                  // API documentado
+                  player.playlist.setAutoadvanceDelay(0);
+                  console.log('🔍 [DEBUG] setAutoadvanceDelay(0) ejecutado');
+                  configSuccess = true;
+                } else if (typeof player.playlist.autoadvance === 'function') {
+                  // API anterior/fallback
+                  player.playlist.autoadvance(0);
+                  const verifyDelay = player.playlist.autoadvance();
+                  console.log('🔍 [DEBUG] autoadvance(0) ejecutado, valor:', verifyDelay);
+                  configSuccess = verifyDelay !== undefined;
+                }
+                
+                if (!configSuccess && attempts < maxAttempts) {
+                  console.log('🔍 [DEBUG] Ningun API de autoadvance disponible, reintentando...');
+                  setTimeout(configureAutoadvance, 200);
+                  return;
+                }
+                
+                // Verificar que se configuró correctamente
+                let verifyDelay = 'configurado';
+                if (typeof player.playlist.getDelay === 'function') {
+                  verifyDelay = player.playlist.getDelay();
+                } else if (typeof player.playlist.autoadvance === 'function') {
+                  verifyDelay = player.playlist.autoadvance();
+                }
+                console.log('🔍 [DEBUG] Autoadvance configurado, valor:', verifyDelay);
+                
+                if ((verifyDelay === undefined || verifyDelay === 'configurado') && attempts < maxAttempts && !configSuccess) {
+                  console.log('⚠️ Autoadvance no verificable, reintento', attempts, '/', maxAttempts);
+                  setTimeout(configureAutoadvance, 200);
+                } else {
+                  console.log('✅ Autoadvance configurado con delay:', verifyDelay, 'success:', configSuccess);
+                }
+              } catch (error) {
+                console.error('Error configurando autoadvance:', error);
+                if (attempts < maxAttempts) {
+                  setTimeout(configureAutoadvance, 200);
+                }
+              }
+            };
+            
+            // Iniciar configuración
+            configureAutoadvance();
+          });
+          
+          // Verificación más completa del estado
+          setTimeout(() => {
+            const currentIdx = player.playlist.currentIndex();
+            console.log('📋 VERIFICACIÓN FINAL después de configurar:', {
+              currentIndex: currentIdx,
+              currentItem: player.playlist.currentItem(),
+              autoadvanceDelay: player.playlist.autoadvance(),
+              playlistLength: player.playlist().length,
+              currentSrc: player.currentSrc(),
+              isPlaylistVideo: currentIdx !== -1 ? 'SÍ' : 'NO - PROBLEMA!'
+            });
+            
+            // Si aún está en -1, forzar sincronización
+            if (currentIdx === -1) {
+              console.log('🚨 PROBLEMA: currentIndex sigue en -1, intentando sincronización forzada');
+              player.playlist.currentItem(currentEpisodeIndex);
+              
+              // Verificar de nuevo
+              setTimeout(() => {
+                console.log('📋 DESPUÉS DE SINCRONIZACIÓN FORZADA:', {
+                  currentIndex: player.playlist.currentIndex(),
+                  autoadvanceDelay: player.playlist.autoadvance()
+                });
+              }, 200);
+            }
+          }, 500);
+          
+          console.log('📋 Playlist configurada con', playlistItems.length, 'episodios');
+        }
+
         // Configurar subtítulos si están disponibles
         if (movieData.available_subtitles && movieData.available_subtitles.length > 0) {
           const subtitleTracks = movieData.available_subtitles.map(subtitle => {
@@ -413,7 +718,6 @@ const VideoPlayer = () => {
             if (activeLevel) {
               const quality = activeLevel.height ? `${activeLevel.height}p` : 'Auto';
               setCurrentQuality(quality);
-              console.log(`📺 Calidad activa: ${quality}`);
             }
           });
           
@@ -586,27 +890,16 @@ const VideoPlayer = () => {
           savePlayerPreferences();
         });
         
+        // Usar eventos oficiales de Video.js según documentación
         player.on('useractive', () => {
-          const overlay = overlayContainerRef.current?.querySelector('.video-player-overlay');
-          if (overlay && overlay.showControls) {
-            overlay.showControls();
+          if (overlayRef.current) {
+            overlayRef.current.showControls();
           }
         });
         
         player.on('userinactive', () => {
-          const overlay = overlayContainerRef.current?.querySelector('.video-player-overlay');
-          if (overlay && overlay.hideControls) {
-            overlay.hideControls();
-          }
-        });
-        
-        // Click handler para overlay
-        player.el().addEventListener('click', (e) => {
-          if (e.target === player.el().querySelector('video')) {
-            const overlay = overlayContainerRef.current?.querySelector('.video-player-overlay');
-            if (overlay && overlay.showControls) {
-              overlay.showControls();
-            }
+          if (overlayRef.current) {
+            overlayRef.current.hideControls();
           }
         });
         
@@ -621,8 +914,14 @@ const VideoPlayer = () => {
         
         // Guardar preferencias periódicamente
         const saveInterval = setInterval(() => {
-          if (!player.paused() && !player.isDisposed()) {
-            savePlayerPreferences();
+          try {
+            if (!player.isDisposed() && player.paused && typeof player.paused === 'function' && !player.paused()) {
+              savePlayerPreferences();
+            }
+          } catch (error) {
+            console.warn('⚠️ Error en saveInterval:', error);
+            // Si hay error, limpiar el intervalo
+            clearInterval(saveInterval);
           }
         }, 30000); // Cada 30 segundos
         
@@ -653,7 +952,13 @@ const VideoPlayer = () => {
         playerRef.current.dispose();
       }
     };
-  }, [urlComplete, movieData, loading, subsUrl, handleSkip, savePlayerPreferences, setupTextTracks, initializeAnalytics]);
+  }, [urlComplete, movieData, loading, subsUrl, handleSkip, savePlayerPreferences, setupTextTracks, initializeAnalytics, playlistData, resolutions, cdnUrl, currentEpisodeIndex]);
+
+  // ===== SINCRONIZAR ESTADO CON PLAYLIST - DESHABILITADO TEMPORALMENTE =====
+  // useEffect(() => {
+  //   // NOTA: Deshabilitado porque puede interferir con el cambio manual de episodios
+  //   console.log('📋 Sincronización de playlist deshabilitada');
+  // }, [playlistData, playlistKey, resolutions]);
 
   // ===== VALIDACIONES =====
   if (!movieId) {
@@ -750,6 +1055,7 @@ const VideoPlayer = () => {
           {/* Portal para el overlay de controles */}
           {overlayContainerRef.current && movieData && createPortal(
             <VideoPlayerOverlay
+              ref={overlayRef}
               onSkipBack={() => handleSkip(playerRef.current, 10, 'backward')}
               onPlayPause={() => {
                 if (playerRef.current) {

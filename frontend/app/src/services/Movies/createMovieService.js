@@ -99,6 +99,21 @@ const createMovieService = async (movieData) => {
       throw new Error('Esta película ya existe en el sistema');
     }
     
+    // Manejar errores específicos de descarga de imagen del backend
+    if (error.response?.status === 500 && error.response?.data?.error === 'IMAGE_DOWNLOAD_FAILED') {
+      const errorMsg = error.response.data.message || 'Error al descargar la imagen';
+      console.error('💥 Error de descarga de imagen del backend:', error.response.data);
+      throw new Error(errorMsg);
+    }
+    
+    if (error.response?.status === 400 && error.response?.data?.error === 'INVALID_IMAGE_URL') {
+      throw new Error('La URL de la imagen no es válida o no está permitida');
+    }
+    
+    if (error.response?.status === 500 && error.response?.data?.error === 'UNEXPECTED_DOWNLOAD_ERROR') {
+      throw new Error('Error inesperado al procesar la imagen. Intenta nuevamente.');
+    }
+    
     if (error.response?.status === 400 && error.response?.data?.message?.includes('imagen')) {
       throw new Error('Error al procesar la imagen: ' + error.response.data.message);
     }
@@ -115,7 +130,8 @@ const createMovieService = async (movieData) => {
     }
     
     // Error genérico del backend
-    throw new Error(error.response?.data?.message || 'Error al crear la película');
+    const backendMessage = error.response?.data?.message || error.message || 'Error al crear la película';
+    throw new Error(backendMessage);
   }
 };
 

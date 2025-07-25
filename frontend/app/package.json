@@ -39,7 +39,9 @@
     "videojs-contrib-dash": "^5.1.1",
     "videojs-contrib-quality-levels": "^4.0.0",
     "videojs-hotkeys": "^0.2.30",
-    "videojs-overlay": "^4.0.0"
+    "videojs-overlay": "^4.0.0",
+    "videojs-playlist": "^5.2.0",
+    "videojs-playlist-ui": "^5.0.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^4.0.0",

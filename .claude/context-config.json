@@ -1,0 +1,118 @@
+{
+  "videoPlayerContext": {
+    "description": "Contexto específico para debugging del VideoPlayer component",
+    "components": {
+      "VideoPlayer": {
+        "filePath": "/frontend/app/src/Pages/VideoPlayer/VideoPlayer.jsx",
+        "type": "complex-page-component",
+        "dependencies": [
+          "video.js",
+          "videojs-contrib-quality-levels", 
+          "jb-videojs-hls-quality-selector",
+          "videojs-overlay",
+          "videojs-hotkeys",
+          "videojs-playlist",
+          "videojs-playlist-ui"
+        ],
+        "mainFeatures": [
+          "HLS video streaming",
+          "Quality selector",
+          "Playlist management (series episodes)",
+          "Subtitles support",
+          "Hotkeys (space, arrows, J/L)",
+          "Analytics tracking",
+          "Auto-advance episodes",
+          "Player preferences persistence",
+          "Picture-in-picture",
+          "Custom overlay controls"
+        ],
+        "commonIssues": [
+          {
+            "issue": "Video no carga",
+            "possibleCauses": ["CDN down", "Invalid hash", "Missing resolutions", "Network error"],
+            "debugSteps": ["Check urlComplete", "Verify CDN connectivity", "Check browser console", "Test different resolution"]
+          },
+          {
+            "issue": "Subtítulos no aparecen", 
+            "possibleCauses": ["VTT file missing", "Text tracks not loaded", "Language mismatch"],
+            "debugSteps": ["Check subsUrl", "Verify VTT file exists", "Test setupTextTracks function", "Check browser text track support"]
+          },
+          {
+            "issue": "Auto-advance no funciona",
+            "possibleCauses": ["Playlist plugin not loaded", "AutoAdvance delay not set", "Episode index mismatch"],
+            "debugSteps": ["Check playlist configuration", "Verify currentEpisodeIndex", "Test autoadvance delay", "Check console logs for plugin errors"]
+          },
+          {
+            "issue": "Calidad no cambia",
+            "possibleCauses": ["HLS quality selector plugin missing", "Quality levels not detected", "VHS configuration issue"],
+            "debugSteps": ["Check hlsQualitySelector plugin", "Verify quality levels", "Test VHS settings", "Check manifest file"]
+          },
+          {
+            "issue": "Hotkeys no responden",
+            "possibleCauses": ["Hotkeys plugin not loaded", "Event conflicts", "Focus issues"],
+            "debugSteps": ["Check hotkeys configuration", "Verify key event handlers", "Test player focus", "Check for event conflicts"]
+          },
+          {
+            "issue": "Cross-browser issues",
+            "possibleCauses": ["Browser codec support", "Autoplay policies", "Fullscreen API differences"],
+            "debugSteps": ["Check browser compatibility", "Test different codecs", "Verify autoplay policy", "Test fullscreen API"]
+          }
+        ],
+        "keyMethods": [
+          "initializePlayer() - línea 452: Setup principal del player",
+          "setupTextTracks() - línea 164: Configuración de subtítulos", 
+          "initializeAnalytics() - línea 199: Setup de métricas",
+          "handleSkip() - línea 74: Navegación de video",
+          "savePlayerPreferences() - línea 101: Persistencia de configuración",
+          "loadPlayerPreferences() - línea 130: Carga de configuración guardada"
+        ],
+        "stateVariables": [
+          "movieData - Información del contenido",
+          "playlistData - Datos de la serie y episodios", 
+          "currentEpisodeIndex - Índice del episodio actual",
+          "currentQuality - Calidad de video actual",
+          "isPlaying - Estado de reproducción",
+          "bufferPercentage - Porcentaje de buffer",
+          "loading - Estado de carga",
+          "error - Errores del player"
+        ],
+        "urlParameters": [
+          "movieId - Hash del video (requerido)",
+          "resolutions - Resoluciones disponibles (requerido)",
+          "type - movie|episode (opcional, default: movie)",
+          "playlist - Key de playlist en sessionStorage (opcional)"
+        ]
+      }
+    },
+    "debuggingTemplates": {
+      "videoLoadError": {
+        "description": "Template para problemas de carga de video",
+        "context": {
+          "currentError": "{{error message}}",
+          "urlComplete": "{{generated HLS URL}}",
+          "movieData": "{{content metadata}}",
+          "cdnStatus": "{{cdn connectivity}}",
+          "browserInfo": "{{user agent and capabilities}}"
+        }
+      },
+      "playlistIssues": {
+        "description": "Template para problemas de playlist",
+        "context": {
+          "playlistData": "{{playlist structure}}",
+          "currentEpisodeIndex": "{{episode index}}",
+          "autoAdvanceConfig": "{{autoadvance settings}}",
+          "pluginStatus": "{{playlist plugin status}}"
+        }
+      },
+      "crossBrowserIssues": {
+        "description": "Template para problemas cross-browser",
+        "context": {
+          "browser": "{{browser name and version}}",
+          "codecSupport": "{{supported codecs}}",
+          "autoplayPolicy": "{{autoplay restrictions}}",
+          "videoJsVersion": "{{video.js version}}"
+        }
+      }
+    }
+  }
+}
