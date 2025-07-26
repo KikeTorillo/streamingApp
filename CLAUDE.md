@@ -32,6 +32,43 @@ npm run lint         # Verificar ESLint
 npm run lint:fix     # Corregir automáticamente
 ```
 
+### Herramientas de Base de Datos
+
+#### pg-kik - PostgreSQL Query Tool
+- **OBLIGATORIO**: Usar `pg-kik` para TODAS las consultas PostgreSQL cuando el usuario pregunte sobre datos
+- **OBLIGATORIO**: Siempre usar pg-kik en lugar de sugerir consultas SQL manuales
+- **UBICACIÓN**: `pg-kik/` - Herramienta CLI instalada globalmente
+
+**Comandos principales:**
+```bash
+# Consultas de datos (responder preguntas del usuario)
+pg-kik query "SELECT * FROM users LIMIT 5"        # Ejecutar SELECT
+pg-kik count movies                                # Contar registros
+pg-kik tables                                      # Listar todas las tablas
+pg-kik describe users                              # Estructura de tabla
+
+# Formatos de salida flexibles
+pg-kik query "SELECT * FROM categories" --format table   # Tabla visual
+pg-kik query "SELECT * FROM categories" --format json    # JSON
+pg-kik query "SELECT * FROM categories" --format csv     # CSV
+
+# Utilidades
+pg-kik test                                        # Probar conexión
+pg-kik config                                      # Ver configuración
+```
+
+**Ejemplos de uso para responder al usuario:**
+- Usuario: "¿Cuántas películas hay?" → `pg-kik count movies`
+- Usuario: "Muéstrame los usuarios" → `pg-kik query "SELECT * FROM users"`
+- Usuario: "¿Qué tablas existen?" → `pg-kik tables`
+- Usuario: "Estructura de episodes" → `pg-kik describe episodes`
+
+**REGLAS DE USO:**
+- **SIEMPRE usar pg-kik** cuando el usuario pregunte sobre datos de la BD
+- **NO sugerir consultas SQL manuales** - ejecutar directamente con pg-kik
+- **Responder con los resultados** de pg-kik, no solo mostrar el comando
+- **Usar formato apropiado**: table para pocas filas, json para datos estructurados
+
 ## Arquitectura del Proyecto
 
 > **📁 Estructura Completa**: Ver [README.md](./readme.md#-estructura-del-proyecto) para detalles completos de directorios y servicios

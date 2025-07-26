@@ -1,8 +1,8 @@
 // routes/episodesRouter.js
 const express = require('express');
 const multiUpload = require('../middleware/upload');
-const SeriesService = require('../services/seriesService');
-const service = new SeriesService();
+const EpisodesService = require('../services/EpisodesService');
+const service = new EpisodesService();
 const { validatorHandler } = require('../middleware/validatorHandler');
 const {
   createEpisodeSchema,
@@ -11,6 +11,7 @@ const {
   updateEpisodeSchema,
 } = require('../schemas/episodesSchema');
 const { authenticateJwt, checkRoles } = require('./../middleware/authHandler');
+const { completeInfoUser } = require('../middleware/completeInfoUser');
 const router = express.Router();
 
 // Estado global para rastrear el progreso de transcodificación
@@ -56,7 +57,7 @@ router.get(
   async (req, res, next) => {
     try {
       const { serieId, season, episodeNumber } = req.query;
-      const episodes = await service.findEpisode(serieId, season, episodeNumber);
+      const episodes = await service.find(serieId, season, episodeNumber);
       res.json(episodes);
     } catch (error) {
       next(error);
@@ -76,7 +77,7 @@ router.get(
     try {
       const { id } = req.params;
       console.log('📺 Obteniendo episodio por ID:', id);
-      const episode = await service.findOneEpisode(id);
+      const episode = await service.findOne(id);
       
       if (!episode || episode.length === 0) {
         return res.status(404).json({ error: 'Episodio no encontrado' });
@@ -101,7 +102,7 @@ router.get(
     try {
       const { fileHash } = req.params;
       console.log('🎬 Obteniendo episodio por hash:', fileHash);
-      const episode = await service.findEpisodeByFileHash(fileHash);
+      const episode = await service.findByFileHash(fileHash);
       res.json(episode);
     } catch (error) {
       next(error);
@@ -153,7 +154,7 @@ router.patch(
     try {
       const { id } = req.params;
       const changes = req.body;
-      const updatedEpisode = await service.updateEpisode(id, changes);
+      const updatedEpisode = await service.update(id, changes);
       res.json(updatedEpisode);
     } catch (error) {
       next(error);
@@ -173,7 +174,7 @@ router.delete(
   async (req, res, next) => {
     try {
       const { id } = req.params;
-      const result = await service.deleteEpisode(id);
+      const result = await service.delete(id);
       res.json(result);
     } catch (error) {
       next(error);
@@ -195,7 +196,7 @@ async function processFile(taskId, fileInfo) {
     progressMap[taskId].progress = 0;
 
     // Llamar al servicio para crear el episodio con callback de progreso
-    await service.createEpisode(fileInfo, (progress) => {
+    await service.create(fileInfo, (progress) => {
       console.log(`📊 Progreso del episodio ${taskId}: ${progress}%`);
       progressMap[taskId].progress = progress;
     });
@@ -214,46 +215,5 @@ async function processFile(taskId, fileInfo) {
   }
 }
 
-/**
- * Middleware para completar información del usuario y archivos
- */
-async function completeInfoUser(req, res, next) {
-  // Extraer datos adicionales del cuerpo de la solicitud
-  // Obtener la IP del cliente
-  let clientIp = req.socket.remoteAddress || '';
-  
-  // Si X-Forwarded-For contiene múltiples IPs, tomar la primera
-  if (Array.isArray(clientIp)) {
-    clientIp = clientIp[0];
-  } else if (typeof clientIp === 'string') {
-    clientIp = clientIp.split(',')[0].trim();
-  }
-  
-  // Normalizar la IP (eliminar ::ffff: para IPv6)
-  clientIp = clientIp.replace(/^::ffff:/, '');
-  
-  const user = { id: 'anonymous' };
-  const ip = clientIp || 'unknown';
-  const data = req.body;
-  
-  data.user = user;
-  data.ip = ip;
-  
-  // Manejar archivo de video para episodios
-  if (req.files && req.files['video']) {
-    data.video = req.files['video'] ? req.files['video'][0].path : '';
-    console.log('📹 Video de episodio recibido:', data.video);
-  }
-  
-  // Manejar imagen de portada si existe
-  if (req.files && req.files['coverImage']) {
-    data.coverImage = req.files['coverImage']
-      ? req.files['coverImage'][0].path
-      : '';
-    console.log('🖼️ Imagen de episodio recibida:', data.coverImage);
-  }
-  
-  next();
-}
 
 module.exports = router;

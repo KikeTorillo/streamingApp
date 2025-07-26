@@ -1,0 +1,236 @@
+/* molecules/SeasonSelector/SeasonSelector.css */
+
+.season-selector {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+}
+
+/* ===========================================
+   ESTADOS
+   =========================================== */
+
+.season-selector--loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.season-selector--disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* ===========================================
+   VARIANTES
+   =========================================== */
+
+.season-selector--compact {
+  padding: var(--space-sm);
+  gap: var(--space-xs);
+  background: transparent;
+  border: none;
+}
+
+.season-selector--compact .season-selector__header {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.season-selector--compact .season-selector__title {
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+.season-selector--normal {
+  padding: var(--space-md);
+  gap: var(--space-sm);
+}
+
+.season-selector--detailed {
+  padding: var(--space-lg);
+  gap: var(--space-md);
+  background: var(--bg-accent);
+}
+
+/* ===========================================
+   TAMAÑOS
+   =========================================== */
+
+.season-selector--sm {
+  padding: var(--space-sm);
+}
+
+.season-selector--sm .season-selector__title {
+  font-size: var(--font-size-sm);
+}
+
+.season-selector--md {
+  padding: var(--space-md);
+}
+
+.season-selector--lg {
+  padding: var(--space-lg);
+}
+
+.season-selector--lg .season-selector__title {
+  font-size: var(--font-size-lg);
+}
+
+/* ===========================================
+   HEADER
+   =========================================== */
+
+.season-selector__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.season-selector__title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin: 0;
+  line-height: var(--line-height-tight);
+}
+
+.season-selector__info {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* ===========================================
+   CONTROL
+   =========================================== */
+
+.season-selector__control {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.season-selector__select {
+  width: 100%;
+}
+
+.season-selector__current-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-sm);
+  background: var(--bg-primary-light);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--color-primary);
+}
+
+.season-selector__current-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  font-style: italic;
+}
+
+.season-selector__current-count {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ===========================================
+   RESPONSIVE - MOBILE FIRST
+   =========================================== */
+
+/* Base: Mobile (320px - 767px) */
+.season-selector {
+  padding: var(--space-sm);
+  gap: var(--space-sm);
+}
+
+.season-selector__header {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.season-selector__info {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs);
+}
+
+.season-selector__title {
+  font-size: var(--font-size-sm);
+}
+
+/* Tablet: 768px+ */
+@media (min-width: 768px) {
+  .season-selector {
+    padding: var(--space-md);
+    gap: var(--space-md);
+  }
+  
+  .season-selector__header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .season-selector__info {
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .season-selector__title {
+    font-size: var(--font-size-base);
+  }
+  
+  .season-selector__control {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+  
+  .season-selector__select {
+    flex: 1;
+    min-width: 200px;
+  }
+  
+  .season-selector__current-info {
+    flex-shrink: 0;
+    min-width: 200px;
+  }
+}
+
+/* Desktop: 1024px+ */
+@media (min-width: 1024px) {
+  .season-selector__title {
+    font-size: var(--font-size-lg);
+  }
+}
+
+/* ===========================================
+   VARIANTE COMPACT RESPONSIVE
+   =========================================== */
+
+.season-selector--compact .season-selector__header {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.season-selector--compact .season-selector__info {
+  flex-direction: row;
+  align-items: center;
+}
+
+@media (max-width: 767px) {
+  .season-selector--compact .season-selector__info {
+    display: none; /* Ocultar badges en móvil modo compacto */
+  }
+}

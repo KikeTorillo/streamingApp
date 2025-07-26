@@ -5,8 +5,8 @@ import { useMovieNavigation } from '../../hooks/useMovieNavigation';
 import { Button } from '../../components/atoms/Button/Button';
 import { PageLayout } from '../../components/templates/PageLayout/PageLayout';
 import { AppHeader } from '../../components/organisms/AppHeader/AppHeader';
-import { ContentSection } from '../../components/molecules/ContentSection/ContentSection';
-import { ContentCard } from '../../components/molecules/ContentCard/ContentCard';
+import { EpisodeListItem } from '../../components/molecules/EpisodeListItem/EpisodeListItem';
+import { SeasonSelector } from '../../components/molecules/SeasonSelector/SeasonSelector';
 import { EmptyState } from '../../components/molecules/EmptyState/EmptyState';
 
 // Servicios (necesitarás crearlos)
@@ -164,7 +164,7 @@ function SeriesDetailPage() {
         window.location.reload();
     };
 
-    // ===== FILTRAR EPISODIOS POR TEMPORADA =====
+    // ===== PREPARAR DATOS DE TEMPORADAS PARA SEASONELECTOR =====
     const episodesBySeason = episodes.reduce((acc, episode) => {
         const season = episode.season || 1;
         if (!acc[season]) acc[season] = [];
@@ -172,9 +172,14 @@ function SeriesDetailPage() {
         return acc;
     }, {});
 
-    const availableSeasons = Object.keys(episodesBySeason)
+    const seasonsData = Object.keys(episodesBySeason)
         .map(Number)
-        .sort((a, b) => a - b);
+        .sort((a, b) => a - b)
+        .map(seasonNumber => ({
+            number: seasonNumber,
+            episodeCount: episodesBySeason[seasonNumber].length,
+            title: undefined // Las series no tienen títulos de temporada por defecto
+        }));
 
     const currentSeasonEpisodes = episodesBySeason[selectedSeason] || [];
     
@@ -182,16 +187,16 @@ function SeriesDetailPage() {
     console.log('🐛 RENDER DEBUG:');
     console.log('🐛 Episodes raw:', episodes);
     console.log('🐛 Episodes by season:', episodesBySeason);
-    console.log('🐛 Available seasons:', availableSeasons);
+    console.log('🐛 Available seasons:', seasonsData);
     console.log('🐛 Selected season:', selectedSeason);
     console.log('🐛 Current season episodes:', currentSeasonEpisodes);
     console.log('🐛 Loading states:', { loadingSerie, loadingEpisodes });
     console.log('🐛 Error states:', { serieError, episodesError });
 
-    // ===== TRANSFORMAR EPISODIOS PARA CONTENTCARD =====
-    const transformEpisodeForCard = (episode) => {
+    // ===== TRANSFORMAR EPISODIOS PARA EPISODELISTITEM =====
+    const transformEpisodeForList = (episode) => {
         // ✅ FORMATEAR DURACIÓN correctamente
-        let durationText = '45 min';
+        let durationText = '45:00';
         if (episode.video_duration) {
             if (typeof episode.video_duration === 'object' && episode.video_duration.seconds) {
                 const totalSeconds = episode.video_duration.seconds;
@@ -203,30 +208,20 @@ function SeriesDetailPage() {
             }
         }
 
-        // ✅ FORMATEAR URL DE IMAGEN correctamente
+        // ✅ FORMATEAR URL DE THUMBNAIL correctamente
         const coverUrl = episode.cover_image
             ? `${import.meta.env.VITE_CDN_URL || 'http://localhost:8082'}/covers/${episode.cover_image}/cover.jpg`
             : serie?.cover_image
                 ? `${import.meta.env.VITE_CDN_URL || 'http://localhost:8082'}/covers/${serie.cover_image}/cover.jpg`
-                : 'https://via.placeholder.com/300x450?text=Episodio';
+                : 'https://via.placeholder.com/320x180?text=Episodio';
 
-        const transformedEpisode = {
-            id: episode.id,
+        return {
+            ...episode, // Mantener todos los datos originales
             title: episode.title || `Episodio ${episode.episode_number}`,
             cover: coverUrl,
-            category: `T${episode.season} E${episode.episode_number}`,
-            year: new Date(episode.created_at || episode.createdAt).getFullYear(),
-            type: 'episode',
-            rating: episode.rating || serie?.rating || 0,
             duration: durationText,
-            // Campos necesarios para el reproductor
-            file_hash: episode.file_hash,
-            available_resolutions: episode.available_resolutions,
-            _original: episode
+            rating: episode.rating || serie?.rating || 0
         };
-
-        console.log('✅ Transformed episode final:', transformedEpisode);
-        return transformedEpisode;
     };
 
     // ===== VERIFICAR ERRORES =====
@@ -372,79 +367,92 @@ function SeriesDetailPage() {
                     )}
 
                     {/* ===== SELECTOR DE TEMPORADAS ===== */}
-                    {availableSeasons.length > 1 && (
-                        <div style={{ marginBottom: 'var(--space-lg)' }}>
-                            <h3 style={{ 
-                                marginBottom: 'var(--space-md)',
-                                color: 'var(--text-primary)'
-                            }}>
-                                Temporadas
-                            </h3>
-                            <div style={{ 
-                                display: 'flex', 
-                                gap: 'var(--space-sm)', 
-                                flexWrap: 'wrap' 
-                            }}>
-                                {availableSeasons.map(season => (
-                                    <Button
-                                        key={season}
-                                        variant={selectedSeason === season ? 'primary' : 'outline'}
-                                        size="sm"
-                                        onClick={() => setSelectedSeason(season)}
-                                    >
-                                        Temporada {season}
-                                    </Button>
-                                ))}
-                            </div>
+                    {seasonsData.length > 1 && (
+                        <div style={{ marginBottom: 'var(--space-xl)' }}>
+                            <SeasonSelector
+                                seasons={seasonsData}
+                                selectedSeason={selectedSeason}
+                                onSeasonChange={setSelectedSeason}
+                                showEpisodeCount={true}
+                                variant="normal"
+                                size="md"
+                            />
                         </div>
                     )}
 
                     {/* ===== LISTA DE EPISODIOS ===== */}
-                    <ContentSection
-                        title={`Episodios${availableSeasons.length > 1 ? ` - Temporada ${selectedSeason}` : ''}`}
-                        icon="🎬"
-                        loading={loadingEpisodes}
-                        error={episodesError}
-                        empty={currentSeasonEpisodes.length === 0 && !loadingEpisodes}
-                        emptyTitle="No hay episodios disponibles"
-                        emptyDescription={
-                            availableSeasons.length > 1 
-                                ? `No se encontraron episodios para la temporada ${selectedSeason}`
-                                : "Esta serie aún no tiene episodios disponibles"
-                        }
-                        emptyAction={
-                            episodesError ? (
-                                <Button variant="outline" onClick={handleRetry}>
-                                    Reintentar
-                                </Button>
-                            ) : (
-                                <Button variant="outline" onClick={handleBackToSeries}>
-                                    Volver a series
-                                </Button>
-                            )
-                        }
-                        variant="default"
-                        size="md"
-                        gridColumns="repeat(auto-fit, minmax(200px, 1fr))"
-                        gridGap="var(--space-md)"
-                    >
-                        {currentSeasonEpisodes.map(episode => {
-                            const transformedEpisode = transformEpisodeForCard(episode);
-                            console.log('🐛 Rendering episode:', transformedEpisode);
-                            
-                            return (
-                                <ContentCard
-                                    key={`episode-${episode.id}`}
-                                    content={transformedEpisode}
-                                    onPlay={() => handlePlayEpisode(episode)}
-                                    onClick={() => handleEpisodeClick(episode)}
-                                    size="md"
-                                    showRating={true}
-                                    variant="elevated"
-                                />
-                            );
-                        })}
-                    </ContentSection>
+                    <div style={{ marginBottom: 'var(--space-xl)' }}>
+                        <h2 style={{ 
+                            fontSize: 'var(--font-size-xl)',
+                            fontWeight: 'var(--font-weight-semibold)',
+                            color: 'var(--text-primary)',
+                            marginBottom: 'var(--space-lg)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 'var(--space-sm)'
+                        }}>
+                            🎬 Episodios{seasonsData.length > 1 ? ` - Temporada ${selectedSeason}` : ''}
+                        </h2>
+
+                        {loadingEpisodes ? (
+                            <div style={{ 
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                minHeight: '200px'
+                            }}>
+                                <div>Cargando episodios...</div>
+                            </div>
+                        ) : episodesError ? (
+                            <EmptyState
+                                title="Error al cargar episodios"
+                                description={episodesError}
+                                action={
+                                    <Button variant="outline" onClick={handleRetry}>
+                                        Reintentar
+                                    </Button>
+                                }
+                            />
+                        ) : currentSeasonEpisodes.length === 0 ? (
+                            <EmptyState
+                                title="No hay episodios disponibles"
+                                description={
+                                    seasonsData.length > 1 
+                                        ? `No se encontraron episodios para la temporada ${selectedSeason}`
+                                        : "Esta serie aún no tiene episodios disponibles"
+                                }
+                                action={
+                                    <Button variant="outline" onClick={handleBackToSeries}>
+                                        Volver a series
+                                    </Button>
+                                }
+                            />
+                        ) : (
+                            <div style={{ 
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 'var(--space-sm)'
+                            }}>
+                                {currentSeasonEpisodes.map(episode => {
+                                    const transformedEpisode = transformEpisodeForList(episode);
+                                    console.log('🐛 Rendering episode:', transformedEpisode);
+                                    
+                                    return (
+                                        <EpisodeListItem
+                                            key={`episode-${episode.id}`}
+                                            episode={transformedEpisode}
+                                            onPlay={() => handlePlayEpisode(episode)}
+                                            onClick={() => handleEpisodeClick(episode)}
+                                            showThumbnail={true}
+                                            showDescription={true}
+                                            showRating={true}
+                                            variant="normal"
+                                        />
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </PageLayout>
         );
