@@ -186,7 +186,7 @@ async function completeInfoUser(req, res, next) {
       console.log('🌐 URL de imagen recibida, descargando...:', data.coverImageUrl);
       
       try {
-        const { downloadImageFromUrl, isValidImageUrl } = require('../utils/imageDownloader');
+        const { downloadImageFromUrl, isValidImageUrl } = require('../utils/media/image/imageDownloader');
         
         // Validar URL
         if (!isValidImageUrl(data.coverImageUrl)) {

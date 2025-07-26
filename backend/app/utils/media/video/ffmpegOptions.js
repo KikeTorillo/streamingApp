@@ -1,5 +1,4 @@
-// utils/ffmpegOptions.js
-const { videoConfig } = require('./configMediaQualities');
+const { videoConfig } = require('../config/configMediaQualities');
 
 /**
  * Genera las opciones de FFmpeg para la parte de video.

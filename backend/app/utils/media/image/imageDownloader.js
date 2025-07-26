@@ -1,4 +1,3 @@
-// app/utils/imageDownloader.js
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
@@ -14,7 +13,8 @@ const axios = require('axios');
  */
 async function downloadImageFromUrl(imageUrl, tempDir = null, maxRetries = 3, baseDelay = 1000) {
   if (!tempDir) {
-    tempDir = path.join(__dirname, '..', 'temp_downloads');
+    // Apuntar a la carpeta temp_downloads en la raíz del backend
+    tempDir = path.join(__dirname, '..', '..', '..', 'temp_downloads');
   }
 
   // Crear directorio temporal si no existe

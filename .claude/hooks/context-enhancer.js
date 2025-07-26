@@ -22,6 +22,22 @@ function isVideoPlayerRelated(prompt) {
   );
 }
 
+// Detectar si el prompt está relacionado con Design System
+function isDesignSystemRelated(prompt) {
+  const designKeywords = [
+    'component', 'button', 'input', 'select', 'card', 'modal',
+    'style', 'css', 'design', 'color', 'spacing', 'typography',
+    'theme', 'responsive', 'mobile', 'atom', 'molecule', 'organism',
+    'variables', 'sistema de diseño', 'design system', 'storybook',
+    'variant', 'size', 'padding', 'margin', 'border', 'shadow',
+    'crear componente', 'nuevo componente', 'consistencia'
+  ];
+  
+  return designKeywords.some(keyword => 
+    prompt.toLowerCase().includes(keyword.toLowerCase())
+  );
+}
+
 // Auto-discovery para componentes internos
 function detectInternalComponents(prompt) {
   const componentMappings = {

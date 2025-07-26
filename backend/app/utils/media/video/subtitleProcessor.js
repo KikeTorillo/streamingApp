@@ -1,7 +1,7 @@
 // utils/subtitleProcessor.js
 const ffmpeg = require('fluent-ffmpeg');
-const { uploadFileIfNotExists } = require('./aws');
-const { config } = require('../config/config');
+const { uploadFileIfNotExists } = require('../../storage/aws');
+const { config } = require('../../../config/config');
 
 /**
  * Extrae una pista de subtítulos en formato WebVTT y la guarda en un archivo.

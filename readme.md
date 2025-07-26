@@ -29,20 +29,36 @@ npm --version
 
 ## 🚀 Inicio Rápido
 
-### ⚡ Comando Principal (TODO EN UNO)
-```bash
-# Desde la raíz del proyecto
-npm run dev
-```
-Este comando ejecuta automáticamente:
-- Backend API (puerto 3000)
-- Frontend React+Vite (puerto 8080) 
-- Storybook (puerto 6006)
-- PostgreSQL + pgAdmin
-- MinIO S3 + Panel
-- CDN y Transcodificadores
+### 🎯 **Selecciona tu Entorno de Desarrollo**
 
-### 📋 Configuración Inicial
+El proyecto soporta **2 modos de desarrollo** principales:
+
+#### 🏠 **Desarrollo Local**
+```bash
+# 1. Configurar variables según tu necesidad:
+# Para localhost: cp .env.local.example .env
+# Para red local: cp .env.host.example .env (editar IP)
+
+# 2. Iniciar servicios
+npm run dev:local
+```
+- **Localhost**: Solo accesible desde tu máquina local
+- **Red local**: Accesible desde dispositivos en tu red (configurar IP en .env)
+- **Ideal para**: Desarrollo, testing móvil, demos
+
+#### 🚀 **Producción**
+```bash
+# 1. Configurar variables de entorno
+cp .env.prod.example .env
+# ⚠️ IMPORTANTE: Editar .env con valores de producción
+
+# 2. Iniciar servicios
+npm run prod
+```
+- **Acceso**: Configuración de producción
+- **Ideal para**: Despliegue en servidor
+
+### 📋 Configuración Inicial Rápida
 
 #### 🎯 **Configuración Automática (Recomendado)**
 ```bash
@@ -50,16 +66,22 @@ Este comando ejecuta automáticamente:
 git clone https://github.com/KikeTorillo/streamingApp.git
 cd streamingApp
 
-# 2. Copiar y configurar variables de entorno
-cp example.env .env
-# ⚠️ IMPORTANTE: Editar .env y configurar las variables marcadas con ⚠️
+# 2. Mostrar opciones de configuración
+npm run env:setup
 
-# 3. Levantar toda la plataforma
-npm run dev
+# 3. Seleccionar y copiar el archivo de entorno apropiado
+# Para localhost: cp .env.local.example .env
+# Para red local: cp .env.host.example .env  
+# Para producción: cp .env.prod.example .env
+
+# 4. Editar variables requeridas en .env
+
+# 5. Levantar la plataforma según tu entorno
+npm run dev:local    # o prod
 ```
 
 #### ⚙️ **Variables de Entorno Requeridas**
-Después de copiar `example.env` a `.env`, **debes configurar**:
+Después de copiar `.env.prod.example` a `.env`, **debes configurar**:
 
 ```bash
 # 🔑 REQUERIDO: API key de TMDB (gratuita)
@@ -86,7 +108,7 @@ git clone https://github.com/KikeTorillo/streamingApp.git
 cd streamingApp
 
 # 2. Configurar variables de entorno
-cp example.env .env
+cp .env.prod.example .env
 # Editar .env con tus valores
 
 # 3. Instalar dependencias (opcional)
@@ -98,54 +120,70 @@ npm run dev
 
 ## 🛠️ Scripts Principales Disponibles
 
-### 🐳 **Gestión Docker (Recomendado para desarrollo)**
+### 🏠 **Desarrollo Local**
 ```bash
-npm run dev          # Inicia toda la plataforma (Backend + Frontend + Storybook + Servicios)
-npm run stop         # Detiene todos los servicios
-npm run restart      # Reinicia todos los servicios
-npm run clean        # Limpia contenedores, volúmenes e imágenes
-npm run status       # Muestra el estado de todos los servicios
+npm run dev:local         # Inicia toda la plataforma (localhost o red según .env)
+npm run dev:local:up      # Solo levantar servicios (sin rebuild)
+npm run dev:local:logs    # Ver logs de todos los servicios
+npm run dev:local:status  # Estado de servicios
+npm run dev:local:restart # Reiniciar servicios
+npm run stop:local        # Detener servicios de desarrollo
 ```
 
-### 💻 **Desarrollo Local (Sin Docker)**
+### 🚀 **Producción**
 ```bash
-npm run dev:local    # Ejecuta backend, frontend y storybook en paralelo
-npm run dev:backend  # Solo backend (requiere DB externa)
-npm run dev:frontend # Solo frontend
-npm run dev:storybook # Solo Storybook
+npm run prod         # Inicia toda la plataforma en modo producción
+npm run prod:up      # Solo levantar servicios (sin rebuild)
+npm run prod:logs    # Ver logs de producción
+npm run prod:status  # Estado de servicios de producción
+npm run prod:restart # Reiniciar servicios de producción
+npm run stop:prod    # Detener servicios de producción
 ```
 
-### 🔧 **Servicios Individuales**
+### 📋 **Compatibilidad (Comando Legacy)**
 ```bash
-npm run up:backend   # Solo backend + base de datos + almacenamiento
-npm run up:frontend  # Solo frontend
-npm run up:storybook # Solo Storybook
-npm run up:database  # Solo PostgreSQL + pgAdmin
-npm run up:storage   # Solo MinIO
-npm run up:cdn       # Solo CDN y transcodificadores
+npm run dev          # ⚠️ Muestra mensaje y redirige a dev:local
+```
+
+### 🔧 **Herramientas y Utilidades**
+```bash
+npm run build        # Compilar frontend para producción
+npm run install:all  # Instalar dependencias en backend y frontend
+npm run status       # Ver estado de contenedores Docker
+npm run health       # Verificar salud de todos los servicios
+npm run ports        # Mostrar puertos en uso
+npm run env:setup    # Mostrar opciones de configuración de entorno
 ```
 
 ### 📊 **Monitoreo y Debug**
 ```bash
-npm run logs         # Ver logs de todos los servicios
-npm run logs:backend # Ver logs solo del backend
-npm run logs:frontend # Ver logs solo del frontend
-npm run monitor      # Monitorear recursos de contenedores
-npm run health       # Verificar que todos los servicios respondan
-npm run ports        # Ver qué puertos están en uso
+npm run logs:backend   # Ver logs del backend
+npm run logs:frontend  # Ver logs del frontend  
+npm run logs:storybook # Ver logs de Storybook
+npm run logs:database  # Ver logs de PostgreSQL
+npm run monitor        # Monitorear recursos de contenedores
+npm run check:services # Verificar salud de servicios principales
 ```
 
 ### 🐚 **Acceso a Consolas**
 ```bash
 npm run shell:backend  # Acceder al contenedor del backend
 npm run shell:frontend # Acceder al contenedor del frontend
-npm run shell:db      # Acceder a PostgreSQL CLI
+npm run shell:storybook # Acceder al contenedor de Storybook
+npm run shell:db       # Acceder a PostgreSQL CLI
+```
+
+### 🧹 **Limpieza y Mantenimiento**
+```bash
+npm run clean      # Limpiar contenedores básico
+npm run clean:full # Limpieza completa (imágenes, volúmenes, redes)
 ```
 
 ## 🌐 URLs de Acceso
 
-Una vez ejecutado `npm run dev`, acceder a:
+### 🏠 **Desarrollo Local** (`npm run dev:local`)
 
+**Modo Localhost** (con .env.local.example):
 - **Frontend:** http://localhost:8080
 - **Backend API:** http://localhost:3000
 - **Storybook:** http://localhost:6006
@@ -153,38 +191,72 @@ Una vez ejecutado `npm run dev`, acceder a:
 - **MinIO Panel:** http://localhost:9001 (admin / admin123)
 - **CDN:** http://localhost:8082
 
+**Modo Red Local** (con .env.host.example):
+- **Frontend:** http://TU_IP:8080 (ej: http://192.168.0.179:8080)
+- **Backend API:** http://TU_IP:3000
+- **Storybook:** http://TU_IP:6006
+- **pgAdmin:** http://TU_IP:5050 (admin@gmail.com / root)
+- **MinIO Panel:** http://TU_IP:9001 (admin / admin123)
+- **CDN:** http://TU_IP:8082
+
+> **Nota**: El modo depende del archivo .env que uses. Reemplaza `TU_IP` con la IP configurada en tu archivo .env
+
 ## 📁 Estructura del Proyecto
 
 ```
 streamingApp/
-├── package.json              # 🎯 NUEVO: Scripts centralizados
-├── docker-compose.yml        # Orquestación de servicios
-├── example.env               # Variables de entorno de ejemplo
-├── .env                      # Variables de entorno (crear desde example.env)
+├── package.json                    # 🎯 Scripts centralizados del monorepo
+├── docker-compose.yml              # 🚀 Producción
+├── docker-compose.local.yml        # 🏠 Desarrollo localhost
+├── docker-compose.host.yml         # 🌐 Desarrollo red local
+├── docker-compose.dev.yml          # 🔧 Desarrollo legacy
+├── .env.prod.example               # 🚀 Variables para producción
+├── .env.local.example             # 🏠 Variables para localhost
+├── .env.host.example              # 🌐 Variables para red local
+├── .env                           # Variables activas (copiar desde ejemplo)
+├── clean.js                       # Script de limpieza Docker
 │
-├── backend/app/              # 🔙 Backend Node.js + Express
-│   ├── package.json         # Scripts específicos del backend
-│   ├── index.js             # Punto de entrada del servidor
-│   ├── routes/              # Rutas de la API
-│   ├── models/              # Modelos de datos
-│   └── middleware/          # Middleware personalizado
+├── backend/app/                    # 🔙 Backend Node.js + Express
+│   ├── package.json               # Dependencias y scripts del backend
+│   ├── index.js                   # Punto de entrada del servidor
+│   ├── routes/                    # Rutas API (authRouter, moviesRoutes, etc.)
+│   ├── services/                  # Lógica de negocio
+│   ├── middleware/                # Middleware (auth, validation, upload)
+│   ├── schemas/                   # Validación de datos
+│   ├── utils/                     # Utilidades (video, auth, AWS)
+│   └── libs/                      # Librerías (PostgreSQL pool)
 │
-├── frontend/app/             # 🎨 Frontend React + Vite
-│   ├── package.json         # Scripts específicos del frontend
-│   ├── src/                 # Código fuente React
-│   │   ├── components/      # Componentes siguiendo Atomic Design
-│   │   │   ├── atoms/       # Componentes básicos
-│   │   │   ├── molecules/   # Combinaciones de átomos
-│   │   │   └── organisms/   # Componentes complejos
-│   │   ├── pages/           # Páginas de la aplicación
-│   │   └── services/        # Servicios y APIs
-│   └── .storybook/          # Configuración de Storybook
+├── frontend/app/                   # 🎨 Frontend React + Vite + Storybook
+│   ├── package.json               # Dependencias y scripts del frontend
+│   ├── vite.config.js             # Configuración Vite + path aliases
+│   ├── src/                       # Código fuente React
+│   │   ├── components/            # Atomic Design
+│   │   │   ├── atoms/             # Button, Input, Card, Avatar...
+│   │   │   ├── molecules/         # FilterBar, ContentCard, StatsCard...
+│   │   │   ├── organisms/         # DataTable, AdminSidebar, TMDBSearchView...
+│   │   │   └── templates/         # AdminLayout, PageLayout
+│   │   ├── Pages/                 # Páginas principales
+│   │   ├── services/              # APIs organizadas por dominio
+│   │   │   ├── Auth/              # loginService, registrationService...
+│   │   │   ├── Movies/            # createMovieService, getMoviesService...
+│   │   │   ├── Series/            # createSeriesService, getSeriesService...
+│   │   │   └── Users/             # createUserService, getUsersService...
+│   │   ├── hooks/                 # Custom hooks (useAuth, useMovies...)
+│   │   └── app/context/           # React contexts por dominio
+│   └── .storybook/                # Configuración Storybook
 │
-└── servers/                  # 🏗️ Configuración de infraestructura
-    ├── cdn/                 # Configuración del CDN
-    ├── transcoderServers/   # Servidores de transcodificación
-    ├── minio/               # Almacenamiento S3
-    └── postgresQl/          # Base de datos
+├── servers/                        # 🏗️ Infraestructura
+│   ├── cdn/                       # NGINX CDN + configuración
+│   ├── transcoderServers/         # Transcodificación de video
+│   │   ├── transcoder1/           # Servidor 1 de transcodificación  
+│   │   └── transcoder2/           # Servidor 2 de transcodificación
+│   ├── minio/                     # MinIO S3-compatible storage
+│   └── postgresQl/                # PostgreSQL + datos iniciales
+│
+└── documentation/                  # 📖 Documentación técnica
+    ├── videojs-player-configuration.html
+    ├── comandosServerNgix.html
+    └── vodKaltura.html
 ```
 
 ## 🎨 Sistema de Diseño y Storybook
@@ -231,27 +303,36 @@ style={{ padding: '20px', color: '#ff0000' }}
 
 ### 🐳 **Docker (Recomendado)**
 - **Ventajas:** Todo configurado automáticamente, mismo entorno para todos
-- **Uso:** `npm run dev` y listo
+- **Localhost:** `npm run dev:local` - Solo accesible desde tu máquina
+- **Red Local:** `npm run dev:host` - Accesible desde dispositivos en red
 - **Hot Reload:** Automático en todos los servicios
 
-### 💻 **Local (Desarrollo avanzado)**
-- **Requisitos:** Node.js 18+, PostgreSQL, MinIO local
-- **Configuración:** Ajustar variables en `.env`
-- **Uso:** `npm run dev:local`
+### 💻 **Calidad de Código**
+```bash
+npm run lint           # Verificar ESLint en backend y frontend
+npm run lint:fix       # Corregir problemas automáticamente
+```
 
 ## 🚨 Resolución de Problemas
 
 ### ❌ **Error "Puerto en uso"**
 ```bash
-# Solución rápida
-npm run stop     # Detener todos los servicios
-npm run clean    # Limpiar completamente
-npm run dev      # Reiniciar
+# Solución rápida según tu entorno
+npm run stop:local   # Si usas desarrollo local
+npm run stop:prod    # Si usas producción
+npm run clean        # Limpiar completamente
+npm run clean:full   # Limpieza profunda
+
+# Reiniciar según tu entorno
+npm run dev:local    # Localhost
+npm run dev:host     # Red local
+npm run prod         # Producción
 
 # Verificar qué proceso usa el puerto
-lsof -i :8080    # Frontend
-lsof -i :3000    # Backend  
-lsof -i :5432    # PostgreSQL
+npm run ports       # Ver puertos del proyecto
+lsof -i :8080      # Frontend
+lsof -i :3000      # Backend  
+lsof -i :5432      # PostgreSQL
 ```
 
 ### ❌ **Error de permisos Docker**
@@ -267,12 +348,15 @@ sudo usermod -aG docker $USER
 ### ❌ **Variables de entorno**
 ```bash
 # Problema: Variables no encontradas
-cp example.env .env
-# Editar .env con tus valores reales
+# Seleccionar archivo según tu entorno:
+cp .env.local.example .env    # Para desarrollo localhost
+cp .env.host.example .env     # Para desarrollo red local
+cp .env.prod.example .env     # Para producción
+
+# Usar helper para seleccionar
+npm run env:setup            # Muestra opciones disponibles
 
 # Verificar que las variables se cargan
-npm run env:validate  # (si existe)
-# o manualmente:
 cat .env | grep VITE_TMDB_API_KEY
 ```
 
@@ -295,10 +379,16 @@ docker ps | grep postgres # Verificar que PostgreSQL esté corriendo
 
 ### ❌ **Problemas de conectividad**
 ```bash
-npm run health    # Verificar que todos los servicios respondan
-npm run logs      # Ver logs para identificar errores
-npm run ports     # Verificar que los puertos estén disponibles
-npm run status    # Estado de contenedores Docker
+npm run health         # Verificar que todos los servicios respondan
+npm run check:services # Verificar salud de servicios principales
+npm run ports          # Verificar que los puertos estén disponibles
+npm run status         # Estado de contenedores Docker
+
+# Ver logs específicos según el problema
+npm run logs:backend   # Solo backend
+npm run logs:frontend  # Solo frontend
+npm run logs:database  # Solo base de datos
+npm run monitor        # Monitorear recursos
 ```
 
 ### ❌ **Error "Cannot connect to Docker daemon"**
@@ -319,54 +409,19 @@ npm run logs:backend              # Ver logs del backend
 
 ## 📦 Gestión de Dependencias
 
-### 🔄 Actualizar dependencias
+### 🔧 **Instalación de Dependencias**
 ```bash
-npm run update:all      # Actualizar todas las dependencias
-npm run update:backend  # Solo backend
-npm run update:frontend # Solo frontend
+npm run install:all    # Instalar dependencias en monorepo, backend y frontend
 ```
 
-### 🧹 Linting y formato
+### 🧹 **Linting y Calidad de Código**
 ```bash
-npm run lint          # Verificar calidad de código
-npm run lint:fix      # Corregir problemas automáticamente
-```
-
-## 🧪 Testing
-
-### 🔬 **Comandos de Testing**
-```bash
-# Frontend tests (Vitest)
-npm run test                # Ejecutar todos los tests del frontend
-npm run test:watch          # Ejecutar tests en modo watch
-npm run test:ui             # Interfaz gráfica para tests
-npm run test:coverage       # Generar reporte de cobertura
-
-# Storybook tests
-npm run test:storybook      # Tests de componentes en Storybook
-npm run storybook:build     # Build de Storybook para producción
-```
-
-### 📊 **Estructura de Testing**
-```
-frontend/app/
-├── src/
-│   ├── components/
-│   │   ├── atoms/
-│   │   │   └── Button/
-│   │   │       ├── Button.jsx
-│   │   │       ├── Button.test.jsx     # ✅ Tests unitarios
-│   │   │       └── Button.stories.jsx  # ✅ Stories de Storybook
-│   │   └── molecules/
-│   └── __tests__/              # Tests globales
-└── vitest.config.js
-```
-
-### 🎯 **Filosofía de Testing**
-- **Componentes Atoms**: Tests unitarios obligatorios
-- **Componentes Molecules**: Tests de integración
-- **Storybook**: Tests visuales y de interacción
-- **API**: Tests de endpoints (pendiente implementar)
+npm run lint           # Verificar ESLint en backend y frontend
+npm run lint:backend   # Solo backend
+npm run lint:frontend  # Solo frontend
+npm run lint:fix       # Corregir problemas automáticamente
+npm run lint:fix:backend   # Corregir solo backend
+npm run lint:fix:frontend  # Corregir solo frontend
 ```
 
 ## 🎬 Procesamiento de Video
@@ -497,7 +552,7 @@ VIDEO_QUALITY_PROFILE=standard   # 'standard' | 'high'
 1. **Fork** del repositorio
 2. **Crear rama:** `git checkout -b feature/nueva-funcionalidad`
 3. **Seguir convenciones:** Ver guía de reglas del proyecto
-4. **Testing:** Ejecutar `npm run test` y `npm run lint`
+4. **Linting:** Ejecutar `npm run lint` y `npm run lint:fix`
 5. **Commit:** Usar [conventional commits](https://www.conventionalcommits.org/es/v1.0.0/)
 6. **Pull Request:** Descripción clara de los cambios
 
@@ -514,9 +569,10 @@ test: add unit tests for authentication service
 
 ### 🎯 **Antes de Contribuir**
 - Leer `CLAUDE.md` para entender la arquitectura
-- Verificar que los tests pasen: `npm run test`
 - Verificar que el código pase el linting: `npm run lint`
-- Probar que la aplicación funcione: `npm run dev`
+- Probar que la aplicación funcione según tu entorno:
+  - `npm run dev:local` (desarrollo local)
+  - `npm run prod` (producción)
 
 ## 📄 Licencia
 

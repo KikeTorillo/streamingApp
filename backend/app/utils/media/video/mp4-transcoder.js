@@ -1,18 +1,18 @@
 const ffmpegStatic = require('ffmpeg-static'); // Importa el binario estático de FFmpeg para usarlo en Node.js.
 const ffmpeg = require('fluent-ffmpeg'); // Importa la biblioteca fluent-ffmpeg para interactuar con FFmpeg.
 const fs = require('fs'); // Módulo de Node.js para interactuar con el sistema de archivos.
-const { uploadFileIfNotExists, copyFileToMinIO } = require('../utils/aws');
-const { createTempDir, deleteTempDir } = require('../utils/fileHelpers');
+const { uploadFileIfNotExists, copyFileToMinIO } = require('../../storage/aws');
+const { createTempDir, deleteTempDir } = require('../../storage/fileHelpers');
 const {
   calculateResolutions,
   determineMaxQuality,
   getProcessingMode,
   getConfigInfo,
-} = require('../utils/transcodeSettings');
-const { generateOutputOptions } = require('../utils/ffmpegOptions');
-const { processSubtitles } = require('../utils/subtitleProcessor');
-const { config } = require('../config/config');
-const { validateVideoForMultipleQualities, getVideoInfo } = require('../utils/videoValidator');
+} = require('./transcodeSettings');
+const { generateOutputOptions } = require('./ffmpegOptions');
+const { processSubtitles } = require('./subtitleProcessor');
+const { config } = require('../../../config/config');
+const { validateVideoForMultipleQualities, getVideoInfo } = require('./videoValidator');
 // Configura la ruta del binario de FFmpeg usando el módulo `ffmpeg-static`.
 ffmpeg.setFfmpegPath(ffmpegStatic);
 

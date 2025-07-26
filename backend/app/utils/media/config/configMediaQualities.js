@@ -7,7 +7,7 @@ const imageconfig = {
   // Solo optimizamos formato y calidad para web
 };
 
-const { config } = require('../config/config');
+const { config } = require('../../../config/config');
 
 const videoConfig = {
   transcode: {

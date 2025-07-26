@@ -9,6 +9,7 @@ const {
   getMovieSchema,
   getMovieByHashSchema,
   getMovieByTitleSchema,
+  searchMoviesByYearRangeSchema,
   updateMovieSchema,
 } = require('../schemas/moviesSchemas'); // Asegúrate de tener el schema adecuado
 const { authenticateJwt, checkRoles } = require('./../middleware/authHandler');
@@ -114,6 +115,39 @@ router.get(
       // Llamar al servicio con el tipo de contenido
       const results = await service.findByName(title);
       res.json(results); // Responder con los resultados de la búsqueda
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
+ * Endpoint para buscar películas por rango de años:
+ * - Esta ruta maneja una solicitud GET para buscar películas lanzadas en un rango de años específico.
+ * - Los parámetros deben ser proporcionados como parámetros de consulta (`from` y `to`).
+ * - Ejemplo: GET /movies/search-by-year-range?from=2020&to=2023
+ */
+router.get(
+  '/search-by-year-range',
+  authenticateJwt,
+  checkRoles(['admin', 'editor', 'user']),
+  validatorHandler(searchMoviesByYearRangeSchema, 'query'),
+  async (req, res, next) => {
+    try {
+      const { from, to } = req.query;
+      
+      // Convertir strings a números (Joi ya validó que son números válidos)
+      const fromYear = parseInt(from);
+      const toYear = parseInt(to);
+      
+      const results = await service.searchByYearRange(fromYear, toYear);
+      
+      res.json({
+        success: true,
+        data: results,
+        count: results.length,
+        range: { from: fromYear, to: toYear }
+      });
     } catch (error) {
       next(error);
     }
@@ -273,7 +307,7 @@ async function completeInfoUser(req, res, next) {
       console.log('🌐 URL de imagen recibida, descargando...:', data.coverImageUrl);
       
       try {
-        const { downloadImageFromUrl, isValidImageUrl } = require('../utils/imageDownloader');
+        const { downloadImageFromUrl, isValidImageUrl } = require('../utils/media/image/imageDownloader');
         
         // Validar URL
         if (!isValidImageUrl(data.coverImageUrl)) {

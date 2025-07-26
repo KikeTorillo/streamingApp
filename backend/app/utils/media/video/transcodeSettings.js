@@ -1,5 +1,5 @@
 // utils/transcodeSettings.js
-const { videoConfig } = require('./configMediaQualities');
+const { videoConfig } = require('../config/configMediaQualities');
 
 /**
  * Calcula las resoluciones basadas en la proporción del video original y

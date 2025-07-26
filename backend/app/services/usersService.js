@@ -3,7 +3,7 @@
 const pool = require('../libs/postgresPool'); // Pool de conexiones a PostgreSQL
 const bcrypt = require('bcrypt'); // Biblioteca para encriptación de contraseñas
 const boom = require('@hapi/boom'); // Biblioteca para manejo de errores HTTP estructurados
-const { updateTable } = require('./../utils/sql/updateAbtraction'); // Función genérica para actualización de tablas
+const { updateTable } = require('./../utils/database/updateAbtraction'); // Función genérica para actualización de tablas
 
 /**
  * Clase que gestiona las operaciones relacionadas con los usuarios.

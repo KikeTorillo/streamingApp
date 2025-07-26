@@ -1,9 +1,8 @@
-// utils/imageProcessor.js
 const sharp = require('sharp');
-const { imageconfig } = require('./configMediaQualities');
-const { config } = require('../config/config');
-const { uploadFileIfNotExists } = require('./aws');
-const { createTempDir, deleteTempDir } = require('../utils/fileHelpers');
+const { imageconfig } = require('../config/configMediaQualities');
+const { config } = require('../../../config/config');
+const { uploadFileIfNotExists } = require('../../storage/aws');
+const { createTempDir, deleteTempDir } = require('../../storage/fileHelpers');
 
 /**
  * Optimiza una imagen de portada manteniendo dimensiones originales.

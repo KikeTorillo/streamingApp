@@ -1,44 +1,21 @@
 // services/seriesService.js
-const fs = require('fs');
-const pool = require('../libs/postgresPool');
+const BaseService = require('./BaseService');
 const boom = require('@hapi/boom'); // Biblioteca para manejo de errores HTTP estructurados
-const { updateTable } = require('../utils/sql/updateAbtraction'); // Función genérica para actualización de tablas
-const { transcode } = require('../utils/mp4-transcoder');
-const crypto = require('crypto');
+const { updateTable } = require('../utils/database/updateAbtraction'); // Función genérica para actualización de tablas
+const { transcode } = require('../utils/media/video/mp4-transcoder');
 const { config } = require('../config/config');
-const { processAndUploadCover } = require('../utils/imageProcessor');
-const { deleteFilesByPrefix } = require('../utils/aws');
-const { configureAuditContext } = require('../utils/configureAuditContext');
-const { fileExists, deleteTempDir } = require('../utils/fileHelpers');
+const { processAndUploadCover } = require('../utils/media/image/imageProcessor');
+const { deleteFilesByPrefix } = require('../utils/storage/aws');
+const { configureAuditContext } = require('../utils/database/configureAuditContext');
+const { fileExists, deleteTempDir } = require('../utils/storage/fileHelpers');
 
-class SeriesService {
+class SeriesService extends BaseService {
   constructor() {
-    this.pool = pool;
-    this.pool.on('error', (err) => console.error(err));
+    super(); // Llama al constructor de BaseService
   }
 
-  async calculateFileHash(filePath) {
-    try {
-      const hash = crypto.createHash('sha256');
-      const stream = fs.createReadStream(filePath);
-
-      for await (const chunk of stream) {
-        hash.update(chunk);
-      }
-
-      return hash.digest('hex');
-    } catch (error) {
-      throw new Error(
-        `Error al calcular el hash del archivo: ${error.message}`
-      );
-    }
-  }
-
-  async checkIfFileExistsInDatabase(fileHash) {
-    const query = 'SELECT id FROM videos WHERE file_hash = $1 LIMIT 1';
-    const result = await this.pool.query(query, [fileHash]);
-    return result.rows.length > 0;
-  }
+  // Los métodos calculateFileHash y checkIfFileExistsInDatabase 
+  // ahora se heredan de BaseService
 
   async checkIfCoverExistsInDatabase(fileHash) {
     const query = 'SELECT id FROM series WHERE cover_image = $1 LIMIT 1';
@@ -134,7 +111,6 @@ class SeriesService {
    * @returns {Object} Mensaje de éxito.
    */
   async create(serieInfo) {
-    const client = await this.pool.connect();
     const {
       title,
       description,
@@ -146,59 +122,61 @@ class SeriesService {
     } = serieInfo;
 
     const coverFileHash = await this.calculateFileHash(coverImage);
-    try {
-      if (!(await fileExists(coverImage))) {
-        throw new Error('Imagen de portada no encontrada');
-      }
+    
+    // Validaciones previas fuera de la transacción
+    if (!(await fileExists(coverImage))) {
+      throw new Error('Imagen de portada no encontrada');
+    }
 
-      if (await this.checkIfCoverExistsInDatabase(coverFileHash)) {
-        throw new Error(
-          'Contenido duplicado. Hash de portada ya existe en la BD'
-        );
-      }
-
-      if (await this.checkExistByTitleAndYear(title, releaseYear)) {
-        throw new Error(
-          'La serie ya existe. Nombre y anio de lanzamiento ya existen en la BD.'
-        );
-      }
-
-      await configureAuditContext(client, user.id, ip);
-
-      await client.query('BEGIN');
-
-      await processAndUploadCover(coverImage, coverFileHash);
-
-      // Insertar la serie en la tabla "series"
-      const seriesResult = await client.query(
-        `INSERT INTO series (
-          title,
-          cover_image,
-          description,
-          category_id,
-          release_year
-        ) VALUES ($1, $2, $3, $4, $5)
-        RETURNING id`,
-        [title, coverFileHash, description, categoryId, releaseYear]
+    if (await this.checkIfCoverExistsInDatabase(coverFileHash)) {
+      throw new Error(
+        'Contenido duplicado. Hash de portada ya existe en la BD'
       );
+    }
 
-      if (seriesResult.rowCount === 0) {
-        throw new Error('La serie ya existe. Operación abortada.');
-      }
+    if (await this.checkExistByTitleAndYear(title, releaseYear)) {
+      throw new Error(
+        'La serie ya existe. Nombre y anio de lanzamiento ya existen en la BD.'
+      );
+    }
 
-      await client.query('COMMIT');
-      return {
-        serieId: seriesResult.rows[0].id,
-        message: 'Serie creada exitosamente',
-      };
+    try {
+      // Usar withTransaction para manejar la transacción automáticamente
+      const result = await this.withTransaction(async (client) => {
+        await configureAuditContext(client, user.id, ip);
+
+        await processAndUploadCover(coverImage, coverFileHash);
+
+        // Insertar la serie en la tabla "series"
+        const seriesResult = await client.query(
+          `INSERT INTO series (
+            title,
+            cover_image,
+            description,
+            category_id,
+            release_year
+          ) VALUES ($1, $2, $3, $4, $5)
+          RETURNING id`,
+          [title, coverFileHash, description, categoryId, releaseYear]
+        );
+
+        if (seriesResult.rowCount === 0) {
+          throw new Error('La serie ya existe. Operación abortada.');
+        }
+
+        return {
+          serieId: seriesResult.rows[0].id,
+          message: 'Serie creada exitosamente',
+        };
+      });
+
+      return result;
     } catch (error) {
-      await client.query('ROLLBACK');
       console.error('Error al crear la serie:', error.message);
       throw new Error('Error al crear la serie: ' + error.message);
     } finally {
+      // Cleanup se ejecuta siempre, sin importar si la transacción falló
       await deleteTempDir(coverImage);
-      //await deleteTempDir(localDir);
-      await client.release();
     }
   }
 
@@ -209,54 +187,50 @@ class SeriesService {
    * @returns {Object} Registro actualizado.
    */
   async update(id, changes) {
-    const client = await this.pool.connect();
-    const { title, releaseYear, coverImage, categoryId, description } = changes;
+    const { title, releaseYear, coverImage } = changes;
 
     try {
-      await client.query('BEGIN');
-
-      // ✅ CORREGIDO: Solo validar duplicados si título o año han cambiado
-      const serie = await this.findOne(id);
-      
-      if ((title && title !== serie.title) || (releaseYear && releaseYear !== serie.release_year)) {
-        const checkTitle = title || serie.title;
-        const checkYear = releaseYear || serie.release_year;
+      // Usar withTransaction para manejar la transacción automáticamente
+      const result = await this.withTransaction(async (client) => {
+        // ✅ CORREGIDO: Solo validar duplicados si título o año han cambiado
+        const serie = await this.findOne(id);
         
-        if (await this.checkExistByTitleAndYear(checkTitle, checkYear)) {
-          throw new Error(
-            'La serie ya existe. Nombre y año de lanzamiento ya existen en la BD.'
-          );
-        }
-      }
-
-      if (coverImage) {
-        const coverFileHash = await this.calculateFileHash(coverImage);
-
-        if (await this.checkIfCoverExistsInDatabase(coverFileHash)) {
-          throw new Error(
-            'Contenido duplicado. Hash de portada ya existe en la BD'
-          );
+        if ((title && title !== serie.title) || (releaseYear && releaseYear !== serie.release_year)) {
+          const checkTitle = title || serie.title;
+          const checkYear = releaseYear || serie.release_year;
+          
+          if (await this.checkExistByTitleAndYear(checkTitle, checkYear)) {
+            throw new Error(
+              'La serie ya existe. Nombre y año de lanzamiento ya existen en la BD.'
+            );
+          }
         }
 
-        const remoteCoverPath = `${config.coversDir}/${serie.cover_image}`;
-        await deleteFilesByPrefix(remoteCoverPath);
+        if (coverImage) {
+          const coverFileHash = await this.calculateFileHash(coverImage);
 
-        // Procesa y sube la nueva portada
-        await processAndUploadCover(changes.coverImage, coverFileHash);
-        await deleteTempDir(changes.coverImage);
-        changes.coverImage = coverFileHash;
-      }
+          if (await this.checkIfCoverExistsInDatabase(coverFileHash)) {
+            throw new Error(
+              'Contenido duplicado. Hash de portada ya existe en la BD'
+            );
+          }
 
-      const result = await updateTable(client, 'series', serie.id, changes);
+          const remoteCoverPath = `${config.coversDir}/${serie.cover_image}`;
+          await deleteFilesByPrefix(remoteCoverPath);
 
-      await client.query('COMMIT');
+          // Procesa y sube la nueva portada
+          await processAndUploadCover(changes.coverImage, coverFileHash);
+          await deleteTempDir(changes.coverImage);
+          changes.coverImage = coverFileHash;
+        }
+
+        return await updateTable(client, 'series', serie.id, changes);
+      });
+
       return result;
     } catch (error) {
-      await client.query('ROLLBACK');
       console.error('Error al actualizar la serie:', error.message);
       throw new Error('Error al actualizar la serie: ' + error.message);
-    } finally {
-      client.release();
     }
   }
 
@@ -267,11 +241,11 @@ class SeriesService {
  * @returns {Object} Confirmación de eliminación con estadísticas
  */
   async delete(id) {
-    const client = await this.pool.connect();
-
     try {
-      await client.query('BEGIN');
       console.log(`🎬 Eliminando serie ID: ${id}`);
+      
+      // Usar withTransaction para manejar la transacción automáticamente
+      const result = await this.withTransaction(async (client) => {
 
       // ✅ PASO 1: Obtener información ANTES de eliminar (para MinIO y estadísticas)
       const serieInfoQuery = `
@@ -362,12 +336,12 @@ class SeriesService {
       console.log(`🎉 Eliminación completada automáticamente:`, result);
       return result;
 
+      });
+
+      return result;
     } catch (error) {
-      await client.query('ROLLBACK');
       console.error(`❌ Error al eliminar serie ${id}:`, error.message);
       throw new Error(`Error al eliminar la serie: ${error.message}`);
-    } finally {
-      client.release();
     }
   }
 
@@ -432,49 +406,12 @@ class SeriesService {
 
       const result = await this.pool.query(query, arrayValues);
 
-      // ✅ PROCESAR LOS RESULTADOS para parsear JSON de forma segura
-      const episodes = result.rows.map(episode => {
-        let parsedResolutions = null;
-        let parsedSubtitles = null;
-
-        // ✅ PARSEO SEGURO de available_resolutions
-        if (episode.available_resolutions) {
-          try {
-            if (typeof episode.available_resolutions === 'string') {
-              parsedResolutions = JSON.parse(episode.available_resolutions);
-            } else {
-              parsedResolutions = episode.available_resolutions; // Ya es un objeto/array
-            }
-          } catch (error) {
-            console.error('❌ Error parsing available_resolutions:', error.message);
-            console.error('❌ Raw value:', episode.available_resolutions);
-            parsedResolutions = null;
-          }
-        }
-
-        // ✅ PARSEO SEGURO de available_subtitles
-        if (episode.available_subtitles) {
-          try {
-            if (typeof episode.available_subtitles === 'string') {
-              parsedSubtitles = JSON.parse(episode.available_subtitles);
-            } else {
-              parsedSubtitles = episode.available_subtitles; // Ya es un objeto/array
-            }
-          } catch (error) {
-            console.error('❌ Error parsing available_subtitles:', error.message);
-            console.error('❌ Raw value:', episode.available_subtitles);
-            parsedSubtitles = null;
-          }
-        }
-
-        const processedEpisode = {
-          ...episode,
-          available_resolutions: parsedResolutions,
-          available_subtitles: parsedSubtitles
-        };
-
-        return processedEpisode;
-      });
+      // ✅ PROCESAR LOS RESULTADOS usando el método seguro de BaseService
+      const episodes = result.rows.map(episode => ({
+        ...episode,
+        available_resolutions: this.parseJsonSafely(episode.available_resolutions),
+        available_subtitles: this.parseJsonSafely(episode.available_subtitles)
+      }));
 
       return episodes;
 
@@ -529,29 +466,9 @@ class SeriesService {
     
     const episode = result.rows[0];
     
-    // ✅ PARSEO SEGURO de available_resolutions
-    if (episode.available_resolutions) {
-      try {
-        if (typeof episode.available_resolutions === 'string') {
-          episode.available_resolutions = JSON.parse(episode.available_resolutions);
-        }
-      } catch (error) {
-        console.error('❌ Error parsing available_resolutions:', error.message);
-        episode.available_resolutions = null;
-      }
-    }
-
-    // ✅ PARSEO SEGURO de available_subtitles
-    if (episode.available_subtitles) {
-      try {
-        if (typeof episode.available_subtitles === 'string') {
-          episode.available_subtitles = JSON.parse(episode.available_subtitles);
-        }
-      } catch (error) {
-        console.error('❌ Error parsing available_subtitles:', error.message);
-        episode.available_subtitles = null;
-      }
-    }
+    // ✅ PARSEO SEGURO usando método de BaseService
+    episode.available_resolutions = this.parseJsonSafely(episode.available_resolutions);
+    episode.available_subtitles = this.parseJsonSafely(episode.available_subtitles);
     
     return episode;
   }

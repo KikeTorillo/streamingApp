@@ -2,7 +2,7 @@
 const AWS = require('aws-sdk');
 const fs = require('fs');
 const stream = require('stream');
-const { config } = require('../config/config'); // Configuración de la aplicación
+const { config } = require('../../config/config'); // Configuración de la aplicación
 const mime = require('mime-types');
 
 let endpoint = `http://${config.minioHost}:9000`;

@@ -118,6 +118,35 @@ const getMovieByTitleSchema = Joi.object({
   }),
 });
 
+// Esquema para búsqueda por rango de años
+const searchMoviesByYearRangeSchema = Joi.object({
+  from: releaseYear.required().messages({
+    'any.required': 'El año inicial es obligatorio',
+    'number.base': 'El año inicial debe ser un número válido',
+    'number.min': 'El año inicial no puede ser menor a 1900',
+    'number.max': `El año inicial no puede ser mayor a ${new Date().getFullYear()}`,
+  }),
+  to: releaseYear.required().messages({
+    'any.required': 'El año final es obligatorio',
+    'number.base': 'El año final debe ser un número válido',
+    'number.min': 'El año final no puede ser menor a 1900',
+    'number.max': `El año final no puede ser mayor a ${new Date().getFullYear()}`,
+  }),
+})
+// VALIDACIÓN PERSONALIZADA: from debe ser menor o igual a to
+.custom((value, helpers) => {
+  const { from, to } = value;
+  
+  if (from > to) {
+    return helpers.error('custom.invalidYearRange');
+  }
+  
+  return value;
+})
+.messages({
+  'custom.invalidYearRange': 'El año inicial no puede ser mayor al año final',
+});
+
 // Esquema para actualizar una película
 const updateMovieSchema = Joi.object({
   title: title.optional().messages({
@@ -158,5 +187,6 @@ module.exports = {
   getMovieSchema,
   getMovieByHashSchema,
   getMovieByTitleSchema,
+  searchMoviesByYearRangeSchema,
   updateMovieSchema,
 };

@@ -1,3 +1,7 @@
+# 🏠 DOCKER COMPOSE DESARROLLO LOCAL
+# Para desarrollo en localhost (una sola máquina)
+# ✅ OPTIMIZADO: No requiere configuración DNS especial
+
 services:
   # 🗄️ POSTGRESQL - Base de datos principal
   postgres:
@@ -15,8 +19,8 @@ services:
     networks:
       - lan
     ports:
-      - "5432:${DB_PORT}"
-  
+      - "${DB_PORT}:5432"
+
   # 📊 PGADMIN - Administración de base de datos (opcional)
   pgadmin:
     image: dpage/pgadmin4
@@ -57,7 +61,8 @@ services:
     depends_on:
       - minio
     environment:
-      - MINIO_HOST=${IP_ADDRESS_MINIO}  # minio
+      - MINIO_HOST=${IP_ADDRESS_MINIO}
+      - MINIO_PORT=${MINIO_PORT}
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - MINIO_BUCKET=${MINIO_BUCKET}
@@ -66,8 +71,8 @@ services:
     entrypoint: ["/bin/sh", "/init-minio.sh"]
     networks:
       - lan
-  
-  # Servicio Backend Node.js
+
+  # 🖥️ BACKEND - API Node.js (SIN configuración DNS especial)
   backend:
     build:
       context: ./backend/app
@@ -116,6 +121,10 @@ services:
       - lan
     ports:
       - "${BACK_PORT}:3000"
+    # 🔧 DNS para resolver dominios externos (TMDB)
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     depends_on:
       - postgres
       - minio
@@ -147,17 +156,40 @@ services:
       - ./frontend/app:/app
       - /app/node_modules
       - /app/dist
+    networks:
+      - lan
     ports:
       - "8080:8080"
     depends_on:
       - backend
-    command: ["npm", "run", "dev"]
 
-  # 🌐 CDN - Servidor de distribución de contenido
-  cdn1:
+  # 📚 STORYBOOK - Librería de componentes
+  storybook:
     build:
+      context: ./frontend/app
+      dockerfile: dockerfile.storybook
+      args:
+        - NODE_ENV=development
+        - SERVICE_TYPE=storybook
+    container_name: storybook
+    restart: unless-stopped
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_INTERVAL=1000
+      - WATCHPACK_POLLING=true
+    volumes:
+      - ./frontend/app:/app
+      - /app/node_modules
+      - /app/storybook-static
+    networks:
+      - lan
+    ports:
+      - "6006:6006"
+
+  # 🌐 CDN - Servidor de contenido
+  cdn1:
+    build: 
       context: ./servers
-      dockerfile: dockerfile
       args:
         - TEMPLATE_FILE=./cdn/nginx.conf.template
     container_name: cdn1
@@ -170,20 +202,19 @@ services:
       - ./servers/cdn/index.html:/nginx-1.26.3/html/index.html
     networks:
       - lan
-    depends_on:
-      - transcoder1
-      - transcoder2
     ports:
       - "8082:80"
+    depends_on:
+      - minio
 
-  # Servicio Transcoder1: Servidor de transcodificación
+  # 🎬 TRANSCODER SERVERS
   transcoder1:
-    build:
+    build: 
       context: ./servers
-      dockerfile: dockerfile
       args:
         - TEMPLATE_FILE=./transcoderServers/transcoder1/nginx.conf.template
-    container_name: transcoder1  # ✅ Nombre fijo del contenedor
+    container_name: transcoder1
+    restart: unless-stopped
     environment:
       - NGINX_MINIO_SERVER=${IP_ADDRESS_MINIO}:${MINIO_PORT}  # minio:9000
       - NGINX_MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
@@ -198,18 +229,14 @@ services:
       - ./servers/transcoderServers/transcoder1/index.html:/nginx-1.26.3/html/index.html
     networks:
       - lan
-    restart: always
-    depends_on:
-      - minio
 
-  # Servicio Transcoder2: Servidor de transcodificación
   transcoder2:
-    build:
+    build: 
       context: ./servers
-      dockerfile: dockerfile
       args:
         - TEMPLATE_FILE=./transcoderServers/transcoder2/nginx.conf.template
-    container_name: transcoder2  # ✅ Nombre fijo del contenedor
+    container_name: transcoder2
+    restart: unless-stopped
     environment:
       - NGINX_MINIO_SERVER=${IP_ADDRESS_MINIO}:${MINIO_PORT}  # minio:9000
       - NGINX_MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
@@ -224,34 +251,8 @@ services:
       - ./servers/transcoderServers/transcoder2/index.html:/nginx-1.26.3/html/index.html
     networks:
       - lan
-    restart: always
-    depends_on:
-      - minio
 
-  # ==========================================
-  # 📚 STORYBOOK - SERVICIO INDEPENDIENTE
-  # ==========================================
-  storybook:
-    build:
-      context: ./frontend/app
-      dockerfile: dockerfile.storybook
-      args:
-        - NODE_ENV=development
-        - SERVICE_TYPE=storybook
-    container_name: storybook
-    environment:
-      - NODE_ENV=development
-      - CHOKIDAR_USEPOLLING=true
-      - STORYBOOK_DISABLE_TELEMETRY=true
-      - STORYBOOK_DISABLE_UPDATES=true
-    volumes:
-      - ./frontend/app:/app
-      - /app/node_modules
-      - /app/storybook-static
-    ports:
-      - "6006:6006"   
-    restart: "no"
-# Red Docker simple - sin IPs estáticas
+# Red personalizada
 networks:
   lan:
     driver: bridge

@@ -114,5 +114,107 @@
         }
       }
     }
+  },
+  
+  "designSystemContext": {
+    "description": "Sistema de diseño completo para crear componentes consistentes y reutilizables",
+    "framework": {
+      "type": "css-variables-system",
+      "architecture": "atomic-design",
+      "responsive": "mobile-first",
+      "themes": "light-dark + custom-palettes",
+      "accessibility": "wcag-compliant"
+    },
+    "coreTokens": {
+      "colors": "Tailwind-inspired con sistema semántico completo",
+      "spacing": "Scale de 8-point con variables centralizadas", 
+      "typography": "Inter font + escala modular",
+      "components": "Altura estándar 56px + padding/font consistentes",
+      "elevation": "4-level shadow system",
+      "motion": "3-speed transition system"
+    },
+    "componentsStandards": {
+      "heights": "56px (lg) como estándar principal",
+      "variants": "primary, secondary, danger, success, warning",
+      "sizes": "xs, sm, md, lg, xl (con lg=56px)",
+      "states": "default, hover, active, disabled, loading",
+      "props": "Consistent API across all components"
+    },
+    "developmentWorkflow": {
+      "creation": "1. Revisar similar → 2. Usar variables → 3. Storybook → 4. Test responsive",
+      "debugging": "height-grid, debug-heights classes disponibles",
+      "validation": "ESLint + Storybook + visual testing",
+      "migration": "Guías step-by-step para proyectos nuevos/existentes"
+    },
+    "reuseStrategy": {
+      "baseFramework": "App.css como foundation universal",
+      "componentLibrary": "Atoms/Molecules/Organisms patterns",
+      "themeSystem": "4 paletas predefinidas + custom themes",
+      "projectTypes": "Streaming, Admin, E-commerce, Blog, SaaS ready"
+    }
+  },
+
+  "streamingBackendContext": {
+    "description": "Arquitectura completa del backend de streaming media con patrones y lógica de negocio",
+    "architecture": {
+      "pattern": "MVC (Model-View-Controller)",
+      "stack": "Express.js + PostgreSQL + MinIO S3 + FFmpeg",
+      "authentication": "JWT + Passport.js + Role-based access control"
+    },
+    "services": {
+      "pattern": "Class-based services con métodos CRUD estándar",
+      "entities": ["Movies", "Series", "Episodes", "Auth", "Users", "Categories"],
+      "specialFeatures": [
+        "Video transcoding pipeline con FFmpeg",
+        "SHA256 hash para detección de duplicados", 
+        "Procesamiento de imágenes de portada",
+        "URLs temporales para VOD"
+      ]
+    },
+    "dataLayer": {
+      "database": "PostgreSQL con triggers de auditoría",
+      "validation": "Joi schemas con validaciones personalizadas",
+      "relationships": "Users->Roles, Movies/Series->Categories, Episodes->Series->Videos"
+    },
+    "fileProcessing": {
+      "videos": "FFmpeg transcoding a múltiples calidades",
+      "images": "Redimensionamiento y optimización",
+      "storage": "MinIO S3 con buckets organizados",
+      "duplicates": "SHA256 hash check antes de procesamiento"
+    },
+    "apiPatterns": {
+      "routes": "/api/v1/{resource} con autenticación JWT",
+      "middleware": "auth -> roles -> validation -> business logic",
+      "responses": "Boom.js structured errors + success objects",
+      "async": "Task IDs para operaciones largas como transcoding"
+    },
+    "commonIssues": [
+      {
+        "issue": "Transcoding failures",
+        "causes": ["FFmpeg path", "Memory limits", "Codec support", "File corruption"],
+        "solutions": ["Check ffmpegOptions.js", "Verify temp directories", "Test file integrity"]
+      },
+      {
+        "issue": "Database connection errors", 
+        "causes": ["Pool exhaustion", "Connection timeout", "Invalid credentials"],
+        "solutions": ["Check postgresPool.js config", "Verify env vars", "Monitor active connections"]
+      },
+      {
+        "issue": "S3 upload failures",
+        "causes": ["Credentials", "Bucket permissions", "Network issues", "File size limits"],
+        "solutions": ["Verify aws.js config", "Check MinIO server", "Test connectivity"]
+      },
+      {
+        "issue": "JWT authentication errors",
+        "causes": ["Token expiration", "Invalid secret", "Cookie issues", "CORS problems"],
+        "solutions": ["Check jwtStrategy.js", "Verify config.jwtSecret", "Test CORS whitelist"]
+      }
+    ],
+    "developmentPatterns": {
+      "serviceCreation": "Class extends with constructor + pool connection",
+      "routeStructure": "auth middleware -> validation -> async handler -> error handling",
+      "errorHandling": "boom.js for HTTP errors + centralized error middleware",
+      "validation": "Joi schemas with custom messages in Spanish"
+    }
   }
 }
