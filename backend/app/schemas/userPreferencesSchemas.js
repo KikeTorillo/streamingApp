@@ -22,8 +22,13 @@ const subtitleOffset = Joi.number().min(-10).max(10); // Offset de sincronizaci�
 // Esquema para el progreso de reproducción individual
 const watchProgressItem = Joi.object({
   position: Joi.number().min(0).required(), // Posición en segundos
-  type: Joi.string().valid('movie', 'series').required(), // Tipo de contenido
-  currentEpisode: Joi.number().positive().optional(), // Episodio actual (solo para series)
+  type: Joi.string().valid('movie', 'series', 'episode').required(), // ✅ Agregar 'episode'
+  currentEpisode: Joi.number().positive().optional(), // Episodio actual (solo para series) - DEPRECATED
+  // ✅ Nuevos campos para episodios individuales
+  seriesId: Joi.string().optional(), // ID de la serie (para episodios)
+  episodeIndex: Joi.number().min(0).optional(), // Índice del episodio en la playlist
+  seasonNumber: Joi.number().positive().optional(), // Número de temporada
+  episodeNumber: Joi.number().positive().optional(), // Número de episodio
   timestamp: Joi.number().positive().required(), // Timestamp de cuando se guardó
   completed: Joi.boolean().default(false) // Si se completó la reproducción
 });
@@ -149,13 +154,29 @@ const updateWatchProgressSchema = Joi.object({
     'number.base': 'La posición debe ser un número',
     'number.min': 'La posición debe ser mayor o igual a 0',
   }),
-  type: Joi.string().valid('movie', 'series').required().messages({
+  type: Joi.string().valid('movie', 'series', 'episode').required().messages({
     'any.required': 'El tipo es obligatorio',
-    'any.only': 'El tipo debe ser: movie o series',
+    'any.only': 'El tipo debe ser: movie, series o episode', // ✅ Actualizar mensaje
   }),
   currentEpisode: Joi.number().positive().optional().messages({
     'number.base': 'El episodio actual debe ser un número',
     'number.positive': 'El episodio actual debe ser un número positivo',
+  }),
+  // ✅ Nuevos campos para episodios individuales
+  seriesId: Joi.string().optional().messages({
+    'string.base': 'El seriesId debe ser un string',
+  }),
+  episodeIndex: Joi.number().min(0).optional().messages({
+    'number.base': 'El episodeIndex debe ser un número',
+    'number.min': 'El episodeIndex debe ser mayor o igual a 0',
+  }),
+  seasonNumber: Joi.number().positive().optional().messages({
+    'number.base': 'El seasonNumber debe ser un número',
+    'number.positive': 'El seasonNumber debe ser un número positivo',
+  }),
+  episodeNumber: Joi.number().positive().optional().messages({
+    'number.base': 'El episodeNumber debe ser un número',
+    'number.positive': 'El episodeNumber debe ser un número positivo',
   }),
   completed: Joi.boolean().default(false)
 });

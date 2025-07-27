@@ -269,20 +269,30 @@ function useVideoPreferences() {
      * Prioriza la API dedicada, con fallback al cache local
      */
     const getWatchProgress = useCallback(async (contentId) => {
-        if (!userId || !isAuthenticated || !contentId) return null;
+        console.log('🔍 [DEBUG-HOOK] getWatchProgress called - contentId:', contentId, 'userId:', userId, 'isAuthenticated:', isAuthenticated);
+        
+        if (!userId || !isAuthenticated || !contentId) {
+            console.log('🔍 [DEBUG-HOOK] getWatchProgress - Condiciones no cumplidas:', { userId, isAuthenticated, contentId });
+            return null;
+        }
 
         try {
             // Si no estamos usando fallback, intentar obtener desde API
             if (!isUsingFallback) {
+                console.log('🔍 [DEBUG-HOOK] getWatchProgress - Intentando API call...');
                 const result = await getWatchProgressService(userId, contentId);
+                console.log('🔍 [DEBUG-HOOK] getWatchProgress - API result:', result);
                 if (result.success && result.data) {
                     return result.data;
                 }
             }
             
             // Fallback: obtener desde cache local (preferencias ya cargadas)
+            console.log('🔍 [DEBUG-HOOK] getWatchProgress - Usando fallback cache, preferences:', preferences?.watch_progress);
             if (preferences?.watch_progress) {
-                return preferences.watch_progress[contentId] || null;
+                const progressData = preferences.watch_progress[contentId] || null;
+                console.log('🔍 [DEBUG-HOOK] getWatchProgress - Cache result:', progressData);
+                return progressData;
             }
             
             return null;

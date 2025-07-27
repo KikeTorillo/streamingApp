@@ -90,6 +90,19 @@ const VideoPlayer = () => {
   const subsUrl = `${cdnUrl}/subs/${currentHash}/`;
   const urlComplete = `${baseUrl}_,${currentResolutions},p.mp4.play/master.m3u8`;
 
+  // ===== FUNCIÓN PARA OBTENER ID CORRECTO DE PROGRESO =====
+  const getContentProgressId = useCallback(() => {
+    if (contentType === 'episode') {
+      // Para episodios, usar el hash del episodio actual (individual o playlist)
+      const episodeHash = getCurrentHash();
+      console.log('🔍 [DEBUG-EPISODE] getContentProgressId - episodeHash:', episodeHash, 'contentType:', contentType);
+      return episodeHash;
+    }
+    // Para películas, usar movieId
+    console.log('🔍 [DEBUG-MOVIE] getContentProgressId - movieId:', movieId, 'contentType:', contentType);
+    return movieId;
+  }, [contentType, getCurrentHash, movieId]);
+
 
   // ===== FUNCIÓN DE SKIP SIMPLIFICADA =====
   const handleSkip = useCallback((player, seconds, direction) => {
@@ -154,23 +167,33 @@ const VideoPlayer = () => {
       
       // 2. Guardar progreso de reproducción del contenido actual
       if (currentTime > 0 && duration > 0) {
+        const contentId = getContentProgressId(); // ✅ Usar función para obtener ID correcto
+        
         const progressData = {
           position: currentTime,
-          type: contentType === 'episode' ? 'series' : 'movie',
-          ...(contentType === 'episode' && playlistData && { 
-            currentEpisode: currentEpisodeIndex 
+          type: contentType === 'episode' ? 'episode' : 'movie', // ✅ Usar 'episode' para episodios
+          ...(contentType === 'episode' && { 
+            seriesId: movieId, // ✅ Referencia a la serie para episodios
+            // Solo agregar datos de playlist si existe
+            ...(playlistData && {
+              episodeIndex: currentEpisodeIndex,
+              seasonNumber: playlistData.episodes[currentEpisodeIndex]?.season_number,
+              episodeNumber: playlistData.episodes[currentEpisodeIndex]?.episode_number
+            })
           }),
           completed: currentTime >= duration * 0.9 // Considerado completado si vio 90%+
         };
         
-        console.log('🔄 Guardando progreso de reproducción en backend...', { movieId, progressData });
-        await updateWatchProgress(movieId, progressData);
+        console.log('🔍 [DEBUG] savePlayerPreferences - contentId:', contentId, 'contentType:', contentType);
+        console.log('🔄 Guardando progreso de reproducción en backend...', { contentId, progressData });
+        await updateWatchProgress(contentId, progressData);
       }
       
       // 3. Mantener fallback en localStorage (el hook ya maneja esto internamente)
       // Pero guardamos posición local para restauración inmediata
       const contentPositions = JSON.parse(localStorage.getItem('contentPositions') || '{}');
-      contentPositions[movieId] = {
+      const contentId = getContentProgressId(); // ✅ Usar mismo ID para localStorage
+      contentPositions[contentId] = {
         position: currentTime,
         duration: duration,
         timestamp: Date.now()
@@ -181,7 +204,7 @@ const VideoPlayer = () => {
       console.error('Error al guardar preferencias:', error);
       // El hook useVideoPreferences maneja automáticamente el fallback a localStorage
     }
-  }, [movieId, updatePreferences, updateWatchProgress, preferences, contentType, playlistData, currentEpisodeIndex]);
+  }, [getContentProgressId, updatePreferences, updateWatchProgress, preferences, contentType, playlistData, currentEpisodeIndex, movieId]);
 
   const loadPlayerPreferences = useCallback(async (player) => {
     if (!player) return;
@@ -207,8 +230,11 @@ const VideoPlayer = () => {
       }
       
       // 2. Cargar progreso específico del contenido desde el backend
-      console.log('🔄 Obteniendo progreso de reproducción para:', movieId);
-      const watchProgress = await getWatchProgress(movieId);
+      const contentId = getContentProgressId(); // ✅ Usar función para obtener ID correcto
+      console.log('🔍 [DEBUG] loadPlayerPreferences - contentId:', contentId, 'contentType:', contentType, 'movieId:', movieId);
+      console.log('🔄 Obteniendo progreso de reproducción para:', contentId);
+      const watchProgress = await getWatchProgress(contentId);
+      console.log('🔍 [DEBUG] watchProgress obtenido:', watchProgress);
       
       if (watchProgress && watchProgress.position > 0) {
         const { position } = watchProgress;
@@ -237,8 +263,8 @@ const VideoPlayer = () => {
         // 3. Fallback: Cargar desde localStorage si no hay progreso en backend
         console.log('📁 No hay progreso en backend, intentando localStorage...');
         const contentPositions = JSON.parse(localStorage.getItem('contentPositions') || '{}');
-        if (contentPositions[movieId]) {
-          const savedPosition = contentPositions[movieId];
+        if (contentPositions[contentId]) { // ✅ Usar mismo ID para localStorage
+          const savedPosition = contentPositions[contentId];
           console.log('📁 Progreso encontrado en localStorage:', savedPosition);
           
           const setLocalStoragePosition = () => {
@@ -299,7 +325,7 @@ const VideoPlayer = () => {
         }
       }
     }
-  }, [movieId, preferences, getWatchProgress]);
+  }, [getContentProgressId, preferences, getWatchProgress]);
 
   // ===== PRECARGA Y CONFIGURACIÓN OPTIMIZADA DE TEXT TRACKS =====
   const setupTextTracks = useCallback((player, subtitleTracks) => {
@@ -363,10 +389,9 @@ const VideoPlayer = () => {
               }
             });
             
-            // Cargar preferencias con delay optimizado
-            setTimeout(() => {
-              loadPlayerPreferences(player);
-            }, 100); // Reducido de 200ms para mejor timing
+            // Preferencias se cargan por separado en player.ready()
+            // Este código solo maneja configuración de subtítulos
+            console.log('🔍 [DEBUG] setupTextTracks - Subtítulos configurados para contentType:', contentType);
           }, 50); // Buffer de sincronización de 50ms
         };
 
@@ -656,7 +681,8 @@ const VideoPlayer = () => {
       
       // 1. Siempre guardar en localStorage de forma síncrona
       const contentPositions = JSON.parse(localStorage.getItem('contentPositions') || '{}');
-      contentPositions[movieId] = {
+      const contentId = getContentProgressId(); // ✅ Usar función para obtener ID correcto
+      contentPositions[contentId] = {
         position: currentTime,
         duration: duration,
         timestamp: Date.now()
@@ -667,11 +693,17 @@ const VideoPlayer = () => {
       if (currentTime > 0 && duration > 0) {
         const { urlBackend } = environmentService();
         const progressData = {
-          contentId: movieId,
+          contentId: contentId, // ✅ Usar ID correcto ya calculado
           position: currentTime,
-          type: contentType === 'episode' ? 'series' : 'movie',
-          ...(contentType === 'episode' && playlistData && { 
-            currentEpisode: currentEpisodeIndex 
+          type: contentType === 'episode' ? 'episode' : 'movie', // ✅ Usar 'episode' para episodios
+          ...(contentType === 'episode' && { 
+            seriesId: movieId, // ✅ Referencia a la serie para episodios
+            // Solo agregar datos de playlist si existe
+            ...(playlistData && {
+              episodeIndex: currentEpisodeIndex,
+              seasonNumber: playlistData.episodes[currentEpisodeIndex]?.season_number,
+              episodeNumber: playlistData.episodes[currentEpisodeIndex]?.episode_number
+            })
           }),
           completed: currentTime >= duration * 0.9
         };
@@ -689,7 +721,7 @@ const VideoPlayer = () => {
             credentials: 'include', // Incluir cookies para JWT
             keepalive: true // Mantener request vivo durante unload
           }).then(() => {
-            console.log('📡 Progreso enviado síncronamente con fetch keepalive:', { movieId, currentTime });
+            console.log('📡 Progreso enviado síncronamente con fetch keepalive:', { contentId, currentTime });
           }).catch((error) => {
             console.warn('⚠️ fetch keepalive falló:', error);
           });
@@ -700,7 +732,7 @@ const VideoPlayer = () => {
     } catch (error) {
       console.error('Error en guardado síncrono:', error);
     }
-  }, [movieId, contentType, playlistData, currentEpisodeIndex, isAuthenticated, userId]);
+  }, [getContentProgressId, contentType, playlistData, currentEpisodeIndex, isAuthenticated, userId, movieId]);
 
   // ===== AJUSTE MANUAL DE SINCRONIZACIÓN DE SUBTÍTULOS OPTIMIZADO =====
   const adjustSubtitleSync = useCallback((adjustment) => {
@@ -799,6 +831,12 @@ const VideoPlayer = () => {
         }
         
         setMovieData(contentData);
+        console.log('🔍 [DEBUG] Datos del contenido cargados - contentType:', contentType, 'contentData:', {
+          id: contentData.id,
+          title: contentData.title || contentData.name,
+          file_hash: contentData.file_hash,
+          serie_id: contentData.serie_id
+        });
 
         // ===== CARGAR PLAYLIST SI EXISTE PLAYLIST KEY =====
         if (playlistKey && contentType === 'episode') {
@@ -1117,8 +1155,19 @@ const VideoPlayer = () => {
           console.log('📋 Playlist configurada con', playlistItems.length, 'episodios');
         }
 
+        // ===== SIEMPRE CARGAR PREFERENCIAS DEL USUARIO =====
+        // Separar carga de preferencias de configuración de subtítulos
+        player.ready(() => {
+          console.log('🔍 [DEBUG] Player ready - Cargando preferencias para contentType:', contentType);
+          setTimeout(() => {
+            console.log('🔍 [DEBUG] Ejecutando loadPlayerPreferences directamente');
+            loadPlayerPreferences(player);
+          }, 100);
+        });
+
         // Configurar subtítulos si están disponibles
         if (movieData.available_subtitles && movieData.available_subtitles.length > 0) {
+          console.log('🔍 [DEBUG] Configurando subtítulos para contentType:', contentType, 'subtítulos:', movieData.available_subtitles.length);
           const subtitleTracks = movieData.available_subtitles.map(subtitle => {
             let language = 'es';
             let label = 'Español';
@@ -1145,6 +1194,8 @@ const VideoPlayer = () => {
           });
           
           setupTextTracks(player, subtitleTracks);
+        } else {
+          console.log('🔍 [DEBUG] Sin subtítulos disponibles para contentType:', contentType);
         }
         
         // ===== MANEJO DE CALIDAD Y BUFFER =====

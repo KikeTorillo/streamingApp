@@ -186,7 +186,15 @@ class UserPreferencesService {
     watchProgress[contentId] = {
       position: progressData.position,
       type: progressData.type,
+      // ✅ Mantener compatibilidad con series antiguas
       ...(progressData.type === 'series' && { currentEpisode: progressData.currentEpisode }),
+      // ✅ Nuevos campos para episodios individuales
+      ...(progressData.type === 'episode' && {
+        seriesId: progressData.seriesId,
+        episodeIndex: progressData.episodeIndex,
+        seasonNumber: progressData.seasonNumber,
+        episodeNumber: progressData.episodeNumber
+      }),
       timestamp: Date.now(),
       completed: progressData.completed || false
     };
