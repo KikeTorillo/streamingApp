@@ -35,7 +35,6 @@ WORKDIR /app
 
 # Copiar archivos de configuración de dependencias
 COPY package*.json ./
-COPY yarn.lock* ./
 
 # Instalar dependencias según el entorno
 RUN if [ "$NODE_ENV" = "production" ]; then \
