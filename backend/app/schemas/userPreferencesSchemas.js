@@ -17,6 +17,7 @@ const forcedSubtitlesOnly = Joi.boolean(); // Solo subtítulos forzados
 const autoFullscreen = Joi.boolean(); // Pantalla completa automática
 const pictureInPictureEnabled = Joi.boolean(); // Picture-in-picture habilitado
 const hotkeyEnabled = Joi.boolean(); // Teclas rápidas habilitadas
+const subtitleOffset = Joi.number().min(-10).max(10); // Offset de sincronización de subtítulos en segundos
 
 // Esquema para el progreso de reproducción individual
 const watchProgressItem = Joi.object({
@@ -92,6 +93,11 @@ const createUserPreferencesSchema = Joi.object({
   autoFullscreen: autoFullscreen.default(false),
   pictureInPictureEnabled: pictureInPictureEnabled.default(true),
   hotkeyEnabled: hotkeyEnabled.default(true),
+  subtitleOffset: subtitleOffset.default(0).messages({
+    'number.base': 'El offset de subtítulos debe ser un número',
+    'number.min': 'El offset de subtítulos debe ser mayor o igual a -10',
+    'number.max': 'El offset de subtítulos debe ser menor o igual a 10',
+  }),
   watchProgress: watchProgress.default({})
 });
 
@@ -121,6 +127,11 @@ const updateUserPreferencesSchema = Joi.object({
   autoFullscreen: autoFullscreen.optional(),
   pictureInPictureEnabled: pictureInPictureEnabled.optional(),
   hotkeyEnabled: hotkeyEnabled.optional(),
+  subtitleOffset: subtitleOffset.optional().messages({
+    'number.base': 'El offset de subtítulos debe ser un número',
+    'number.min': 'El offset de subtítulos debe ser mayor o igual a -10',
+    'number.max': 'El offset de subtítulos debe ser menor o igual a 10',
+  }),
   watchProgress: watchProgress.optional()
 });
 
