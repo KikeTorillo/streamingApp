@@ -125,8 +125,6 @@ function MoviesDetailPage() {
                         onTitleClick={handleBackToMain}
                         userName={user?.userName || user?.username || user?.name || user?.email || 'Usuario'}
                         showSearch={false}
-                        showBackButton
-                        onBackClick={handleBackToMain}
                         onLogout={handleLogout}
                         variant="default"
                         size="lg"
@@ -172,8 +170,6 @@ function MoviesDetailPage() {
                         onTitleClick={handleBackToMain}
                         userName={user?.userName || user?.username || user?.name || user?.email || 'Usuario'}
                         showSearch={false}
-                        showBackButton
-                        onBackClick={handleBackToMain}
                         onLogout={handleLogout}
                         variant="default"
                         size="lg"

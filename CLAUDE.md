@@ -282,6 +282,39 @@ pg-kik config                                      # Ver configuración
 4. **Linting**: `npm run lint:fix` antes de commits
 5. **Debug**: Usar logs específicos por servicio
 
+## Convenciones de Nomenclatura (Frontend ↔ Backend)
+
+### **REGLA FUNDAMENTAL**: camelCase en Frontend/Backend, snake_case solo en DB
+
+**PATRÓN OBLIGATORIO** del proyecto:
+1. **Frontend → Backend**: **camelCase** (`playbackRate`, `preferredLanguage`, `subtitlesEnabled`)
+2. **Joi Schemas**: **camelCase** (valida la entrada del API)
+3. **Service Logic**: **Mapeo automático** camelCase → snake_case para DB
+4. **Database**: **snake_case** (`playback_rate`, `preferred_language`, `subtitles_enabled`)
+
+### Ejemplos de Conversión Correcta
+```javascript
+// ✅ CORRECTO: Frontend envía camelCase
+const preferences = {
+  playbackRate: 1.5,           // Frontend
+  preferredLanguage: 'es',     // Frontend  
+  subtitlesEnabled: true       // Frontend
+};
+
+// ✅ Backend Service mapea automáticamente:
+// playbackRate → playback_rate (DB)
+// preferredLanguage → preferred_language (DB)
+// subtitlesEnabled → subtitles_enabled (DB)
+```
+
+### Ubicaciones del Patrón
+- **Joi Schemas**: `/backend/app/schemas/*` - **camelCase**
+- **Service Mapping**: `/backend/app/services/*Service.js` - **fieldMapping object**
+- **Frontend Services**: `/frontend/app/src/services/*` - **camelCase**
+- **React Hooks**: `/frontend/app/src/hooks/*` - **camelCase**
+
+**❌ PROHIBIDO**: Usar snake_case en frontend o mixing de convenciones
+
 ## Development Rules & Constraints
 
 ### Regla de Consistencia Global

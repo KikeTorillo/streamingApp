@@ -17,6 +17,9 @@ import { getEpisodesBySerieService } from '../../services/Episodes/getEpisodesBy
 import { getSerieByIdService } from '../../services/Series/getSerieByIdService';
 import { Button } from '../../components/atoms/Button/Button';
 import { VideoPlayerOverlay } from '../../components/organisms/VideoPlayerOverlay/VideoPlayerOverlay';
+import { useVideoPreferences } from '../../hooks/useVideoPreferences';
+import { environmentService } from '../../services/environmentService';
+import { useAuth } from '../../app/context/AuthContext';
 
 const VideoPlayer = () => {
   const {movieId} = useParams();
@@ -25,6 +28,19 @@ const VideoPlayer = () => {
   const resolutions = searchParams.get('resolutions');
   const contentType = searchParams.get('type') || 'movie';
   const playlistKey = searchParams.get('playlist');
+  
+  // Hook para manejar preferencias de usuario con backend + localStorage fallback
+  const { 
+    preferences, 
+    updateWatchProgress, 
+    getWatchProgress,
+    updatePreferences,
+    loading: preferencesLoading
+  } = useVideoPreferences();
+  
+  // Hook de autenticación
+  const { isAuthenticated, user } = useAuth();
+  const userId = user?.id;
   const videoRef = useRef(null);
   const playerRef = useRef(null);
   const overlayContainerRef = useRef(null);
@@ -99,67 +115,185 @@ const VideoPlayer = () => {
   }, []);
 
   // ===== GUARDAR Y CARGAR PREFERENCIAS =====
-  const savePlayerPreferences = useCallback(() => {
-    if (playerRef.current && !playerRef.current.isDisposed()) {
+  const savePlayerPreferences = useCallback(async () => {
+    if (!playerRef.current || playerRef.current.isDisposed()) {
+      return;
+    }
+
+    try {
       const textTracks = playerRef.current.textTracks();
       const activeTrack = Array.from(textTracks).find(track => track.mode === 'showing');
+      const currentTime = playerRef.current.currentTime();
+      const duration = playerRef.current.duration();
       
-      const preferences = {
+      // 1. Guardar preferencias generales del player en el backend
+      const playerPrefs = {
         volume: playerRef.current.volume(),
-        selectedTextTrack: activeTrack ? {
-          language: activeTrack.language,
-          label: activeTrack.label
-        } : null,
-        playbackRate: playerRef.current.playbackRate(),
-        lastPosition: playerRef.current.currentTime(),
-        movieId: movieId
+        playbackRate: playerRef.current.playbackRate(), // camelCase para backend
+        preferredLanguage: activeTrack?.language || 'es', // camelCase para backend
+        subtitlesEnabled: activeTrack ? true : false, // camelCase para backend
       };
       
-      localStorage.setItem('playerPreferences', JSON.stringify(preferences));
+      // Solo actualizar si hay cambios significativos para evitar spam al backend
+      if (preferences) {
+        const hasChanges = 
+          Math.abs((preferences.volume || 1) - playerPrefs.volume) > 0.05 ||
+          (preferences.playbackRate || 1) !== playerPrefs.playbackRate ||
+          (preferences.preferredLanguage || 'es') !== playerPrefs.preferredLanguage ||
+          (preferences.subtitlesEnabled || false) !== playerPrefs.subtitlesEnabled;
+          
+        if (hasChanges) {
+          console.log('🔄 Guardando preferencias del player en backend...');
+          await updatePreferences(playerPrefs);
+        }
+      }
       
-      // Guardar posición específica del contenido
+      // 2. Guardar progreso de reproducción del contenido actual
+      if (currentTime > 0 && duration > 0) {
+        const progressData = {
+          position: currentTime,
+          type: contentType === 'episode' ? 'series' : 'movie',
+          ...(contentType === 'episode' && playlistData && { 
+            currentEpisode: currentEpisodeIndex 
+          }),
+          completed: currentTime >= duration * 0.9 // Considerado completado si vio 90%+
+        };
+        
+        console.log('🔄 Guardando progreso de reproducción en backend...', { movieId, progressData });
+        await updateWatchProgress(movieId, progressData);
+      }
+      
+      // 3. Mantener fallback en localStorage (el hook ya maneja esto internamente)
+      // Pero guardamos posición local para restauración inmediata
       const contentPositions = JSON.parse(localStorage.getItem('contentPositions') || '{}');
       contentPositions[movieId] = {
-        position: playerRef.current.currentTime(),
-        duration: playerRef.current.duration(),
+        position: currentTime,
+        duration: duration,
         timestamp: Date.now()
       };
       localStorage.setItem('contentPositions', JSON.stringify(contentPositions));
+      
+    } catch (error) {
+      console.error('Error al guardar preferencias:', error);
+      // El hook useVideoPreferences maneja automáticamente el fallback a localStorage
     }
-  }, [movieId]);
+  }, [movieId, updatePreferences, updateWatchProgress, preferences, contentType, playlistData, currentEpisodeIndex]);
 
-  const loadPlayerPreferences = useCallback((player) => {
+  const loadPlayerPreferences = useCallback(async (player) => {
+    if (!player) return;
+    
     try {
-      const saved = localStorage.getItem('playerPreferences');
-      if (saved && player) {
-        const preferences = JSON.parse(saved);
+      console.log('🔄 Cargando preferencias del usuario desde backend...');
+      
+      // 1. Cargar preferencias generales desde el hook (backend + fallback automático)
+      if (preferences) {
+        console.log('✅ Aplicando preferencias del usuario:', preferences);
         
         // Aplicar volumen
         if (preferences.volume !== undefined) {
           player.volume(preferences.volume);
+          console.log('✅ Volumen aplicado:', preferences.volume);
         }
         
         // Aplicar velocidad de reproducción
         if (preferences.playbackRate) {
           player.playbackRate(preferences.playbackRate);
+          console.log('✅ Velocidad de reproducción aplicada:', preferences.playbackRate);
         }
+      }
+      
+      // 2. Cargar progreso específico del contenido desde el backend
+      console.log('🔄 Obteniendo progreso de reproducción para:', movieId);
+      const watchProgress = await getWatchProgress(movieId);
+      
+      if (watchProgress && watchProgress.position > 0) {
+        const { position } = watchProgress;
+        console.log('📊 Progreso encontrado en backend:', watchProgress);
         
-        // Cargar posición guardada para este contenido
+        // Solo restaurar si la posición es mayor a 10 segundos y menor al 90% del video
+        const setVideoPosition = () => {
+          const duration = player.duration();
+          if (position > 10 && position < duration * 0.9) {
+            player.currentTime(position);
+            console.log('✅ Posición restaurada desde backend:', position, 'de', duration);
+          } else {
+            console.log('⏭️ Posición no restaurada (muy cerca del inicio/final):', position);
+          }
+        };
+
+        // Verificar si los metadatos ya están cargados
+        if (player.readyState() >= 1) {
+          // Los metadatos ya están cargados
+          setVideoPosition();
+        } else {
+          // Esperar a que se carguen los metadatos
+          player.one('loadedmetadata', setVideoPosition);
+        }
+      } else {
+        // 3. Fallback: Cargar desde localStorage si no hay progreso en backend
+        console.log('📁 No hay progreso en backend, intentando localStorage...');
         const contentPositions = JSON.parse(localStorage.getItem('contentPositions') || '{}');
         if (contentPositions[movieId]) {
           const savedPosition = contentPositions[movieId];
-          // Solo restaurar si la posición es mayor a 10 segundos y menor al 90% del video
-          if (savedPosition.position > 10 && 
-              savedPosition.position < savedPosition.duration * 0.9) {
-            player.currentTime(savedPosition.position);
-            // Posición restaurada correctamente
+          console.log('📁 Progreso encontrado en localStorage:', savedPosition);
+          
+          const setLocalStoragePosition = () => {
+            const duration = player.duration();
+            if (savedPosition.position > 10 && 
+                savedPosition.position < duration * 0.9) {
+              player.currentTime(savedPosition.position);
+              console.log('✅ Posición restaurada desde localStorage:', savedPosition.position);
+            }
+          };
+
+          // Verificar si los metadatos ya están cargados
+          if (player.readyState() >= 1) {
+            // Los metadatos ya están cargados
+            setLocalStoragePosition();
+          } else {
+            // Esperar a que se carguen los metadatos
+            player.one('loadedmetadata', setLocalStoragePosition);
           }
+        } else {
+          console.log('📁 No hay progreso guardado para este contenido');
         }
       }
+      
+      // 4. Cargar preferencias de subtítulos si están disponibles
+      if (preferences?.preferredLanguage) {
+        player.ready(() => {
+          setTimeout(() => {
+            const tracks = player.textTracks();
+            for (let i = 0; i < tracks.length; i++) {
+              const track = tracks[i];
+              if (track.language === preferences.preferredLanguage) {
+                track.mode = preferences.subtitlesEnabled ? 'showing' : 'disabled';
+                console.log('✅ Idioma de subtítulos aplicado:', preferences.preferredLanguage, 'habilitado:', preferences.subtitlesEnabled);
+                break;
+              }
+            }
+          }, 500); // Esperar a que los tracks estén disponibles
+        });
+      }
+      
     } catch (error) {
       console.error('Error al cargar preferencias:', error);
+      // Fallback: usar localStorage como última opción
+      console.log('🔄 Usando fallback de localStorage por error...');
+      const saved = localStorage.getItem('playerPreferences');
+      if (saved) {
+        const localPrefs = JSON.parse(saved);
+        if (localPrefs.volume !== undefined) {
+          player.volume(localPrefs.volume);
+          console.log('✅ Volumen aplicado desde localStorage:', localPrefs.volume);
+        }
+        if (localPrefs.playbackRate) {
+          player.playbackRate(localPrefs.playbackRate);
+          console.log('✅ Velocidad aplicada desde localStorage:', localPrefs.playbackRate);
+        }
+      }
     }
-  }, [movieId]);
+  }, [movieId, preferences, getWatchProgress]);
 
   // ===== CONFIGURACIÓN SIMPLIFICADA DE TEXT TRACKS =====
   const setupTextTracks = useCallback((player, subtitleTracks) => {
@@ -189,12 +323,6 @@ const VideoPlayer = () => {
       });
     });
   }, [loadPlayerPreferences]);
-
-  // ===== FUNCIONES DE PLAYLIST SIMPLIFICADAS =====
-  // La lógica de avance automático es manejada por el plugin oficial videojs-playlist
-  // Ya no necesitamos lógica manual compleja
-
-  // handlePlaylistItemChange ya no es necesario - el plugin maneja los cambios automáticamente
 
   // ===== ANALYTICS Y MÉTRICAS =====
   const initializeAnalytics = useCallback((player) => {
@@ -332,10 +460,70 @@ const VideoPlayer = () => {
     navigate(-1);
   }, [navigate, savePlayerPreferences]);
 
+  // ===== GUARDADO SÍNCRONO PARA BEFOREUNLOAD =====
+  const saveProgressSynchronously = useCallback(() => {
+    if (!playerRef.current || playerRef.current.isDisposed() || !isAuthenticated || !userId) {
+      return;
+    }
+
+    try {
+      const currentTime = playerRef.current.currentTime();
+      const duration = playerRef.current.duration();
+      
+      // 1. Siempre guardar en localStorage de forma síncrona
+      const contentPositions = JSON.parse(localStorage.getItem('contentPositions') || '{}');
+      contentPositions[movieId] = {
+        position: currentTime,
+        duration: duration,
+        timestamp: Date.now()
+      };
+      localStorage.setItem('contentPositions', JSON.stringify(contentPositions));
+      
+      // 2. Intentar guardar en backend usando fetch con keepalive (síncrono)
+      if (currentTime > 0 && duration > 0) {
+        const { urlBackend } = environmentService();
+        const progressData = {
+          contentId: movieId,
+          position: currentTime,
+          type: contentType === 'episode' ? 'series' : 'movie',
+          ...(contentType === 'episode' && playlistData && { 
+            currentEpisode: currentEpisodeIndex 
+          }),
+          completed: currentTime >= duration * 0.9
+        };
+        
+        // Usar fetch con keepalive para garantizar envío antes del unload
+        const beaconUrl = `${urlBackend}/api/v1/user-preferences/${userId}/watch-progress`;
+        
+        try {
+          fetch(beaconUrl, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(progressData),
+            credentials: 'include', // Incluir cookies para JWT
+            keepalive: true // Mantener request vivo durante unload
+          }).then(() => {
+            console.log('📡 Progreso enviado síncronamente con fetch keepalive:', { movieId, currentTime });
+          }).catch((error) => {
+            console.warn('⚠️ fetch keepalive falló:', error);
+          });
+        } catch (error) {
+          console.warn('⚠️ Error en fetch keepalive:', error);
+        }
+      }
+    } catch (error) {
+      console.error('Error en guardado síncrono:', error);
+    }
+  }, [movieId, contentType, playlistData, currentEpisodeIndex, isAuthenticated, userId]);
+
   // ===== CLEANUP MEJORADO =====
   useEffect(() => {
     const handleBeforeUnload = () => {
-      savePlayerPreferences();
+      // Usar guardado síncrono para beforeunload
+      saveProgressSynchronously();
+      
       if (playerRef.current && !playerRef.current.isDisposed()) {
         if (playerRef.current._cleanupSeeking) {
           playerRef.current._cleanupSeeking();
@@ -357,7 +545,7 @@ const VideoPlayer = () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [savePlayerPreferences]);
+  }, [savePlayerPreferences, saveProgressSynchronously]);
 
   // ===== CARGAR DATOS DEL CONTENIDO =====
   useEffect(() => {
@@ -484,7 +672,7 @@ const VideoPlayer = () => {
         const player = videojs(videoRef.current, {
           controls: true,
           autoplay: true,
-          muted: true, // Necesario para autoplay en navegadores modernos
+          muted: false, // Necesario para autoplay en navegadores modernos
           preload: "auto",
           fluid: true,
           playbackRates: [0.5, 1, 1.25, 1.5, 2],
@@ -887,7 +1075,6 @@ const VideoPlayer = () => {
         
         player.on('pause', () => {
           setIsPlaying(false);
-          savePlayerPreferences();
         });
         
         // Usar eventos oficiales de Video.js según documentación
@@ -911,19 +1098,6 @@ const VideoPlayer = () => {
         player.on('leavepictureinpicture', () => {
           console.log('📺 Left PiP mode');
         });
-        
-        // Guardar preferencias periódicamente
-        const saveInterval = setInterval(() => {
-          try {
-            if (!player.isDisposed() && player.paused && typeof player.paused === 'function' && !player.paused()) {
-              savePlayerPreferences();
-            }
-          } catch (error) {
-            console.warn('⚠️ Error en saveInterval:', error);
-            // Si hay error, limpiar el intervalo
-            clearInterval(saveInterval);
-          }
-        }, 30000); // Cada 30 segundos
         
         // Inicializar analytics
         initializeAnalytics(player);
@@ -952,13 +1126,7 @@ const VideoPlayer = () => {
         playerRef.current.dispose();
       }
     };
-  }, [urlComplete, movieData, loading, subsUrl, handleSkip, savePlayerPreferences, setupTextTracks, initializeAnalytics, playlistData, resolutions, cdnUrl, currentEpisodeIndex]);
-
-  // ===== SINCRONIZAR ESTADO CON PLAYLIST - DESHABILITADO TEMPORALMENTE =====
-  // useEffect(() => {
-  //   // NOTA: Deshabilitado porque puede interferir con el cambio manual de episodios
-  //   console.log('📋 Sincronización de playlist deshabilitada');
-  // }, [playlistData, playlistKey, resolutions]);
+  }, [urlComplete, movieData, loading, subsUrl, playlistData, resolutions, cdnUrl, currentEpisodeIndex]); // Removidas funciones que pueden cambiar por preferencias
 
   // ===== VALIDACIONES =====
   if (!movieId) {
@@ -983,11 +1151,12 @@ const VideoPlayer = () => {
     );
   }
 
-  if (loading) {
+  if (loading || preferencesLoading) {
     return (
       <div className="video-player-container">
         <div className="video-info">
           <h2>Cargando {contentType === 'episode' ? 'episodio' : 'película'}...</h2>
+          {preferencesLoading && <p>Cargando preferencias de usuario...</p>}
         </div>
       </div>
     );

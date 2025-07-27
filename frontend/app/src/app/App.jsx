@@ -2,6 +2,7 @@
 import React from "react";
 import { useRoutes, BrowserRouter } from "react-router-dom";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
+import { AuthProvider } from "./context/AuthContext";
 import { UsersProvider } from "./context/UserContext";
 import { MoviesProvider } from "./context/MoviesContext";
 import { SeriesProvider } from "./context/SeriesContext";
@@ -315,21 +316,23 @@ function AppRoutes() {
 function App() {
   return (
     <ThemeProvider>
-      <AlertProvider>
-        <UsersProvider>
-          <CategoriesProvider>
-            <MoviesProvider>
-              <SeriesProvider>
-                <EpisodesProvider>
-                  <BrowserRouter>
-                    <AppRoutes />
-                  </BrowserRouter>
-                </EpisodesProvider>
-              </SeriesProvider>
-            </MoviesProvider>
-          </CategoriesProvider>
-        </UsersProvider>
-      </AlertProvider>
+      <AuthProvider>
+        <AlertProvider>
+          <UsersProvider>
+            <CategoriesProvider>
+              <MoviesProvider>
+                <SeriesProvider>
+                  <EpisodesProvider>
+                    <BrowserRouter>
+                      <AppRoutes />
+                    </BrowserRouter>
+                  </EpisodesProvider>
+                </SeriesProvider>
+              </MoviesProvider>
+            </CategoriesProvider>
+          </UsersProvider>
+        </AlertProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

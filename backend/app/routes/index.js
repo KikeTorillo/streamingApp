@@ -11,6 +11,7 @@ const seriesRoutes = require('./seriesRoutes');  // Rutas para gestión de serie
 const episodesRoutes = require('./episodesRouter');
 const categoriesRoutes = require('./categoriesRoutes'); // Rutas para gestión de categorías
 const usersRoutes = require('./usersRoutes');    // Rutas para gestión de usuarios
+const userPreferencesRoutes = require('./userPreferencesRoutes'); // Rutas para preferencias de usuario
 
 /**
  * Monta todos los routers de la API en la aplicación Express.
@@ -62,6 +63,12 @@ function routerApi(app) {
    * @route   /api/v1/users
    */
   router.use('/users', usersRoutes);
+
+  /**
+   * Rutas para gestión de preferencias de usuario.
+   * @route   /api/v1/user-preferences
+   */
+  router.use('/user-preferences', userPreferencesRoutes);
 }
 
 module.exports = routerApi;

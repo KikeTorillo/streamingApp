@@ -351,6 +351,60 @@ BEGIN
 END $$;
 
 ----------------------------------------------------------------------
+-- Tabla: user_preferences (Sistema de preferencias de usuario)
+----------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS user_preferences (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    
+    -- Configuraciones de reproducción
+    volume DECIMAL(3,2) DEFAULT 1.0 CHECK (volume >= 0.0 AND volume <= 1.0),
+    playback_rate DECIMAL(3,2) DEFAULT 1.0 CHECK (playback_rate IN (0.5, 1.0, 1.25, 1.5, 2.0)),
+    autoplay BOOLEAN DEFAULT false,
+    muted BOOLEAN DEFAULT false,
+    
+    -- Configuraciones de video
+    default_quality VARCHAR(10) DEFAULT 'auto' CHECK (default_quality IN ('auto', '480p', '720p', '1080p', '4k')),
+    preferred_language VARCHAR(5) DEFAULT 'es' CHECK (preferred_language IN ('es', 'en')),
+    subtitles_enabled BOOLEAN DEFAULT true,
+    forced_subtitles_only BOOLEAN DEFAULT false,
+    
+    -- Configuraciones de interfaz
+    auto_fullscreen BOOLEAN DEFAULT false,
+    picture_in_picture_enabled BOOLEAN DEFAULT true,
+    hotkey_enabled BOOLEAN DEFAULT true,
+    
+    -- Progreso de reproducción (JSONB para flexibilidad)
+    watch_progress JSONB DEFAULT '{}',
+    
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    
+    -- Garantizar una sola configuración por usuario
+    CONSTRAINT unique_user_preferences UNIQUE (user_id)
+);
+
+-- Índices para user_preferences
+CREATE INDEX IF NOT EXISTS idx_user_preferences_user_id ON user_preferences(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_preferences_watch_progress ON user_preferences USING GIN (watch_progress);
+
+-- Comentarios para documentación
+COMMENT ON TABLE user_preferences IS 'Configuraciones personalizadas de video y progreso de reproducción por usuario';
+COMMENT ON COLUMN user_preferences.watch_progress IS 'Estructura JSON: {"contentId": {"position": number, "type": "movie|series", "currentEpisode": number?, "timestamp": number, "completed": boolean}}';
+
+----------------------------------------------------------------------
+-- Trigger para user_preferences
+----------------------------------------------------------------------
+CREATE TRIGGER update_user_preferences_updated_at 
+BEFORE UPDATE ON user_preferences
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER audit_user_preferences
+AFTER INSERT OR UPDATE OR DELETE ON user_preferences
+FOR EACH ROW EXECUTE FUNCTION log_audit();
+
+----------------------------------------------------------------------
 -- ✅ VERIFICACIÓN FINAL - Query para comprobar la configuración
 ----------------------------------------------------------------------
 -- Puedes ejecutar esto después de aplicar el esquema para verificar:
@@ -367,6 +421,8 @@ SELECT
         THEN '✅ CORRECTO: RESTRICT + Trigger automático'
         WHEN tc.table_name = 'episodes' AND kcu.column_name = 'serie_id' 
         THEN '✅ CORRECTO: CASCADE'
+        WHEN tc.table_name = 'user_preferences' AND kcu.column_name = 'user_id' 
+        THEN '✅ CORRECTO: CASCADE'
         ELSE '✅ CONFIGURACIÓN VÁLIDA'
     END as status
 FROM information_schema.table_constraints tc
@@ -377,6 +433,6 @@ JOIN information_schema.constraint_column_usage ccu
 LEFT JOIN information_schema.referential_constraints rc 
     ON tc.constraint_name = rc.constraint_name
 WHERE tc.constraint_type = 'FOREIGN KEY' 
-    AND tc.table_name IN ('episodes', 'movies', 'series')
+    AND tc.table_name IN ('episodes', 'movies', 'series', 'user_preferences')
 ORDER BY tc.table_name, kcu.column_name;
 */

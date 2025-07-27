@@ -8,6 +8,9 @@ import { useNavigate } from 'react-router-dom';
 import { loginService } from "../../services/Auth/loginService";
 import { recoveryService } from "../../services/Auth/recoveryService";
 
+// Hook de autenticación
+import { useAuth } from "../../app/context/AuthContext";
+
 // Componente LoginCard del sistema de diseño
 import { LoginCard } from "../../components/organisms/LoginCard/LoginCard";
 import './Login.css';
@@ -18,6 +21,7 @@ function Login() {
   const [isLoading, setIsLoading] = useState(false);
   
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   /**
    * ✅ CORREGIDO: Manejo de respuesta del loginService
@@ -32,6 +36,9 @@ function Login() {
       if (response.success && response.user?.sub) {
         // Guardar datos del usuario en sessionStorage
         sessionStorage.setItem('sessionUser', JSON.stringify(response.user));
+        
+        // ✅ NUEVO: Actualizar el AuthContext
+        login(response.user);
         
         // Navegar a la página principal
         navigate('/main-page');

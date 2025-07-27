@@ -234,8 +234,6 @@ function SeriesDetailPage() {
                         onTitleClick={handleBackToSeries}
                         userName={user?.userName || user?.username || user?.name || user?.email || 'Usuario'}
                         showSearch={false}
-                        showBackButton
-                        onBackClick={handleBackToSeries}
                         onLogout={handleLogout}
                         variant="default"
                         size="lg"
