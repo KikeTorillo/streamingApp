@@ -38,7 +38,7 @@ services:
   
   # 🗂️ MINIO - Almacenamiento S3 compatible
   minio:
-    image: quay.io/minio/minio
+    image: minio/minio
     container_name: minio
     restart: unless-stopped
     environment:

@@ -1,5 +1,7 @@
-# 🚀 DOCKER COMPOSE PRODUCCIÓN - SYNOLOGY OPTIMIZADO
-# Basado en la estructura de docker-compose.dev.yml
+# 🏠 DOCKER COMPOSE DESARROLLO LOCAL
+# Para desarrollo en localhost (una sola máquina)
+# ✅ OPTIMIZADO: No requiere configuración DNS especial
+
 services:
   # 🗄️ POSTGRESQL - Base de datos principal
   postgres:
@@ -17,7 +19,7 @@ services:
     networks:
       - lan
     ports:
-      - "5433:${DB_PORT}"
+      - "${DB_PORT}:5432"
 
   # 📊 PGADMIN - Administración de base de datos (opcional)
   pgadmin:
@@ -33,7 +35,7 @@ services:
       - "${PG_PORT}:80"
     depends_on:
       - postgres
-
+  
   # 🗂️ MINIO - Almacenamiento S3 compatible
   minio:
     image: minio/minio
@@ -51,7 +53,7 @@ services:
       - "${MINIO_PORT}:9000"
       - "${MINIO_PANEL_PORT}:9001"
     command: server /data --console-address ":9001"
-  
+
   # Inicializador de MinIO
   minio-init:
     image: alpine:latest
@@ -59,7 +61,8 @@ services:
     depends_on:
       - minio
     environment:
-      - MINIO_HOST=${IP_ADDRESS_MINIO}  # minio
+      - MINIO_HOST=${IP_ADDRESS_MINIO}
+      - MINIO_PORT=${MINIO_PORT}
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - MINIO_BUCKET=${MINIO_BUCKET}
@@ -69,7 +72,7 @@ services:
     networks:
       - lan
 
-  # 🖥️ BACKEND - API Node.js
+  # 🖥️ BACKEND - API Node.js (SIN configuración DNS especial)
   backend:
     build:
       context: ./backend/app
@@ -112,37 +115,76 @@ services:
     networks:
       - lan
     ports:
-      - "3000:3000"  # Exponer para desarrollo/debug
+      - "${BACK_PORT}:3000"
+    # 🔧 DNS para resolver dominios externos (TMDB)
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     depends_on:
       - postgres
       - minio
-
-  # 🎨 FRONTEND - React + NGINX optimizado
+  
+  # 🎨 FRONTEND VITE - SERVICIO PRINCIPAL
   frontend:
     build:
       context: ./frontend/app
-      dockerfile: dockerfile.frontend.prod
+      dockerfile: dockerfile.frontend
       args:
-        - VITE_API_KEY=${VITE_API_KEY}
-        - VITE_FRONT_URL_LOCAL=${VITE_FRONT_URL_LOCAL}
-        - VITE_MODE=${VITE_MODE}
-        - VITE_HOST_LOCAL=${VITE_HOST_LOCAL}
-        - VITE_CDN_URL=${VITE_CDN_URL}
-        - VITE_TMDB_API_KEY=${VITE_TMDB_API_KEY}
+        - NODE_ENV=development
+        - SERVICE_TYPE=frontend
     container_name: front
     restart: unless-stopped
-    ports:
-      - "8080:80"    # Puerto principal de acceso
-    depends_on:
-      - backend
+    environment:
+      - VITE_API_KEY=${VITE_API_KEY}
+      - VITE_FRONT_URL_LOCAL=${VITE_FRONT_URL_LOCAL}
+      - VITE_MODE=${VITE_MODE}
+      - VITE_HOST_LOCAL=${VITE_HOST_LOCAL}
+      - VITE_CDN_URL=${VITE_CDN_URL}
+      - VITE_TMDB_API_KEY=${VITE_TMDB_API_KEY}
+      - VITE_HOST=0.0.0.0
+      - VITE_PORT=8080
+      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_INTERVAL=1000
+      - WATCHPACK_POLLING=true
+      - FAST_REFRESH=true
+    volumes:
+      - ./frontend/app:/app
+      - /app/node_modules
+      - /app/dist
     networks:
       - lan
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend
 
-  # 🌐 CDN - Servidor de distribución de contenido
-  cdn1:
+  # 📚 STORYBOOK - Librería de componentes
+  storybook:
     build:
+      context: ./frontend/app
+      dockerfile: dockerfile.storybook
+      args:
+        - NODE_ENV=development
+        - SERVICE_TYPE=storybook
+    container_name: storybook
+    restart: unless-stopped
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_INTERVAL=1000
+      - WATCHPACK_POLLING=true
+    volumes:
+      - ./frontend/app:/app
+      - /app/node_modules
+      - /app/storybook-static
+    networks:
+      - lan
+    ports:
+      - "6006:6006"
+
+  # 🌐 CDN - Servidor de contenido
+  cdn1:
+    build: 
       context: ./servers
-      dockerfile: dockerfile
       args:
         - TEMPLATE_FILE=./cdn/nginx.conf.template
     container_name: cdn1
@@ -155,20 +197,19 @@ services:
       - ./servers/cdn/index.html:/nginx-1.26.3/html/index.html
     networks:
       - lan
-    depends_on:
-      - transcoder1
-      - transcoder2
     ports:
       - "8082:80"
+    depends_on:
+      - minio
 
-  # 🎞️ TRANSCODER1 - Servidor de transcodificación principal
+  # 🎬 TRANSCODER SERVERS
   transcoder1:
-    build:
+    build: 
       context: ./servers
-      dockerfile: dockerfile
       args:
         - TEMPLATE_FILE=./transcoderServers/transcoder1/nginx.conf.template
-    container_name: transcoder1  # ✅ Nombre fijo del contenedor
+    container_name: transcoder1
+    restart: unless-stopped
     environment:
       - NGINX_MINIO_SERVER=${IP_ADDRESS_MINIO}:${MINIO_PORT}  # minio:9000
       - NGINX_MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
@@ -183,18 +224,14 @@ services:
       - ./servers/transcoderServers/transcoder1/index.html:/nginx-1.26.3/html/index.html
     networks:
       - lan
-    restart: always
-    depends_on:
-      - minio
 
-  # 🎞️ TRANSCODER2 - Servidor de transcodificación secundario
   transcoder2:
-    build:
+    build: 
       context: ./servers
-      dockerfile: dockerfile
       args:
         - TEMPLATE_FILE=./transcoderServers/transcoder2/nginx.conf.template
-    container_name: transcoder2  # ✅ Nombre fijo del contenedor
+    container_name: transcoder2
+    restart: unless-stopped
     environment:
       - NGINX_MINIO_SERVER=${IP_ADDRESS_MINIO}:${MINIO_PORT}  # minio:9000
       - NGINX_MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
@@ -209,11 +246,8 @@ services:
       - ./servers/transcoderServers/transcoder2/index.html:/nginx-1.26.3/html/index.html
     networks:
       - lan
-    restart: always
-    depends_on:
-      - minio
-      
-# 🌐 RED DOCKER - Comunicación interna entre servicios
+
+# Red personalizada
 networks:
   lan:
     driver: bridge
