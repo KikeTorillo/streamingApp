@@ -13,8 +13,45 @@ const { authenticateJwt, checkRoles } = require('../middleware/authHandler');
 const router = express.Router(); // Creación del enrutador Express
 
 /**
- * Ruta POST /categories:
- * Crea una nueva categoría.
+ * @swagger
+ * /category:
+ *   post:
+ *     tags:
+ *       - Categorías
+ *     summary: Crear una nueva categoría
+ *     description: Crea una nueva categoría para clasificar contenido
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Nombre de la categoría
+ *                 example: "Ciencia Ficción"
+ *     responses:
+ *       201:
+ *         description: Categoría creada exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Category'
+ *             example:
+ *               id: 16
+ *               name: "Ciencia Ficción"
+ *               updatedAt: "2024-01-01T00:00:00.000Z"
+ *       400:
+ *         $ref: '#/components/responses/ValidationError'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
  */
 router.post(
   '/',
@@ -33,8 +70,38 @@ router.post(
 );
 
 /**
- * Ruta GET /categories:
- * Lista todas las categorías.
+ * @swagger
+ * /category:
+ *   get:
+ *     tags:
+ *       - Categorías
+ *     summary: Obtener lista de todas las categorías
+ *     description: Devuelve una lista completa de categorías disponibles
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de categorías obtenida exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Category'
+ *             example:
+ *               - id: 1
+ *                 name: "Acción"
+ *                 updatedAt: "2024-01-01T00:00:00.000Z"
+ *               - id: 2
+ *                 name: "Comedia"
+ *                 updatedAt: "2024-01-01T00:00:00.000Z"
+ *               - id: 3
+ *                 name: "Drama"
+ *                 updatedAt: "2024-01-01T00:00:00.000Z"
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
  */
 router.get(
   '/',
@@ -51,8 +118,40 @@ router.get(
 );
 
 /**
- * Ruta GET /categories/:id:
- * Obtiene una categoría por su ID.
+ * @swagger
+ * /category/{id}:
+ *   get:
+ *     tags:
+ *       - Categorías
+ *     summary: Obtener una categoría específica por ID
+ *     description: Devuelve los detalles de una categoría específica
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID único de la categoría
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Categoría encontrada exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Category'
+ *             example:
+ *               id: 1
+ *               name: "Acción"
+ *               updatedAt: "2024-01-01T00:00:00.000Z"
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
  */
 router.get(
   '/:id',
@@ -71,8 +170,60 @@ router.get(
 );
 
 /**
- * Ruta patch /categories/:id:
- * Actualiza una categoría existente.
+ * @swagger
+ * /category/{id}:
+ *   patch:
+ *     tags:
+ *       - Categorías
+ *     summary: Actualizar una categoría existente
+ *     description: Actualiza el nombre de una categoría existente
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID único de la categoría
+ *         example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Nuevo nombre de la categoría
+ *                 example: "Acción y Aventura"
+ *     responses:
+ *       200:
+ *         description: Categoría actualizada exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 name:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *             example:
+ *               id: 1
+ *               name: "Acción y Aventura"
+ *               message: "Categoría actualizada exitosamente"
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
+ *       400:
+ *         $ref: '#/components/responses/ValidationError'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
  */
 router.patch(
   '/:id',
@@ -93,8 +244,44 @@ router.patch(
 );
 
 /**
- * Ruta DELETE /categories/:id:
- * Elimina una categoría por su ID.
+ * @swagger
+ * /category/{id}:
+ *   delete:
+ *     tags:
+ *       - Categorías
+ *     summary: Eliminar una categoría por ID
+ *     description: Elimina permanentemente una categoría del sistema
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID único de la categoría a eliminar
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Categoría eliminada exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 id:
+ *                   type: integer
+ *             example:
+ *               message: "Categoría eliminada exitosamente"
+ *               id: 1
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
  */
 router.delete(
   '/:id',

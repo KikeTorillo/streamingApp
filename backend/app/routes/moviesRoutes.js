@@ -19,7 +19,74 @@ const router = express.Router();
 const progressMap = {};
 
 /**
- * Ruta para crear una pelicula
+ * @swagger
+ * /movies:
+ *   post:
+ *     tags:
+ *       - Películas
+ *     summary: Crear nueva película
+ *     description: |
+ *       Crea una nueva película con archivo de video y portada.
+ *       El procesamiento es asíncrono - retorna un taskId para monitoreo.
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - categoryId
+ *               - releaseYear
+ *               - video
+ *               - coverImage
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: Título de la película
+ *                 example: 'Película de Ejemplo'
+ *               description:
+ *                 type: string
+ *                 description: Descripción de la película
+ *                 example: 'Una película increíble sobre...'
+ *               categoryId:
+ *                 type: integer
+ *                 description: ID de la categoría
+ *                 example: 1
+ *               releaseYear:
+ *                 type: integer
+ *                 minimum: 1900
+ *                 maximum: 2030
+ *                 description: Año de lanzamiento
+ *                 example: 2024
+ *               video:
+ *                 type: string
+ *                 format: binary
+ *                 description: Archivo de video (.mp4, .avi, .mkv, etc.)
+ *               coverImage:
+ *                 type: string
+ *                 format: binary
+ *                 description: Imagen de portada (.jpg, .png, .webp)
+ *     responses:
+ *       200:
+ *         description: Película creada - procesamiento iniciado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 taskId:
+ *                   type: string
+ *                   description: ID de la tarea para monitorear progreso
+ *                   example: '1641234567890'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
+ *       400:
+ *         $ref: '#/components/responses/ValidationError'
  */
 router.post(
   '/',
@@ -44,7 +111,30 @@ router.post(
   }
 );
 
-// Ruta para obtener la lista de películas
+/**
+ * @swagger
+ * /movies:
+ *   get:
+ *     tags:
+ *       - Películas
+ *     summary: Obtener lista de películas
+ *     description: Retorna todas las películas disponibles en el sistema
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de películas obtenida exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Movie'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
+ */
 router.get(
   '/',
   authenticateJwt,
@@ -59,7 +149,40 @@ router.get(
   }
 );
 
-// Ruta para obtener una película por ID (incluyendo info de subtítulos)
+/**
+ * @swagger
+ * /movies/{id}:
+ *   get:
+ *     tags:
+ *       - Películas
+ *     summary: Obtener película por ID
+ *     description: |
+ *       Retorna una película específica por su ID, incluyendo información
+ *       de subtítulos, resoluciones disponibles y metadatos completos.
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID único de la película
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Película encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Movie'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
+ */
 router.get(
   '/:id',
   authenticateJwt,
@@ -76,7 +199,41 @@ router.get(
   }
 );
 
-// Ruta para obtener una película por hash (para el reproductor)
+/**
+ * @swagger
+ * /movies/by-hash/{hash}:
+ *   get:
+ *     tags:
+ *       - Películas
+ *     summary: Obtener película por hash de archivo
+ *     description: |
+ *       Retorna una película específica por su hash SHA256 de archivo.
+ *       Usado principalmente por el reproductor para obtener metadatos
+ *       sin exponer el ID interno de la película.
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: hash
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Hash SHA256 del archivo de video
+ *         example: 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6'
+ *     responses:
+ *       200:
+ *         description: Película encontrada por hash
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Movie'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
+ */
 router.get(
   '/by-hash/:hash',
   authenticateJwt,
@@ -94,9 +251,50 @@ router.get(
 );
 
 /**
- * Endpoint para buscar videos por nombre:
- * - Esta ruta maneja una solicitud GET para buscar videos cuyos nombres coincidan con una consulta.
- * - La consulta debe ser proporcionada como un parámetro de consulta (`title`).
+ * @swagger
+ * /movies/search:
+ *   get:
+ *     tags:
+ *       - Películas
+ *     summary: Buscar películas por título
+ *     description: |
+ *       Busca películas que coincidan con el título proporcionado.
+ *       La búsqueda es parcial e insensible a mayúsculas/minúsculas.
+ *       Requiere mínimo 3 caracteres para realizar la búsqueda.
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: title
+ *         required: true
+ *         schema:
+ *           type: string
+ *           minLength: 3
+ *         description: Título o parte del título a buscar (mínimo 3 caracteres)
+ *         example: 'Matrix'
+ *     responses:
+ *       200:
+ *         description: Resultados de búsqueda
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Movie'
+ *       400:
+ *         description: Consulta muy corta
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: 'La consulta debe tener al menos 3 caracteres.'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
  */
 router.get(
   '/search',
@@ -123,10 +321,71 @@ router.get(
 );
 
 /**
- * Endpoint para buscar películas por rango de años:
- * - Esta ruta maneja una solicitud GET para buscar películas lanzadas en un rango de años específico.
- * - Los parámetros deben ser proporcionados como parámetros de consulta (`from` y `to`).
- * - Ejemplo: GET /movies/search-by-year-range?from=2020&to=2023
+ * @swagger
+ * /movies/search-by-year-range:
+ *   get:
+ *     tags:
+ *       - Películas
+ *     summary: Buscar películas por rango de años
+ *     description: |
+ *       Busca películas lanzadas dentro de un rango de años específico.
+ *       Incluye películas cuyo año de lanzamiento esté entre los valores
+ *       'from' y 'to' (ambos inclusive).
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: from
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           minimum: 1900
+ *           maximum: 2030
+ *         description: Año de inicio del rango (inclusive)
+ *         example: 2020
+ *       - in: query
+ *         name: to
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           minimum: 1900
+ *           maximum: 2030
+ *         description: Año de fin del rango (inclusive)
+ *         example: 2023
+ *     responses:
+ *       200:
+ *         description: Resultados de búsqueda por rango de años
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Movie'
+ *                 count:
+ *                   type: integer
+ *                   description: Número de películas encontradas
+ *                   example: 15
+ *                 range:
+ *                   type: object
+ *                   properties:
+ *                     from:
+ *                       type: integer
+ *                       example: 2020
+ *                     to:
+ *                       type: integer
+ *                       example: 2023
+ *       400:
+ *         $ref: '#/components/responses/ValidationError'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
  */
 router.get(
   '/search-by-year-range',
@@ -156,9 +415,70 @@ router.get(
 );
 
 /**
- * Ruta para actualizar una película.
- * Se espera recibir en el cuerpo de la solicitud:
- * { title, coverImage, releaseYear }
+ * @swagger
+ * /movies/{id}:
+ *   patch:
+ *     tags:
+ *       - Películas
+ *     summary: Actualizar película
+ *     description: |
+ *       Actualiza los datos de una película existente.
+ *       Permite modificar título, descripción, categoría, año de lanzamiento
+ *       y opcionalmente subir una nueva imagen de portada.
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID único de la película a actualizar
+ *         example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: Nuevo título de la película
+ *                 example: 'Título Actualizado'
+ *               description:
+ *                 type: string
+ *                 description: Nueva descripción de la película
+ *                 example: 'Descripción actualizada de la película'
+ *               categoryId:
+ *                 type: integer
+ *                 description: Nuevo ID de categoría
+ *                 example: 2
+ *               releaseYear:
+ *                 type: integer
+ *                 minimum: 1900
+ *                 maximum: 2030
+ *                 description: Nuevo año de lanzamiento
+ *                 example: 2023
+ *               coverImage:
+ *                 type: string
+ *                 format: binary
+ *                 description: Nueva imagen de portada (opcional)
+ *     responses:
+ *       200:
+ *         description: Película actualizada exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Movie'
+ *       400:
+ *         $ref: '#/components/responses/ValidationError'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
  */
 router.patch(
   '/:id',
@@ -181,7 +501,53 @@ router.patch(
 );
 
 /**
- * Ruta para eliminar una película por su ID.
+ * @swagger
+ * /movies/{id}:
+ *   delete:
+ *     tags:
+ *       - Películas
+ *     summary: Eliminar película
+ *     description: |
+ *       Elimina una película del sistema de forma permanente.
+ *       También elimina los archivos asociados (video, portada, subtítulos)
+ *       del almacenamiento y todas las referencias relacionadas.
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID único de la película a eliminar
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Película eliminada exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: 'Película eliminada exitosamente'
+ *                 deletedId:
+ *                   type: integer
+ *                   example: 1
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                   example: '2024-01-01T00:00:00.000Z'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
  */
 router.delete(
   '/:id',
@@ -200,9 +566,69 @@ router.delete(
 );
 
 /**
- * Endpoint para obtener el progreso de una tarea:
- * - Esta ruta maneja una solicitud GET para consultar el estado de una tarea específica.
- * - Devuelve el estado (`status`) y el progreso (`progress`) de la tarea.
+ * @swagger
+ * /movies/progress/{taskId}:
+ *   get:
+ *     tags:
+ *       - Películas
+ *     summary: Obtener progreso de transcodificación
+ *     description: |
+ *       Consulta el estado y progreso de una tarea de procesamiento de video.
+ *       Usado para monitorear el progreso de transcodificación después
+ *       de crear una nueva película con POST /movies.
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la tarea de procesamiento retornado por POST /movies
+ *         example: '1641234567890'
+ *     responses:
+ *       200:
+ *         description: Estado de la tarea de procesamiento
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/TaskProgress'
+ *             examples:
+ *               processing:
+ *                 summary: Tarea en procesamiento
+ *                 value:
+ *                   status: 'processing'
+ *                   progress: 0
+ *               transcoding:
+ *                 summary: Tarea transcodificando
+ *                 value:
+ *                   status: 'transcoding'
+ *                   progress: 45
+ *               completed:
+ *                 summary: Tarea completada
+ *                 value:
+ *                   status: 'completed'
+ *                   progress: 100
+ *               failed:
+ *                 summary: Tarea fallida
+ *                 value:
+ *                   status: 'failed'
+ *                   progress: 75
+ *                   error: 'Error durante la transcodificación'
+ *       404:
+ *         description: Tarea no encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: 'Tarea no encontrada'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
  */
 router.get(
   '/progress/:taskId',

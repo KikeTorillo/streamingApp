@@ -18,9 +18,71 @@ const {
 const router = express.Router(); // Creación del enrutador Express
 
 /**
- * @route GET /preferences/:userId
- * @desc Obtiene las preferencias de un usuario específico
- * @access Autenticado (usuario propio o admin)
+ * @swagger
+ * /user-preferences/{userId}:
+ *   get:
+ *     tags:
+ *       - Preferencias
+ *     summary: Obtener preferencias de usuario
+ *     description: Obtiene las preferencias del reproductor de video de un usuario específico
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del usuario
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Preferencias obtenidas exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/UserPreferences'
+ *                 message:
+ *                   type: string
+ *             example:
+ *               success: true
+ *               data:
+ *                 id: 1
+ *                 userId: 1
+ *                 volume: 1.0
+ *                 playbackRate: 1.0
+ *                 autoplay: false
+ *                 muted: false
+ *                 defaultQuality: "auto"
+ *                 preferredLanguage: "es"
+ *                 subtitlesEnabled: true
+ *                 watchProgress: {}
+ *                 createdAt: "2024-01-01T00:00:00.000Z"
+ *                 updatedAt: "2024-01-01T00:00:00.000Z"
+ *               message: "Preferencias obtenidas exitosamente"
+ *       403:
+ *         description: No tienes permisos para acceder a estas preferencias
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *             example:
+ *               success: false
+ *               message: "No tienes permisos para acceder a estas preferencias"
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
  */
 router.get(
   '/:userId',

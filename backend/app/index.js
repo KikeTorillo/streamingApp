@@ -7,6 +7,8 @@
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./config/swagger');
 const app = express();
 const routerApi = require('./routes');
 const { checkApiKey } = require('./middleware/authHandler');
@@ -72,6 +74,30 @@ require('./utils/auth');
  */
 app.get('/', (req, res) => {
   res.send('Hola mi server en express');
+});
+
+// --- Documentación Swagger ---
+/**
+ * Configuración de Swagger UI para documentación interactiva de la API
+ * Disponible en: http://localhost:3001/api-docs
+ */
+const swaggerOptions = {
+  explorer: true,
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: "Streaming App API Documentation",
+  swaggerOptions: {
+    persistAuthorization: true,
+    displayRequestDuration: true,
+    filter: true
+  }
+};
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerOptions));
+
+// Endpoint para obtener la especificación OpenAPI en formato JSON
+app.get('/api-docs.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
 });
 
 // Si quisieras validar API Key globalmente, descomenta la siguiente línea:
