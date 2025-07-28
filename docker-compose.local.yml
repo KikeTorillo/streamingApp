@@ -19,7 +19,7 @@ services:
     networks:
       - lan
     ports:
-      - "${DB_PORT}:5432"
+      - "5432:5432"
 
   # 📊 PGADMIN - Administración de base de datos (opcional)
   pgadmin:

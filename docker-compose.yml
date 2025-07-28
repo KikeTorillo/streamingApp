@@ -19,7 +19,7 @@ services:
     networks:
       - lan
     ports:
-      - "${DB_PORT}:5432"
+      - "5433:5432"
 
   # 📊 PGADMIN - Administración de base de datos (opcional)
   pgadmin:
@@ -86,7 +86,7 @@ services:
       - IP_ADDRESS_MINIO=minio
       - NODE_ENV=${NODE_ENV}
       - DB_HOST=postgres
-      - DB_PORT=5432
+      - DB_PORT=${DB_PORT}
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
