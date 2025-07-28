@@ -107,151 +107,6 @@ pg-kik config                                      # Ver configuración
 - **Una responsabilidad**: Cada función/componente debe hacer una sola cosa bien
 - **Debugging fácil**: Si es difícil de debuggear, probablemente es muy complejo
 
-## Principio Mobile-First
-
-**REGLA FUNDAMENTAL**: DISEÑAR PRIMERO PARA MÓVIL
-- **OBLIGATORIO**: Comenzar siempre con estilos móvil como base
-- **OBLIGATORIO**: Usar `min-width` en media queries (mobile-first) NO `max-width` (desktop-first)
-- **OBLIGATORIO**: Touch targets mínimo 44px (4.4rem) para elementos interactivos
-- **OBLIGATORIO**: Optimizar para thumbs (pulgares) en pantallas pequeñas
-- **OBLIGATORIO**: Priorizar contenido esencial en móvil
-
-## Metodología de Resolución de Problemas CSS
-
-**PRINCIPIO FUNDAMENTAL**: Investigar → Entender → Solucionar Simple e Inteligente
-
-### Proceso de Resolución (Ejemplo: DataTable Scroll)
-
-#### 1. **INVESTIGACIÓN PROFUNDA**
-- **OBLIGATORIO**: Investigar la librería/framework antes de escribir CSS
-- **OBLIGATORIO**: Entender cómo funciona internamente (ej: TanStack Table)
-- **OBLIGATORIO**: Identificar la causa raíz, no solo los síntomas
-- **EJEMPLO**: TanStack Table aplica `style={{ width: header.getSize() }}` inline que sobrescribe CSS
-
-#### 2. **IDENTIFICAR EL PROBLEMA REAL**
-- **OBLIGATORIO**: Distinguir entre problemas de CSS vs configuración de librería
-- **OBLIGATORIO**: Verificar si hay estilos inline que sobrescriben
-- **OBLIGATORIO**: Revisar contenedores padre que puedan limitar
-- **EJEMPLO**: `overflow-x: hidden` en AdminLayout bloqueaba scroll del DataTable
-
-#### 3. **SOLUCIÓN SIMPLE E INTELIGENTE**
-- **PREFERIR**: Soluciones que trabajen CON la librería, no contra ella
-- **PREFERIR**: CSS inteligente vs fuerza bruta con `!important`
-- **PREFERIR**: Contenido natural + contenedor limitado vs anchos fijos
-- **EJEMPLO**: `max-width: 100vw` + `width: max-content` = scroll automático
-
-### Reglas de CSS Inteligente
-
-#### ✅ **HACER (Smart CSS)**
-```css
-/* Contenido natural + límites inteligentes */
-.wrapper {
-  max-width: 100vw; /* Limita a pantalla */
-}
-
-.content {
-  width: max-content; /* Respeta contenido natural */
-  min-width: 100%; /* Mínimo del contenedor */
-}
-```
-
-#### ❌ **EVITAR (Brute Force CSS)**
-```css
-/* Anchos fijos que rompen flexibilidad */
-.content {
-  width: 100rem !important; /* Demasiado rígido */
-  table-layout: fixed !important; /* Pierde adaptabilidad */
-}
-```
-
-### Metodología de Debugging
-
-#### 1. **Orden de Investigación**
-1. Revisar documentación de librería/framework
-2. Inspeccionar DOM para estilos inline inesperados
-3. Verificar contenedores padre (AdminLayout, etc.)
-4. Verificar viewport y meta tags
-5. Probar en dispositivos reales vs simulados
-
-#### 2. **Preguntas Clave**
-- ¿La librería está aplicando estilos que no esperamos?
-- ¿Hay un contenedor padre limitando el comportamiento?
-- ¿Estamos peleando contra el comportamiento natural?
-- ¿Podemos trabajar CON la librería en lugar de contra ella?
-
-#### 3. **Validación de Solución**
-- **OBLIGATORIO**: La solución debe funcionar en TODOS los casos (users, movies, series, etc.)
-- **OBLIGATORIO**: Debe ser mantenible y no frágil
-- **OBLIGATORIO**: Debe seguir principios mobile-first
-- **OBLIGATORIO**: Menos código CSS = mejor (simplicidad > complejidad)
-
-### Ejemplo de Éxito: DataTable Scroll
-```css
-/* ❌ ANTES: Fuerza bruta */
-.data-table__table {
-  width: 100rem !important; /* Rígido */
-  table-layout: fixed !important; /* Pierde flexibilidad */
-}
-
-/* ✅ DESPUÉS: Inteligente */
-.data-table {
-  max-width: 100vw; /* Límite inteligente */
-}
-
-.data-table__table {
-  width: max-content; /* Contenido natural */
-  min-width: 100%; /* Mínimo del contenedor */
-}
-```
-
-**Resultado**: Scroll automático cuando es necesario, tabla normal cuando no.
-
-### Reglas de CSS Mobile-First
-```css
-/* ✅ CORRECTO: Base móvil */
-.component {
-  /* Estilos móvil por defecto */
-  font-size: var(--font-size-sm);
-  padding: var(--space-sm);
-}
-
-/* ✅ CORRECTO: Tablet (min-width) */
-@media (min-width: 768px) {
-  .component {
-    font-size: var(--font-size-base);
-    padding: var(--space-md);
-  }
-}
-
-/* ✅ CORRECTO: Desktop (min-width) */
-@media (min-width: 1024px) {
-  .component {
-    font-size: var(--font-size-lg);
-    padding: var(--space-lg);
-  }
-}
-
-/* ❌ INCORRECTO: Desktop-first */
-@media (max-width: 767px) {
-  .component {
-    /* Esto es un parche, no mobile-first */
-  }
-}
-```
-
-### Breakpoints Estándar Mobile-First
-- **Base**: Móvil (320px - 767px) - ESTILOS POR DEFECTO
-- **Tablet**: `@media (min-width: 768px)` 
-- **Desktop**: `@media (min-width: 1024px)`
-- **Large Desktop**: `@media (min-width: 1200px)`
-
-### UX Mobile-First para Componentes
-- **DataTable**: Cards en móvil, tabla en desktop
-- **Navigation**: Hamburger menu en móvil, horizontal en desktop
-- **Forms**: Stack vertical en móvil, grid en desktop
-- **Modals**: Full-screen en móvil, centered en desktop
-
-
 ## Configuración de Entorno
 
 > **⚙️ Setup Detallado**: Ver [README.md](./readme.md#-configuración-inicial-rápida) para configuración completa de entornos
@@ -315,90 +170,6 @@ const preferences = {
 
 **❌ PROHIBIDO**: Usar snake_case en frontend o mixing de convenciones
 
-## Development Rules & Constraints
-
-### Regla de Consistencia Global
-- **OBLIGATORIO**: Buscar y revisar implementaciones existentes antes de escribir código nuevo
-- **OBLIGATORIO**: Usar exactamente los mismos patrones que componentes similares (hooks, estados, procesamiento)
-- **OBLIGATORIO**: Si hay diferencias entre componentes similares, normalizarlas para mantener consistencia
-- **EJEMPLO CRÍTICO**: CreatePages (Movie, Series, Episodes) deben usar mismos hooks, misma estructura, mismo flujo
-
-### Component Usage Rules
-- **MANDATORY**: Only use components that have Storybook stories when building UI
-- **MANDATORY**: Before using any component, verify it exists in Storybook by checking for a `.stories.jsx` file
-- **MANDATORY**: All new components MUST have Storybook stories before they can be used elsewhere
-- **MANDATORY**: SIEMPRE usar componentes del proyecto en lugar de elementos HTML nativos (usar Button en lugar de `<button>`, etc.)
-- **MANDATORY**: Proponer nuevos componentes cuando sea necesario en lugar de crear elementos HTML customizados
-- **FORBIDDEN**: Using third-party UI libraries or components not documented in Storybook
-- **FORBIDDEN**: Creating custom styled HTML elements instead of using existing components
-- **FORBIDDEN**: Usar elementos HTML nativos cuando existe un componente equivalente (button, input, select, etc.)
-
-### Code Quality Enforcement
-- **MANDATORY**: Run `npm run lint` before any commit
-- **MANDATORY**: All components must follow atomic design pattern
-- **MANDATORY**: Use named exports only: `export { ComponentName }`
-- **MANDATORY**: CSS variables must be used: `var(--color-primary)`, `var(--space-md)`
-- **FORBIDDEN**: Inline styles or style objects in JSX
-- **FORBIDDEN**: Default exports
-
-### Component Development Process
-1. Create component in appropriate atomic design folder
-2. Create `.jsx`, `.css`, and `.stories.jsx` files
-3. Add component to Storybook with proper stories
-4. Test component in Storybook before using in pages
-5. Only then use component in other parts of the application
-
-### Pre-Development Checks
-- Always check existing components in `frontend/app/src/components/` before creating new ones
-- Review Storybook at http://localhost:6006 to see available components
-- Verify component has required stories before using it
-
-### Service Layer Rules
-- **MANDATORY**: Organize services by domain in separate folders (Auth, Movies, Users, etc.)
-- **MANDATORY**: Use `actionResourceService.js` naming pattern (e.g., `createMovieService.js`)
-- **MANDATORY**: All services must return structured format: `{ success, data, error, message }`
-- **MANDATORY**: Include proper error handling with user-friendly messages
-- **FORBIDDEN**: Direct API calls from components - always use service layer
-
-### Context & State Management Rules
-- **MANDATORY**: Use custom hooks like `useAuth()`, `useUsers()` with context validation
-- **MANDATORY**: Include loading states for all async operations
-- **MANDATORY**: Separate contexts by domain (UserAuthContext, UsersContext, etc.)
-- **FORBIDDEN**: Using contexts without proper validation hooks
-
-### CSS & Styling Rules
-- **MANDATORY**: Use BEM methodology: `.block__element--modifier`
-- **MANDATORY**: CSS classes must start with component name as prefix
-- **MANDATORY**: Use design system variables for all colors, spacing, and sizes
-- **FORBIDDEN**: Hardcoded values in CSS - use `var(--variable-name)`
-- **FORBIDDEN**: Inline styles or style objects in JSX
-
-### Import/Export Organization
-- **MANDATORY**: Import order: React first → Components by atomic level → CSS last
-- **MANDATORY**: Use function declarations followed by named exports
-- **MANDATORY**: Group imports logically with blank lines between groups
-- **FORBIDDEN**: Default exports anywhere in the project
-
-### File & Folder Structure Rules
-- **MANDATORY**: Component folder structure: `ComponentName/ComponentName.jsx`, `.css`, `.stories.jsx`
-- **MANDATORY**: Use PascalCase for component folders and files
-- **MANDATORY**: Admin pages must end with `Page` suffix (e.g., `UsersListPage`)
-- **MANDATORY**: Use absolute paths starting from project root
-- **FORBIDDEN**: Relative paths for imports
-
-### Backend API Rules
-- **MANDATORY**: Follow RESTful conventions with standard HTTP methods
-- **MANDATORY**: Middleware order: Authentication → Authorization → Validation → Handler
-- **MANDATORY**: All routes must use `authenticateJwt` except public endpoints
-- **MANDATORY**: Use `checkRoles` middleware for admin routes
-- **MANDATORY**: Include JSDoc documentation for all endpoints
-
-### Error Handling Standards
-- **MANDATORY**: Use structured error responses with consistent format
-- **MANDATORY**: Convert technical errors to user-readable messages
-- **MANDATORY**: Handle common HTTP status codes (400, 401, 403, 409, 413, 500)
-- **FORBIDDEN**: Exposing raw error messages to users
-
 ## Principio de "Crear vs Usar" (Build vs Buy)
 
 ### Framework de Evaluación para Dependencias Externas
@@ -460,3 +231,180 @@ No Crítico    │  Usar   │ Crear
 2. **Optimización**: Extraer design system reutilizable
 3. **Maduración**: Sistema de componentes entre proyectos
 4. **Especialización**: Componentes custom solo cuando sea necesario
+
+## Frontend Specialist - Contexto Específico del Proyecto
+
+### Contextos React Disponibles
+- **AuthContext**: Autenticación (user, isAuthenticated, login/logout)
+- **UserContext**: Gestión de usuarios CRUD
+- **MoviesContext**: Gestión de películas
+- **SeriesContext**: Gestión de series  
+- **EpisodesContext**: Gestión de episodios
+- **CategoriesContext**: Gestión de categorías
+- **AlertContext**: Sistema de notificaciones
+- **ThemeContext**: Tema claro/oscuro
+
+### Servicios por Dominio (Patrón actionResourceService.js)
+- **Auth/**: loginService, logoutService, registrationService, recoveryService
+- **Users/**: getUsersService, createUserService, updateUserService, deleteUserService
+- **Movies/**: getMoviesService, createMovieService, updateMovieService, deleteMovieService
+- **Series/**: getSeriesService, createSeriesService, updateSeriesService, deleteSeriesService
+- **Episodes/**: getEpisodesService, createEpisodeService, updateEpisodeService, deleteEpisodeService
+- **Categories/**: getCategoriesService, createCategoryService, updateCategoryService, deleteCategoryService
+- **UserPreferences/**: getUserPreferencesService, updateWatchProgressService
+
+### Hooks Personalizados Disponibles
+- **useAuth()**: Hook principal de autenticación
+- **useUsers()**: CRUD completo de usuarios
+- **useMovies()**: CRUD completo de películas
+- **useSeries()**: CRUD completo de series
+- **useEpisodes()**: CRUD completo de episodios
+- **useCategories()**: CRUD completo de categorías
+- **useAlert()**: Sistema de notificaciones
+
+### Patrones de Páginas CRUD Existentes
+- **UsersListPage + UsersCreatePage**: Patrón maestro para CRUD
+- **MoviesListPage + MoviesCreatePage**: Sigue mismo patrón
+- **SeriesListPage + SeriesCreatePage**: Consistencia mantenida
+- **EpisodesListPage + EpisodesCreatePage**: Mismo flujo
+
+### Componentes Storybook Verificados
+**OBLIGATORIO**: Solo usar componentes con .stories.jsx:
+- Verificar en http://localhost:6006 antes de usar cualquier componente
+- Todos los componentes nuevos DEBEN tener stories antes de ser usables
+
+### Para Frontend Specialist - Flujo de Trabajo
+
+1. **ANTES de crear componentes**: Buscar patrones similares existentes
+2. **ANTES de usar contextos**: Verificar hooks disponibles (useAuth, useUsers, etc.)
+3. **ANTES de crear servicios**: Revisar servicios existentes en misma carpeta
+4. **ANTES de definir estilos**: Usar variables CSS del design system
+
+### Ejemplos de Consistencia Requerida
+- Si trabajas en UsersCreatePage, revisar MoviesCreatePage y SeriesCreatePage
+- Si creates un nuevo contexto, seguir patrón de AuthContext y UserContext
+- Si agregas un servicio, seguir patrón actionResourceService.js
+
+## Estructura Real de Archivos del Proyecto
+
+### Páginas Admin (PascalCase con mayúsculas)
+**IMPORTANTE**: Las rutas usan PascalCase, NO minúsculas
+- `/frontend/app/src/Pages/Admin/Users/UsersListPage/UsersListPage.jsx`
+- `/frontend/app/src/Pages/Admin/Users/UsersCreatePage/UsersCreatePage.jsx`
+- `/frontend/app/src/Pages/Admin/Movies/MoviesListPage/MoviesListPage.jsx`
+- `/frontend/app/src/Pages/Admin/Movies/MoviesCreatePage/MoviesCreatePage.jsx`
+- `/frontend/app/src/Pages/Admin/Series/SeriesListPage/SeriesListPage.jsx`
+- `/frontend/app/src/Pages/Admin/Series/SeriesCreatePage/SeriesCreatePage.jsx`
+- `/frontend/app/src/Pages/Admin/Episodes/EpisodesListPage/EpisodesListPage.jsx`
+- `/frontend/app/src/Pages/Admin/Episodes/EpisodesCreatePage/EpisodesCreatePage.jsx`
+- `/frontend/app/src/Pages/Admin/Categories/CategoriesListPage/CategoriesListPage.jsx`
+- `/frontend/app/src/Pages/Admin/Categories/CategoriesCreatePage/CategoriesCreatePage.jsx`
+
+### Contextos (en subcarpeta app/)
+- `/frontend/app/src/app/context/AuthContext.jsx`
+- `/frontend/app/src/app/context/UserContext.jsx`
+- `/frontend/app/src/app/context/MoviesContext.jsx`
+- `/frontend/app/src/app/context/SeriesContext.jsx`
+- `/frontend/app/src/app/context/EpisodesContext.jsx`
+- `/frontend/app/src/app/context/CategoriesContext.jsx`
+- `/frontend/app/src/app/context/AlertContext.jsx`
+- `/frontend/app/src/app/context/ThemeContext.jsx`
+
+### Hooks (wrappers de contextos)
+- `/frontend/app/src/hooks/useAuth.js`
+- `/frontend/app/src/hooks/useUsers.js`
+- `/frontend/app/src/hooks/useMovies.js`
+- `/frontend/app/src/hooks/useSeries.js`
+- `/frontend/app/src/hooks/useEpisodes.js`
+- `/frontend/app/src/hooks/useCategories.js`
+
+### Servicios (organizados por dominio)
+- `/frontend/app/src/services/Auth/loginService.js`
+- `/frontend/app/src/services/Users/getUsersService.js`
+- `/frontend/app/src/services/Movies/getMoviesService.js`
+- `/frontend/app/src/services/Series/getSeriesService.js`
+- `/frontend/app/src/services/Episodes/getEpisodesService.js`
+- `/frontend/app/src/services/Categories/getCategoriesService.js`
+
+### Componentes (Atomic Design)
+- `/frontend/app/src/components/atoms/Button/Button.jsx`
+- `/frontend/app/src/components/molecules/DynamicForm/DynamicForm.jsx`
+- `/frontend/app/src/components/organisms/DataTable/DataTable.jsx`
+- `/frontend/app/src/components/templates/AdminLayout/AdminLayout.jsx`
+
+## Metodología de Exploración para Frontend Specialist
+
+### PASO 1: EXPLORAR ANTES DE MODIFICAR
+**OBLIGATORIO**: Usar herramientas de exploración antes de asumir rutas
+
+```bash
+# Encontrar archivos por patrón
+Glob pattern="**/*EpisodesListPage*"
+Glob pattern="**/*Context*"
+
+# Buscar por contenido específico  
+Grep pattern="useEpisodes" path="frontend/app/src"
+Grep pattern="selectedSerieId" output_mode="files_with_matches"
+```
+
+### PASO 2: VERIFICAR ESTRUCTURA REAL
+1. **Siempre usar Glob primero** para encontrar archivos existentes
+2. **Leer archivos completos** para entender la implementación actual
+3. **Identificar patrones** en archivos similares (Movies, Series, Users)
+4. **Verificar imports** para confirmar rutas reales
+
+### PASO 3: IMPLEMENTAR SIGUIENDO PATRONES
+1. **Buscar implementaciones similares** en otros contextos
+2. **Mantener consistencia** con patrones existentes
+3. **Verificar que los cambios funcionan** con la estructura real
+
+### Ejemplos de Exploración Correcta
+
+#### ✅ **CORRECTO - Explorar primero:**
+```bash
+Glob pattern="**/*EpisodesContext*"
+# Resultado: /frontend/app/src/app/context/EpisodesContext.jsx
+
+Read path="/frontend/app/src/app/context/EpisodesContext.jsx"
+# Verificar estructura antes de modificar
+```
+
+#### ❌ **INCORRECTO - Asumir rutas:**
+```bash
+Edit path="/pages/admin/episodes/EpisodesListPage.jsx"
+# Error: archivo no existe en esa ruta
+```
+
+### Rutas Comunes que Causan Errores
+- ❌ `/pages/` → ✅ `/Pages/` (PascalCase)
+- ❌ `/context/` → ✅ `/app/context/` (subcarpeta app)
+- ❌ `/hooks/` → ✅ `/hooks/` (correcto, pero verificar imports)
+- ❌ Minúsculas → ✅ PascalCase en nombres de componentes
+
+## Compatibilidad Móvil y Progressive Web App (PWA)
+
+### Mobile-First Design Principles
+- **REGLA FUNDAMENTAL**: Diseñar primero para móvil
+- **Media Queries**: Usar `min-width` (mobile-first) NO `max-width` (desktop-first)
+- **Touch Targets**: Mínimo 44px (4.4rem) para elementos interactivos
+- **Breakpoints**: Base móvil → Tablet (768px) → Desktop (1024px) → Large (1200px)
+
+### Progressive Web App (PWA) Implementation
+- **Service Workers**: Funcionamiento offline y cache inteligente
+- **Web App Manifest**: Configuración para instalación como app nativa
+- **HTTPS obligatorio**: Service Workers requieren conexión segura
+- **Touch Events**: Soporte para gestos táctiles (swipe, pinch, tap)
+- **App-like Experience**: Navegación fluida sin recargas de página
+
+### Mobile Browser Compatibility
+- **iOS Safari**: Limitaciones específicas de WebKit móvil
+- **Android Chrome**: Soporte completo de estándares web modernos
+- **Samsung Internet**: Consideraciones para dispositivos Samsung
+- **Cross-Platform**: Feature detection, polyfills, graceful degradation
+
+### Mobile Performance & UX
+- **Touch-Friendly**: Optimizar para thumbs en pantallas pequeñas
+- **Fast Loading**: Tiempo de carga inicial < 3 segundos
+- **Lazy Loading**: Cargar contenido bajo demanda
+- **Battery Optimization**: Minimizar consumo en animaciones
+- **Responsive Components**: DataTable → Cards, Navigation → Hamburger
