@@ -8,41 +8,76 @@
  * - Logger estructurado para debugging
  * - Validaciones mejoradas con contexto
  * - Manejo de errores homologado
+ * - Sistema centralizado de logs heredado de BaseService
  */
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 
-// Sistema de errores y logging mejorado
+// Sistema centralizado de errores y logging
+const BaseService = require('./BaseService');
 const ErrorFactory = require('../utils/errors/ErrorFactory');
-const logger = require('../utils/logging/Logger');
 const { config } = require('../config/config');
 
 // Servicios
 const UserService = require('./usersService');
 const service = new UserService();
 
-class AuthService {
+/**
+ * Clase que gestiona las operaciones de autenticación del sistema.
+ * Extiende BaseService para usar el sistema centralizado de errores y logging.
+ */
+class AuthService extends BaseService {
+  constructor() {
+    super('AuthService'); // Inicializar BaseService con nombre del servicio
+    
+    this.logger.info('AuthService inicializado correctamente');
+  }
   /**
    * Genera un token JWT a partir de los datos del usuario.
    * @param {Object} user - Objeto de usuario que contiene `id` y `role`.
    * @returns {Object} Un objeto con el payload y el token generado.
    */
   signToken(user) {
-    const payload = {
-      sub: user.id, // Identificador único del usuario
-      role: user.role, // Rol del usuario
-      userName: user.user_name, // Nombre de usuario para mostrar en UI
-    };
-    // Genera el token JWT usando la clave secreta y el payload
-    const token = jwt.sign(
-      payload,
-      config.jwtSecret
-      // Opcionalmente, se puede añadir una expiración (ej., '1h')
-      //{ expiresIn: '1h' }
-    );
-    return { payload, token }; // Retorna tanto el payload como el token
+    try {
+      this.logger.debug('Generando token JWT', { 
+        userId: user.id, 
+        userName: user.user_name, 
+        role: user.role 
+      });
+      
+      const payload = {
+        sub: user.id, // Identificador único del usuario
+        role: user.role, // Rol del usuario
+        userName: user.user_name, // Nombre de usuario para mostrar en UI
+      };
+      
+      // Genera el token JWT usando la clave secreta y el payload
+      const token = jwt.sign(
+        payload,
+        config.jwtSecret
+        // Opcionalmente, se puede añadir una expiración (ej., '1h')
+        //{ expiresIn: '1h' }
+      );
+      
+      this.logger.info('Token JWT generado exitosamente', { 
+        userId: user.id, 
+        userName: user.user_name 
+      });
+      
+      return { payload, token }; // Retorna tanto el payload como el token
+    } catch (error) {
+      this.logger.error('Error al generar token JWT', { 
+        userId: user.id,
+        userName: user.user_name,
+        error: error.message 
+      });
+      throw ErrorFactory.internal('AUTH', 'TOKEN_GENERATION_FAILED', {
+        operation: 'sign_token',
+        userId: user.id
+      });
+    }
   }
 
   /**
@@ -53,40 +88,44 @@ class AuthService {
    * @throws {Error} Error si el usuario no existe o la contraseña es incorrecta
    */
   async getUser(userName, password) {
-    const authLogger = logger.child({ operation: 'user_authentication', userName });
-    
     try {
-      authLogger.info('Iniciando proceso de autenticación de usuario');
+      this.logger.info('Iniciando proceso de autenticación de usuario', { userName });
       
       // Buscar usuario por nombre de usuario
       const user = await service.findByUserName(userName);
       if (!user) {
-        authLogger.warn('Intento de login con usuario inexistente', { userName });
+        this.logger.warn('Intento de login con usuario inexistente', { userName });
         throw ErrorFactory.unauthorized('USER_NOT_FOUND', { userName });
       }
+
+      this.logger.debug('Usuario encontrado, verificando contraseña', { 
+        userId: user.id, 
+        userName 
+      });
 
       // Verificar contraseña
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-        authLogger.warn('Intento de login con contraseña incorrecta', { userId: user.id, userName });
+        this.logger.warn('Intento de login con contraseña incorrecta', { 
+          userId: user.id, 
+          userName 
+        });
         
-        // Log de seguridad por intento fallido
-        logger.security('failed_login_attempt', {
+        // Log de seguridad por intento fallido usando el logger de BaseService
+        this.logger.error('Intento de login fallido - contraseña incorrecta', {
           userId: user.id,
           userName,
-          ip: 'unknown', // Se puede obtener del request en el controller
-          reason: 'invalid_password'
+          reason: 'invalid_password',
+          operation: 'user_authentication'
         });
         
         throw ErrorFactory.unauthorized('INVALID_PASSWORD', { userName });
       }
 
       // Login exitoso
-      authLogger.info('Autenticación exitosa', { userId: user.id });
-      logger.security('successful_login', {
-        userId: user.id,
-        userName,
-        loginTime: new Date().toISOString()
+      this.logger.info('Autenticación exitosa', { 
+        userId: user.id, 
+        userName: user.user_name 
       });
 
       // Limpiar datos sensibles
@@ -102,8 +141,14 @@ class AuthService {
       }
       
       // Para errores inesperados, crear error interno
-      authLogger.error('Error inesperado durante autenticación', error);
-      throw ErrorFactory.internal('USER_AUTHENTICATION', error, { userName });
+      this.logger.error('Error inesperado durante autenticación', { 
+        userName,
+        error: error.message 
+      });
+      throw ErrorFactory.internal('AUTH', 'USER_AUTHENTICATION_FAILED', { 
+        operation: 'user_authentication',
+        userName 
+      });
     }
   }
 
@@ -114,17 +159,20 @@ class AuthService {
    * @throws {Error} Error si el usuario no existe o si falla el envío
    */
   async sendRecoveryLink(email) {
-    const recoveryLogger = logger.child({ operation: 'password_recovery', email });
-    
     try {
-      recoveryLogger.info('Iniciando proceso de recuperación de contraseña');
+      this.logger.info('Iniciando proceso de recuperación de contraseña', { email });
       
       // Buscar usuario por email
       const user = await service.findByEmail(email);
       if (!user) {
-        recoveryLogger.warn('Solicitud de recuperación para email inexistente', { email });
+        this.logger.warn('Solicitud de recuperación para email inexistente', { email });
         throw ErrorFactory.unauthorized('USER_NOT_FOUND', { email });
       }
+
+      this.logger.debug('Usuario encontrado para recuperación', { 
+        userId: user.id, 
+        email: user.email 
+      });
 
       // Generar token de recuperación con expiración
       const payload = { sub: user.id, purpose: 'password_recovery' };
@@ -135,7 +183,10 @@ class AuthService {
       
       // Guardar token en la base de datos
       await service.update(user.id, { recovery_token: token });
-      recoveryLogger.info('Token de recuperación generado y guardado', { userId: user.id });
+      this.logger.debug('Token de recuperación generado y guardado', { 
+        userId: user.id,
+        tokenExpiry: '15min' 
+      });
 
       // Preparar correo de recuperación
       const mail = {
@@ -163,17 +214,16 @@ class AuthService {
       };
 
       // Enviar correo
-      const emailResult = await this.sendEmail(mail);
-      recoveryLogger.info('Correo de recuperación enviado exitosamente', { 
-        userId: user.id, 
+      this.logger.debug('Enviando correo de recuperación', { 
+        userId: user.id,
         email: user.email 
       });
-
-      // Log de seguridad
-      logger.security('password_recovery_requested', {
-        userId: user.id,
-        email: user.email,
-        tokenExpiry: '15min'
+      
+      const emailResult = await this.sendEmail(mail);
+      
+      this.logger.info('Correo de recuperación enviado exitosamente', { 
+        userId: user.id, 
+        email: user.email 
       });
 
       return { 
@@ -189,8 +239,14 @@ class AuthService {
       }
       
       // Para errores inesperados (probablemente del servicio de email)
-      recoveryLogger.error('Error durante envío de recuperación', error);
-      throw ErrorFactory.internal('PASSWORD_RECOVERY', error, { email });
+      this.logger.error('Error durante envío de recuperación', { 
+        email,
+        error: error.message 
+      });
+      throw ErrorFactory.internal('AUTH', 'PASSWORD_RECOVERY_FAILED', { 
+        operation: 'send_recovery_link',
+        email 
+      });
     }
   }
 
@@ -202,14 +258,67 @@ class AuthService {
    * @throws {Error} Error si el token no es válido o no coincide.
    */
   async changePassword(token, newPassword) {
-    const payload = jwt.verify(token, config.jwtSecret); // Verifica el token
-    const user = await service.findOne(payload.sub); // Busca al usuario por ID
-    if (user.recovery_token !== token) {
-      throw boom.unauthorized('Token inválido o expirado'); // Lanza error 401 si no coincide
+    try {
+      this.logger.info('Iniciando proceso de cambio de contraseña');
+      
+      // Verificar el token JWT
+      this.logger.debug('Verificando token JWT de recuperación');
+      const payload = jwt.verify(token, config.jwtSecret);
+      
+      // Buscar al usuario por ID
+      const user = await service.findOne(payload.sub);
+      
+      this.logger.debug('Usuario encontrado para cambio de contraseña', { 
+        userId: user.id,
+        userName: user.user_name 
+      });
+      
+      // Validar que el token coincida con el almacenado
+      if (user.recovery_token !== token) {
+        this.logger.warn('Intento de cambio con token inválido o expirado', { 
+          userId: user.id,
+          userName: user.user_name 
+        });
+        throw ErrorFactory.unauthorized('INVALID_TOKEN', { 
+          userId: user.id,
+          operation: 'change_password' 
+        });
+      }
+      
+      // Encriptar la nueva contraseña
+      this.logger.debug('Encriptando nueva contraseña', { userId: user.id });
+      const hash = await bcrypt.hash(newPassword, 10);
+      
+      // Actualizar la contraseña y limpiar el token
+      await service.update(user.id, { recovery_token: null, password: hash });
+      
+      this.logger.info('Contraseña cambiada exitosamente', { 
+        userId: user.id,
+        userName: user.user_name 
+      });
+      
+      return { message: 'Contraseña cambiada exitosamente' };
+      
+    } catch (error) {
+      // Si es un error de JWT o nuestro sistema, re-lanzarlo
+      if (error.isBoom || error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
+        if (error.name === 'TokenExpiredError') {
+          this.logger.warn('Intento de cambio con token expirado');
+          throw ErrorFactory.unauthorized('TOKEN_EXPIRED', { 
+            operation: 'change_password' 
+          });
+        }
+        throw error;
+      }
+      
+      // Para errores inesperados
+      this.logger.error('Error inesperado durante cambio de contraseña', { 
+        error: error.message 
+      });
+      throw ErrorFactory.internal('AUTH', 'PASSWORD_CHANGE_FAILED', { 
+        operation: 'change_password' 
+      });
     }
-    const hash = await bcrypt.hash(newPassword, 10); // Encripta la nueva contraseña
-    await service.update(user.id, { recovery_token: null, password: hash }); // Actualiza la contraseña
-    return { message: 'Contraseña cambiada exitosamente' }; // Retorna mensaje de éxito
   }
 
   /**
@@ -218,17 +327,49 @@ class AuthService {
    * @returns {Object} Confirmación de envío del correo.
    */
   async sendEmail(infoMail) {
-    const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com', // Servidor SMTP
-      port: 465, // Puerto seguro
-      secure: true, // Habilita SSL/TLS
-      auth: {
-        user: config.email, // Correo del remitente
-        pass: config.passEmail, // Contraseña del remitente
-      },
-    });
-    await transporter.sendMail(infoMail); // Envía el correo
-    return { message: 'Correo enviado exitosamente' }; // Retorna confirmación
+    try {
+      this.logger.debug('Configurando transporter de email', { 
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true 
+      });
+      
+      const transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com', // Servidor SMTP
+        port: 465, // Puerto seguro
+        secure: true, // Habilita SSL/TLS
+        auth: {
+          user: config.email, // Correo del remitente
+          pass: config.passEmail, // Contraseña del remitente
+        },
+      });
+      
+      this.logger.debug('Enviando correo electrónico', { 
+        to: infoMail.to,
+        subject: infoMail.subject 
+      });
+      
+      const result = await transporter.sendMail(infoMail);
+      
+      this.logger.info('Correo enviado exitosamente', { 
+        to: infoMail.to,
+        subject: infoMail.subject,
+        messageId: result.messageId 
+      });
+      
+      return { message: 'Correo enviado exitosamente' };
+      
+    } catch (error) {
+      this.logger.error('Error al enviar correo electrónico', { 
+        to: infoMail.to,
+        subject: infoMail.subject,
+        error: error.message 
+      });
+      throw ErrorFactory.internal('AUTH', 'EMAIL_SEND_FAILED', { 
+        operation: 'send_email',
+        recipient: infoMail.to 
+      });
+    }
   }
 
   /**
@@ -236,10 +377,56 @@ class AuthService {
    * @param {Object} body - Datos del usuario a registrar.
    * @returns {Object} Mensaje de confirmación.
    */
+  async registerUser(body) {
+    try {
+      this.logger.info('Iniciando registro de nuevo usuario', { 
+        userName: body.userName,
+        email: body.email 
+      });
+      
+      // Asignar rol de usuario normal por defecto
+      body.roleId = 2;
+      
+      this.logger.debug('Delegando creación a UserService', { 
+        userName: body.userName,
+        roleId: body.roleId 
+      });
+      
+      const user = await service.create(body);
+      
+      this.logger.info('Usuario registrado exitosamente', { 
+        userId: user.id,
+        userName: user.user_name,
+        email: user.email 
+      });
+      
+      return { message: 'Usuario registrado exitosamente' };
+      
+    } catch (error) {
+      // Si es un error de nuestro sistema (como duplicate), re-lanzarlo
+      if (error.isBoom) {
+        throw error;
+      }
+      
+      // Para errores inesperados
+      this.logger.error('Error inesperado durante registro de usuario', { 
+        userName: body.userName,
+        email: body.email,
+        error: error.message 
+      });
+      throw ErrorFactory.internal('AUTH', 'USER_REGISTRATION_FAILED', { 
+        operation: 'register_user',
+        userName: body.userName 
+      });
+    }
+  }
+  
+  // Mantener el método anterior para compatibilidad hacia atrás
   async regiterUser(body) {
-    body.roleId = 2;
-    const user = await service.create(body); // Crea el usuario en la base de datos
-    return { message: 'Usuario registrado exitosamente' }; // Retorna mensaje de éxito
+    this.logger.warn('Método regiterUser deprecado, usando registerUser', { 
+      userName: body.userName 
+    });
+    return this.registerUser(body);
   }
 }
 
