@@ -1,10 +1,13 @@
-// ===== MAIN PAGE - CAMBIO BOTÓN ADMIN =====
+// ===== MAIN PAGE - REFACTORIZADA CON CONTEXTOS =====
 // src/Pages/MainPage/MainPage.jsx
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMovieNavigation } from '../../hooks/useMovieNavigation';
 import { useAlertContext } from '../../app/context/AlertContext';
+import { useMovies } from '../../app/context/MoviesContext';
+import { useSeries } from '../../app/context/SeriesContext';
+import { useCategories } from '../../app/context/CategoriesContext';
 import { transformMovieData } from '../../utils/movieDataTransformer';
 import { Button } from '../../components/atoms/Button/Button';
 import { PageLayout } from '../../components/templates/PageLayout/PageLayout';
@@ -13,40 +16,23 @@ import { FilterBar } from '../../components/molecules/FilterBar/FilterBar';
 import { ContentSection } from '../../components/molecules/ContentSection/ContentSection';
 import { ContentCard } from '../../components/molecules/ContentCard/ContentCard';
 import { EmptyState } from '../../components/molecules/EmptyState/EmptyState';
-
-// Servicios
-import { getMoviesService } from '../../services/Movies/getMoviesService';
-import { searchMoviesService } from '../../services/Movies/searchMoviesService';
-import { getSeriesService } from '../../services/Series/getSeriesService';
-import { searchSeriesService } from '../../services/Series/searchSeriesService';
-import { getCategoriesService } from '../../services/Categories/getCategoriesService';
 import { logoutService } from '../../services/Auth/logoutService';
 
 function MainPage() {
     const navigate = useNavigate();
     const { handleContentCardClick, handleContentCardPlay } = useMovieNavigation();
     const { showPermissionError, showConfirm } = useAlertContext();
+    
+    // ✅ CONTEXTOS - Usar datos centralizados en lugar de llamadas directas
+    const { movies, loading: loadingMovies, error: moviesError, loadMovies } = useMovies();
+    const { series, loading: loadingSeries, error: seriesError, loadSeries } = useSeries();
+    const { categories, loading: loadingCategories, error: categoriesError, loadCategories } = useCategories();
 
-    // Estados
+    // Estados locales reducidos
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [user, setUser] = useState(null);
-
-    // Estados de datos
-    const [movies, setMovies] = useState([]);
-    const [series, setSeries] = useState([]);
-    const [categories, setCategories] = useState([]);
-
-    // Estados de carga
-    const [loadingMovies, setLoadingMovies] = useState(true);
-    const [loadingSeries, setLoadingSeries] = useState(true);
-    const [loadingCategories, setLoadingCategories] = useState(true);
     const [searching, setSearching] = useState(false);
-
-    // Estados de error
-    const [moviesError, setMoviesError] = useState(null);
-    const [seriesError, setSeriesError] = useState(null);
-    const [categoriesError, setCategoriesError] = useState(null);
 
     // ===== VERIFICAR AUTENTICACIÓN =====
     useEffect(() => {
@@ -174,144 +160,90 @@ function MainPage() {
     };
 
     /**
-     * Reintentar carga de películas
+     * Reintentar carga usando contextos
      */
     const handleRetryMovies = () => {
-        setMoviesError(null);
-        loadMovies();
+        console.log('🔄 [MainPage] Reintentando carga de películas');
+        loadMovies(); // Método del contexto
+    };
+
+    const handleRetrySeries = () => {
+        console.log('🔄 [MainPage] Reintentando carga de series');
+        loadSeries(); // Método del contexto
+    };
+
+    // ===== FUNCIONES DE TRANSFORMACIÓN DE DATOS =====
+    
+    /**
+     * Mapear movies del contexto para mostrar en UI
+     */
+    const getMappedMovies = () => {
+        if (!movies || !Array.isArray(movies)) return [];
+        return movies.map((movie) => transformMovieData(movie, getMappedCategories()));
+    };
+    
+    /**
+     * Mapear series del contexto para mostrar en UI
+     */
+    const getMappedSeries = () => {
+        if (!series || !Array.isArray(series)) return [];
+        return series.map(serie => ({
+            id: serie.id,
+            title: serie.title,
+            category: serie.category || 'Sin categoría',
+            categoryId: serie.categoryId,
+            year: serie.releaseYear || serie.year || new Date().getFullYear(),
+            cover: `${import.meta.env.VITE_CDN_URL || 'http://localhost:8082'}/covers/${serie.cover_image}/cover.jpg`,
+            type: 'series',
+            rating: serie.rating || 0,
+            seasons: serie.seasons || 1
+        }));
     };
 
     /**
-     * Reintentar carga de series
+     * Mapear categorías del contexto al formato que espera FilterBar
      */
-    const handleRetrySeries = () => {
-        setSeriesError(null);
-        loadSeries();
+    const getMappedCategories = () => {
+        if (!categories || !Array.isArray(categories)) return [{ value: 'all', label: 'Todas', icon: '🎬' }];
+        
+        return [
+            { value: 'all', label: 'Todas', icon: '🎬' },
+            ...categories.map(cat => ({
+                value: cat.id ? cat.id.toString() : 'unknown',
+                label: cat.name || 'Sin nombre',
+                icon: getCategoryIcon(cat.name),
+                id: cat.id
+            }))
+        ];
     };
 
-    // ===== FUNCIONES DE DATOS =====
-
-    const loadMovies = async () => {
-        try {
-            setLoadingMovies(true);
-            setMoviesError(null);
-            const response = await getMoviesService();
-
-            console.log('🎬 Respuesta movies:', response); // Debug
-
-            const movieData = Array.isArray(response) ? response : response?.data || [];
-            const mappedMovies = movieData.map((movie) =>
-                transformMovieData(movie, categories)
-            );
-
-            console.log('🎬 Movies mapeadas:', mappedMovies); // Debug
-            setMovies(mappedMovies);
-        } catch (error) {
-            console.error('Error loading movies:', error);
-            setMoviesError('Error al cargar películas');
-        } finally {
-            setLoadingMovies(false);
-        }
-    };
-
-    const loadSeries = async () => {
-        try {
-            setLoadingSeries(true);
-            setSeriesError(null);
-            const response = await getSeriesService();
-
-            console.log('📺 Respuesta series:', response); // Debug
-
-            const seriesData = Array.isArray(response) ? response : response?.data || [];
-            const mappedSeries = seriesData.map(serie => ({
-                id: serie.id,
-                title: serie.title,
-                category: serie.category || 'Sin categoría', // Para mostrar
-                categoryId: serie.categoryId, // Para filtrar
-                year: serie.releaseYear || serie.year || new Date().getFullYear(),
-                cover: `${import.meta.env.VITE_CDN_URL || 'http://localhost:8082'}/covers/${serie.cover_image}/cover.jpg`,
-                type: 'series',
-                rating: serie.rating || 0,
-                seasons: serie.seasons || 1
-            }));
-
-            console.log('📺 Series mapeadas:', mappedSeries); // Debug
-            setSeries(mappedSeries);
-        } catch (error) {
-            console.error('Error loading series:', error);
-            setSeriesError('Error al cargar series');
-        } finally {
-            setLoadingSeries(false);
-        }
-    };
-
-    const loadCategories = async () => {
-        try {
-            setLoadingCategories(true);
-            setCategoriesError(null);
-            const response = await getCategoriesService();
-
-            console.log('📋 Respuesta categorías:', response); // Debug
-
-            const categoryData = Array.isArray(response) ? response : response?.data || [];
-
-            // ✅ CORREGIDO: Mapear al formato que espera FilterBar
-            const mappedCategories = [
-                { value: 'all', label: 'Todas', icon: '🎬' }, // Categoría por defecto
-                ...categoryData.map(cat => ({
-                    value: cat.id ? cat.id.toString() : 'unknown', // FilterBar espera string
-                    label: cat.name || 'Sin nombre',
-                    icon: getCategoryIcon(cat.name),
-                    id: cat.id // Mantener ID original para filtros
-                }))
-            ];
-
-            console.log('📋 Categorías mapeadas:', mappedCategories); // Debug
-            setCategories(mappedCategories);
-
-        } catch (error) {
-            console.error('Error loading categories:', error);
-            setCategoriesError('Error al cargar categorías');
-
-            // ✅ FALLBACK: Categorías por defecto si falla
-            setCategories([
-                { value: 'all', label: 'Todas', icon: '🎬' },
-                { value: '1', label: 'Acción', icon: '💥' },
-                { value: '2', label: 'Drama', icon: '🎭' },
-                { value: '3', label: 'Comedia', icon: '😂' }
-            ]);
-        } finally {
-            setLoadingCategories(false);
-        }
-    };
-
-    // ===== EFECTOS =====
+    // ===== INICIALIZAR CARGA DE DATOS =====
     useEffect(() => {
         if (user) {
-            loadMovies();
-            loadSeries();
-            loadCategories();
+            console.log('🔄 [MainPage] Usuario autenticado, iniciando carga de datos desde contextos');
+            // Disparar carga usando métodos de los contextos
+            loadCategories(); // Necesario para FilterBar
+            loadMovies();     // Solo se dispara si no hay datos
+            loadSeries();     // Solo se dispara si no hay datos
         }
-    }, [user]);
+    }, [user]); // Solo depender del usuario, no de las funciones
 
-    // ===== FILTRADO CORREGIDO =====
-    const filteredMovies = movies.filter(movie => {
+    // ===== FILTRADO CON DATOS DE CONTEXTOS =====
+    const mappedMovies = getMappedMovies();
+    const mappedSeries = getMappedSeries();
+    const mappedCategories = getMappedCategories();
+    
+    const filteredMovies = mappedMovies.filter(movie => {
         const matchesSearch = movie.title.toLowerCase().includes(searchTerm.toLowerCase());
-
-        // ✅ CORREGIDO: Comparar con categoryId del contenido
         const matchesCategory = selectedCategory === 'all' ||
             movie.categoryId?.toString() === selectedCategory;
-
         return matchesSearch && matchesCategory;
     });
 
-    const filteredSeries = series.filter(serie => {
+    const filteredSeries = mappedSeries.filter(serie => {
         const matchesSearch = serie.title.toLowerCase().includes(searchTerm.toLowerCase());
-
-        // ✅ CORREGIDO: Comparar con categoryId del contenido  
         const matchesCategory = selectedCategory === 'all' ||
             serie.categoryId?.toString() === selectedCategory;
-
         return matchesSearch && matchesCategory;
     });
 
@@ -349,7 +281,7 @@ function MainPage() {
             }
             filters={
                 <FilterBar
-                    categories={categories}
+                    categories={mappedCategories}
                     selectedCategory={selectedCategory}
                     onCategoryChange={handleCategoryChange}
                     loading={loadingCategories}
