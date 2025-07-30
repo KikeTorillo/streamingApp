@@ -34,14 +34,14 @@ const ffprobeAsync = (filePath) => {
 
 /**
  * Detecta todas las pistas de audio compatibles con el contenedor MP4.
- * Se incluyen los codecs más usados: aac, mp3, opus y ac3.
+ * Se incluyen los codecs más usados: aac, mp3, opus, ac3 y eac3.
  */
 const detectCompatibleAudioStreams = async (filePath) => {
   const data = await ffprobeAsync(filePath);
   return data.streams.filter(
     (stream) =>
       stream.codec_type === 'audio' &&
-      ['aac', 'mp3', 'opus', 'ac3'].includes(stream.codec_name)
+      ['aac', 'mp3', 'opus', 'ac3', 'eac3'].includes(stream.codec_name)
   );
 };
 
