@@ -15,11 +15,16 @@ import { getMovieByHashService } from '../../services/Movies/getMovieByIdService
 import { getEpisodeByHashService } from '../../services/Episodes/getEpisodeByHashService';
 import { getEpisodesBySerieService } from '../../services/Episodes/getEpisodesBySerieService';
 import { getSerieByIdService } from '../../services/Series/getSerieByIdService';
-import { Button } from '../../components/atoms/Button/Button';
 import { VideoPlayerOverlay } from '../../components/organisms/VideoPlayerOverlay/VideoPlayerOverlay';
 import { useVideoPreferences } from '../../hooks/useVideoPreferences';
 import { environmentService } from '../../services/environmentService';
 import { useAuth } from '../../app/context/AuthContext';
+
+// Componentes extraídos
+import { VideoPlayerLoadingScreen } from './components/VideoPlayerLoadingScreen';
+import { VideoPlayerErrorScreen } from './components/VideoPlayerErrorScreen';
+import { VideoPlayerBackButton } from './components/VideoPlayerBackButton';
+import { VideoPlayerStatusBar } from './components/VideoPlayerStatusBar';
 
 const VideoPlayer = () => {
   const {movieId} = useParams();
@@ -1442,10 +1447,6 @@ const VideoPlayer = () => {
 
         playerRef.current = player;
         
-        // Cleanup del intervalo
-        return () => {
-          clearInterval(saveInterval);
-        };
         
       } catch (error) {
         console.error("Error initializing player:", error);
@@ -1479,79 +1480,40 @@ const VideoPlayer = () => {
   }
 
   if (!resolutions) {
-    return (
-      <div className="video-player-container">
-        <div className="video-info">
-          <h2>Error: Resoluciones no encontradas</h2>
-          <p>Verifica que la URL contenga parámetros de resolución</p>
-        </div>
-      </div>
-    );
+    return <VideoPlayerErrorScreen resolutionsError={true} />;
   }
 
   if (loading || preferencesLoading) {
     return (
-      <div className="video-player-container">
-        <div className="video-info">
-          <h2>Cargando {contentType === 'episode' ? 'episodio' : 'película'}...</h2>
-          {preferencesLoading && <p>Cargando preferencias de usuario...</p>}
-        </div>
-      </div>
+      <VideoPlayerLoadingScreen 
+        contentType={contentType} 
+        preferencesLoading={preferencesLoading} 
+      />
     );
   }
   
   if (error) {
     return (
-      <div className="video-player-container">
-        <div className="video-info">
-          <h2>Error</h2>
-          <p>{error}</p>
-          <Button 
-            onClick={handleGoBack}
-            variant="primary"
-            size="md"
-          >
-            Regresar
-          </Button>
-        </div>
-      </div>
+      <VideoPlayerErrorScreen 
+        error={error} 
+        onGoBack={handleGoBack} 
+      />
     );
   }
   
   return (
     <div className="video-player-container">
-      <Button 
-        className="back-button"
-        onClick={handleGoBack}
-        ariaLabel="Regresar"
-        variant="secondary"
-        size="md"
-        icon="←"
-        iconPosition="left"
-      >
-        Regresar
-      </Button>
+      <VideoPlayerBackButton onGoBack={handleGoBack} />
 
       <div className="video-wrapper">
         <div className="video-container">
           {/* Indicadores de estado */}
-          <div className="video-status-indicators">
-            {currentQuality && (
-              <span className="quality-indicator">
-                📺 {currentQuality}
-              </span>
-            )}
-            {bufferPercentage > 0 && (
-              <span className="buffer-indicator">
-                ⏳ Buffer: {bufferPercentage.toFixed(0)}%
-              </span>
-            )}
-            {showOffsetIndicator && (
-              <span className="subtitle-offset-indicator">
-                📝 Subtítulos: {subtitleOffset > 0 ? '+' : ''}{subtitleOffset.toFixed(1)}s
-              </span>
-            )}
-          </div>
+          <VideoPlayerStatusBar 
+            currentQuality={currentQuality}
+            bufferPercentage={bufferPercentage}
+            subtitleOffset={subtitleOffset}
+            showOffsetIndicator={showOffsetIndicator}
+          />
           
           <div data-vjs-player>
             <video

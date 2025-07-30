@@ -201,6 +201,7 @@ aws3DataMinio
 temp_downloads
 tempProcessinDir
 uploads
+.claude
 
 # Logs
 logs
