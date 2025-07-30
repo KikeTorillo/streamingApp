@@ -145,7 +145,6 @@ function MovieCreatePage() {
         type: 'image-crop',
         label: 'Archivo de Portada',
         aspect: 2/3,
-        acceptedFormats: ['jpg', 'png', 'webp'],
         maxFileSize: '5MB',
         showPreview: true,
         previewDimensions: { width: 120, height: 180 },

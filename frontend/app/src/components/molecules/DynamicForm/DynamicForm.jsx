@@ -413,7 +413,7 @@ const DynamicForm = ({
             // Props específicas de ImageCropField
             aspect={field.aspect || 16/9}
             showPreview={field.showPreview !== false}
-            acceptedFormats={field.acceptedFormats || ['jpg', 'png', 'webp']}
+            acceptedFormats={field.acceptedFormats}
             maxFileSize={field.maxFileSize || '5MB'}
             previewDimensions={field.previewDimensions || { width: 300, height: 200 }}
             cropButtonText={field.cropButtonText || 'Volver a recortar'}

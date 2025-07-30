@@ -92,14 +92,13 @@ function SeriesEditPage() {
       },
       {
         name: 'coverImage',
-        type: 'file',
+        type: 'image-crop',
         label: 'Portada (Imagen)',
-        accept: 'image/*',
-        required: false,
-        leftIcon: '🖼️',
-        helperText: 'Nueva imagen de portada (opcional). Formatos: JPG, PNG, WebP',
-        text: 'Seleccionar nueva portada',
-        width: 'full'
+        aspect: 2/3,
+        maxFileSize: '5MB',
+        showPreview: true,
+        previewDimensions: { width: 120, height: 180 },
+        helperText: 'Sube una imagen para recortar como portada (formato póster 2:3)'
       }
     ];
   };

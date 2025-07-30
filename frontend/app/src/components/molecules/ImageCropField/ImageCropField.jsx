@@ -67,7 +67,7 @@ function ImageCropField({
   aspect = 16 / 9,
   showPreview = true,
   maxFileSize = '5MB',
-  acceptedFormats = ['jpg', 'png', 'webp'],
+  acceptedFormats = ['*'],
   previewAlt = 'Vista previa de imagen',
   previewDimensions = { width: 300, height: 200 },
   cropButtonText = 'Volver a recortar',
