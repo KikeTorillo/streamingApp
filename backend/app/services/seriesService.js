@@ -437,19 +437,35 @@ class SeriesService extends BaseService {
 
       // PASO 2: Eliminar archivos de MinIO (lo único que no puede hacer PostgreSQL)
       if (videoHashes.length > 0) {
-        this.logger.info('Eliminando archivos de video de MinIO', { 
+        this.logger.info('Eliminando archivos de video y subtítulos de MinIO', { 
           serieId: validId,
           videoCount: videoHashes.length 
         });
 
         for (const hash of videoHashes) {
           if (hash) {
-            const remotePath = `${config.videoDir}/${hash}`;
+            const remoteVideoPath = `${config.videoDir}/${hash}`;
+            const remoteSubtitlesPath = `${config.subsDir}/${hash}`;
+            
+            // Eliminar videos
             try {
-              await deleteFilesByPrefix(remotePath);
-              this.logger.debug('Video eliminado de MinIO', { serieId: validId, videoHash: hash });
+              await deleteFilesByPrefix(remoteVideoPath);
+              this.logger.debug('Videos eliminados de MinIO', { serieId: validId, videoHash: hash });
             } catch (error) {
-              this.logger.warn('Error eliminando video de MinIO', { 
+              this.logger.warn('Error eliminando videos de MinIO', { 
+                serieId: validId,
+                videoHash: hash,
+                error: error.message 
+              });
+              // Continuar con otros archivos aunque uno falle
+            }
+            
+            // Eliminar subtítulos
+            try {
+              await deleteFilesByPrefix(remoteSubtitlesPath);
+              this.logger.debug('Subtítulos eliminados de MinIO', { serieId: validId, videoHash: hash });
+            } catch (error) {
+              this.logger.warn('Error eliminando subtítulos de MinIO', { 
                 serieId: validId,
                 videoHash: hash,
                 error: error.message 
@@ -496,12 +512,15 @@ class SeriesService extends BaseService {
         statistics: {
           episodesDeleted: parseInt(serieInfo.total_episodes) || 0,
           videosDeleted: videoHashes.length,
+          subtitlesDeleted: videoHashes.length,
           coverDeleted: !!serieInfo.cover_image
         },
         automaticDeletion: {
           episodesCascade: true,
           videosTrigger: true,
-          minioFiles: true
+          minioFiles: true,
+          minioVideos: true,
+          minioSubtitles: true
         }
       };
 

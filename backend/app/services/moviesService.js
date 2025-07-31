@@ -625,6 +625,7 @@ class MoviesService extends BaseService {
       // Rutas remotas a eliminar en MinIO
       const remoteCoverPath = `${config.coversDir}/${movie.cover_image}`;
       const remoteVideoPaths = `${config.videoDir}/${file_hash}`;
+      const remoteSubtitlesPath = `${config.subsDir}/${file_hash}`;
 
       try {
         await deleteFilesByPrefix(remoteCoverPath);
@@ -654,6 +655,20 @@ class MoviesService extends BaseService {
         });
       }
 
+      try {
+        await deleteFilesByPrefix(remoteSubtitlesPath);
+        this.logger.debug('Subtítulos eliminados de MinIO', { 
+          movieId: validId,
+          videoHash: file_hash 
+        });
+      } catch (error) {
+        this.logger.warn('Error eliminando subtítulos de MinIO', { 
+          movieId: validId,
+          videoHash: file_hash,
+          error: error.message 
+        });
+      }
+
       // Eliminar de la base de datos
       this.logger.debug('Eliminando película de la base de datos', { movieId: validId });
       
@@ -677,7 +692,8 @@ class MoviesService extends BaseService {
         movieTitle: movie.title,
         statistics: {
           videoDeleted: true,
-          coverDeleted: !!movie.cover_image
+          coverDeleted: !!movie.cover_image,
+          subtitlesDeleted: true
         },
         automaticDeletion: {
           minioFiles: true

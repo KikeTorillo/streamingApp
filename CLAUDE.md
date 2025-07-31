@@ -89,6 +89,33 @@ pg-kik config                                      # Ver configuración
 - **Estilos**: CSS modules + Design System variables
 - **APIs**: Servicios organizados por dominio
 
+## Contextos Especializados para Claude
+
+### 🔧 Backend - Contexto Completo
+> **📋 Referencia Principal**: [.claude/contexts/streaming-backend-context.md](./.claude/contexts/streaming-backend-context.md)
+
+**OBLIGATORIO**: Cuando trabajes con backend, servicios, APIs, base de datos, autenticación, o procesamiento de archivos, consultar este contexto que incluye:
+
+- **BaseService Pattern**: Clase base con herencia para todos los servicios
+- **Sistema de Errores**: ErrorFactory + Logger estructurado en español
+- **Middleware Stack**: Orden de ejecución y configuración JWT + roles
+- **Esquemas Joi**: Validación en camelCase para todos los endpoints
+- **Arquitectura MVC**: Routes → Services → Models documentada
+- **File Processing**: Pipeline FFmpeg + MinIO + detección de duplicados
+- **Database Layer**: PostgreSQL con auditoría automática y optimizaciones
+- **API Structure**: 40+ endpoints documentados con /api/v1 base URL
+- **Security**: CORS, JWT cookies, validación MIME, roles de usuario
+- **Performance**: Connection pooling, transacciones automáticas, logging contextual
+
+**Servicios disponibles** (todos heredan de BaseService):
+- authService, moviesService, seriesService, EpisodesService
+- categoriesService, usersService, userPreferencesService
+
+### 🎨 Frontend - Contextos Adicionales
+- **Design System**: [.claude/contexts/design-system-context.md](./.claude/contexts/design-system-context.md)
+- **Dynamic Forms**: [.claude/contexts/dynamicform-context.md](./.claude/contexts/dynamicform-context.md)
+- **Database Schema**: [.claude/contexts/database-context.md](./.claude/contexts/database-context.md)
+
 ## Flujo de Desarrollo
 
 > **🚀 Setup Completo**: Ver [README.md](./readme.md#-inicio-rápido) para configuración inicial detallada

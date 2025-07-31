@@ -545,15 +545,30 @@ class EpisodesService extends BaseService {
       });
 
       const remoteVideoPaths = `${config.videoDir}/${file_hash}`;
+      const remoteSubtitlesPath = `${config.subsDir}/${file_hash}`;
 
       try {
         await deleteFilesByPrefix(remoteVideoPaths);
-        this.logger.debug('Video eliminado de MinIO', { 
+        this.logger.debug('Videos eliminados de MinIO', { 
           episodeId: validId,
           videoHash: file_hash 
         });
       } catch (error) {
-        this.logger.warn('Error eliminando video de MinIO', { 
+        this.logger.warn('Error eliminando videos de MinIO', { 
+          episodeId: validId,
+          videoHash: file_hash,
+          error: error.message 
+        });
+      }
+
+      try {
+        await deleteFilesByPrefix(remoteSubtitlesPath);
+        this.logger.debug('Subtítulos eliminados de MinIO', { 
+          episodeId: validId,
+          videoHash: file_hash 
+        });
+      } catch (error) {
+        this.logger.warn('Error eliminando subtítulos de MinIO', { 
           episodeId: validId,
           videoHash: file_hash,
           error: error.message 
@@ -583,10 +598,13 @@ class EpisodesService extends BaseService {
         episodeTitle: episode.title,
         serieId: episode.serie_id,
         statistics: {
-          videoDeleted: true
+          videoDeleted: true,
+          subtitlesDeleted: true
         },
         automaticDeletion: {
-          minioFiles: true
+          minioFiles: true,
+          minioVideos: true,
+          minioSubtitles: true
         }
       };
 
