@@ -83,28 +83,8 @@ function StatsCard({
     return val;
   };
 
-  /**
-   * Formatea el cambio porcentual
-   */
-  const formatChange = (changeValue) => {
-    if (!changeValue) return null;
-    
-    // Si ya incluye el signo, devolverlo tal como está
-    if (typeof changeValue === 'string' && (changeValue.includes('+') || changeValue.includes('-'))) {
-      return changeValue;
-    }
-    
-    // Si es un número, agregar el signo apropiado
-    if (typeof changeValue === 'number') {
-      return changeValue > 0 ? `+${changeValue}%` : `${changeValue}%`;
-    }
-    
-    return changeValue;
-  };
-
   const finalChangeDirection = getChangeDirection();
   const formattedValue = formatValue(value);
-  const formattedChange = formatChange(change);
 
   // ===== CLASES CSS =====
   const statsCardClasses = [
@@ -177,31 +157,6 @@ function StatsCard({
           </div>
         )}
       </div>
-
-      {/* Cambio porcentual */}
-      {(formattedChange || loading) && (
-        <div className="stats-card__footer">
-          {loading ? (
-            <div className="stats-card__change stats-card__change--skeleton">
-              <div className="stats-card__skeleton stats-card__skeleton--change"></div>
-            </div>
-          ) : (
-            <div className={changeClasses} aria-live="polite">
-              <span className="stats-card__change-icon" aria-hidden="true">
-                {getChangeIcon()}
-              </span>
-              <span className="stats-card__change-value">
-                {formattedChange}
-              </span>
-              {changeLabel && (
-                <span className="stats-card__change-label">
-                  {changeLabel}
-                </span>
-              )}
-            </div>
-          )}
-        </div>
-      )}
 
       {/* Estado de error */}
       {error && (
