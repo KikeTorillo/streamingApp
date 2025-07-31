@@ -11,7 +11,7 @@ const searchMoviesService = async (title) => {
         });
         return response.data;
     } catch (error) {
-        console.error('Error al buscar películas:', error);
+
         throw error;
     }
 };

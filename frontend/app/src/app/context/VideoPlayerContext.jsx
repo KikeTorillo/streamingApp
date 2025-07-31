@@ -86,9 +86,9 @@ function VideoPlayerProvider({ children }) {
     
     try {
       playerRef.current.currentTime(newTime);
-      console.log(`⏭️ Skip ${direction}: ${seconds}s -> ${newTime.toFixed(2)}s`);
+
     } catch (error) {
-      console.error('Error en seeking:', error);
+
     }
   }, []);
 
@@ -124,8 +124,7 @@ function VideoPlayerProvider({ children }) {
         showOffsetIndicator: false
       }));
     }, 2000);
-    
-    console.log(`📝 Ajuste de subtítulos: ${adjustment}s -> Offset total: ${newOffset}s`);
+
     return newOffset;
   }, [subtitleState.subtitleOffset]);
 
@@ -146,8 +145,7 @@ function VideoPlayerProvider({ children }) {
         showOffsetIndicator: false
       }));
     }, 2000);
-    
-    console.log('🔄 Sincronización de subtítulos reseteada');
+
   }, []);
 
   /**

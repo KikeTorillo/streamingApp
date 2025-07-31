@@ -114,16 +114,13 @@ function MovieEditPage() {
   const loadMovieData = async () => {
     try {
       setLocalError(null);
-      
-      console.log('📥 [MovieEditPage] Cargando datos de la película ID:', id);
-      
+
       // ✅ USAR FUNCIÓN DEL CONTEXTO
       const result = await loadMovieById(id);
       
       if (result.success) {
         const movieInfo = result.data;
-        console.log('✅ [MovieEditPage] Película cargada exitosamente:', movieInfo);
-        
+
         // ✅ USAR FUNCIÓN DEL CONTEXTO PARA PORTADA
         if (movieInfo.cover_image) {
           const currentImageUrl = getMovieCoverUrl(movieInfo.cover_image);
@@ -139,12 +136,12 @@ function MovieEditPage() {
         });
         
       } else {
-        console.error('❌ [MovieEditPage] Error del contexto:', result.error);
+
         setLocalError(result.error || 'Error al cargar datos de la película');
       }
       
     } catch (error) {
-      console.error('💥 [MovieEditPage] Error en loadMovieData:', error);
+
       setLocalError(error.message || 'Error al cargar datos de la película');
     }
   };
@@ -155,8 +152,7 @@ function MovieEditPage() {
    * Manejar cambios en el formulario
    */
   const handleFormChange = (formData) => {
-    console.log('📝 Cambios en formulario:', formData);
-    
+
     // Verificar si hay cambios comparando con datos iniciales
     const hasRealChanges = initialData && (
       formData.title !== initialData.title ||
@@ -166,7 +162,7 @@ function MovieEditPage() {
     );
     
     setHasChanges(hasRealChanges);
-    console.log('🔄 ¿Hay cambios?', hasRealChanges);
+
   };
 
   /**
@@ -175,8 +171,6 @@ function MovieEditPage() {
   const handleSubmit = async (formData) => {
     try {
       setLocalError(null);
-
-      console.log('📤 [MovieEditPage] Enviando actualización:', formData);
 
       // ✅ MIGRADO: Preparar datos para el backend (solo campos que cambiaron)
       const updateData = {};
@@ -197,14 +191,11 @@ function MovieEditPage() {
         updateData.coverImage = formData.coverImage;
       }
 
-      console.log('📤 [MovieEditPage] Datos a actualizar:', updateData);
-
       // ✅ USAR FUNCIÓN DEL CONTEXTO
       const result = await updateMovie(id, updateData);
 
       if (result.success) {
-        console.log('✅ [MovieEditPage] Película actualizada exitosamente:', result);
-        
+
         // Éxito
         setSuccess(true);
         setHasChanges(false);
@@ -220,8 +211,7 @@ function MovieEditPage() {
         }, 2500);
         
       } else {
-        console.error('❌ [MovieEditPage] Error del contexto:', result.error);
-        
+
         if (result.error === 'No hay cambios para guardar') {
           alert('No hay cambios para guardar');
         } else {
@@ -230,7 +220,7 @@ function MovieEditPage() {
       }
 
     } catch (err) {
-      console.error('💥 [MovieEditPage] Error en handleSubmit:', err);
+
       setLocalError(err.message || 'Error al actualizar película');
     }
   };

@@ -12,9 +12,7 @@ import { environmentService } from "../environmentService";
  */
 const updateSeriesService = async (id, seriesData) => {
     const { urlBackend } = environmentService();
-    
-    console.log('📺 Actualizando serie ID:', id, 'con datos:', seriesData);
-    
+
     // Crear FormData solo con campos permitidos y que tienen valores
     const formData = new FormData();
     
@@ -44,15 +42,12 @@ const updateSeriesService = async (id, seriesData) => {
     }
 
     try {
-        console.log('📤 Enviando datos al backend...');
-        
+
         const response = await axios.patch(`${urlBackend}/api/v1/series/${id}`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
             withCredentials: true,
         });
-        
-        console.log('📥 Respuesta del backend:', response.data);
-        
+
         // ✅ RESPUESTA ESTRUCTURADA
         return {
             success: true,
@@ -60,8 +55,7 @@ const updateSeriesService = async (id, seriesData) => {
             message: 'Serie actualizada exitosamente'
         };
     } catch (error) {
-        console.error("💥 Error al actualizar serie:", error);
-        
+
         // ✅ MANEJO ESPECÍFICO DE ERRORES
         if (error.response?.status === 401) {
             return {

@@ -34,7 +34,6 @@ Componente de notificación flotante para mostrar mensajes de éxito, error, inf
   isOpen={true}
   type="success"
   message="¡Operación completada exitosamente!"
-  onClose={() => console.log('Toast cerrado')}
 />
 \`\`\`
 
@@ -254,7 +253,7 @@ export const WithAction = {
           action={{
             text: "Ver usuario",
             onClick: () => {
-              console.log('Navegando a usuario...');
+
               setIsOpen(false);
             }
           }}

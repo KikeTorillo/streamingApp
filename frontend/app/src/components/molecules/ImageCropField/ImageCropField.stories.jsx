@@ -221,7 +221,7 @@ const Template = (args) => {
       {...args} 
       value={value}
       onChange={(file) => {
-        console.log('📁 Archivo recortado:', file?.name || 'null');
+
         setValue(file);
       }}
     />
@@ -570,7 +570,7 @@ export const FormIntegration = () => {
     setErrors(newErrors);
     
     if (Object.keys(newErrors).length === 0) {
-      console.log('📤 Formulario de película enviado:', formData);
+
       alert('¡Película creada correctamente! 🎬');
       
       // Reset form

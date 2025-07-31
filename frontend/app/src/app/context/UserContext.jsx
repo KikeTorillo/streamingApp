@@ -94,12 +94,11 @@ function UsersProvider({ children }) {
       setLoading(true);
       setError(null);
 
-      console.log('=� [UserContext] Cargando usuarios...');
       const response = await getUsersService();
 
       // Manejar sesi�n expirada
       if (response.message === 'session expired' && response.error) {
-        console.log('= [UserContext] Sesi�n expirada');
+
         sessionStorage.clear();
         // Nota: La navegaci�n se manejar� en el componente que use el hook
         throw new Error('SESSION_EXPIRED');
@@ -123,10 +122,9 @@ function UsersProvider({ children }) {
       }));
 
       setUsers(mappedUsers);
-      console.log(` [UserContext] ${mappedUsers.length} usuarios cargados`);
 
     } catch (error) {
-      console.error('=� [UserContext] Error loading users:', error);
+
       setError(error.message || 'Error al cargar usuarios');
     } finally {
       setLoading(false);
@@ -137,7 +135,7 @@ function UsersProvider({ children }) {
    * Refrescar lista de usuarios
    */
   const refreshUsers = () => {
-    console.log('= [UserContext] Refrescando usuarios...');
+
     loadUsers();
   };
 
@@ -145,7 +143,7 @@ function UsersProvider({ children }) {
    * Limpiar estado de usuarios (�til para logout)
    */
   const clearUsers = () => {
-    console.log('>� [UserContext] Limpiando estado de usuarios');
+
     setUsers([]);
     setError(null);
     setDeleting(null);
@@ -169,14 +167,13 @@ function UsersProvider({ children }) {
    * Eliminar usuario con validaciones completas
    */
   const deleteUser = (user) => {
-    console.log('🗑️ [UserContext] Iniciando eliminación de usuario:', user);
 
     // ===== VALIDACIONES DE NEGOCIO =====
     try {
       // Validación 1: No eliminar usuario actual
       if (isCurrentUser(user.id)) {
         const error = 'No puedes eliminar tu propia cuenta.';
-        console.warn('❌ [UserContext] Validación fallida:', error);
+
         throw new Error(error);
       }
 
@@ -184,7 +181,7 @@ function UsersProvider({ children }) {
       const adminCount = users.filter(u => u.roleId === 1).length;
       if (user.roleId === 1 && adminCount <= 1) {
         const error = 'No puedes eliminar el último administrador del sistema.';
-        console.warn('❌ [UserContext] Validación fallida:', error);
+
         throw new Error(error);
       }
     } catch (error) {
@@ -195,11 +192,11 @@ function UsersProvider({ children }) {
 
     // ===== CONFIRMACIÓN CON ALERT PROVIDER =====
     // Usar AlertProvider en lugar de window.confirm
-    console.log('🔍 [UserContext] Llamando showDeleteConfirm...', { showDeleteConfirm });
+
     showDeleteConfirm(
       user.userName,
       async () => {
-        console.log('✅ [UserContext] Confirmación aceptada, ejecutando eliminación...');
+
         await performDeleteUser(user);
       },
       {
@@ -208,7 +205,7 @@ function UsersProvider({ children }) {
         cancelText: 'Cancelar'
       }
     );
-    console.log('📤 [UserContext] showDeleteConfirm llamado');
+
   };
 
   /**
@@ -219,13 +216,12 @@ function UsersProvider({ children }) {
 
       // ===== PROCESO DE ELIMINACIÓN =====
       setDeleting(user.id);
-      console.log('🔄 [UserContext] Eliminando usuario del backend:', user.id);
 
       const response = await deleteUserService(user.id);
 
       // Manejar sesión expirada
       if (response.message === 'session expired' && response.error) {
-        console.log('🔒 [UserContext] Sesión expirada durante eliminación');
+
         sessionStorage.clear();
         throw new Error('SESSION_EXPIRED');
       }
@@ -237,17 +233,15 @@ function UsersProvider({ children }) {
       // ===== ACTUALIZAR ESTADO LOCAL =====
       setUsers(prevUsers => {
         const updatedUsers = prevUsers.filter(u => u.id !== user.id);
-        console.log(`✅ [UserContext] Usuario eliminado. Usuarios restantes: ${updatedUsers.length}`);
+
         return updatedUsers;
       });
 
-      console.log('✅ [UserContext] Usuario eliminado exitosamente');
-      
       // Mostrar mensaje de éxito con AlertProvider
       showSuccess(`Usuario "${user.userName}" eliminado correctamente.`);
 
     } catch (error) {
-      console.error('💥 [UserContext] Error deleting user:', error);
+
       setError(error.message || 'Error al eliminar usuario');
       
       // Mostrar mensaje de error con AlertProvider
@@ -264,7 +258,7 @@ function UsersProvider({ children }) {
    */
   const createUser = async (formData) => {
     try {
-      console.log('🏗️ [UserContext] Iniciando creación de usuario:', formData);
+
       setLoading(true);
       setError(null);
 
@@ -273,7 +267,7 @@ function UsersProvider({ children }) {
       // Validación 1: Contraseñas coinciden
       if (!validatePasswordsMatch(formData.password, formData.confirmPassword)) {
         const error = 'Las contraseñas no coinciden';
-        console.warn('❌ [UserContext] Validación fallida:', error);
+
         throw new Error(error);
       }
 
@@ -283,7 +277,7 @@ function UsersProvider({ children }) {
       );
       if (existingUser) {
         const error = 'El nombre de usuario ya está registrado';
-        console.warn('❌ [UserContext] Validación fallida:', error);
+
         throw new Error(error);
       }
 
@@ -294,21 +288,20 @@ function UsersProvider({ children }) {
         );
         if (existingEmail) {
           const error = 'El email ya está registrado';
-          console.warn('❌ [UserContext] Validación fallida:', error);
+
           throw new Error(error);
         }
       }
 
       // ===== PREPARAR DATOS =====
       const userData = prepareUserData(formData);
-      console.log('📤 [UserContext] Datos preparados para envío:', userData);
 
       // ===== PROCESO DE CREACIÓN =====
       const response = await createUserService(userData);
 
       // Manejar sesión expirada
       if (response.message === 'session expired' && response.error) {
-        console.log('🔒 [UserContext] Sesión expirada durante creación');
+
         sessionStorage.clear();
         throw new Error('SESSION_EXPIRED');
       }
@@ -331,11 +324,10 @@ function UsersProvider({ children }) {
 
       setUsers(prevUsers => {
         const updatedUsers = [...prevUsers, newUser];
-        console.log(`✅ [UserContext] Usuario creado. Total usuarios: ${updatedUsers.length}`);
+
         return updatedUsers;
       });
 
-      console.log('✅ [UserContext] Usuario creado exitosamente');
       return { 
         success: true, 
         data: newUser,
@@ -343,7 +335,7 @@ function UsersProvider({ children }) {
       };
 
     } catch (error) {
-      console.error('💥 [UserContext] Error creating user:', error);
+
       setError(error.message || 'Error al crear usuario');
       return { 
         success: false, 
@@ -359,7 +351,7 @@ function UsersProvider({ children }) {
    */
   const updateUser = async (userId, formData, initialData) => {
     try {
-      console.log('✏️ [UserContext] Iniciando actualización de usuario:', userId, formData);
+
       setLoading(true);
       setError(null);
 
@@ -369,7 +361,7 @@ function UsersProvider({ children }) {
       const existingUser = users.find(user => user.id.toString() === userId.toString());
       if (!existingUser) {
         const error = 'Usuario no encontrado';
-        console.warn('❌ [UserContext] Validación fallida:', error);
+
         throw new Error(error);
       }
 
@@ -382,7 +374,7 @@ function UsersProvider({ children }) {
         );
         if (emailExists) {
           const error = 'El email ya está registrado por otro usuario';
-          console.warn('❌ [UserContext] Validación fallida:', error);
+
           throw new Error(error);
         }
       }
@@ -406,18 +398,16 @@ function UsersProvider({ children }) {
       // Validación 3: Debe haber al menos un cambio
       if (Object.keys(updateData).length === 0) {
         const error = 'No hay cambios para guardar';
-        console.warn('❌ [UserContext] Validación fallida:', error);
+
         throw new Error(error);
       }
-
-      console.log('📤 [UserContext] Datos preparados para actualización:', updateData);
 
       // ===== PROCESO DE ACTUALIZACIÓN =====
       const response = await updateUserService(userId, updateData);
 
       // Manejar sesión expirada
       if (response.message === 'session expired' && response.error) {
-        console.log('🔒 [UserContext] Sesión expirada durante actualización');
+
         sessionStorage.clear();
         throw new Error('SESSION_EXPIRED');
       }
@@ -442,18 +432,15 @@ function UsersProvider({ children }) {
               updatedUser.roleName = updateData.roleId === 1 ? 'Administrador' : 
                                     updateData.roleId === 2 ? 'Editor' : 'Usuario Regular';
             }
-            
-            console.log('✅ [UserContext] Usuario actualizado en estado local:', updatedUser);
+
             return updatedUser;
           }
           return user;
         });
-        
-        console.log(`✅ [UserContext] Estado actualizado. Total usuarios: ${updatedUsers.length}`);
+
         return updatedUsers;
       });
 
-      console.log('✅ [UserContext] Usuario actualizado exitosamente');
       return { 
         success: true, 
         data: response.data,
@@ -461,7 +448,7 @@ function UsersProvider({ children }) {
       };
 
     } catch (error) {
-      console.error('💥 [UserContext] Error updating user:', error);
+
       setError(error.message || 'Error al actualizar usuario');
       return { 
         success: false, 
@@ -476,7 +463,7 @@ function UsersProvider({ children }) {
    * Obtener usuario por ID desde estado local
    */
   const getUserById = (userId) => {
-    console.log('🔍 [UserContext] Buscar usuario por ID en estado local:', userId);
+
     return users.find(user => user.id.toString() === userId.toString()) || null;
   };
 
@@ -485,7 +472,7 @@ function UsersProvider({ children }) {
    */
   const loadUserById = async (userId) => {
     try {
-      console.log('📥 [UserContext] Cargando usuario individual desde backend:', userId);
+
       setLoading(true);
       setError(null);
 
@@ -493,7 +480,7 @@ function UsersProvider({ children }) {
 
       // Manejar sesión expirada
       if (response.message === 'session expired' && response.error) {
-        console.log('🔒 [UserContext] Sesión expirada');
+
         sessionStorage.clear();
         throw new Error('SESSION_EXPIRED');
       }
@@ -529,14 +516,13 @@ function UsersProvider({ children }) {
         throw new Error('Datos de usuario incompletos recibidos del backend');
       }
 
-      console.log('✅ [UserContext] Usuario individual cargado:', normalizedUser);
       return { 
         success: true, 
         data: normalizedUser 
       };
 
     } catch (error) {
-      console.error('💥 [UserContext] Error loading user by ID:', error);
+
       setError(error.message || 'Error al cargar usuario');
       return { 
         success: false, 

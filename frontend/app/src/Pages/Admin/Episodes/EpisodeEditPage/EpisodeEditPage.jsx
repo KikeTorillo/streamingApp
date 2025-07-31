@@ -123,8 +123,7 @@ function EpisodeEditPage() {
    */
   const loadEpisodeData = async () => {
     try {
-      console.log('📥 [EpisodeEditPage] Cargando datos del episodio ID:', id);
-      
+
       // Cargar episodio y series usando el contexto
       const [episodeResult] = await Promise.all([
         loadEpisodeById(id),
@@ -133,8 +132,7 @@ function EpisodeEditPage() {
       
       if (episodeResult.success && episodeResult.data) {
         const episodeInfo = episodeResult.data;
-        console.log('✅ [EpisodeEditPage] Episodio cargado:', episodeInfo);
-        
+
         setInitialData({ 
           title: episodeInfo.title || '',
           serieId: episodeInfo.serie_id || '',
@@ -142,11 +140,11 @@ function EpisodeEditPage() {
           episodeNumber: episodeInfo.episode_number || 1,
         });
       } else {
-        console.error('💥 [EpisodeEditPage] Error al cargar episodio:', episodeResult.error);
+
       }
       
     } catch (error) {
-      console.error('💥 [EpisodeEditPage] Error inesperado:', error);
+
     }
   };
 
@@ -156,8 +154,7 @@ function EpisodeEditPage() {
    * Manejar cambios en el formulario
    */
   const handleFormChange = (formData) => {
-    console.log('📝 Cambios en formulario:', formData);
-    
+
     // Verificar si hay cambios comparando con datos iniciales
     const hasRealChanges = initialData && (
       formData.title !== initialData.title ||
@@ -167,7 +164,7 @@ function EpisodeEditPage() {
     );
     
     setHasChanges(hasRealChanges);
-    console.log('🔄 ¿Hay cambios?', hasRealChanges);
+
   };
 
   /**
@@ -175,7 +172,6 @@ function EpisodeEditPage() {
    */
   const handleSubmit = async (formData) => {
     try {
-      console.log('📤 [EpisodeEditPage] Enviando actualización:', formData);
 
       // Preparar datos para el backend (solo campos que cambiaron)
       const updateData = {};
@@ -202,13 +198,11 @@ function EpisodeEditPage() {
         return;
       }
 
-      console.log('📤 [EpisodeEditPage] Datos a actualizar:', updateData);
-
       // Usar updateEpisode del contexto
       const result = await updateEpisode(id, updateData);
 
       if (result.success) {
-        console.log('✅ [EpisodeEditPage] Episodio actualizado exitosamente');
+
         setSuccess(true);
         setHasChanges(false);
 
@@ -222,11 +216,11 @@ function EpisodeEditPage() {
           navigate('/admin/episodes');
         }, 2500);
       } else {
-        console.error('💥 [EpisodeEditPage] Error al actualizar:', result.error);
+
       }
 
     } catch (err) {
-      console.error('💥 [EpisodeEditPage] Error inesperado:', err);
+
     }
   };
 

@@ -30,8 +30,7 @@ const migrateLocalStorageService = async (userId, localStorageData) => {
             message: response.data.message
         };
     } catch (error) {
-        console.error('Error al migrar datos de localStorage:', error);
-        
+
         // Manejar errores específicos
         if (error.response?.status === 404) {
             return {
@@ -82,7 +81,7 @@ const getLocalStorageDataForMigration = () => {
             watchProgress: parsedWatchProgress
         };
     } catch (error) {
-        console.error('Error al obtener datos de localStorage:', error);
+
         return {
             watchProgress: {}
         };
@@ -98,9 +97,9 @@ const clearLocalStorageAfterMigration = (keys = ['watchProgress']) => {
         keys.forEach(key => {
             localStorage.removeItem(key);
         });
-        console.log('📦 Datos de localStorage limpiados después de migración exitosa');
+
     } catch (error) {
-        console.error('Error al limpiar localStorage:', error);
+
     }
 };
 

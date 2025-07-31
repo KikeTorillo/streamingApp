@@ -163,11 +163,11 @@ function EpisodesListPage() {
       // ===== USAR DATOS REALES DEL BACKEND =====
       const seriesData = await getSeriesService();
       const seriesList = Array.isArray(seriesData) ? seriesData : seriesData?.data || [];
-      console.log('📺 [EpisodesListPage] Series cargadas para selector:', seriesList.length);
+
       setSeriesData(seriesList);
 
     } catch (err) {
-      console.error('💥 [EpisodesListPage] Error loading series:', err);
+
       setSeriesError('Error al cargar series');
     } finally {
       setSeriesLoading(false);
@@ -191,21 +191,20 @@ function EpisodesListPage() {
   };
 
   const handleDeleteEpisode = (episode) => {
-    console.log('🗑️ [EpisodesListPage] Solicitud de eliminación:', episode);
-    
+
     // El contexto maneja toda la lógica de confirmación y mensajes
     deleteEpisode(episode);
   };
 
   const handleSerieChange = (event) => {
     const serieId = event.target.value;
-    console.log('📺 [EpisodesListPage] Cambiando serie seleccionada:', serieId);
+
     changeSelectedSerie(serieId);
   };
 
   // ===== EFECTOS =====
   useEffect(() => {
-    console.log('🚀 [EpisodesListPage] Componente montado, cargando series...');
+
     loadSeries();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Solo ejecutar al montar el componente

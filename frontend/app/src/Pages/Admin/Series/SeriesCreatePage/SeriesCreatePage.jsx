@@ -68,7 +68,6 @@ function SeriesCreatePage() {
   // ===== HOOK DE ÉXITO HOMOLOGADO =====
   const { triggerSuccess } = useSuccessRedirect('/admin/series');
 
-
   // ===== WRAPPER PARA NAVEGACIÓN CON RESET DE ERRORES =====
   const handleSelectFromTMDBWithReset = (item) => {
     handleSelectFromTMDB(item, 'tv');
@@ -175,10 +174,9 @@ function SeriesCreatePage() {
     return baseData;
   };
 
-
   // ===== CALLBACK PARA PROGRESO DEL CONTEXTO =====
   const handleProgressCallback = (progress, status, message) => {
-    console.log(`📈 Progreso: ${progress}% - ${status} - ${message}`);
+
     setProgressMessage(message);
     
     if (status === 'completed') {
@@ -190,22 +188,17 @@ function SeriesCreatePage() {
   // ===== HANDLER DEL FORMULARIO USANDO CONTEXTO =====
   const handleFormSubmit = async (seriesData) => {
     try {
-      console.log('📤 Datos del formulario:', seriesData);
-      
+
       setProgressMessage('Iniciando creación de la serie...');
       
       const result = await createSeries(seriesData, handleProgressCallback);
-
-      console.log('📥 Respuesta del contexto:', result);
 
       if (!result.success) {
         throw new Error(result.error || 'Error al crear serie');
       }
 
-      console.log('✅ Serie creada exitosamente desde contexto');
-
     } catch (err) {
-      console.error('💥 Error creando serie:', err);
+
       // El error ya se maneja en el contexto
     }
   };
@@ -224,7 +217,6 @@ function SeriesCreatePage() {
             >
               Volver a Series
             </Button>
-
 
           {/* Contenido principal */}
           {currentView === 'search' && (

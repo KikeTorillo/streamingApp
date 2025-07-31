@@ -24,7 +24,7 @@ function useVideoPreferences() {
     
     // Debug del estado del usuario (solo una vez por mount)
     useEffect(() => {
-        console.log('🔍 [DEBUG] useVideoPreferences - Usuario:', { user, isAuthenticated, userId });
+
     }, [user?.id, isAuthenticated, userId]); // Solo log cuando cambia realmente
     
     // Estados del hook
@@ -62,7 +62,7 @@ function useVideoPreferences() {
                 watch_progress: parsedProgress
             };
         } catch (error) {
-            console.error('Error al obtener fallback de localStorage:', error);
+
             return defaultPreferences;
         }
     }, [defaultPreferences]);
@@ -76,7 +76,7 @@ function useVideoPreferences() {
                 localStorage.setItem('watchProgress', JSON.stringify(updatedPreferences.watch_progress));
             }
         } catch (error) {
-            console.error('Error al guardar fallback en localStorage:', error);
+
         }
     }, []);
 
@@ -91,20 +91,19 @@ function useVideoPreferences() {
             
             // Solo migrar si hay datos en localStorage
             if (Object.keys(localData.watchProgress).length > 0) {
-                console.log('🔄 Migrando datos de localStorage al backend...');
-                
+
                 const result = await migrateLocalStorageService(userId, localData);
                 
                 if (result.success) {
-                    console.log('✅ Migración exitosa');
+
                     setPreferences(result.data);
                     clearLocalStorageAfterMigration();
                 } else {
-                    console.warn('⚠️ Migración falló:', result.error);
+
                 }
             }
         } catch (error) {
-            console.error('Error en migración:', error);
+
         }
     }, [userId, isAuthenticated, isUsingFallback]);
 
@@ -131,14 +130,13 @@ function useVideoPreferences() {
                 await attemptMigration();
             } else {
                 // Si falla, usar localStorage como fallback
-                console.warn('Usando localStorage como fallback:', result.error);
+
                 const fallbackPrefs = getLocalStorageFallback();
                 setPreferences(fallbackPrefs);
                 setIsUsingFallback(true);
             }
         } catch (error) {
-            console.error('Error cargando preferencias:', error);
-            
+
             // Usar localStorage como fallback en caso de error
             const fallbackPrefs = getLocalStorageFallback();
             setPreferences(fallbackPrefs);
@@ -154,7 +152,7 @@ function useVideoPreferences() {
      */
     const updatePreferences = useCallback(async (newPreferences) => {
         if (!userId || !isAuthenticated) {
-            console.warn('No hay usuario autenticado para actualizar preferencias');
+
             return false;
         }
 
@@ -179,7 +177,7 @@ function useVideoPreferences() {
                 return true;
             } else {
                 // Si falla, usar fallback
-                console.warn('Actualizando en localStorage por fallo del backend:', result.error);
+
                 const updatedPrefs = { ...preferences, ...newPreferences };
                 setPreferences(updatedPrefs);
                 saveToLocalStorageFallback(updatedPrefs);
@@ -187,8 +185,7 @@ function useVideoPreferences() {
                 return true;
             }
         } catch (error) {
-            console.error('Error actualizando preferencias:', error);
-            
+
             // Fallback a localStorage en caso de error
             const updatedPrefs = { ...preferences, ...newPreferences };
             setPreferences(updatedPrefs);
@@ -203,7 +200,7 @@ function useVideoPreferences() {
      */
     const updateWatchProgress = useCallback(async (contentId, progressData) => {
         if (!userId || !isAuthenticated) {
-            console.warn('No hay usuario autenticado para actualizar progreso');
+
             return false;
         }
 
@@ -239,7 +236,7 @@ function useVideoPreferences() {
                 return true;
             } else {
                 // Fallback a localStorage
-                console.warn('Actualizando progreso en localStorage por fallo del backend:', result.error);
+
                 const updatedProgress = {
                     ...preferences.watch_progress,
                     [contentId]: {
@@ -258,7 +255,7 @@ function useVideoPreferences() {
                 return true;
             }
         } catch (error) {
-            console.error('Error actualizando progreso:', error);
+
             // Seguir con fallback...
             return false;
         }
@@ -269,35 +266,34 @@ function useVideoPreferences() {
      * Prioriza la API dedicada, con fallback al cache local
      */
     const getWatchProgress = useCallback(async (contentId) => {
-        console.log('🔍 [DEBUG-HOOK] getWatchProgress called - contentId:', contentId, 'userId:', userId, 'isAuthenticated:', isAuthenticated);
-        
+
         if (!userId || !isAuthenticated || !contentId) {
-            console.log('🔍 [DEBUG-HOOK] getWatchProgress - Condiciones no cumplidas:', { userId, isAuthenticated, contentId });
+
             return null;
         }
 
         try {
             // Si no estamos usando fallback, intentar obtener desde API
             if (!isUsingFallback) {
-                console.log('🔍 [DEBUG-HOOK] getWatchProgress - Intentando API call...');
+
                 const result = await getWatchProgressService(userId, contentId);
-                console.log('🔍 [DEBUG-HOOK] getWatchProgress - API result:', result);
+
                 if (result.success && result.data) {
                     return result.data;
                 }
             }
             
             // Fallback: obtener desde cache local (preferencias ya cargadas)
-            console.log('🔍 [DEBUG-HOOK] getWatchProgress - Usando fallback cache, preferences:', preferences?.watch_progress);
+
             if (preferences?.watch_progress) {
                 const progressData = preferences.watch_progress[contentId] || null;
-                console.log('🔍 [DEBUG-HOOK] getWatchProgress - Cache result:', progressData);
+
                 return progressData;
             }
             
             return null;
         } catch (error) {
-            console.warn('Error obteniendo progreso específico, usando cache local:', error);
+
             // Fallback silencioso al cache local
             if (preferences?.watch_progress) {
                 return preferences.watch_progress[contentId] || null;
@@ -320,8 +316,7 @@ function useVideoPreferences() {
      */
     const retryBackendConnection = useCallback(async () => {
         if (!isUsingFallback || !userId || !isAuthenticated) return;
-        
-        console.log('🔄 Reintentando conexión al backend...');
+
         await loadPreferences();
     }, [isUsingFallback, userId, isAuthenticated, loadPreferences]);
 

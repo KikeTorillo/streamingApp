@@ -193,8 +193,7 @@ function MoviesListPage() {
   };
 
   const handleViewMovie = (movie) => {
-    console.log('🎬 [MoviesListPage] Ver película:', movie);
-    
+
     // Transformar datos de película para el hook de navegación
     const movieData = {
       ...movie,
@@ -206,8 +205,7 @@ function MoviesListPage() {
   };
 
   const handleDeleteMovie = (movie) => {
-    console.log('🗑️ [MoviesListPage] Solicitud de eliminación:', movie);
-    
+
     // El contexto maneja toda la lógica de confirmación y mensajes
     deleteMovie(movie);
   };

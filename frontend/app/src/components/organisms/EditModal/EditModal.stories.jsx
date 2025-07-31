@@ -47,7 +47,7 @@ function CategoryList() {
       setEditModal({ isOpen: false, category: null });
       // Recargar datos...
     } catch (error) {
-      console.error('Error:', error);
+
     } finally {
       setSaving(false);
     }

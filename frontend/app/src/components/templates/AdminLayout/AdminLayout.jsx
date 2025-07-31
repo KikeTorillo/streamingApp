@@ -88,7 +88,7 @@ function AdminLayout({
 
       setUser(userData);
     } catch (error) {
-      console.error('Error parsing user data:', error);
+
       navigate('/login');
     }
   }, [navigate]);
@@ -128,7 +128,7 @@ function AdminLayout({
 
         setCounts(newCounts);
       } catch (error) {
-        console.error('Error loading counts:', error);
+
         setCountsError('Error al cargar contadores');
       } finally {
         setLoadingCounts(false);

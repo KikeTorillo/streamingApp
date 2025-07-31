@@ -17,7 +17,7 @@ function useMovieNavigation() {
     const contentType = contentData?.type || 'movie';
     
     if (!fileHash) {
-      console.error('[useMovieNavigation] Error: file_hash no encontrado en contentData:', original);
+
       return null;
     }
     
@@ -45,7 +45,7 @@ function useMovieNavigation() {
     const params = buildPlayerParams(contentData, playlistData);
     
     if (!params) {
-      console.error('[useMovieNavigation] No se pudo generar URL para:', contentData);
+
       return;
     }
     
@@ -60,7 +60,7 @@ function useMovieNavigation() {
     const currentIndex = allEpisodes.findIndex(ep => ep.id === episode.id);
     
     if (currentIndex === -1) {
-      console.error('[useMovieNavigation] Episodio no encontrado en la lista:', episode.id);
+
       return navigateToPlayer(episode);
     }
     
@@ -92,7 +92,7 @@ function useMovieNavigation() {
     } else if (contentType === 'movie') {
       navigate(`/movies/${contentData.id}`);
     } else {
-      console.warn('[useMovieNavigation] Unknown content type:', contentType);
+
       navigate(`/movies/${contentData.id}`);
     }
   };
@@ -116,7 +116,7 @@ function useMovieNavigation() {
       // Episodios van directo al reproductor
       navigateToPlayer(contentData);
     } else {
-      console.warn('[useMovieNavigation] Unknown content type for click:', contentType);
+
       // Fallback: intentar ir a detalles
       navigateToDetails(contentData);
     }

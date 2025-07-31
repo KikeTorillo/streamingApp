@@ -68,7 +68,6 @@ function MovieCreatePage() {
   // ===== HOOK DE ÉXITO HOMOLOGADO =====
   const { triggerSuccess } = useSuccessRedirect('/admin/movies');
 
-
   // ===== WRAPPER PARA NAVEGACIÓN CON RESET DE ERRORES =====
   const handleSelectFromTMDBWithReset = (item) => {
     handleSelectFromTMDB(item, 'movie');
@@ -194,52 +193,48 @@ function MovieCreatePage() {
     return baseData;
   };
 
-
   // ===== HANDLER DEL FORMULARIO SIMPLIFICADO =====
   const handleFormSubmit = async (movieData) => {
     setSubmitError(null);
 
     try {
-      console.log('📤 [MovieCreatePage] Enviando datos al contexto:', movieData);
-      
+
       // ✅ USAR FUNCIÓN DEL CONTEXTO (lógica migrada)
       const result = await createMovie(movieData);
 
       if (result.success) {
-        console.log('✅ [MovieCreatePage] Película creada exitosamente:', result);
-        
+
         // ✅ Limpiar navegación
         resetNavigation();
 
         if (result.taskId) {
           // ✅ Hay procesamiento asíncrono - monitorear progreso
-          console.log('🔄 [MovieCreatePage] Iniciando monitoreo de progreso:', result.taskId);
-          
+
           monitorProgress(result.taskId, 'movies', null, (finished, err) => {
             if (finished) {
-              console.log('✅ [MovieCreatePage] Procesamiento completado');
+
               triggerSuccess('¡Película creada exitosamente!');
               resetCreationState();
             } else if (err) {
-              console.error('❌ [MovieCreatePage] Error en procesamiento:', err);
+
               setSubmitError(err);
               resetCreationState();
             }
           });
         } else {
           // ✅ Procesamiento inmediato completado
-          console.log('✅ [MovieCreatePage] Procesamiento inmediato completado');
+
           triggerSuccess('¡Película creada exitosamente!');
           resetCreationState();
         }
       } else {
         // ✅ Error del contexto
-        console.error('❌ [MovieCreatePage] Error del contexto:', result.error);
+
         setSubmitError(result.error || 'Error desconocido al crear el contenido.');
       }
 
     } catch (err) {
-      console.error('❌ [MovieCreatePage] Error en handleFormSubmit:', err);
+
       setSubmitError(err.message || 'Error desconocido al crear el contenido.');
     }
   };
@@ -258,7 +253,6 @@ function MovieCreatePage() {
             >
               Volver a Películas
             </Button>
-
 
           {/* Contenido principal */}
           {currentView === 'search' && (

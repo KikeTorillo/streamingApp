@@ -190,7 +190,6 @@ export const Completed = () => (
     message="¡Proceso completado exitosamente!"
     showPercentage={true}
     size="md"
-    onClose={() => console.log('Modal cerrado')}
   />
 );
 Completed.parameters = {
@@ -210,7 +209,6 @@ export const Failed = () => (
     message="Error durante el procesamiento del video"
     showPercentage={true}
     size="md"
-    onClose={() => console.log('Modal cerrado tras error')}
   />
 );
 Failed.parameters = {

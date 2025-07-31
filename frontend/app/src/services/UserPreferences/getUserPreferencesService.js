@@ -21,8 +21,7 @@ const getUserPreferencesService = async (userId) => {
             message: response.data.message
         };
     } catch (error) {
-        console.error('Error al obtener preferencias de usuario:', error);
-        
+
         // Manejar errores específicos
         if (error.response?.status === 404) {
             return {

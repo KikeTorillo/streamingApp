@@ -25,8 +25,7 @@ const getWatchProgressService = async (userId, contentId) => {
             message: response.data.message
         };
     } catch (error) {
-        console.error('Error al obtener progreso de reproducción:', error);
-        
+
         // Manejar errores específicos
         if (error.response?.status === 404) {
             return {

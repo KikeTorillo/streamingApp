@@ -122,18 +122,13 @@ function SeriesProvider({ children }) {
       setLoading(true);
       setError(null);
 
-      console.log('📥 [SeriesContext] Cargando series...');
       const response = await getSeriesService();
 
-      console.log('📋 [SeriesContext] Respuesta del backend:', response);
-      
       const seriesData = Array.isArray(response) ? response : [];
       setSeries(seriesData);
-      
-      console.log(`✅ [SeriesContext] ${seriesData.length} series cargadas`);
 
     } catch (error) {
-      console.error('💥 [SeriesContext] Error loading series:', error);
+
       setError(error.message || 'Error al cargar series');
     } finally {
       setLoading(false);
@@ -144,7 +139,7 @@ function SeriesProvider({ children }) {
    * Refrescar lista de series
    */
   const refreshSeries = () => {
-    console.log('🔄 [SeriesContext] Refrescando series...');
+
     loadSeries();
   };
 
@@ -152,7 +147,7 @@ function SeriesProvider({ children }) {
    * Limpiar estado de series
    */
   const clearSeries = () => {
-    console.log('🧹 [SeriesContext] Limpiando estado de series');
+
     setSeries([]);
     setError(null);
     setDeleting(null);
@@ -162,7 +157,6 @@ function SeriesProvider({ children }) {
    * Eliminar serie con validaciones completas
    */
   const deleteSeries = (seriesItem) => {
-    console.log('🗑️ [SeriesContext] Iniciando eliminación de serie:', seriesItem);
 
     // ===== CONFIRMACIÓN CON ALERT PROVIDER =====
     showDeleteConfirm(
@@ -186,32 +180,26 @@ function SeriesProvider({ children }) {
 
       // ===== PROCESO DE ELIMINACIÓN =====
       setDeleting(seriesItem.id);
-      console.log('🔄 [SeriesContext] Eliminando serie del backend:', seriesItem.id);
 
       const response = await deleteSeriesService(seriesItem.id);
-      
-      console.log('📥 [SeriesContext] Respuesta del servicio:', response);
 
       // ===== ACTUALIZAR ESTADO LOCAL =====
       setSeries(prevSeries => {
         const updatedSeries = prevSeries.filter(s => s.id !== seriesItem.id);
-        console.log(`✅ [SeriesContext] Serie eliminada. Series restantes: ${updatedSeries.length}`);
+
         return updatedSeries;
       });
 
-      console.log('✅ [SeriesContext] Serie eliminada exitosamente');
-      
       // Mostrar mensaje de éxito con AlertProvider
       showSuccess(`Serie "${seriesItem.title}" eliminada exitosamente.`);
 
     } catch (error) {
-      console.error('💥 [SeriesContext] Error deleting series:', error);
-      
+
       let errorMessage = `Error al eliminar la serie "${seriesItem.title}".`;
 
       // Manejo específico de errores
       if (error.response?.status === 401) {
-        console.log('🔒 [SeriesContext] Sesión expirada');
+
         sessionStorage.clear();
         throw new Error('SESSION_EXPIRED');
       } else if (error.response?.status === 404) {
@@ -269,7 +257,7 @@ function SeriesProvider({ children }) {
    */
   const createSeries = async (seriesData, onProgressCallback = null) => {
     try {
-      console.log('🏗️ [SeriesContext] Iniciando creación de serie:', seriesData);
+
       setCreating(true);
       setError(null);
       setUploadProgress(0);
@@ -280,11 +268,9 @@ function SeriesProvider({ children }) {
       setUploadStatus('uploading');
 
       // ===== PREPARAR DATOS =====
-      console.log('📤 Datos originales:', seriesData);
-      
+
       // Filtrar campos vacíos antes de enviar
       const filteredData = filterEmptyFields(seriesData);
-      console.log('📤 Datos filtrados (sin campos vacíos):', filteredData);
 
       // ===== CONFIGURAR LISTENER DE PROGRESO =====
       const handleUploadProgress = (event) => {
@@ -306,8 +292,7 @@ function SeriesProvider({ children }) {
         if (onProgressCallback) {
           onProgressCallback(adjustedProgress, 'uploading', message);
         }
-        
-        console.log(`📤 [SeriesContext] Upload progreso: ${adjustedProgress}%`);
+
       };
 
       window.addEventListener('uploadProgress', handleUploadProgress);
@@ -317,8 +302,6 @@ function SeriesProvider({ children }) {
 
       // ✅ Limpiar listener de upload
       window.removeEventListener('uploadProgress', handleUploadProgress);
-
-      console.log('✅ Serie creada exitosamente:', result);
 
       // ✅ Cambiar a estado de procesamiento (continuar desde 50%)
       setUploadProgress(50);
@@ -349,7 +332,7 @@ function SeriesProvider({ children }) {
 
       setSeries(prevSeries => {
         const updatedSeries = [...prevSeries, newSeries];
-        console.log(`✅ [SeriesContext] Serie agregada. Total series: ${updatedSeries.length}`);
+
         return updatedSeries;
       });
 
@@ -372,8 +355,7 @@ function SeriesProvider({ children }) {
       };
 
     } catch (error) {
-      console.error('💥 [SeriesContext] Error creating series:', error);
-      
+
       // ✅ Limpiar listener en caso de error
       if (typeof handleUploadProgress !== 'undefined') {
         window.removeEventListener('uploadProgress', handleUploadProgress);
@@ -427,14 +409,12 @@ function SeriesProvider({ children }) {
    */
   const loadSeriesById = async (seriesId) => {
     try {
-      console.log('📥 [SeriesContext] Cargando datos de la serie ID:', seriesId);
+
       setLoadingSeries(true);
       setError(null);
       
       const seriesResponse = await getSerieByIdService(seriesId);
-      
-      console.log('📋 [SeriesContext] Respuesta serie:', seriesResponse);
-      
+
       // ✅ Manejo de respuesta
       let seriesInfo = null;
       if (seriesResponse.success) {
@@ -445,8 +425,6 @@ function SeriesProvider({ children }) {
         throw new Error('Formato de respuesta inesperado del backend');
       }
 
-      console.log('✅ [SeriesContext] Serie normalizada:', seriesInfo);
-      
       setCurrentSeries(seriesInfo);
       
       return { 
@@ -456,7 +434,7 @@ function SeriesProvider({ children }) {
       };
 
     } catch (error) {
-      console.error('💥 [SeriesContext] Error cargando serie:', error);
+
       setError(error.message || 'Error al cargar datos de la serie');
       
       return { 
@@ -473,7 +451,7 @@ function SeriesProvider({ children }) {
    */
   const updateSeries = async (seriesId, seriesData) => {
     try {
-      console.log('✏️ [SeriesContext] Iniciando actualización de serie:', seriesId, seriesData);
+
       setEditing(true);
       setError(null);
 
@@ -487,8 +465,6 @@ function SeriesProvider({ children }) {
         }
       });
 
-      console.log('📤 [SeriesContext] Datos a actualizar:', updateData);
-
       // Si no hay cambios reales, no enviar
       if (Object.keys(updateData).length === 0) {
         return { 
@@ -499,14 +475,10 @@ function SeriesProvider({ children }) {
 
       const response = await updateSeriesService(seriesId, updateData);
 
-      console.log('📥 [SeriesContext] Respuesta del backend:', response);
-
       // ===== MANEJO DE RESPUESTA =====
       if (!response || (response.error && !response.success)) {
         throw new Error(response?.error || 'Error al actualizar serie');
       }
-
-      console.log('✅ [SeriesContext] Serie actualizada exitosamente');
 
       // ✅ ACTUALIZAR ESTADO LOCAL
       setSeries(prevSeries => {
@@ -530,7 +502,7 @@ function SeriesProvider({ children }) {
       };
 
     } catch (error) {
-      console.error('💥 [SeriesContext] Error actualizando serie:', error);
+
       setError(error.message || 'Error al actualizar serie');
       
       return { 
@@ -546,7 +518,7 @@ function SeriesProvider({ children }) {
    * Limpiar serie actual
    */
   const clearCurrentSeries = () => {
-    console.log('🧹 [SeriesContext] Limpiando serie actual');
+
     setCurrentSeries(null);
     setLoadingSeries(false);
     setEditing(false);
@@ -556,7 +528,7 @@ function SeriesProvider({ children }) {
    * Obtener serie por ID desde estado local
    */
   const getSeriesById = (seriesId) => {
-    console.log('🔍 [SeriesContext] Buscar serie por ID:', seriesId);
+
     return series.find(seriesItem => seriesItem.id.toString() === seriesId.toString()) || null;
   };
 

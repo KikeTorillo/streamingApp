@@ -141,11 +141,9 @@ function EpisodesProvider({ children }) {
       setSeriesLoading(true);
       setSeriesError(null);
 
-      console.log('📺 [EpisodesContext] Cargando series disponibles...');
       const response = await getSeriesService();
       const seriesList = Array.isArray(response) ? response : response?.data || [];
-      
-      console.log(`✅ [EpisodesContext] ${seriesList.length} series cargadas`);
+
       setSeriesData(seriesList);
 
       if (seriesList.length === 0) {
@@ -153,7 +151,7 @@ function EpisodesProvider({ children }) {
       }
 
     } catch (error) {
-      console.error('💥 [EpisodesContext] Error loading series:', error);
+
       setSeriesError(error.message || 'Error al cargar series');
     } finally {
       setSeriesLoading(false);
@@ -167,7 +165,7 @@ function EpisodesProvider({ children }) {
     const targetSerieId = serieId || selectedSerieId;
     
     if (!targetSerieId) {
-      console.log('📺 [EpisodesContext] No hay serie seleccionada, limpiando episodios');
+
       setEpisodes([]);
       return { success: true, episodes: [] };
     }
@@ -176,20 +174,15 @@ function EpisodesProvider({ children }) {
       setLoading(true);
       setError(null);
 
-      console.log('📥 [EpisodesContext] Cargando episodios para serie:', targetSerieId);
       const response = await getEpisodesService({ serieId: targetSerieId });
 
-      console.log('📋 [EpisodesContext] Respuesta del backend:', response);
-      
       const episodesData = Array.isArray(response) ? response : [];
       setEpisodes(episodesData);
-      
-      console.log(`✅ [EpisodesContext] ${episodesData.length} episodios cargados para serie ${targetSerieId}`);
 
       return { success: true, episodes: episodesData };
 
     } catch (error) {
-      console.error('💥 [EpisodesContext] Error loading episodes:', error);
+
       setError(error.message || 'Error al cargar episodios');
       return { success: false, error: error.message || 'Error al cargar episodios' };
     } finally {
@@ -201,7 +194,7 @@ function EpisodesProvider({ children }) {
    * Refrescar lista de episodios
    */
   const refreshEpisodes = () => {
-    console.log('🔄 [EpisodesContext] Refrescando episodios...');
+
     loadEpisodes();
   };
 
@@ -209,7 +202,7 @@ function EpisodesProvider({ children }) {
    * Limpiar estado de episodios
    */
   const clearEpisodes = () => {
-    console.log('🧹 [EpisodesContext] Limpiando estado de episodios');
+
     setEpisodes([]);
     setError(null);
     setDeleting(null);
@@ -219,7 +212,7 @@ function EpisodesProvider({ children }) {
    * Cambiar serie seleccionada
    */
   const changeSelectedSerie = (serieId) => {
-    console.log('📺 [EpisodesContext] Cambiando serie seleccionada a:', serieId);
+
     setSelectedSerieId(serieId);
     
     if (serieId) {
@@ -233,7 +226,6 @@ function EpisodesProvider({ children }) {
    * Eliminar episodio con validaciones completas
    */
   const deleteEpisode = (episode) => {
-    console.log('🗑️ [EpisodesContext] Iniciando eliminación de episodio:', episode);
 
     // ===== CONFIRMACIÓN CON ALERT PROVIDER =====
     const episodeTitle = episode.title || `T${episode.season}E${episode.episode_number}`;
@@ -259,21 +251,16 @@ function EpisodesProvider({ children }) {
 
       // ===== PROCESO DE ELIMINACIÓN =====
       setDeleting(episode.id);
-      console.log('🔄 [EpisodesContext] Eliminando episodio del backend:', episode.id);
 
       const response = await deleteEpisodeService(episode.id);
-      
-      console.log('📥 [EpisodesContext] Respuesta del servicio:', response);
 
       // ===== ACTUALIZAR ESTADO LOCAL =====
       setEpisodes(prevEpisodes => {
         const updatedEpisodes = prevEpisodes.filter(e => e.id !== episode.id);
-        console.log(`✅ [EpisodesContext] Episodio eliminado. Episodios restantes: ${updatedEpisodes.length}`);
+
         return updatedEpisodes;
       });
 
-      console.log('✅ [EpisodesContext] Episodio eliminado exitosamente');
-      
       // Resetear estado de progreso
       setUploadProgress(0);
       setUploadStatus('idle');
@@ -282,13 +269,12 @@ function EpisodesProvider({ children }) {
       showSuccess(`Episodio "${episode.title}" eliminado exitosamente.`);
 
     } catch (error) {
-      console.error('💥 [EpisodesContext] Error deleting episode:', error);
-      
+
       let errorMessage = `Error al eliminar el episodio.`;
 
       // Manejo específico de errores
       if (error.response?.status === 401) {
-        console.log('🔒 [EpisodesContext] Sesión expirada');
+
         sessionStorage.clear();
         throw new Error('SESSION_EXPIRED');
       } else if (error.response?.status === 404) {
@@ -370,12 +356,11 @@ function EpisodesProvider({ children }) {
       if (onProgressCallback) {
         onProgressCallback(adjustedProgress, 'uploading', message);
       }
-      
-      console.log(`📤 [EpisodesContext] Upload progreso: ${adjustedProgress}%`);
+
     };
     
     try {
-      console.log('🏗️ [EpisodesContext] Iniciando creación de episodio:', episodeData);
+
       setCreating(true);
       setError(null);
       setUploadProgress(0);
@@ -386,11 +371,9 @@ function EpisodesProvider({ children }) {
       setUploadStatus('uploading');
 
       // ===== PREPARAR DATOS =====
-      console.log('📤 Datos originales:', episodeData);
-      
+
       // Filtrar campos vacíos antes de enviar
       const filteredData = filterEmptyFields(episodeData);
-      console.log('📤 Datos filtrados (sin campos vacíos):', filteredData);
 
       window.addEventListener('uploadProgress', handleUploadProgress);
 
@@ -399,8 +382,6 @@ function EpisodesProvider({ children }) {
 
       // ✅ Limpiar listener de upload
       window.removeEventListener('uploadProgress', handleUploadProgress);
-
-      console.log('✅ Episodio creado exitosamente:', result);
 
       // ✅ Cambiar a estado de procesamiento (continuar desde 50%)
       setUploadProgress(50);
@@ -431,7 +412,7 @@ function EpisodesProvider({ children }) {
 
       setEpisodes(prevEpisodes => {
         const updatedEpisodes = [...prevEpisodes, newEpisode];
-        console.log(`✅ [EpisodesContext] Episodio agregado. Total episodios: ${updatedEpisodes.length}`);
+
         return updatedEpisodes;
       });
 
@@ -445,8 +426,7 @@ function EpisodesProvider({ children }) {
       };
 
     } catch (error) {
-      console.error('💥 [EpisodesContext] Error creating episode:', error);
-      
+
       // ✅ Limpiar listener en caso de error
       window.removeEventListener('uploadProgress', handleUploadProgress);
       
@@ -486,15 +466,12 @@ function EpisodesProvider({ children }) {
    * Monitorear progreso de procesamiento de video
    */
   const monitorProgress = (taskId, contentType = 'episodes', onStatusChange = null, onFinish = null) => {
-    console.log(`🔄 [EpisodesContext] Iniciando monitoreo de progreso - TaskID: ${taskId}, Tipo: ${contentType}`);
-    
+
     const checkProgress = async () => {
       try {
         const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
         const endpoint = `${backendUrl}/api/v1/${contentType}/progress/${taskId}`;
-        
-        console.log(`📡 [EpisodesContext] Consultando progreso en: ${endpoint}`);
-        
+
         const response = await fetch(endpoint, {
           method: 'GET',
           headers: {
@@ -512,9 +489,7 @@ function EpisodesProvider({ children }) {
         }
         
         const data = await response.json();
-        
-        console.log(`📊 [EpisodesContext] Progreso: ${data.progress || 0}%`, data);
-        
+
         let adjustedProgress = data.progress || 0;
         let status = data.status;
         let message = data.message;
@@ -540,7 +515,7 @@ function EpisodesProvider({ children }) {
         }
         
         if (status === 'completed') {
-          console.log('✅ [EpisodesContext] Procesamiento completado');
+
           setProcessing(false);
           setUploadStatus('completed');
           
@@ -553,7 +528,7 @@ function EpisodesProvider({ children }) {
           }, 1000);
           
         } else if (status === 'failed' || status === 'error') {
-          console.error('❌ [EpisodesContext] Error en procesamiento:', message);
+
           setProcessing(false);
           setUploadStatus('error');
           setError(message || 'Error en el procesamiento');
@@ -567,10 +542,7 @@ function EpisodesProvider({ children }) {
         }
         
       } catch (error) {
-        console.error('💥 [EpisodesContext] Error monitoreando progreso:', error);
-        
-        console.log('⚠️ [EpisodesContext] Error en monitoreo, marcando como completado');
-        
+
         setProcessing(false);
         setUploadStatus('completed');
         setUploadProgress(100);
@@ -604,14 +576,12 @@ function EpisodesProvider({ children }) {
    */
   const loadEpisodeById = async (episodeId) => {
     try {
-      console.log('📥 [EpisodesContext] Cargando datos del episodio ID:', episodeId);
+
       setLoadingEpisode(true);
       setError(null);
       
       const episodeResponse = await getEpisodeByIdService(episodeId);
-      
-      console.log('📋 [EpisodesContext] Respuesta episodio:', episodeResponse);
-      
+
       let episodeInfo = null;
       if (episodeResponse.success) {
         episodeInfo = episodeResponse.data;
@@ -621,8 +591,6 @@ function EpisodesProvider({ children }) {
         throw new Error('Formato de respuesta inesperado del backend');
       }
 
-      console.log('✅ [EpisodesContext] Episodio normalizado:', episodeInfo);
-      
       setCurrentEpisode(episodeInfo);
       
       return { 
@@ -632,7 +600,7 @@ function EpisodesProvider({ children }) {
       };
 
     } catch (error) {
-      console.error('💥 [EpisodesContext] Error cargando episodio:', error);
+
       setError(error.message || 'Error al cargar datos del episodio');
       
       return { 
@@ -649,7 +617,7 @@ function EpisodesProvider({ children }) {
    */
   const updateEpisode = async (episodeId, episodeData) => {
     try {
-      console.log('✏️ [EpisodesContext] Iniciando actualización de episodio:', episodeId, episodeData);
+
       setEditing(true);
       setError(null);
 
@@ -661,8 +629,6 @@ function EpisodesProvider({ children }) {
         }
       });
 
-      console.log('📤 [EpisodesContext] Datos a actualizar:', updateData);
-
       if (Object.keys(updateData).length === 0) {
         return { 
           success: false, 
@@ -672,13 +638,9 @@ function EpisodesProvider({ children }) {
 
       const response = await updateEpisodeService(episodeId, updateData);
 
-      console.log('📥 [EpisodesContext] Respuesta del backend:', response);
-
       if (!response || (response.error && !response.success)) {
         throw new Error(response?.error || 'Error al actualizar episodio');
       }
-
-      console.log('✅ [EpisodesContext] Episodio actualizado exitosamente');
 
       setEpisodes(prevEpisodes => {
         return prevEpisodes.map(episode => {
@@ -700,7 +662,7 @@ function EpisodesProvider({ children }) {
       };
 
     } catch (error) {
-      console.error('💥 [EpisodesContext] Error actualizando episodio:', error);
+
       setError(error.message || 'Error al actualizar episodio');
       
       return { 
@@ -716,7 +678,7 @@ function EpisodesProvider({ children }) {
    * Limpiar episodio actual
    */
   const clearCurrentEpisode = () => {
-    console.log('🧹 [EpisodesContext] Limpiando episodio actual');
+
     setCurrentEpisode(null);
     setLoadingEpisode(false);
     setEditing(false);
@@ -726,7 +688,7 @@ function EpisodesProvider({ children }) {
    * Obtener episodio por ID desde estado local
    */
   const getEpisodeById = (episodeId) => {
-    console.log('🔍 [EpisodesContext] Buscar episodio por ID:', episodeId);
+
     return episodes.find(episode => episode.id.toString() === episodeId.toString()) || null;
   };
 

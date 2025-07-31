@@ -285,7 +285,6 @@ export const WithActions = {
       addToast('success', 'Usuario creado exitosamente', {
         action: {
           text: 'Ver usuario',
-          onClick: () => console.log('Navegando a usuario...')
         },
         autoClose: false
       });
@@ -295,7 +294,6 @@ export const WithActions = {
       addToast('success', 'Categoría eliminada', {
         autoClose: true,
         autoCloseDelay: 2500,
-        onAutoClose: () => console.log('Redirigiendo...')
       });
     };
     

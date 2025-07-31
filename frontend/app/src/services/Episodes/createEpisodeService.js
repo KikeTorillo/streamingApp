@@ -30,7 +30,7 @@ const createEpisodeService = async (episodeData) => {
         });
         return response.data;
     } catch (error) {
-        console.error("Error al crear episodio:", error);
+
         throw error;
     }
 };

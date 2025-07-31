@@ -242,8 +242,7 @@ function SeriesListPage() {
   };
 
   const handleDeleteSeries = (seriesItem) => {
-    console.log('🗑️ [SeriesListPage] Solicitud de eliminación:', seriesItem);
-    
+
     // El contexto maneja toda la lógica de confirmación y mensajes
     deleteSeries(seriesItem);
   };

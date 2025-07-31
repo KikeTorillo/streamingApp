@@ -44,7 +44,7 @@ const EpisodeListItem = ({
 }) => {
   // Validación de datos requeridos
   if (!episode) {
-    console.warn('EpisodeListItem: episode prop is required');
+
     return null;
   }
 

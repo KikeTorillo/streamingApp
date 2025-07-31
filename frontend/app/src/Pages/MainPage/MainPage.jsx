@@ -46,7 +46,7 @@ function MainPage() {
             const userData = JSON.parse(sessionUser);
             setUser(userData);
         } catch (err) {
-            console.error('Error parsing user data:', err);
+
             navigate('/login');
         }
     }, [navigate]);
@@ -105,8 +105,7 @@ function MainPage() {
      */
     const handleLogout = async () => {
         try {
-            console.log('🚪 Usuario solicitando logout...');
-            
+
             // Mostrar mensaje de confirmación usando nuestro sistema
             showConfirm(
                 '¿Estás seguro de que quieres cerrar sesión?',
@@ -121,7 +120,7 @@ function MainPage() {
                 }
             );
         } catch (error) {
-            console.error('❌ Error en handleLogout:', error);
+
             // En caso de error, forzar limpieza y redirigir
             sessionStorage.removeItem('sessionUser');
             window.location.href = '/login';
@@ -146,7 +145,7 @@ function MainPage() {
      * Manejar click en película - redirige a página de detalle
      */
     const handleMovieClick = (movie) => {
-        console.log('🎬 Click movie:', movie.title);
+
         // Redirigir a página de detalle de película
         navigate(`/movies/${movie.id}`);
     };
@@ -155,7 +154,7 @@ function MainPage() {
      * Manejar click en serie - usa navegación inteligente
      */
     const handleSeriesClick = (series) => {
-        console.log('📺 Click series:', series.title);
+
         handleContentCardClick(series); // ✅ Usa el método inteligente
     };
 
@@ -163,12 +162,12 @@ function MainPage() {
      * Reintentar carga usando contextos
      */
     const handleRetryMovies = () => {
-        console.log('🔄 [MainPage] Reintentando carga de películas');
+
         loadMovies(); // Método del contexto
     };
 
     const handleRetrySeries = () => {
-        console.log('🔄 [MainPage] Reintentando carga de series');
+
         loadSeries(); // Método del contexto
     };
 
@@ -220,7 +219,7 @@ function MainPage() {
     // ===== INICIALIZAR CARGA DE DATOS =====
     useEffect(() => {
         if (user) {
-            console.log('🔄 [MainPage] Usuario autenticado, iniciando carga de datos desde contextos');
+
             // Disparar carga usando métodos de los contextos
             loadCategories(); // Necesario para FilterBar
             loadMovies();     // Solo se dispara si no hay datos

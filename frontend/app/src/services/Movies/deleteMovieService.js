@@ -10,7 +10,7 @@ const deleteMovieService = async (id) => {
         });
         return response.data;
     } catch (error) {
-        console.error("Error al eliminar película:", error);
+
         throw error;
     }
 };

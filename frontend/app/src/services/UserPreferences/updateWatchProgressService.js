@@ -16,7 +16,7 @@ import { environmentService } from "../environmentService";
  */
 const updateWatchProgressService = async (userId, contentId, progressData) => {
     const { urlBackend } = environmentService();
-    console.log('🔍 [updateWatchProgress] Enviando datos:', { userId, contentId, progressData });
+
     try {
         const payload = {
             contentId,
@@ -25,7 +25,6 @@ const updateWatchProgressService = async (userId, contentId, progressData) => {
             ...(progressData.currentEpisode !== undefined && { currentEpisode: progressData.currentEpisode }),
             completed: progressData.completed || false
         };
-        console.log('🔍 [updateWatchProgress] Payload final:', payload);
 
         const response = await axios.put(
             `${urlBackend}/api/v1/user-preferences/${userId}/watch-progress`, 
@@ -44,8 +43,7 @@ const updateWatchProgressService = async (userId, contentId, progressData) => {
             message: response.data.message
         };
     } catch (error) {
-        console.error('Error al actualizar progreso de reproducción:', error);
-        
+
         // Manejar errores específicos
         if (error.response?.status === 404) {
             return {

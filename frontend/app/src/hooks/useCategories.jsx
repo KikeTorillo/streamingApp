@@ -13,21 +13,20 @@ const useCategories = () => {
       setError(null);
 
       try {
-        console.log('📂 Cargando categorías...');
+
         const response = await getCategoriesService();
 
         const data = Array.isArray(response) ? response : 
                      response?.data ? response.data : 
                      response?.categories ? response.categories : [];
 
-        console.log('📂 Categorías cargadas:', data);
         setCategories(data);
 
         if (data.length === 0) {
           setError('No hay categorías disponibles. Ve a Administrar > Categorías para crear una.');
         }
       } catch (err) {
-        console.error('❌ Error cargando categorías:', err);
+
         setError('Error al cargar categorías. Verifica tu conexión.');
         setCategories([]);
       } finally {

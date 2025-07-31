@@ -34,7 +34,7 @@ const createMovieService = async (movieData) => {
     }
     
     // Procesar la imagen de portada (valida pero NO descarga URLs)
-    console.log('🎬 Procesando imagen de portada...');
+
     const processedCoverImage = await processCoverImage(movieData.coverImage);
     
     // Crear FormData
@@ -49,22 +49,15 @@ const createMovieService = async (movieData) => {
     if (isValidFile(processedCoverImage)) {
       // Es un archivo local - enviarlo como File
       formData.append("coverImage", processedCoverImage);
-      console.log('📤 Enviando archivo de imagen local al backend');
-      console.log('- Portada (archivo):', processedCoverImage.name, `(${Math.round(processedCoverImage.size / 1024)}KB)`);
+
     } else if (isValidImageUrl(processedCoverImage)) {
       // Es una URL - enviarla como string en un campo separado
       formData.append("coverImageUrl", processedCoverImage);
-      console.log('📤 Enviando URL de imagen al backend para descarga');
-      console.log('- Portada (URL):', processedCoverImage);
+
     } else {
       throw new Error('Error interno: imagen procesada no es válida');
     }
-    
-    console.log('📤 Enviando datos al backend...');
-    console.log('- Título:', movieData.title);
-    console.log('- Año:', movieData.releaseYear);
-    console.log('- Video:', movieData.video.name, `(${Math.round(movieData.video.size / 1024 / 1024)}MB)`);
-    
+
     // Realizar petición al backend con progreso de upload
     const response = await axios.post(`${urlBackend}/api/v1/movies`, formData, {
       headers: { 
@@ -75,7 +68,7 @@ const createMovieService = async (movieData) => {
       onUploadProgress: (progressEvent) => {
         if (progressEvent.lengthComputable) {
           const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-          console.log(`📤 Upload progreso: ${percentCompleted}%`);
+
           // Trigger custom event para actualizar progreso
           window.dispatchEvent(new CustomEvent('uploadProgress', { 
             detail: { progress: percentCompleted } 
@@ -83,13 +76,11 @@ const createMovieService = async (movieData) => {
         }
       }
     });
-    
-    console.log('✅ Película creada exitosamente');
+
     return response.data;
     
   } catch (error) {
-    console.error("❌ Error al crear película:", error);
-    
+
     // Mejorar mensajes de error para el usuario
     if (error.response?.status === 413) {
       throw new Error('El archivo de video es demasiado grande');
@@ -102,7 +93,7 @@ const createMovieService = async (movieData) => {
     // Manejar errores específicos de descarga de imagen del backend
     if (error.response?.status === 500 && error.response?.data?.error === 'IMAGE_DOWNLOAD_FAILED') {
       const errorMsg = error.response.data.message || 'Error al descargar la imagen';
-      console.error('💥 Error de descarga de imagen del backend:', error.response.data);
+
       throw new Error(errorMsg);
     }
     

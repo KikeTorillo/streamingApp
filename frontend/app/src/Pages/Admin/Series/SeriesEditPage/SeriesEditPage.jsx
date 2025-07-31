@@ -110,17 +110,13 @@ function SeriesEditPage() {
    */
   const loadSeriesData = async () => {
     try {
-      console.log('📥 Cargando datos de la serie ID:', id);
-      
+
       // Cargar serie y categorías en paralelo
       const [seriesResponse, categoriesResponse] = await Promise.all([
         loadSeriesById(id),
         getCategoriesService()
       ]);
-      
-      console.log('📋 Respuesta serie desde contexto:', seriesResponse);
-      console.log('📂 Respuesta categorías:', categoriesResponse);
-      
+
       if (!seriesResponse.success) {
         throw new Error(seriesResponse.error || 'Error al cargar datos de la serie');
       }
@@ -133,8 +129,6 @@ function SeriesEditPage() {
         categoriesData = categoriesResponse.data;
       }
 
-      console.log('✅ Categorías normalizadas:', categoriesData);
-      
       // Configurar imagen preview actual usando función del contexto
       if (currentSeries?.cover_image) {
         const currentImageUrl = getSeriesCoverUrl(currentSeries.cover_image);
@@ -150,7 +144,7 @@ function SeriesEditPage() {
       });
       
     } catch (error) {
-      console.error('💥 Error cargando datos de la serie:', error);
+
     }
   };
 
@@ -160,8 +154,7 @@ function SeriesEditPage() {
    * Manejar cambios en el formulario
    */
   const handleFormChange = (formData) => {
-    console.log('📝 Cambios en formulario:', formData);
-    
+
     // Verificar si hay cambios comparando con datos iniciales
     const hasRealChanges = initialData && (
       formData.title !== initialData.title ||
@@ -171,7 +164,7 @@ function SeriesEditPage() {
     );
     
     setHasChanges(hasRealChanges);
-    console.log('🔄 ¿Hay cambios?', hasRealChanges);
+
   };
 
   /**
@@ -180,8 +173,6 @@ function SeriesEditPage() {
   const handleSubmit = async (formData) => {
     try {
       setSuccess(false);
-
-      console.log('📤 Enviando actualización:', formData);
 
       // Preparar datos para el backend (solo campos que cambiaron)
       const updateData = {};
@@ -208,11 +199,7 @@ function SeriesEditPage() {
         return;
       }
 
-      console.log('📤 Datos a actualizar:', updateData);
-
       const response = await updateSeries(id, updateData);
-
-      console.log('📥 Respuesta del contexto:', response);
 
       if (!response.success) {
         throw new Error(response.error || 'Error al actualizar serie');
@@ -221,8 +208,6 @@ function SeriesEditPage() {
       // Éxito
       setSuccess(true);
       setHasChanges(false);
-      
-      console.log('✅ Serie actualizada exitosamente');
 
       // Recargar datos actualizados
       setTimeout(() => {
@@ -235,7 +220,7 @@ function SeriesEditPage() {
       }, 2500);
 
     } catch (err) {
-      console.error('💥 Error actualizando serie:', err);
+
     }
   };
 

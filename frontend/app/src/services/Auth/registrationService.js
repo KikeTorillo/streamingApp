@@ -25,9 +25,7 @@ const registrationService = async (userData) => {
     try {
         const response = await fetch(`${urlBackend}/api/v1/auth/registration`, requestOptions);
         const data = await response.json();
-        
-        console.log('Respuesta del backend registration:', data);
-        
+
         // ✅ MEJORADO: Manejo más específico de respuestas
         if (response.ok) {
             return {
@@ -58,7 +56,7 @@ const registrationService = async (userData) => {
             }
         }
     } catch (error) {
-        console.error('Error en registrationService:', error);
+
         return {
             success: false,
             error: 'Error de conexión',

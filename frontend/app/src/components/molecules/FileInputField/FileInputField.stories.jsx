@@ -152,7 +152,7 @@ const Template = (args) => (
   <FileInputField 
     {...args} 
     onChange={(e) => {
-      console.log('Archivos seleccionados:', e.target.files);
+
     }}
   />
 );
@@ -426,7 +426,7 @@ export const CompleteExample = () => {
     setErrors(newErrors);
     
     if (Object.keys(newErrors).length === 0) {
-      console.log('📤 Formulario enviado:', formData);
+
       alert('¡Formulario enviado correctamente!');
     }
   };

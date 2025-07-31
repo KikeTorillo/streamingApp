@@ -94,17 +94,15 @@ function useImageCropper(options = {}) {
    */
   const openCropper = useCallback((file) => {
     if (!file || !(file instanceof File)) {
-      console.warn('⚠️ useImageCropper: openCropper requiere un archivo válido');
+
       return;
     }
 
     // Verificar si ya fue procesado
     if (isFileProcessed(file)) {
-      console.log('🔄 Archivo ya fue procesado, saltando cropping:', file.name);
+
       return;
     }
-
-    console.log('✅ Abriendo cropper para:', file.name);
 
     try {
       const url = URL.createObjectURL(file);
@@ -114,7 +112,7 @@ function useImageCropper(options = {}) {
       setImageUrl(url);
       setIsOpen(true);
     } catch (error) {
-      console.error('❌ Error creando URL de objeto:', error);
+
     }
   }, [isFileProcessed]);
 
@@ -122,7 +120,6 @@ function useImageCropper(options = {}) {
    * Cerrar cropper y limpiar estado
    */
   const closeCropper = useCallback(() => {
-    console.log('❌ Cerrando cropper');
 
     // Marcar archivo como procesado (tanto si se confirmó como si se canceló)
     if (originalFile) {
@@ -147,14 +144,9 @@ function useImageCropper(options = {}) {
    */
   const handleCroppedImage = useCallback((croppedBlob) => {
     if (!croppedBlob || !originalFile) {
-      console.error('❌ Datos inválidos para procesamiento de imagen recortada');
+
       return;
     }
-
-    console.log('✂️ Procesando imagen recortada:', {
-      blobSize: croppedBlob.size,
-      originalFile: originalFile.name
-    });
 
     try {
       // Crear archivo desde el blob
@@ -162,8 +154,6 @@ function useImageCropper(options = {}) {
       const newCroppedFile = new File([croppedBlob], fileName, {
         type: 'image/jpeg'
       });
-
-      console.log('📁 Archivo recortado creado:', newCroppedFile.name);
 
       // Actualizar estado
       setCroppedFile(newCroppedFile);
@@ -178,7 +168,7 @@ function useImageCropper(options = {}) {
       }, 50);
 
     } catch (error) {
-      console.error('❌ Error procesando imagen recortada:', error);
+
     }
   }, [originalFile, croppedFilePrefix, closeCropper, onCropComplete]);
 
@@ -186,8 +176,7 @@ function useImageCropper(options = {}) {
    * Resetear todo el estado del cropper
    */
   const resetCropper = useCallback(() => {
-    console.log('🔄 Reseteando cropper completamente');
-    
+
     setIsOpen(false);
     setOriginalFile(null);
     setCroppedFile(null);

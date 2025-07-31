@@ -12,9 +12,7 @@ import { environmentService } from "../environmentService";
  */
 const updateMovieService = async (id, movieData) => {
     const { urlBackend } = environmentService();
-    
-    console.log('🎬 Actualizando película ID:', id, 'con datos:', movieData);
-    
+
     // Crear FormData solo con campos permitidos y que tienen valores
     const formData = new FormData();
     
@@ -44,15 +42,12 @@ const updateMovieService = async (id, movieData) => {
     }
 
     try {
-        console.log('📤 Enviando datos al backend...');
-        
+
         const response = await axios.patch(`${urlBackend}/api/v1/movies/${id}`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
             withCredentials: true,
         });
-        
-        console.log('📥 Respuesta del backend:', response.data);
-        
+
         // ✅ RESPUESTA ESTRUCTURADA
         return {
             success: true,
@@ -60,8 +55,7 @@ const updateMovieService = async (id, movieData) => {
             message: 'Película actualizada exitosamente'
         };
     } catch (error) {
-        console.error("💥 Error al actualizar película:", error);
-        
+
         // ✅ MANEJO ESPECÍFICO DE ERRORES
         if (error.response?.status === 401) {
             return {

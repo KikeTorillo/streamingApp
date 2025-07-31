@@ -134,7 +134,7 @@ function EditModal({
         await onSave(value.trim());
       } catch (err) {
         // El error se maneja en el componente padre
-        console.error('Error al guardar:', err);
+
       }
     }
   };

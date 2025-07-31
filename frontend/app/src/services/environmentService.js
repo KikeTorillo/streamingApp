@@ -22,15 +22,6 @@ function environmentService() {
     const viteFrontLocal = import.meta.env.VITE_FRONT_URL_LOCAL;
     const viteTmdbKey = import.meta.env.VITE_TMDB_API_KEY;
 
-    console.log('🔍 Environment Debug:', {
-        isDevelopment,
-        isProduction,
-        viteMode,
-        hasApiKey: !!viteApiKey,
-        hasHostLocal: !!viteHostLocal,
-        hasTmdbKey: !!viteTmdbKey
-    });
-
     // 3. Configuración según entorno
     let urlBackend, urlFront, apiKey, tmdbApiKey;
 
@@ -40,8 +31,7 @@ function environmentService() {
         urlFront = viteFrontLocal || 'http://localhost:5173';
         apiKey = viteApiKey || '1ogC7RKV419Y5XssdtcvmuRJ8RcCu451a';
         tmdbApiKey = viteTmdbKey || '';
-        
-        console.log('🔧 Modo DESARROLLO detectado');
+
     } else {
         // 🏠 PRODUCCIÓN: URLs absolutas (proxy no funciona)
         // NOTA: El proxy de NGINX no está funcionando correctamente,
@@ -50,8 +40,7 @@ function environmentService() {
         urlFront = window.location.origin;  // URL actual del browser
         apiKey = '1ogC7RKV419Y5XssdtcvmuRJ8RcCu451a';  // Valor por defecto
         tmdbApiKey = 'f31b2f3b55906ce54efce57ec7b5c0b7fsdfsd';  // Valor por defecto
-        
-        console.log('🏠 Modo PRODUCCIÓN detectado');
+
     }
 
     // 4. Configuración consolidada
@@ -88,14 +77,6 @@ function environmentService() {
             }
         })
     };
-
-    console.log('📋 Configuración final:', {
-        environment: config.environment,
-        urlBackend: config.urlBackend,
-        urlFront: config.urlFront,
-        hasApiKey: !!config.apiKey,
-        hasTmdbKey: !!config.tmdbApiKey
-    });
 
     return config;
 }

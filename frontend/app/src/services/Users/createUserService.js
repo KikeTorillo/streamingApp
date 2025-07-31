@@ -27,9 +27,7 @@ const createUserService = async (userData) => {
     if (userData.email && userData.email.trim() !== '') {
         payload.email = userData.email;
     }
-    
-    console.log('Enviando al backend createUser:', payload);
-    
+
     try {
         const response = await axios.post(`${urlBackend}/api/v1/users`, 
             payload,
@@ -38,9 +36,7 @@ const createUserService = async (userData) => {
                 withCredentials: true,
             }
         );
-        
-        console.log('Usuario creado exitosamente:', response.data);
-        
+
         // ✅ MEJORADO: Respuesta estructurada
         return {
             success: true,
@@ -48,8 +44,7 @@ const createUserService = async (userData) => {
             message: 'Usuario creado exitosamente'
         };
     } catch (error) {
-        console.error("Error al crear usuario:", error);
-        
+
         // ✅ MEJORADO: Manejo de errores específicos
         if (error.response?.status === 409) {
             return {

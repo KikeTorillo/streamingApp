@@ -10,23 +10,18 @@ import { environmentService } from "../environmentService";
  */
 const deleteUserService = async (id) => {
     const { urlBackend } = environmentService();
-    
-    console.log('Eliminando usuario:', id);
-    
+
     try {
         const response = await axios.delete(`${urlBackend}/api/v1/users/${id}`, {
             withCredentials: true,
         });
-        
-        console.log('Usuario eliminado exitosamente:', response.data);
-        
+
         return {
             success: true,
             message: 'Usuario eliminado exitosamente'
         };
     } catch (error) {
-        console.error("Error al eliminar usuario:", error);
-        
+
         // ✅ MANEJO ESPECÍFICO de errores
         if (error.response?.status === 401) {
             return {

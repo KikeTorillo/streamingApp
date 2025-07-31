@@ -12,14 +12,11 @@ import { environmentService } from "../environmentService";
 const getEpisodeByIdService = async (episodeId) => {
     const { urlBackend } = environmentService();
     try {
-        console.log('📺 Obteniendo episodio ID:', episodeId);
-        
+
         const response = await axios.get(`${urlBackend}/api/v1/episodes/${episodeId}`, {
             withCredentials: true,
         });
-        
-        console.log('📥 Respuesta del backend:', response.data);
-        
+
         // ✅ RESPUESTA ESTRUCTURADA
         return {
             success: true,
@@ -27,8 +24,7 @@ const getEpisodeByIdService = async (episodeId) => {
             message: 'Episodio obtenido exitosamente'
         };
     } catch (error) {
-        console.error('💥 Error al obtener episodio por ID:', error);
-        
+
         // ✅ MANEJO ESPECÍFICO DE ERRORES
         if (error.response?.status === 401) {
             return {

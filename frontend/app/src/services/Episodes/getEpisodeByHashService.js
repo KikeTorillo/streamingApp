@@ -10,7 +10,7 @@ const getEpisodeByHashService = async (fileHash) => {
         });
         return response.data;
     } catch (error) {
-        console.error('Error al obtener episodio por hash:', error);
+
         throw error;
     }
 };

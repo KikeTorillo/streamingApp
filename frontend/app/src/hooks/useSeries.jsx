@@ -17,18 +17,17 @@ const useSeries = () => {
       setError(null);
 
       try {
-        console.log('📺 Cargando series disponibles...');
+
         const response = await getSeriesService();
         const seriesData = response?.data || response || [];
 
-        console.log(`✅ Series cargadas: ${seriesData.length} elementos`);
         setSeries(seriesData);
 
         if (seriesData.length === 0) {
           setError('No hay series disponibles. Ve a Administrar > Series para crear una.');
         }
       } catch (err) {
-        console.error('❌ Error al cargar series:', err);
+
         setError('Error al cargar las series disponibles. Verifica tu conexión.');
         setSeries([]);
       } finally {

@@ -44,7 +44,7 @@ function SeriesDetailPage() {
             const userData = JSON.parse(sessionUser);
             setUser(userData);
         } catch (err) {
-            console.error('Error parsing user data:', err);
+
             navigate('/login');
         }
     }, [navigate]);
@@ -60,12 +60,12 @@ function SeriesDetailPage() {
                 
                 if (response.success) {
                     setSerie(response.data);
-                    console.log('Serie cargada:', response.data);
+
                 } else {
                     throw new Error(response.message || 'Error al cargar la serie');
                 }
             } catch (error) {
-                console.error('Error fetching serie:', error);
+
                 setSerieError(error.message);
             } finally {
                 setLoadingSerie(false);
@@ -87,14 +87,13 @@ function SeriesDetailPage() {
                 const response = await getEpisodesBySerieService(id);
                 
                 if (response.success) {
-                    setEpisodes(response.data || []);
                     console.log('Episodios cargados:', response.data);
-                    console.log('🔍 Episode details:', response.data?.[0]); // Ver el primer episodio en detalle
+                    setEpisodes(response.data || []);
                 } else {
                     throw new Error(response.message || 'Error al cargar episodios');
                 }
             } catch (error) {
-                console.error('Error fetching episodes:', error);
+
                 setEpisodesError(error.message);
             } finally {
                 setLoadingEpisodes(false);
@@ -108,14 +107,10 @@ function SeriesDetailPage() {
 
     // ===== HANDLERS =====
     const handlePlayEpisode = (episode) => {
-        console.log('🎬 Reproducir episodio:', episode);
-        console.log('🔍 Episode file_hash:', episode.file_hash);
-        console.log('🔍 Episode available_resolutions:', episode.available_resolutions);
-        console.log('🔍 Episode full data:', JSON.stringify(episode, null, 2));
-        
+
         // Verificar si tiene file_hash
         if (!episode.file_hash) {
-            console.error('❌ ERROR: El episodio no tiene file_hash:', episode);
+
             alert('Error: El episodio no tiene archivo de video asociado. Verifica que el episodio esté correctamente subido.');
             return;
         }
@@ -132,10 +127,10 @@ function SeriesDetailPage() {
         
         // ===== NUEVA: USAR PLAYLIST PARA CONTINUACIÓN AUTOMÁTICA =====
         if (episodes && episodes.length > 1) {
-            console.log('📋 Navegando con playlist de episodios');
+
             navigateToPlayerWithPlaylist(episodeData, episodes, id);
         } else {
-            console.log('🎬 Navegando sin playlist (episodio único)');
+
             navigateToPlayer(episodeData);
         }
     };
@@ -155,7 +150,7 @@ function SeriesDetailPage() {
             sessionStorage.removeItem('sessionUser');
             navigate('/login');
         } catch (error) {
-            console.error('Error en logout:', error);
+
             window.location.href = '/login';
         }
     };
@@ -184,14 +179,6 @@ function SeriesDetailPage() {
     const currentSeasonEpisodes = episodesBySeason[selectedSeason] || [];
     
     // ✅ DEBUGGING: Verificar datos antes del render
-    console.log('🐛 RENDER DEBUG:');
-    console.log('🐛 Episodes raw:', episodes);
-    console.log('🐛 Episodes by season:', episodesBySeason);
-    console.log('🐛 Available seasons:', seasonsData);
-    console.log('🐛 Selected season:', selectedSeason);
-    console.log('🐛 Current season episodes:', currentSeasonEpisodes);
-    console.log('🐛 Loading states:', { loadingSerie, loadingEpisodes });
-    console.log('🐛 Error states:', { serieError, episodesError });
 
     // ===== TRANSFORMAR EPISODIOS PARA EPISODELISTITEM =====
     const transformEpisodeForList = (episode) => {
@@ -220,7 +207,7 @@ function SeriesDetailPage() {
             title: episode.title || `Episodio ${episode.episode_number}`,
             cover: coverUrl,
             duration: durationText,
-            rating: episode.rating || serie?.rating || 0
+            rating: episode.rating || serie?.rating
         };
     };
 
@@ -433,8 +420,7 @@ function SeriesDetailPage() {
                             }}>
                                 {currentSeasonEpisodes.map(episode => {
                                     const transformedEpisode = transformEpisodeForList(episode);
-                                    console.log('🐛 Rendering episode:', transformedEpisode);
-                                    
+
                                     return (
                                         <EpisodeListItem
                                             key={`episode-${episode.id}`}

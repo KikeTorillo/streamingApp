@@ -35,12 +35,12 @@ const SeasonSelector = ({
 }) => {
   // Validación de datos requeridos
   if (!seasons || seasons.length === 0) {
-    console.warn('SeasonSelector: seasons prop is required and should not be empty');
+
     return null;
   }
 
   if (typeof onSeasonChange !== 'function') {
-    console.warn('SeasonSelector: onSeasonChange prop is required and should be a function');
+
     return null;
   }
 

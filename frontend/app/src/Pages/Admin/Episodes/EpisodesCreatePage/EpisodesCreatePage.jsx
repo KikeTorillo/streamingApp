@@ -58,7 +58,7 @@ function EpisodesCreatePage() {
 
   // ===== EFECTOS =====
   useEffect(() => {
-    console.log('🚀 [EpisodesCreatePage] Componente montado, cargando series...');
+
     loadSeries();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Solo ejecutar al montar el componente
@@ -214,7 +214,6 @@ function EpisodesCreatePage() {
    */
   const handleSubmit = async (formData) => {
     try {
-      console.log('📤 [EpisodesCreatePage] Enviando datos del episodio:', formData);
 
       // Primero procesar campos numéricos que vienen como strings  
       const processedData = {
@@ -224,52 +223,48 @@ function EpisodesCreatePage() {
         episodeNumber: parseInt(formData.episodeNumber)
       };
 
-      console.log('📤 [EpisodesCreatePage] Datos procesados:', processedData);
-
       // Usar createEpisode del contexto con callback de progreso
       const result = await createEpisode(processedData, (progress, status, message) => {
-        console.log(`📊 [EpisodesCreatePage] Progreso: ${progress}% - ${status} - ${message}`);
+
       });
 
       if (result.success) {
-        console.log('✅ [EpisodesCreatePage] Episodio creado exitosamente');
-        
+
         // ✅ Limpiar navegación
         resetNavigation();
 
         if (result.taskId) {
           // ✅ Hay procesamiento asíncrono - monitorear progreso
-          console.log('🔄 [EpisodesCreatePage] Iniciando monitoreo de progreso:', result.taskId);
-          
+
           monitorProgress(
             result.taskId,
             'episodes',
             (status, progress, message) => {
-              console.log(`📊 [EpisodesCreatePage] Estado: ${status} - ${progress}% - ${message}`);
+
             },
             (finished, err) => {
               if (finished) {
-                console.log('✅ [EpisodesCreatePage] Procesamiento completado');
+
                 triggerSuccess('¡Episodio creado exitosamente!');
                 resetCreationState();
               } else if (err) {
-                console.error('❌ [EpisodesCreatePage] Error en procesamiento:', err);
+
                 resetCreationState();
               }
             }
           );
         } else {
           // ✅ Procesamiento inmediato completado
-          console.log('✅ [EpisodesCreatePage] Procesamiento inmediato completado');
+
           triggerSuccess('¡Episodio creado exitosamente!');
           resetCreationState();
         }
       } else {
-        console.error('❌ [EpisodesCreatePage] Error al crear episodio:', result.error);
+
       }
 
     } catch (err) {
-      console.error('💥 [EpisodesCreatePage] Error inesperado:', err);
+
     }
   };
 
@@ -301,7 +296,6 @@ function EpisodesCreatePage() {
           >
             Volver a Episodios
           </Button>
-
 
         {/* Mensaje de Error */}
         {error && (

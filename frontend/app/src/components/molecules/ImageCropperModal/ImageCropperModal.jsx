@@ -120,7 +120,7 @@ function ImageCropperModal({
    */
   const handleConfirmCrop = async () => {
     if (!croppedAreaPixels || !imageSrc) {
-      console.warn('⚠️ No hay área de recorte definida o imagen fuente');
+
       return;
     }
     
@@ -128,7 +128,7 @@ function ImageCropperModal({
       const croppedBlob = await getCroppedImg(imageSrc, croppedAreaPixels);
       onComplete?.(croppedBlob);
     } catch (error) {
-      console.error('❌ Error al recortar la imagen:', error);
+
     }
   };
   

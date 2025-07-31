@@ -301,7 +301,6 @@ export const Interactive = () => (
       size="lg"
       text="Seleccionar cualquier archivo"
       helperText="Haz click para seleccionar un archivo"
-      onChange={(e) => console.log('Archivo seleccionado:', e.target.files[0])}
     />
     
     <FileInput 
@@ -310,7 +309,6 @@ export const Interactive = () => (
       text="Solo imágenes"
       helperText="JPG, PNG, GIF, WebP"
       variant="success"
-      onChange={(e) => console.log('Imagen seleccionada:', e.target.files[0])}
     />
     
     <FileInput 
@@ -319,7 +317,6 @@ export const Interactive = () => (
       size="lg"
       text="Múltiples documentos"
       helperText="Selecciona varios archivos PDF o Word"
-      onChange={(e) => console.log('Documentos seleccionados:', Array.from(e.target.files || []))}
     />
     
     <FileInput 
@@ -328,7 +325,6 @@ export const Interactive = () => (
       text="Seleccionar video"
       helperText="MP4, WebM, AVI, MOV"
       variant="warning"
-      onChange={(e) => console.log('Video seleccionado:', e.target.files[0])}
     />
   </div>
 );

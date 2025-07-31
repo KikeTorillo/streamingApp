@@ -14,7 +14,7 @@ const getUserByIdService = async (id) => {
         });
         return response.data;
     } catch (error) {
-        console.error('Error al obtener usuario:', error);
+
         throw error;
     }
 };

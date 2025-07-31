@@ -11,7 +11,7 @@ const searchSeriesService = async (title) => {
         });
         return response.data;
     } catch (error) {
-        console.error('Error al buscar series:', error);
+
         throw error;
     }
 };

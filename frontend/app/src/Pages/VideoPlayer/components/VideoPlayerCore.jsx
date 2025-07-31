@@ -120,14 +120,6 @@ export const VideoPlayerCore = ({
       }
 
       const finalConfig = getBaseConfig();
-      
-      console.log('🎬 [VideoPlayerCore] Inicializando Video.js con configuración:', {
-        hasSources: !!finalConfig.sources,
-        sourcesCount: finalConfig.sources?.length || 0,
-        firstSource: finalConfig.sources?.[0]?.src || 'N/A',
-        autoplay: finalConfig.autoplay,
-        controls: finalConfig.controls
-      });
 
       // ✅ Patrón oficial: Inicializar Video.js
       const player = videojs(videoRef.current, finalConfig);
@@ -135,8 +127,7 @@ export const VideoPlayerCore = ({
       // ✅ Patrón oficial: Usar player.ready() para configuración adicional
       player.ready(() => {
         playerRef.current = player;
-        console.log('✅ [VideoPlayerCore] Player inicializado y listo');
-        
+
         // Callback oficial para notificar que el player está listo
         if (onReady && typeof onReady === 'function') {
           onReady(player);
@@ -186,8 +177,7 @@ export const VideoPlayerCore = ({
     // ✅ Patrón oficial: Cleanup en el return del useEffect
     return () => {
       if (playerRef.current && !playerRef.current.isDisposed()) {
-        console.log('🧹 [VideoPlayerCore] Limpiando player...');
-        
+
         // Callback de limpieza antes de dispose
         if (onDispose && typeof onDispose === 'function') {
           onDispose(playerRef.current);
@@ -201,8 +191,7 @@ export const VideoPlayerCore = ({
         // ✅ Patrón oficial: Dispose del player
         playerRef.current.dispose();
         playerRef.current = null;
-        
-        console.log('✅ [VideoPlayerCore] Player limpiado correctamente');
+
       }
     };
   }, []); // Solo ejecutar una vez al montar/desmontar
@@ -213,8 +202,7 @@ export const VideoPlayerCore = ({
    */
   useEffect(() => {
     if (playerRef.current && !playerRef.current.isDisposed() && config) {
-      console.log('🔄 [VideoPlayerCore] Actualizando configuración del player');
-      
+
       // Aplicar cambios de configuración que se pueden actualizar dinámicamente
       if (config.sources && config.sources !== playerRef.current.currentSources()) {
         playerRef.current.src(config.sources);

@@ -17,8 +17,7 @@ class TMDBService {
 
     // Verificar que la API key existe
     if (!this.apiKey) {
-      console.error('❌ TMDB API Key no encontrada en variables de entorno');
-      console.log('💡 Asegúrate de tener VITE_TMDB_API_KEY en tu archivo .env');
+
     }
   }
 
@@ -39,8 +38,6 @@ class TMDBService {
         throw new Error('El término de búsqueda debe tener al menos 2 caracteres');
       }
 
-      console.log(`🔍 Buscando en TMDB: "${query}" (tipo: ${contentType})`);
-
       let results = [];
 
       // Decidir qué endpoints usar según el tipo de contenido
@@ -57,11 +54,10 @@ class TMDBService {
       // Ordenar resultados por popularidad y fecha
       results = this.sortResults(results, options.sortBy || 'popularity');
 
-      console.log(`✅ TMDB: Encontrados ${results.length} resultados`);
       return results;
 
     } catch (error) {
-      console.error('❌ Error en búsqueda TMDB:', error.message);
+
       throw new Error(`Error al buscar en TMDB: ${error.message}`);
     }
   }
@@ -134,7 +130,7 @@ class TMDBService {
       return this.transformMovieData(data, true);
 
     } catch (error) {
-      console.error('❌ Error obteniendo detalles de película:', error);
+
       throw error;
     }
   }
@@ -161,7 +157,7 @@ class TMDBService {
       return this.transformTVData(data, true);
 
     } catch (error) {
-      console.error('❌ Error obteniendo detalles de serie:', error);
+
       throw error;
     }
   }
@@ -297,7 +293,7 @@ class TMDBService {
       };
 
     } catch (error) {
-      console.error('❌ Error obteniendo configuración TMDB:', error);
+
       return null;
     }
   }

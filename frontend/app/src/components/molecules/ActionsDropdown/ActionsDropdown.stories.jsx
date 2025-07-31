@@ -51,7 +51,6 @@ const userActions = [
   {
     label: 'Ver perfil',
     icon: '👁️',
-    onClick: (user) => console.log('Ver:', user),
   },
   {
     label: 'Editar',

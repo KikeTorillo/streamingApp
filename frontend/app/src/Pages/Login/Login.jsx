@@ -83,7 +83,7 @@ function Login() {
       setError('✅ Email de recuperación enviado. Revisa tu bandeja de entrada.');
       
     } catch (err) {
-      console.error('Error en recovery:', err);
+
       setError('❌ Error al enviar email de recuperación.');
       
     } finally {

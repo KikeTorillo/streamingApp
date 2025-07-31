@@ -36,8 +36,7 @@ const getUsersService = async () => {
             count: mappedUsers.length
         };
     } catch (error) {
-        console.error('Error al obtener usuarios:', error);
-        
+
         // ✅ MEJORADO: Manejo específico de sesión expirada
         if (error.response?.status === 401) {
             return {

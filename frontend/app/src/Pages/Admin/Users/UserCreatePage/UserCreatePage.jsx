@@ -111,21 +111,20 @@ function UserCreatePage() {
    * Manejar envío del formulario - Usa función del contexto
    */
   const handleSubmit = async (formData) => {
-    console.log('🏗️ [UserCreatePage] Solicitud de creación:', formData);
 
     try {
       const result = await createUser(formData);
 
       if (result.success) {
-        console.log('✅ [UserCreatePage] Usuario creado:', result.data);
+
         triggerSuccess('¡Usuario creado exitosamente!');
         setHasChanges(false);
       } else {
-        console.error('❌ [UserCreatePage] Error en creación:', result.error);
+
         // El error ya se maneja en el contexto
       }
     } catch (error) {
-      console.error('💥 [UserCreatePage] Error en creación:', error);
+
       // El error ya se maneja en el contexto
     }
   };
@@ -185,7 +184,6 @@ function UserCreatePage() {
           Volver a Usuarios
         </Button>
 
-
         {/* ❌ MENSAJE DE ERROR - SISTEMA DE DISEÑO */}
         {error && (
           <div className="status-message status-message--error">
@@ -203,8 +201,6 @@ function UserCreatePage() {
             </button>
           </div>
         )}
-
-
 
         {/* Header del formulario */}
         <div className="form-header">

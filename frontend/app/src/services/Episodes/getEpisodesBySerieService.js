@@ -4,13 +4,10 @@ import { getEpisodesService } from './getEpisodesService'; // Asumiendo que ya l
 
 const getEpisodesBySerieService = async (serieId) => {
   try {
-    console.log(`[getEpisodesBySerieService] Buscando episodios para serie ID: ${serieId}`);
-    
+
     // ✅ Usar el servicio existente con el filtro de serieId
     const episodes = await getEpisodesService({ serieId });
-    
-    console.log('[getEpisodesBySerieService] Episodes found:', episodes);
-    
+
     return {
       success: true,
       data: Array.isArray(episodes) ? episodes : episodes.data || [],
@@ -18,8 +15,7 @@ const getEpisodesBySerieService = async (serieId) => {
     };
     
   } catch (error) {
-    console.error('[getEpisodesBySerieService] Error:', error);
-    
+
     return {
       success: false,
       data: [],

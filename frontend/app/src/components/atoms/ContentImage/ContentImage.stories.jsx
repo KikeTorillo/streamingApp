@@ -405,12 +405,12 @@ export const States = () => {
 
   const handleLoad = (key) => (e) => {
     setImageStates(prev => ({ ...prev, [key]: 'loaded' }));
-    console.log(`Imagen ${key} cargada`);
+
   };
 
   const handleError = (key) => (e) => {
     setImageStates(prev => ({ ...prev, [key]: 'error' }));
-    console.log(`Error cargando imagen ${key}`);
+
   };
 
   return (

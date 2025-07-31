@@ -109,8 +109,7 @@ function ImageCropField({
       // Recorte cancelado - no hacer nada
     }
   });
-  
-  
+
   // Construir accept string para FileInput
   const acceptString = acceptedFormats.map(format => {
     if (format.startsWith('.')) return format;
@@ -182,7 +181,7 @@ function ImageCropField({
     try {
       return URL.createObjectURL(value);
     } catch (error) {
-      console.error('❌ Error creando URL de preview:', error);
+
       return null;
     }
   }, [value]);

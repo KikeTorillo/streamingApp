@@ -72,7 +72,7 @@ function AdminSidebar({
     location = useLocation();
   } catch (error) {
     // Fallback para cuando no hay router (Storybook)
-    navigate = onNavigate || ((route) => console.log('Navigate to:', route));
+    navigate = onNavigate;
     location = { pathname: '/admin' };
   }
 
@@ -164,7 +164,7 @@ function AdminSidebar({
     try {
       navigate(route);
     } catch (error) {
-      console.warn('Navigation error:', error);
+
       // Fallback para Storybook
       if (onNavigate) {
         onNavigate(route);
@@ -186,7 +186,7 @@ function AdminSidebar({
     try {
       navigate('/');
     } catch (error) {
-      console.warn('Home navigation error:', error);
+
       window.location.href = '/';
     }
   };

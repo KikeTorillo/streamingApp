@@ -18,7 +18,7 @@ const getEpisodesService = async (filters = {}) => {
         });
         return response.data;
     } catch (error) {
-        console.error('Error al obtener episodios:', error);
+
         throw error;
     }
 };

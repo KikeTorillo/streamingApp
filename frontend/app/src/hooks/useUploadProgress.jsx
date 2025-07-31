@@ -24,12 +24,6 @@ const useUploadProgress = () => {
       progressEndpoint = `${urlBackend}/api/v1/series/progress/${taskId}`;
     }
 
-    console.log('🔄 Iniciando monitoreo de progreso:', {
-      taskId,
-      contentType,
-      endpoint: progressEndpoint
-    });
-
     // No resetear progreso si ya está en curso
     if (status === 'idle') {
       setProgress(0);
@@ -50,12 +44,6 @@ const useUploadProgress = () => {
         });
         
         const { status: taskStatus, progress: currentProgress, error: taskError } = response.data;
-        
-        console.log('📊 Progreso actualizado:', {
-          status: taskStatus,
-          progress: currentProgress,
-          error: taskError
-        });
 
         // Ajustar progreso para continuidad (50-100%)
         const backendProgress = currentProgress || 0;
@@ -101,8 +89,7 @@ const useUploadProgress = () => {
           setMessage('¡Video procesado y agregado al catálogo!');
           setProgress(100);
           clearInterval(interval);
-          
-          console.log('✅ Procesamiento completado');
+
           onStatusChange?.('Video procesado exitosamente');
           onFinish?.(true, null);
           
@@ -111,8 +98,7 @@ const useUploadProgress = () => {
           setMessage(`Error: ${errorMessage}`);
           setError(errorMessage);
           clearInterval(interval);
-          
-          console.error('❌ Procesamiento falló:', errorMessage);
+
           onStatusChange?.(`Error: ${errorMessage}`);
           onFinish?.(false, errorMessage);
         }
@@ -121,8 +107,7 @@ const useUploadProgress = () => {
         onStatusChange?.(taskStatus);
 
       } catch (error) {
-        console.error('❌ Error consultando progreso:', error);
-        
+
         const errorMessage = error.response?.status === 404 
           ? 'Tarea no encontrada' 
           : 'Error de conexión consultando progreso';
@@ -140,7 +125,7 @@ const useUploadProgress = () => {
     // Retornar función para cancelar monitoreo
     return () => {
       clearInterval(interval);
-      console.log('🛑 Monitoreo de progreso cancelado');
+
     };
   };
 

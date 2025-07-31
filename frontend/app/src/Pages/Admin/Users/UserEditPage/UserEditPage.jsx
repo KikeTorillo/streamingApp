@@ -116,15 +116,13 @@ function UserEditPage() {
    * Cargar datos del usuario - Usa función del contexto
    */
   const loadUserData = async () => {
-    console.log('📥 [UserEditPage] Cargando datos del usuario ID:', id);
 
     try {
       const result = await loadUserById(id);
 
       if (result.success) {
         const normalizedUserData = result.data;
-        console.log('✅ [UserEditPage] Usuario cargado:', normalizedUserData);
-        
+
         setUserData(normalizedUserData);
         setInitialData({ 
           email: normalizedUserData.email,
@@ -132,11 +130,11 @@ function UserEditPage() {
           roleId: normalizedUserData.roleId
         });
       } else {
-        console.error('❌ [UserEditPage] Error al cargar usuario:', result.error);
+
         // El error ya se maneja en el contexto
       }
     } catch (error) {
-      console.error('💥 [UserEditPage] Error en carga:', error);
+
       // El error ya se maneja en el contexto
     }
   };
@@ -147,8 +145,7 @@ function UserEditPage() {
    * Manejar cambios en el formulario
    */
   const handleFormChange = (formData) => {
-    console.log('📝 Cambios en formulario:', formData);
-    
+
     // Verificar si hay cambios comparando con datos iniciales
     const hasRealChanges = initialData && (
       formData.email !== initialData.email ||
@@ -157,20 +154,19 @@ function UserEditPage() {
     );
     
     setHasChanges(hasRealChanges);
-    console.log('🔄 ¿Hay cambios?', hasRealChanges);
+
   };
 
   /**
    * Manejar envío del formulario - Usa función del contexto
    */
   const handleSubmit = async (formData) => {
-    console.log('📤 [UserEditPage] Solicitud de actualización:', formData);
 
     try {
       const result = await updateUser(id, formData, initialData);
 
       if (result.success) {
-        console.log('✅ [UserEditPage] Usuario actualizado:', result.data);
+
         setSuccess(true);
         setHasChanges(false);
 
@@ -184,11 +180,11 @@ function UserEditPage() {
           navigate('/admin/users');
         }, 2500);
       } else {
-        console.error('❌ [UserEditPage] Error en actualización:', result.error);
+
         // El error ya se maneja en el contexto
       }
     } catch (error) {
-      console.error('💥 [UserEditPage] Error en actualización:', error);
+
       // El error ya se maneja en el contexto
     }
   };

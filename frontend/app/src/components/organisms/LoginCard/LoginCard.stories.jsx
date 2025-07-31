@@ -32,11 +32,11 @@ import { LoginCard } from './organisms/LoginCard';
 
 <LoginCard
   onSubmit={(data) => {
-    console.log('Login:', data);
+
     // { username: 'usuario', password: 'contraseña' }
   }}
   onForgotPassword={(username) => {
-    console.log('Recuperar:', username);
+
   }}
   loading={isLoading}
   error={errorMessage}
@@ -296,11 +296,11 @@ export const PageIntegration = () => (
       
       <LoginCard
         onSubmit={(data) => {
-          console.log('Login data:', data);
+
           alert('Login simulado');
         }}
         onForgotPassword={(username) => {
-          console.log('Forgot password for:', username);
+
           alert('Recuperación simulada');
         }}
         onRegisterClick={() => {

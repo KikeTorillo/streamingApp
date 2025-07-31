@@ -91,16 +91,16 @@ const Template = (args) => {
         isPlaying={isPlaying}
         onSkipBack={() => {
           args.onSkipBack();
-          console.log(`Retrocediendo ${args.skipSeconds} segundos`);
+
         }}
         onPlayPause={() => {
           setIsPlaying(!isPlaying);
           args.onPlayPause();
-          console.log(isPlaying ? 'Pausando' : 'Reproduciendo');
+
         }}
         onSkipForward={() => {
           args.onSkipForward();
-          console.log(`Avanzando ${args.skipSeconds} segundos`);
+
         }}
       />
     </VideoPlayerWrapper>
@@ -152,16 +152,16 @@ export const AlwaysVisible = (args) => {
           isPlaying={isPlaying}
           onSkipBack={() => {
             args.onSkipBack();
-            console.log(`Retrocediendo ${args.skipSeconds} segundos`);
+
           }}
           onPlayPause={() => {
             setIsPlaying(!isPlaying);
             args.onPlayPause();
-            console.log(isPlaying ? 'Pausando' : 'Reproduciendo');
+
           }}
           onSkipForward={() => {
             args.onSkipForward();
-            console.log(`Avanzando ${args.skipSeconds} segundos`);
+
           }}
         />
       </div>
@@ -227,12 +227,10 @@ export const Interactive = () => {
           <VideoPlayerOverlay
             isPlaying={isPlaying}
             skipSeconds={skipSeconds}
-            onSkipBack={() => console.log(`⏪ Retrocediendo ${skipSeconds}s`)}
             onPlayPause={() => {
               setIsPlaying(!isPlaying);
-              console.log(isPlaying ? '⏸️ Pausando' : '▶️ Reproduciendo');
+
             }}
-            onSkipForward={() => console.log(`⏩ Avanzando ${skipSeconds}s`)}
           />
         </div>
       </VideoPlayerWrapper>

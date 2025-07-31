@@ -74,9 +74,6 @@ const users = [
 <DataTable
   data={users}
   columns={userColumns}
-  onEdit={(user) => console.log('Editar:', user)}
-  onDelete={(user) => console.log('Eliminar:', user)}
-  onView={(user) => console.log('Ver:', user)}
 />
 \`\`\`
 
@@ -424,12 +421,12 @@ const Template = (args) => {
   const [data, setData] = useState(args.data);
 
   const handleEdit = (row) => {
-    console.log('Editar:', row);
+
     args.onEdit?.(row);
   };
 
   const handleDelete = (row) => {
-    console.log('Eliminar:', row);
+
     if (window.confirm(`¿Eliminar el elemento con ID ${row.id}?`)) {
       setData(prevData => prevData.filter(item => item.id !== row.id));
     }
@@ -437,7 +434,7 @@ const Template = (args) => {
   };
 
   const handleView = (row) => {
-    console.log('Ver detalles:', row);
+
     args.onView?.(row);
   };
 
@@ -499,9 +496,6 @@ export const UsersTable = () => (
       emptyTitle="No hay usuarios registrados"
       emptyDescription="Crea tu primer usuario para comenzar"
       emptyIcon="👥"
-      onEdit={(user) => console.log('Editar usuario:', user)}
-      onDelete={(user) => console.log('Eliminar usuario:', user)}
-      onView={(user) => console.log('Ver perfil:', user)}
     />
   </div>
 );
@@ -556,9 +550,6 @@ export const MoviesTable = () => (
       emptyTitle="No hay películas en el catálogo"
       emptyDescription="Agrega tu primera película al catálogo"
       emptyIcon="🎬"
-      onEdit={(movie) => console.log('Editar película:', movie)}
-      onDelete={(movie) => console.log('Eliminar película:', movie)}
-      onView={(movie) => console.log('Ver detalles:', movie)}
     />
   </div>
 );

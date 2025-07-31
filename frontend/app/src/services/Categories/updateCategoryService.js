@@ -14,7 +14,7 @@ const updateCategoryService = async (id, name) => {
         );
         return response.data;
     } catch (error) {
-        console.error("Error al actualizar categoría:", error);
+
         throw error;
     }
 };

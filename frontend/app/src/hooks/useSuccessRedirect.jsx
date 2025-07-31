@@ -31,15 +31,13 @@ function useSuccessRedirect(redirectPath, delay = 3000) {
     const finalDelay = options.delay || delay;
     const shouldRedirect = options.redirect !== false;
 
-    console.log(`✅ [useSuccessRedirect] Modal de éxito activado: "${successMessage}"`);
-    
     // Mostrar modal de éxito con auto-close
     showSuccess(successMessage, {
       title: options.title || '¡Éxito!',
       size: options.size || 'sm',
       autoCloseDelay: finalDelay,
       onAutoClose: shouldRedirect ? () => {
-        console.log(`🔄 [useSuccessRedirect] Redirigiendo a "${redirectPath}"`);
+
         navigate(redirectPath);
       } : undefined
     });

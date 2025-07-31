@@ -10,7 +10,7 @@ const getCategoryByIdService = async (id) => {
         });
         return response.data;
     } catch (error) {
-        console.error('Error al obtener categoría:', error);
+
         throw error;
     }
 };

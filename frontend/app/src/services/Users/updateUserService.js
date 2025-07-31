@@ -16,8 +16,6 @@ const updateUserService = async (id, userData) => {
     if (userData.email !== undefined) updateData.email = userData.email;
     if (userData.password) updateData.password = userData.password; // ✅ AGREGADO
     if (userData.roleId) updateData.roleId = userData.roleId;
-    
-    console.log('Actualizando usuario:', id, updateData);
 
     try {
         const response = await axios.patch(`${urlBackend}/api/v1/users/${id}`, 
@@ -27,9 +25,7 @@ const updateUserService = async (id, userData) => {
                 withCredentials: true,
             }
         );
-        
-        console.log('Usuario actualizado exitosamente:', response.data);
-        
+
         // ✅ MEJORADO: Respuesta estructurada
         return {
             success: true,
@@ -37,8 +33,7 @@ const updateUserService = async (id, userData) => {
             message: 'Usuario actualizado exitosamente'
         };
     } catch (error) {
-        console.error("Error al actualizar usuario:", error);
-        
+
         // ✅ MEJORADO: Manejo específico de errores
         if (error.response?.status === 401) {
             return {

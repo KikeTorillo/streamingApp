@@ -12,15 +12,12 @@ import { environmentService } from "../environmentService";
 const deleteCategoryService = async (id) => {
     const { urlBackend } = environmentService();
     try {
-        console.log('🗑️ Eliminando categoría ID:', id);
-        
+
         const response = await axios.delete(`${urlBackend}/api/v1/category/${id}`, {
             headers: { "Content-Type": "application/json" },
             withCredentials: true,
         });
-        
-        console.log('📥 Respuesta del backend:', response.data);
-        
+
         // ✅ RESPUESTA ESTRUCTURADA
         return {
             success: true,
@@ -28,8 +25,7 @@ const deleteCategoryService = async (id) => {
             message: 'Categoría eliminada exitosamente'
         };
     } catch (error) {
-        console.error('💥 Error al eliminar categoría:', error);
-        
+
         // ✅ MANEJO ESPECÍFICO DE ERRORES
         if (error.response?.status === 401) {
             return {

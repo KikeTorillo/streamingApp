@@ -77,7 +77,7 @@ const Template = (args) => {
   };
 
   const handleComplete = (croppedBlob) => {
-    console.log('Imagen recortada:', croppedBlob);
+
     setResult(`Imagen recortada: ${croppedBlob.size} bytes`);
     setIsOpen(false);
   };

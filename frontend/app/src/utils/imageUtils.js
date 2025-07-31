@@ -80,26 +80,17 @@ export const isValidImageFile = (file) => {
 export const processCoverImage = async (coverImage) => {
   // Si ya es un archivo válido, validarlo y retornarlo
   if (isValidFile(coverImage)) {
-    console.log('📁 Procesando archivo File local...');
-    
+
     if (!isValidImageFile(coverImage)) {
       throw new Error('El archivo seleccionado no es una imagen válida o es demasiado grande (máx. 10MB)');
     }
-    
-    console.log('✅ Archivo File válido:', {
-      name: coverImage.name,
-      size: `${Math.round(coverImage.size / 1024)}KB`,
-      type: coverImage.type
-    });
-    
+
     return coverImage; // Retorna el File
   }
   
   // Si es una URL válida, solo validarla (NO descargar)
   if (isValidImageUrl(coverImage)) {
-    console.log('🌐 URL de imagen válida detectada (backend se encargará de la descarga)');
-    console.log('- URL:', coverImage);
-    
+
     return coverImage; // Retorna la URL como string
   }
   

@@ -36,7 +36,7 @@ function MoviesDetailPage() {
             const userData = JSON.parse(sessionUser);
             setUser(userData);
         } catch (err) {
-            console.error('Error parsing user data:', err);
+
             navigate('/login');
         }
     }, [navigate]);
@@ -52,12 +52,12 @@ function MoviesDetailPage() {
                 
                 if (response.success) {
                     setMovie(response.data);
-                    console.log('Película cargada:', response.data);
+
                 } else {
                     throw new Error(response.message || 'Error al cargar la película');
                 }
             } catch (error) {
-                console.error('Error fetching movie:', error);
+
                 setMovieError(error.message);
             } finally {
                 setLoadingMovie(false);
@@ -71,13 +71,10 @@ function MoviesDetailPage() {
 
     // ===== HANDLERS =====
     const handlePlayMovie = () => {
-        console.log('🎬 Reproducir película:', movie);
-        console.log('🔍 Movie file_hash:', movie.file_hash);
-        console.log('🔍 Movie available_resolutions:', movie.available_resolutions);
-        
+
         // Verificar si tiene file_hash
         if (!movie.file_hash) {
-            console.error('❌ ERROR: La película no tiene file_hash:', movie);
+
             alert('Error: La película no tiene archivo de video asociado. Verifica que la película esté correctamente subida.');
             return;
         }
@@ -91,8 +88,7 @@ function MoviesDetailPage() {
             file_hash: movie.file_hash,
             available_resolutions: movie.available_resolutions || [480, 720, 1080]
         };
-        
-        console.log('🎬 Datos transformados para navigateToPlayer:', movieData);
+
         navigateToPlayer(movieData);
     };
 
@@ -106,7 +102,7 @@ function MoviesDetailPage() {
             sessionStorage.removeItem('sessionUser');
             navigate('/login');
         } catch (error) {
-            console.error('Error en logout:', error);
+
             window.location.href = '/login';
         }
     };

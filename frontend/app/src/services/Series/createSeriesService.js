@@ -29,7 +29,7 @@ const createSeriesService = async (seriesData) => {
     }
     
     // Procesar la imagen de portada (valida pero NO descarga URLs)
-    console.log('📺 Procesando imagen de portada para serie...');
+
     const processedCoverImage = await processCoverImage(seriesData.coverImage);
     
     // Crear FormData
@@ -43,21 +43,15 @@ const createSeriesService = async (seriesData) => {
     if (isValidFile(processedCoverImage)) {
       // Es un archivo local - enviarlo como File
       formData.append("coverImage", processedCoverImage);
-      console.log('📤 Enviando archivo de imagen local al backend');
-      console.log('- Portada (archivo):', processedCoverImage.name, `(${Math.round(processedCoverImage.size / 1024)}KB)`);
+
     } else if (isValidImageUrl(processedCoverImage)) {
       // Es una URL - enviarla como string en un campo separado
       formData.append("coverImageUrl", processedCoverImage);
-      console.log('📤 Enviando URL de imagen al backend para descarga');
-      console.log('- Portada (URL):', processedCoverImage);
+
     } else {
       throw new Error('Error interno: imagen procesada no es válida');
     }
-    
-    console.log('📤 Enviando datos de serie al backend...');
-    console.log('- Título:', seriesData.title);
-    console.log('- Año:', seriesData.releaseYear);
-    
+
     // Realizar petición al backend
     const response = await axios.post(`${urlBackend}/api/v1/series`, formData, {
       headers: { 
@@ -66,13 +60,11 @@ const createSeriesService = async (seriesData) => {
       withCredentials: true,
       timeout: 2 * 60 * 1000, // 2 minutos para imágenes
     });
-    
-    console.log('✅ Serie creada exitosamente');
+
     return response.data;
     
   } catch (error) {
-    console.error("❌ Error al crear serie:", error);
-    
+
     // Mejorar mensajes de error para el usuario
     if (error.response?.status === 413) {
       throw new Error('La imagen es demasiado grande');

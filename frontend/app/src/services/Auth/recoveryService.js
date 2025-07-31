@@ -21,9 +21,7 @@ const recoveryService = async (emailValue) => {
     try {
         const response = await fetch(`${urlBackend}/api/v1/auth/recovery`, requestOptions);
         const data = await response.json();
-        
-        console.log('Respuesta del backend recovery:', data);
-        
+
         // ✅ MEJORADO: Respuesta estructurada
         if (response.ok) {
             return {
@@ -46,7 +44,7 @@ const recoveryService = async (emailValue) => {
             }
         }
     } catch (error) {
-        console.error('Error en recoveryService:', error);
+
         return {
             success: false,
             error: 'Error de conexión',
@@ -56,5 +54,4 @@ const recoveryService = async (emailValue) => {
 }
 
 export { recoveryService };
-
 

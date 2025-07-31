@@ -9,8 +9,7 @@ import { environmentService } from "../environmentService";
  */
 const logoutService = async () => {
     try {
-        console.log('🚪 Iniciando proceso de logout...');
-        
+
         // 1. Obtener configuración del entorno
         const { urlBackend, apiKey } = environmentService();
         
@@ -33,30 +32,27 @@ const logoutService = async () => {
             const data = await response.json();
             
             if (data?.success) {
-                console.log('✅ Backend logout exitoso:', data.message);
+
             } else {
-                console.warn('⚠️ Backend logout falló, pero continuando con logout local');
+
             }
         } catch (backendError) {
-            console.warn('⚠️ No se pudo comunicar con backend para logout:', backendError.message);
+
             // No bloqueamos el logout local si el backend falla
         }
 
         // 5. Limpiar datos de sesión local (SIEMPRE ejecutar)
-        console.log('🧹 Limpiando datos de sesión local...');
-        
+
         // Limpiar todos los posibles lugares donde se almacena info de sesión
         sessionStorage.removeItem('sessionUser');
         localStorage.removeItem('sessionUser');
         localStorage.removeItem('authToken');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('user');
-        
-        console.log('✅ Datos de sesión limpiados');
 
         // 6. Redirigir al login después de un pequeño delay
         setTimeout(() => {
-            console.log('🔄 Redirigiendo al login...');
+
             window.location.href = '/login';
         }, 500);
 
@@ -66,11 +62,9 @@ const logoutService = async () => {
         };
 
     } catch (error) {
-        console.error('❌ Error durante logout:', error);
-        
+
         // Aunque haya error, ejecutar logout local de emergencia
-        console.log('🚨 Ejecutando logout de emergencia...');
-        
+
         sessionStorage.removeItem('sessionUser');
         localStorage.removeItem('sessionUser');
         localStorage.removeItem('authToken');

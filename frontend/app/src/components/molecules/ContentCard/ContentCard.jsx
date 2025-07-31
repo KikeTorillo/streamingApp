@@ -53,7 +53,7 @@ const ContentCard = ({
 }) => {
   // Validación de datos requeridos
   if (!content) {
-    console.warn('ContentCard: content prop is required');
+
     return null;
   }
 
@@ -115,11 +115,9 @@ const ContentCard = ({
     onClick?.(content);
   };
 
-
-
   const handleImageError = (e) => {
     // ContentImage ya maneja los errores automáticamente
-    console.log('Image error handled by ContentImage atom');
+
   };
 
   return (
@@ -145,12 +143,10 @@ const ContentCard = ({
           aspectRatio="2/3"
           contentType={type}
           loading={loading ? "eager" : "lazy"}
-          onLoad={() => console.log(`${title} loaded`)}
           onError={handleImageError}
           rounded="none" // El contenedor ya maneja el border radius
           className="content-card__image"
         />
-        
 
         {/* Badge de tipo en esquina superior */}
         <div className="content-card__type-badge">

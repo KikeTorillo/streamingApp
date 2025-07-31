@@ -52,7 +52,6 @@ function AuthProvider({ children }) {
         ...parsedUser
       };
     } catch (error) {
-      console.warn('🔍 [AuthContext] Error parsing sessionUser:', error);
       return null;
     }
   }, []);
@@ -108,7 +107,6 @@ function AuthProvider({ children }) {
    */
   const loadUser = useCallback(() => {
     try {
-      console.log('🔍 [AuthContext] Cargando usuario desde sessionStorage...');
       setLoading(true);
       
       // Función inline para obtener usuario
@@ -131,18 +129,14 @@ function AuthProvider({ children }) {
             ...parsedUser
           };
         } catch (error) {
-          console.warn('🔍 [AuthContext] Error parsing sessionUser:', error);
-          return null;
+              return null;
         }
       };
       
       const sessionUser = getUser();
-      
-      console.log('🔍 [AuthContext] Datos RAW de sessionStorage:', sessionStorage.getItem('sessionUser'));
-      console.log('🔍 [AuthContext] Usuario procesado:', sessionUser);
-      
+
       if (!sessionUser) {
-        console.log('❌ [AuthContext] No hay usuario en sessionStorage');
+
         setUser(null);
         setIsAuthenticated(false);
         return;
@@ -150,23 +144,17 @@ function AuthProvider({ children }) {
 
       // Verificar si el token ha expirado
       if (sessionUser.exp && sessionUser.exp < Math.floor(Date.now() / 1000)) {
-        console.log('⏰ [AuthContext] Token expirado, limpiando sesión');
+
         sessionStorage.removeItem('sessionUser');
         setUser(null);
         setIsAuthenticated(false);
         return;
       }
 
-      console.log('✅ [AuthContext] Usuario cargado:', {
-        id: sessionUser.id,
-        username: sessionUser.username,
-        role: sessionUser.role
-      });
-      
       setUser(sessionUser);
       setIsAuthenticated(true);
     } catch (error) {
-      console.error('❌ [AuthContext] Error cargando usuario:', error);
+
       setUser(null);
       setIsAuthenticated(false);
     } finally {
@@ -179,8 +167,7 @@ function AuthProvider({ children }) {
    */
   const login = useCallback((userData) => {
     try {
-      console.log('🔐 [AuthContext] Iniciando sesión para:', userData.username || userData.id);
-      
+
       // Guardar en sessionStorage
       sessionStorage.setItem('sessionUser', JSON.stringify(userData));
       
@@ -188,11 +175,10 @@ function AuthProvider({ children }) {
       const normalizedUser = getSessionUser();
       setUser(normalizedUser);
       setIsAuthenticated(true);
-      
-      console.log('✅ [AuthContext] Login exitoso');
+
       return true;
     } catch (error) {
-      console.error('❌ [AuthContext] Error en login:', error);
+
       return false;
     }
   }, [getSessionUser]);
@@ -202,19 +188,17 @@ function AuthProvider({ children }) {
    */
   const logout = useCallback(() => {
     try {
-      console.log('🚪 [AuthContext] Cerrando sesión...');
-      
+
       // Limpiar sessionStorage
       sessionStorage.removeItem('sessionUser');
       
       // Limpiar estado
       setUser(null);
       setIsAuthenticated(false);
-      
-      console.log('✅ [AuthContext] Logout exitoso');
+
       return true;
     } catch (error) {
-      console.error('❌ [AuthContext] Error en logout:', error);
+
       return false;
     }
   }, []);
@@ -223,7 +207,7 @@ function AuthProvider({ children }) {
    * Refrescar usuario (útil tras cambios de perfil)
    */
   const refreshUser = useCallback(() => {
-    console.log('🔄 [AuthContext] Refrescando usuario...');
+
     loadUser();
   }, [loadUser]);
 
@@ -253,7 +237,7 @@ function AuthProvider({ children }) {
    * Cargar usuario al montar el componente
    */
   useEffect(() => {
-    console.log('🔄 [AuthContext] useEffect de carga inicial ejecutándose...');
+
     loadUser();
   }, []); // Sin dependencias para evitar bucle infinito
 
@@ -265,12 +249,12 @@ function AuthProvider({ children }) {
       if (e.key === 'sessionUser') {
         if (!e.newValue) {
           // SessionUser fue eliminado en otra pestaña
-          console.log('🔄 [AuthContext] Sesión cerrada en otra pestaña');
+
           setUser(null);
           setIsAuthenticated(false);
         } else {
           // SessionUser fue actualizado en otra pestaña
-          console.log('🔄 [AuthContext] Sesión actualizada en otra pestaña');
+
           loadUser();
         }
       }

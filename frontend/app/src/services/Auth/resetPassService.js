@@ -20,9 +20,7 @@ const resetPassService = async (token, newPasswordValue) => {
     try {
         const response = await fetch(`${urlBackend}/api/v1/auth/change-password`, requestOptions);
         const data = await response.json();
-        
-        console.log('Respuesta del backend resetPass:', data);
-        
+
         // ✅ MEJORADO: Respuesta estructurada
         if (response.ok) {
             return {
@@ -51,7 +49,7 @@ const resetPassService = async (token, newPasswordValue) => {
             }
         }
     } catch (error) {
-        console.error('Error en resetPassService:', error);
+
         return {
             success: false,
             error: 'Error de conexión',

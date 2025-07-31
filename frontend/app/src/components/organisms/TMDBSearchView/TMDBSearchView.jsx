@@ -83,7 +83,6 @@ function TMDBSearchView({
     setHasSearched(true);
 
     try {
-      console.log(`🔍 Realizando búsqueda TMDB: "${safeSearchQuery}"`);
 
       // Usar el servicio real de TMDB
       const searchResults = await tmdbService.searchContent(
@@ -99,8 +98,7 @@ function TMDBSearchView({
       }
       
     } catch (err) {
-      console.error('❌ Error en búsqueda TMDB:', err);
-      
+
       // Manejar diferentes tipos de errores
       let errorMessage = 'Error desconocido al buscar en TMDB.';
       
@@ -178,7 +176,7 @@ function TMDBSearchView({
   }, []);
 
   const handleItemClick = useCallback((item) => {
-    console.log('🎯 Item seleccionado desde TMDB:', item);
+
     onSelectItem(item);
   }, [onSelectItem]);
 

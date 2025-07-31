@@ -91,7 +91,7 @@ export const Playground = {
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
           onConfirm={() => {
-            console.log('Confirmado!');
+
             setIsOpen(false);
           }}
         />
@@ -183,7 +183,7 @@ export const Confirm = {
           type="confirm"
           message="¿Estás seguro de que quieres continuar?"
           onConfirm={() => {
-            console.log('Usuario confirmó');
+
             setIsOpen(false);
           }}
         />

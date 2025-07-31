@@ -123,7 +123,7 @@ function CategoriesListContent() {
    * Ver detalles de categoría
    */
   const handleViewCategory = (category) => {
-    console.log('👁️ Ver categoría:', category);
+
     // TODO: Implementar modal de detalles o navegar a página de detalles
     showInfo(`
       <strong>Detalles de categoría: ${category.name}</strong><br/>
@@ -139,7 +139,7 @@ function CategoriesListContent() {
    * Editar categoría - Abrir modal de edición
    */
   const handleEditCategory = (category) => {
-    console.log('✏️ Editar categoría:', category);
+
     openEditModal(category);
   };
   
@@ -151,15 +151,15 @@ function CategoriesListContent() {
       const result = await saveFromModal(newName);
       
       if (result.success) {
-        console.log('✅ Categoría actualizada exitosamente');
+
       } else if (result.error === 'SESSION_EXPIRED') {
-        console.log('🔒 Sesión expirada, redirigiendo...');
+
         navigate('/login');
       }
       
     } catch (error) {
       if (error.message === 'SESSION_EXPIRED') {
-        console.log('🔒 Sesión expirada, redirigiendo...');
+
         navigate('/login');
       }
     }
@@ -174,7 +174,7 @@ function CategoriesListContent() {
       deleteCategory(category);
     } catch (error) {
       if (error.message === 'SESSION_EXPIRED') {
-        console.log('🔒 Sesión expirada, redirigiendo...');
+
         navigate('/login');
       } else {
         showError(`Error inesperado: ${error.message}`);

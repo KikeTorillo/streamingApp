@@ -12,14 +12,11 @@ import { environmentService } from "../environmentService";
 const getMovieByIdService = async (movieId) => {
     const { urlBackend } = environmentService();
     try {
-        console.log('🎬 Obteniendo película ID:', movieId);
-        
+
         const response = await axios.get(`${urlBackend}/api/v1/movies/${movieId}`, {
             withCredentials: true,
         });
-        
-        console.log('📥 Respuesta del backend:', response.data);
-        
+
         // ✅ RESPUESTA ESTRUCTURADA
         return {
             success: true,
@@ -27,8 +24,7 @@ const getMovieByIdService = async (movieId) => {
             message: 'Película obtenida exitosamente'
         };
     } catch (error) {
-        console.error('💥 Error al obtener película por ID:', error);
-        
+
         // ✅ MANEJO ESPECÍFICO DE ERRORES
         if (error.response?.status === 401) {
             return {
@@ -62,7 +58,7 @@ const getMovieByHashService = async (fileHash) => {
         });
         return response.data;
     } catch (error) {
-        console.error('Error al obtener película por hash:', error);
+
         throw error;
     }
 };

@@ -124,15 +124,15 @@ export const VideoPlayerContainer = () => {
             mode: 'cors'
           });
           if (response.ok) {
-            console.log('✅ Subtítulo precargado:', track.label);
+
           }
         } catch (error) {
-          console.warn('⚠️ Error precargando subtítulo:', track.label, error);
+
         }
       });
       
       await Promise.allSettled(preloadPromises);
-      console.log('📂 Precarga de subtítulos completada');
+
     };
 
     player.ready(() => {
@@ -155,16 +155,15 @@ export const VideoPlayerContainer = () => {
                 const trackElement = textTrack.track;
                 
                 trackElement.addEventListener('load', () => {
-                  console.log('✅ Subtítulo cargado:', track.label);
+
                 });
                 
                 trackElement.addEventListener('error', (error) => {
-                  console.error('❌ Error cargando subtítulo:', track.label, error);
+
                 });
               }
             });
-            
-            console.log('🔍 [DEBUG] setupTextTracks - Subtítulos configurados');
+
           }, 50); // Buffer de sincronización de 50ms
         };
 
@@ -175,7 +174,7 @@ export const VideoPlayerContainer = () => {
           // Timeout de seguridad
           setTimeout(() => {
             if (player.readyState() < 1) {
-              console.warn('⚠️ Timeout esperando metadata, configurando tracks anyway');
+
               setupTracks();
             }
           }, 3000);
@@ -223,7 +222,7 @@ export const VideoPlayerContainer = () => {
           (preferences.subtitlesEnabled || false) !== playerPrefs.subtitlesEnabled;
           
         if (hasChanges) {
-          console.log('🔄 Guardando preferencias del player en backend...');
+
           await updatePreferences(playerPrefs);
         }
       }
@@ -245,8 +244,7 @@ export const VideoPlayerContainer = () => {
           }),
           completed: currentTime >= duration * 0.9
         };
-        
-        console.log('🔄 Guardando progreso de reproducción...', { contentId, progressData });
+
         await updateWatchProgress(contentId, progressData);
       }
       
@@ -261,7 +259,7 @@ export const VideoPlayerContainer = () => {
       localStorage.setItem('contentPositions', JSON.stringify(contentPositions));
       
     } catch (error) {
-      console.error('Error al guardar preferencias:', error);
+
     }
   }, [getContentProgressId, updatePreferences, updateWatchProgress, preferences, contentType, playlistData, currentEpisodeIndex, movieId, playerRef]);
 
@@ -270,39 +268,36 @@ export const VideoPlayerContainer = () => {
     if (!player) return;
     
     try {
-      console.log('🔄 Cargando preferencias del usuario desde backend...');
-      
+
       // 1. Cargar preferencias generales
       if (preferences) {
-        console.log('✅ Aplicando preferencias del usuario:', preferences);
-        
+
         if (preferences.volume !== undefined) {
           player.volume(preferences.volume);
-          console.log('✅ Volumen aplicado:', preferences.volume);
+
         }
         
         if (preferences.playbackRate) {
           player.playbackRate(preferences.playbackRate);
-          console.log('✅ Velocidad de reproducción aplicada:', preferences.playbackRate);
+
         }
       }
       
       // 2. Cargar progreso específico del contenido
       const contentId = getContentProgressId();
-      console.log('🔄 Obteniendo progreso de reproducción para:', contentId);
+
       const watchProgress = await getWatchProgress(contentId);
       
       if (watchProgress && watchProgress.position > 0) {
         const { position } = watchProgress;
-        console.log('📊 Progreso encontrado en backend:', watchProgress);
-        
+
         const setVideoPosition = () => {
           const duration = player.duration();
           if (position > 10 && position < duration * 0.9) {
             player.currentTime(position);
-            console.log('✅ Posición restaurada desde backend:', position, 'de', duration);
+
           } else {
-            console.log('⏭️ Posición no restaurada (muy cerca del inicio/final):', position);
+
           }
         };
 
@@ -313,18 +308,17 @@ export const VideoPlayerContainer = () => {
         }
       } else {
         // Fallback: localStorage
-        console.log('📁 No hay progreso en backend, intentando localStorage...');
+
         const contentPositions = JSON.parse(localStorage.getItem('contentPositions') || '{}');
         if (contentPositions[contentId]) {
           const savedPosition = contentPositions[contentId];
-          console.log('📁 Progreso encontrado en localStorage:', savedPosition);
-          
+
           const setLocalStoragePosition = () => {
             const duration = player.duration();
             if (savedPosition.position > 10 && 
                 savedPosition.position < duration * 0.9) {
               player.currentTime(savedPosition.position);
-              console.log('✅ Posición restaurada desde localStorage:', savedPosition.position);
+
             }
           };
 
@@ -337,13 +331,12 @@ export const VideoPlayerContainer = () => {
       }
       
     } catch (error) {
-      console.error('Error al cargar preferencias:', error);
+
     }
   }, [getContentProgressId, preferences, getWatchProgress]);
 
   // ===== CONFIGURACIÓN DEL VIDEO PLAYER =====
   const playerConfig = useMemo(() => {
-    console.log('🎬 [VideoPlayerContainer] Configurando player...');
 
     const baseConfig = {
       autoplay: true,
@@ -361,13 +354,13 @@ export const VideoPlayerContainer = () => {
 
     // Si hay playlist, NO configurar sources individuales
     if (playlistData && playlistData.episodes.length > 0) {
-      console.log('📋 Configuración para playlist con', playlistData.episodes.length, 'episodios');
+
       return baseConfig;
     }
 
     // Si es contenido individual, configurar source normal
     if (urlComplete) {
-      console.log('🎬 Configuración para contenido individual:', urlComplete);
+
       return {
         ...baseConfig,
         sources: [{
@@ -382,8 +375,7 @@ export const VideoPlayerContainer = () => {
 
   // ===== CALLBACK CUANDO EL PLAYER ESTÁ LISTO =====
   const handlePlayerReady = useCallback((player) => {
-    console.log('🎬 [VideoPlayerContainer] Player listo, configurando...');
-    
+
     // Establecer referencia del player en el hook de estado
     if (playerRef) {
       playerRef.current = player;
@@ -432,7 +424,7 @@ export const VideoPlayerContainer = () => {
     });
 
     // ===== CARGAR PREFERENCIAS Y PROGRESO =====
-    console.log('🔄 Cargando preferencias del usuario...');
+
     loadPlayerPreferences(player);
 
     // ===== PANTALLA COMPLETA AUTOMÁTICA =====
@@ -441,10 +433,10 @@ export const VideoPlayerContainer = () => {
         if (player.requestFullscreen) {
           player.requestFullscreen()
             .then(() => {
-              console.log('✅ Pantalla completa activada automáticamente');
+
             })
             .catch((err) => {
-              console.warn('⚠️ No se pudo activar pantalla completa:', err.message);
+
             });
         }
       });
@@ -452,8 +444,7 @@ export const VideoPlayerContainer = () => {
 
     // ===== CONFIGURAR SUBTÍTULOS =====
     if (movieData.available_subtitles && movieData.available_subtitles.length > 0) {
-      console.log('🔍 [DEBUG] Configurando subtítulos:', movieData.available_subtitles.length);
-      
+
       const subtitleTracks = movieData.available_subtitles.map(subtitle => {
         let language = 'es';
         let label = 'Español';
@@ -484,19 +475,18 @@ export const VideoPlayerContainer = () => {
       // Configurar subtítulos con precarga
       setupTextTracks(player, subtitleTracks);
     } else {
-      console.log('🔍 [DEBUG] Sin subtítulos disponibles');
+
     }
 
     // ===== EVENTOS PARA GUARDAR PROGRESO =====
     player.on('pause', () => {
-      console.log('⏸️ Video pausado - guardando progreso...');
+
       savePlayerPreferences();
     });
 
     // ===== CONFIGURAR PLAYLIST NATIVA DE VIDEO.JS =====
     if (playlistData && playlistData.episodes.length > 0) {
-      console.log('📋 Configurando playlist nativa de Video.js...');
-      
+
       // Crear array de items para la playlist con URLs absolutas completas
       const playlistItems = playlistData.episodes.map((episode) => {
         const episodeHash = episode.file_hash;
@@ -523,15 +513,14 @@ export const VideoPlayerContainer = () => {
       player.ready(() => {
         if (typeof player.playlist.autoadvance === 'function') {
           player.playlist.autoadvance(0);
-          console.log('✅ Autoadvance configurado con delay 0');
+
         }
       });
       
       // Eventos de playlist
       player.on('playlistitem', () => {
         const currentIndex = player.playlist.currentIndex();
-        console.log('🔍 [DEBUG] Evento playlistitem - Índice actual:', currentIndex);
-        
+
         // Actualizar URL del navegador sin navegar (solo history)
         if (currentIndex !== currentEpisodeIndex && currentIndex >= 0) {
           if (playlistData.episodes[currentIndex]) {
@@ -547,44 +536,39 @@ export const VideoPlayerContainer = () => {
                 currentIndex: currentIndex
               };
               sessionStorage.setItem(playlistKey, JSON.stringify(playlistDataToSave));
-              console.log('💾 Playlist actualizada en sessionStorage con índice:', currentIndex);
+
             } catch (error) {
-              console.error('Error actualizando playlist en sessionStorage:', error);
+
             }
-            
-            console.log('🔍 [DEBUG] URL actualizada:', newUrl);
+
           }
         }
       });
       
       player.on('playlistend', () => {
-        console.log('🔍 [DEBUG] Evento playlistend - Todos los episodios completados');
+
       });
-      
-      console.log('📋 Playlist configurada con', playlistItems.length, 'episodios');
+
     }
 
     player.on('ended', () => {
-      console.log('🏁 Video terminado - guardando progreso final...');
+
       savePlayerPreferences();
       // El autoadvance lo maneja automáticamente la playlist de Video.js
     });
-    
-    console.log('✅ [VideoPlayerContainer] Player configurado correctamente');
+
   }, [playerRef, updatePlayerState, movieData, cdnUrl, currentHash, setupTextTracks, loadPlayerPreferences, savePlayerPreferences, playlistData, currentEpisodeIndex, resolutions, playlistKey, navigate]);
 
   // ===== CALLBACK CUANDO SE DISPONE EL PLAYER =====
   const handlePlayerDispose = useCallback(() => {
-    console.log('🧹 [VideoPlayerContainer] Limpiando player...');
-    
+
     // Guardar preferencias finales antes de limpiar
     savePlayerPreferences();
     
     if (playerRef) {
       playerRef.current = null;
     }
-    
-    console.log('✅ [VideoPlayerContainer] Player limpiado');
+
   }, [playerRef, savePlayerPreferences]);
 
   // ===== CLEANUP PARA BEFOREUNLOAD =====
@@ -604,7 +588,7 @@ export const VideoPlayerContainer = () => {
             timestamp: Date.now()
           };
           localStorage.setItem('contentPositions', JSON.stringify(contentPositions));
-          console.log('📡 Progreso guardado síncronamente antes de cerrar');
+
         }
       }
     };
@@ -633,13 +617,6 @@ export const VideoPlayerContainer = () => {
           movieData: contentData,
           contentType: contentType
         });
-        
-        console.log('🔍 [DEBUG] Datos del contenido cargados - contentType:', contentType, 'contentData:', {
-          id: contentData.id,
-          title: contentData.title || contentData.name,
-          file_hash: contentData.file_hash,
-          serie_id: contentData.serie_id
-        });
 
         // ===== CARGAR PLAYLIST SI EXISTE PLAYLIST KEY =====
         if (playlistKey && contentType === 'episode') {
@@ -665,8 +642,7 @@ export const VideoPlayerContainer = () => {
               });
               
             } else {
-              console.warn('📋 No se encontró playlist en sessionStorage con key:', playlistKey);
-              
+
               // Fallback: cargar desde API si no está en sessionStorage
               if (contentData.serie_id) {
                 const serieResponse = await getSerieByIdService(contentData.serie_id);
@@ -696,13 +672,13 @@ export const VideoPlayerContainer = () => {
               }
             }
           } catch (playlistError) {
-            console.error('❌ Error cargando playlist:', playlistError);
+
             // No fallar la carga del video, solo log del error
           }
         }
         
       } catch (error) {
-        console.error(`❌ Error loading ${contentType} data:`, error);
+
         updateContentState({ 
           error: 'Error al cargar el contenido. Por favor, intenta de nuevo.' 
         });

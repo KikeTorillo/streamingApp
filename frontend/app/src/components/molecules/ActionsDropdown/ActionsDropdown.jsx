@@ -139,7 +139,7 @@ function ActionsDropdown({
     try {
       action.onClick?.(data);
     } catch (error) {
-      console.error('Error ejecutando acción:', error);
+
     }
     
     handleClose();

@@ -13,7 +13,7 @@ const useFormNavigation = () => {
   // Manejar selección desde TMDB
   const handleSelectFromTMDB = (item, contentType = 'movie') => {
     const emoji = contentType === 'movie' ? '🎬' : '📺';
-    console.log(`${emoji} Elemento seleccionado de TMDB:`, item);
+
     setSelectedItem(item);
     setCurrentView('form');
     setHasChanges(false);
@@ -21,7 +21,7 @@ const useFormNavigation = () => {
 
   // Manejar creación manual
   const handleManualCreate = () => {
-    console.log('✏️ Creación manual iniciada');
+
     setSelectedItem(null);
     setCurrentView('form');
     setHasChanges(false);

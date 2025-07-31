@@ -10,7 +10,7 @@ const getMoviesService = async () => {
         });
         return response.data;
     } catch (error) {
-        console.error('Error al obtener películas:', error);
+
         throw error;
     }
 };

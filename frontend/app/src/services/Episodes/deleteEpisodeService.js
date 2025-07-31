@@ -10,7 +10,7 @@ const deleteEpisodeService = async (id) => {
         });
         return response.data;
     } catch (error) {
-        console.error("Error al eliminar episodio:", error);
+
         throw error;
     }
 };

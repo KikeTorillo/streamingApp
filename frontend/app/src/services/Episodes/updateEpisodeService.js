@@ -12,9 +12,7 @@ import { environmentService } from "../environmentService";
  */
 const updateEpisodeService = async (id, episodeData) => {
     const { urlBackend } = environmentService();
-    
-    console.log('📺 Actualizando episodio ID:', id, 'con datos:', episodeData);
-    
+
     // Crear FormData solo con campos permitidos y que tienen valores
     const formData = new FormData();
     
@@ -44,15 +42,12 @@ const updateEpisodeService = async (id, episodeData) => {
     }
 
     try {
-        console.log('📤 Enviando datos al backend...');
-        
+
         const response = await axios.patch(`${urlBackend}/api/v1/episodes/${id}`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
             withCredentials: true,
         });
-        
-        console.log('📥 Respuesta del backend:', response.data);
-        
+
         // ✅ RESPUESTA ESTRUCTURADA
         return {
             success: true,
@@ -60,8 +55,7 @@ const updateEpisodeService = async (id, episodeData) => {
             message: 'Episodio actualizado exitosamente'
         };
     } catch (error) {
-        console.error("💥 Error al actualizar episodio:", error);
-        
+
         // ✅ MANEJO ESPECÍFICO DE ERRORES
         if (error.response?.status === 401) {
             return {

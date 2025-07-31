@@ -39,16 +39,14 @@ function useToast() {
       onAutoClose: options.onAutoClose || null,
       createdAt: Date.now()
     };
-    
-    console.log('🍞 [useToast] Agregando toast:', newToast);
-    
+
     setToasts(prevToasts => {
       // Agregar nuevo toast al inicio de la lista
       const updatedToasts = [newToast, ...prevToasts];
       
       // Limitar máximo de toasts (mantener los 5 más recientes)
       if (updatedToasts.length > 5) {
-        console.log('🍞 [useToast] Limitando toasts a 5, removiendo antiguos');
+
         return updatedToasts.slice(0, 5);
       }
       
@@ -60,8 +58,7 @@ function useToast() {
   
   // Remover toast específico
   const removeToast = useCallback((toastId) => {
-    console.log('🗑️ [useToast] Removiendo toast:', toastId);
-    
+
     setToasts(prevToasts => {
       return prevToasts.filter(toast => toast.id !== toastId);
     });
@@ -69,7 +66,7 @@ function useToast() {
   
   // Limpiar todos los toasts
   const clearToasts = useCallback(() => {
-    console.log('🧹 [useToast] Limpiando todos los toasts');
+
     setToasts([]);
   }, []);
   

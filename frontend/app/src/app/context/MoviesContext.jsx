@@ -115,18 +115,13 @@ function MoviesProvider({ children }) {
       setLoading(true);
       setError(null);
 
-      console.log('📥 [MoviesContext] Cargando películas...');
       const response = await getMoviesService();
 
-      console.log('📋 [MoviesContext] Respuesta del backend:', response);
-      
       const moviesData = Array.isArray(response) ? response : [];
       setMovies(moviesData);
-      
-      console.log(`✅ [MoviesContext] ${moviesData.length} películas cargadas`);
 
     } catch (error) {
-      console.error('💥 [MoviesContext] Error loading movies:', error);
+
       setError(error.message || 'Error al cargar películas');
     } finally {
       setLoading(false);
@@ -137,7 +132,7 @@ function MoviesProvider({ children }) {
    * Refrescar lista de películas
    */
   const refreshMovies = () => {
-    console.log('🔄 [MoviesContext] Refrescando películas...');
+
     loadMovies();
   };
 
@@ -145,7 +140,7 @@ function MoviesProvider({ children }) {
    * Limpiar estado de películas
    */
   const clearMovies = () => {
-    console.log('🧹 [MoviesContext] Limpiando estado de películas');
+
     setMovies([]);
     setError(null);
     setDeleting(null);
@@ -155,7 +150,6 @@ function MoviesProvider({ children }) {
    * Eliminar película con validaciones completas
    */
   const deleteMovie = (movie) => {
-    console.log('🗑️ [MoviesContext] Iniciando eliminación de película:', movie);
 
     // ===== CONFIRMACIÓN CON ALERT PROVIDER =====
     // Usar AlertProvider en lugar de window.confirm
@@ -180,32 +174,26 @@ function MoviesProvider({ children }) {
 
       // ===== PROCESO DE ELIMINACIÓN =====
       setDeleting(movie.id);
-      console.log('🔄 [MoviesContext] Eliminando película del backend:', movie.id);
 
       const response = await deleteMovieService(movie.id);
-      
-      console.log('📥 [MoviesContext] Respuesta del servicio:', response);
 
       // ===== ACTUALIZAR ESTADO LOCAL =====
       setMovies(prevMovies => {
         const updatedMovies = prevMovies.filter(m => m.id !== movie.id);
-        console.log(`✅ [MoviesContext] Película eliminada. Películas restantes: ${updatedMovies.length}`);
+
         return updatedMovies;
       });
 
-      console.log('✅ [MoviesContext] Película eliminada exitosamente');
-      
       // Mostrar mensaje de éxito con AlertProvider
       showSuccess(`Película "${movie.title}" eliminada exitosamente.`);
 
     } catch (error) {
-      console.error('💥 [MoviesContext] Error deleting movie:', error);
-      
+
       let errorMessage = `Error al eliminar la película "${movie.title}".`;
 
       // Manejo específico de errores
       if (error.response?.status === 401) {
-        console.log('🔒 [MoviesContext] Sesión expirada');
+
         sessionStorage.clear();
         throw new Error('SESSION_EXPIRED');
       } else if (error.response?.status === 404) {
@@ -263,7 +251,7 @@ function MoviesProvider({ children }) {
    */
   const createMovie = async (movieData, onProgressCallback = null) => {
     try {
-      console.log('🏗️ [MoviesContext] Iniciando creación de película:', movieData);
+
       setCreating(true);
       setError(null);
       setUploadProgress(0);
@@ -274,11 +262,9 @@ function MoviesProvider({ children }) {
       setUploadStatus('uploading');
 
       // ===== PREPARAR DATOS (LÓGICA MIGRADA DE MoviesCreatePage) =====
-      console.log('📤 Datos originales:', movieData);
-      
+
       // Filtrar campos vacíos antes de enviar
       const filteredData = filterEmptyFields(movieData);
-      console.log('📤 Datos filtrados (sin campos vacíos):', filteredData);
 
       // ===== CONFIGURAR LISTENER DE PROGRESO (LÓGICA MIGRADA) =====
       const handleUploadProgress = (event) => {
@@ -300,8 +286,7 @@ function MoviesProvider({ children }) {
         if (onProgressCallback) {
           onProgressCallback(adjustedProgress, 'uploading', message);
         }
-        
-        console.log(`📤 [MoviesContext] Upload progreso: ${adjustedProgress}%`);
+
       };
 
       window.addEventListener('uploadProgress', handleUploadProgress);
@@ -311,8 +296,6 @@ function MoviesProvider({ children }) {
 
       // ✅ Limpiar listener de upload
       window.removeEventListener('uploadProgress', handleUploadProgress);
-
-      console.log('✅ Contenido creado exitosamente:', result);
 
       // ✅ Cambiar a estado de procesamiento (continuar desde 50%)
       setUploadProgress(50);
@@ -343,7 +326,7 @@ function MoviesProvider({ children }) {
 
       setMovies(prevMovies => {
         const updatedMovies = [...prevMovies, newMovie];
-        console.log(`✅ [MoviesContext] Película agregada. Total películas: ${updatedMovies.length}`);
+
         return updatedMovies;
       });
 
@@ -357,8 +340,7 @@ function MoviesProvider({ children }) {
       };
 
     } catch (error) {
-      console.error('💥 [MoviesContext] Error creating movie:', error);
-      
+
       // ✅ Limpiar listener en caso de error
       window.removeEventListener('uploadProgress', handleUploadProgress);
       
@@ -399,16 +381,13 @@ function MoviesProvider({ children }) {
    * MIGRADO DESDE useUploadProgress hook (usando endpoints correctos)
    */
   const monitorProgress = (taskId, contentType = 'movies', onStatusChange = null, onFinish = null) => {
-    console.log(`🔄 [MoviesContext] Iniciando monitoreo de progreso - TaskID: ${taskId}, Tipo: ${contentType}`);
-    
+
     const checkProgress = async () => {
       try {
         // ✅ ARREGLO: Usar URL y endpoint correctos según el hook original
         const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
         const endpoint = `${backendUrl}/api/v1/${contentType}/progress/${taskId}`;
-        
-        console.log(`📡 [MoviesContext] Consultando progreso en: ${endpoint}`);
-        
+
         const response = await fetch(endpoint, {
           method: 'GET',
           headers: {
@@ -427,9 +406,7 @@ function MoviesProvider({ children }) {
         }
         
         const data = await response.json();
-        
-        console.log(`📊 [MoviesContext] Progreso: ${data.progress || 0}%`, data);
-        
+
         // ✅ ARREGLO: Ajustar progreso según el hook original
         let adjustedProgress = data.progress || 0;
         let status = data.status;
@@ -459,7 +436,7 @@ function MoviesProvider({ children }) {
         }
         
         if (status === 'completed') {
-          console.log('✅ [MoviesContext] Procesamiento completado');
+
           setProcessing(false);
           setUploadStatus('completed');
           
@@ -473,7 +450,7 @@ function MoviesProvider({ children }) {
           }, 1000);
           
         } else if (status === 'failed' || status === 'error') {
-          console.error('❌ [MoviesContext] Error en procesamiento:', message);
+
           setProcessing(false);
           setUploadStatus('error');
           setError(message || 'Error en el procesamiento');
@@ -488,8 +465,7 @@ function MoviesProvider({ children }) {
         }
         
       } catch (error) {
-        console.error('💥 [MoviesContext] Error monitoreando progreso:', error);
-        
+
         // ✅ ARREGLO: Manejo de errores según el hook original
         let errorMessage = 'Error de conexión consultando progreso';
         
@@ -498,9 +474,7 @@ function MoviesProvider({ children }) {
         } else if (error.message.includes('timeout')) {
           errorMessage = 'Timeout consultando progreso';
         }
-        
-        console.log('⚠️ [MoviesContext] Error en monitoreo, marcando como completado:', errorMessage);
-        
+
         // Si hay error, asumir que está completado para no bloquear la UI
         setProcessing(false);
         setUploadStatus('completed');
@@ -538,14 +512,12 @@ function MoviesProvider({ children }) {
    */
   const loadMovieById = async (movieId) => {
     try {
-      console.log('📥 [MoviesContext] Cargando datos de la película ID:', movieId);
+
       setLoadingMovie(true);
       setError(null);
       
       const movieResponse = await getMovieByIdService(movieId);
-      
-      console.log('📋 [MoviesContext] Respuesta película:', movieResponse);
-      
+
       // ✅ MIGRADO: Manejo de respuesta como en MovieEditPage
       let movieInfo = null;
       if (movieResponse.success) {
@@ -556,8 +528,6 @@ function MoviesProvider({ children }) {
         throw new Error('Formato de respuesta inesperado del backend');
       }
 
-      console.log('✅ [MoviesContext] Película normalizada:', movieInfo);
-      
       setCurrentMovie(movieInfo);
       
       return { 
@@ -567,7 +537,7 @@ function MoviesProvider({ children }) {
       };
 
     } catch (error) {
-      console.error('💥 [MoviesContext] Error cargando película:', error);
+
       setError(error.message || 'Error al cargar datos de la película');
       
       return { 
@@ -585,7 +555,7 @@ function MoviesProvider({ children }) {
    */
   const updateMovie = async (movieId, movieData) => {
     try {
-      console.log('✏️ [MoviesContext] Iniciando actualización de película:', movieId, movieData);
+
       setEditing(true);
       setError(null);
 
@@ -599,8 +569,6 @@ function MoviesProvider({ children }) {
         }
       });
 
-      console.log('📤 [MoviesContext] Datos a actualizar:', updateData);
-
       // Si no hay cambios reales, no enviar
       if (Object.keys(updateData).length === 0) {
         return { 
@@ -611,14 +579,10 @@ function MoviesProvider({ children }) {
 
       const response = await updateMovieService(movieId, updateData);
 
-      console.log('📥 [MoviesContext] Respuesta del backend:', response);
-
       // ✅ MIGRADO: Manejo de respuesta como en MovieEditPage
       if (!response || (response.error && !response.success)) {
         throw new Error(response?.error || 'Error al actualizar película');
       }
-
-      console.log('✅ [MoviesContext] Película actualizada exitosamente');
 
       // ✅ ACTUALIZAR ESTADO LOCAL
       setMovies(prevMovies => {
@@ -642,7 +606,7 @@ function MoviesProvider({ children }) {
       };
 
     } catch (error) {
-      console.error('💥 [MoviesContext] Error actualizando película:', error);
+
       setError(error.message || 'Error al actualizar película');
       
       return { 
@@ -658,7 +622,7 @@ function MoviesProvider({ children }) {
    * Limpiar película actual
    */
   const clearCurrentMovie = () => {
-    console.log('🧹 [MoviesContext] Limpiando película actual');
+
     setCurrentMovie(null);
     setLoadingMovie(false);
     setEditing(false);
@@ -668,7 +632,7 @@ function MoviesProvider({ children }) {
    * Obtener película por ID desde estado local
    */
   const getMovieById = (movieId) => {
-    console.log('🔍 [MoviesContext] Buscar película por ID:', movieId);
+
     return movies.find(movie => movie.id.toString() === movieId.toString()) || null;
   };
 

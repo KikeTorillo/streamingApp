@@ -10,7 +10,7 @@ const getCategoriesService = async () => {
         });
         return response.data;
     } catch (error) {
-        console.error('Error al obtener categorías:', error);
+
         throw error;
     }
 };

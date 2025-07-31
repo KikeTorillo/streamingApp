@@ -215,7 +215,7 @@ export const ContactForm = () => {
         fieldSize="md"
         fieldRounded="lg"
         onSubmit={(data) => {
-          console.log('Contacto enviado:', data);
+
           alert('¡Mensaje enviado correctamente!');
         }}
         onChange={setFormData}
@@ -360,7 +360,7 @@ export const RegistrationForm = () => {
         fieldSize="md"
         fieldRounded="lg"
         onSubmit={(data) => {
-          console.log('Registro:', data);
+
           alert('¡Cuenta creada exitosamente!');
         }}
         validateOnChange
@@ -504,7 +504,7 @@ export const AdvancedConfiguration = () => {
         fieldSize="lg"
         fieldRounded="xl"
         onSubmit={(data) => {
-          console.log('Proyecto configurado:', data);
+
           alert('¡Proyecto creado exitosamente!');
         }}
         onChange={setFormData}
@@ -646,31 +646,18 @@ export const FormWithFileInputs = () => {
   ];
 
   const handleSubmit = (data) => {
-    console.log('🎬 Datos del formulario completo:', data);
-    
+
     // Mostrar información detallada de archivos
     if (data.video) {
-      console.log('📹 Video:', {
-        name: data.video.name,
-        size: `${(data.video.size / 1024 / 1024).toFixed(2)} MB`,
-        type: data.video.type
-      });
+
     }
     
     if (data.poster) {
-      console.log('🖼️ Poster:', {
-        name: data.poster.name,
-        size: `${(data.poster.size / 1024).toFixed(1)} KB`,
-        type: data.poster.type
-      });
+
     }
     
     if (data.subtitles && data.subtitles.length > 0) {
-      console.log('📝 Subtítulos:', data.subtitles.map(file => ({
-        name: file.name,
-        size: `${(file.size / 1024).toFixed(1)} KB`,
-        type: file.type
-      })));
+
     }
 
     // Simular creación de FormData para backend
@@ -698,7 +685,6 @@ export const FormWithFileInputs = () => {
       });
     }
 
-    console.log('📦 FormData preparado para backend');
     setSubmittedData(data);
   };
 
@@ -974,7 +960,7 @@ export const WithCheckboxes = () => {
       <DynamicForm
         fields={checkboxFields}
         onSubmit={(data) => {
-          console.log('Formulario enviado:', data);
+
           alert('Formulario enviado! Revisa la consola.');
         }}
         onChange={setFormData}
@@ -1070,7 +1056,6 @@ export const CheckboxSizes = () => {
     <div style={{ maxWidth: '500px' }}>
       <DynamicForm
         fields={sizeFields}
-        onSubmit={(data) => console.log('Tamaños:', data)}
         columnsPerRow={1}
         submitText="Probar tamaños"
       />
@@ -1101,7 +1086,6 @@ export const CheckboxValidation = () => {
     <div style={{ maxWidth: '500px' }}>
       <DynamicForm
         fields={validationFields}
-        onSubmit={(data) => console.log('Validación:', data)}
         validateOnBlur={true}
         submitText="Validar campos"
       />

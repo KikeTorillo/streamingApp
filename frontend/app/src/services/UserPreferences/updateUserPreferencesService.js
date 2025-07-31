@@ -11,12 +11,10 @@ import { environmentService } from "../environmentService";
  */
 const updateUserPreferencesService = async (userId, preferences) => {
     const { urlBackend } = environmentService();
-    console.log('🔍 [updateUserPreferences] Enviando datos:', { userId, preferences });
-    
+
     // ⚠️ VALIDACIÓN: Detectar si hay contentId por error
     if (preferences && preferences.contentId) {
-        console.error('❌ ERROR: contentId detectado en preferencias generales!', preferences);
-        console.error('❌ Esto debería ir a updateWatchProgressService, no updateUserPreferencesService');
+
         return {
             success: false,
             error: 'contentId no permitido en preferencias generales',
@@ -41,8 +39,7 @@ const updateUserPreferencesService = async (userId, preferences) => {
             message: response.data.message
         };
     } catch (error) {
-        console.error('Error al actualizar preferencias de usuario:', error);
-        
+
         // Manejar errores específicos
         if (error.response?.status === 404) {
             return {

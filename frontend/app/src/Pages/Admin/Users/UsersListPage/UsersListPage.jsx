@@ -58,7 +58,7 @@ function UsersListPage() {
    * Ver usuario - TODO: Implementar modal de detalles
    */
   const handleViewUser = (user) => {
-    console.log('👁️ Ver usuario:', user);
+
     showInfo(
       `<strong>ID:</strong> ${user.id}<br/>` +
       `<strong>Email:</strong> ${user.email}<br/>` +
@@ -74,7 +74,7 @@ function UsersListPage() {
    * Editar usuario
    */
   const handleEditUser = (user) => {
-    console.log('✏️ Editar usuario:', user);
+
     navigate(`/admin/users/edit/${user.id}`);
   };
 
@@ -82,8 +82,7 @@ function UsersListPage() {
    * Eliminar usuario - Usa función del contexto
    */
   const handleDeleteUser = (user) => {
-    console.log('🗑️ [UsersListPage] Solicitud de eliminación:', user);
-    
+
     // El contexto maneja toda la lógica de confirmación y mensajes
     deleteUser(user);
   };

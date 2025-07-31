@@ -125,7 +125,6 @@ function CategoryCreatePage() {
     setError(null);
 
     try {
-      console.log('📤 Enviando datos al backend:', formData);
 
       // Preparar datos para el backend usando utility
       const categoryData = filterEmptyFields(formData);
@@ -133,14 +132,13 @@ function CategoryCreatePage() {
       const result = await createCategory(categoryData);
 
       if (result.success) {
-        console.log('✅ Categoría creada exitosamente:', result);
 
         // Usar hook homologado de éxito
         triggerSuccess('¡Categoría creada exitosamente!');
         setHasChanges(false);
 
       } else if (result.error === 'SESSION_EXPIRED') {
-        console.log('🔒 Sesión expirada, redirigiendo...');
+
         navigate('/login');
         return;
       } else {
@@ -149,10 +147,9 @@ function CategoryCreatePage() {
       }
 
     } catch (err) {
-      console.error('❌ Error al crear categoría:', err);
-      
+
       if (err.message === 'SESSION_EXPIRED') {
-        console.log('🔒 Sesión expirada, redirigiendo...');
+
         navigate('/login');
         return;
       }
@@ -205,7 +202,6 @@ function CategoryCreatePage() {
             Volver a Categorías
           </Button>
 
-  
         {/* Mensaje de Error */}
         {(error || contextError) && (
           <div className="status-message status-message--error">
