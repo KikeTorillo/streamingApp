@@ -138,7 +138,7 @@ export const Playground = {
 // ========== FORMULARIO DE CONTACTO ==========
 
 export const ContactForm = () => {
-  const [formData, setFormData] = useState({});
+  const [, setFormData] = useState({});
 
   const contactFields = [
     {
@@ -215,7 +215,7 @@ export const ContactForm = () => {
         fieldSize="md"
         fieldRounded="lg"
         onSubmit={(data) => {
-
+          console.log('Datos del formulario:', data);
           alert('¡Mensaje enviado correctamente!');
         }}
         onChange={setFormData}
@@ -360,7 +360,7 @@ export const RegistrationForm = () => {
         fieldSize="md"
         fieldRounded="lg"
         onSubmit={(data) => {
-
+          console.log('Datos de registro:', data);
           alert('¡Cuenta creada exitosamente!');
         }}
         validateOnChange
@@ -504,7 +504,7 @@ export const AdvancedConfiguration = () => {
         fieldSize="lg"
         fieldRounded="xl"
         onSubmit={(data) => {
-
+          console.log('Datos del proyecto:', data);
           alert('¡Proyecto creado exitosamente!');
         }}
         onChange={setFormData}
@@ -649,15 +649,15 @@ export const FormWithFileInputs = () => {
 
     // Mostrar información detallada de archivos
     if (data.video) {
-
+      console.log('Video seleccionado:', data.video.name);
     }
     
     if (data.poster) {
-
+      console.log('Poster seleccionado:', data.poster.name);
     }
     
     if (data.subtitles && data.subtitles.length > 0) {
-
+      console.log('Subtítulos seleccionados:', data.subtitles.length);
     }
 
     // Simular creación de FormData para backend
@@ -960,7 +960,7 @@ export const WithCheckboxes = () => {
       <DynamicForm
         fields={checkboxFields}
         onSubmit={(data) => {
-
+          console.log('Datos del checkbox:', data);
           alert('Formulario enviado! Revisa la consola.');
         }}
         onChange={setFormData}

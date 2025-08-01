@@ -1,5 +1,6 @@
 // molecules/ContentCard/ContentCard.jsx
 import { memo } from 'react';
+import PropTypes from 'prop-types';
 import { Card, CardBody, CardTitle, CardSubtitle } from '../../atoms/Card/Card';
 import { Badge } from '../../atoms/Badge/Badge';
 import { ContentImage } from '../../atoms/ContentImage/ContentImage';
@@ -38,8 +39,6 @@ const ContentCard = ({
   content,
   size = 'md',
   onClick,
-  onPlay,
-  onFavorite,
   showRating = true,
   showMeta = true,
   showCategory = true,
@@ -57,7 +56,6 @@ const ContentCard = ({
   }
 
   const {
-    id,
     title,
     cover,
     category,
@@ -82,6 +80,15 @@ const ContentCard = ({
     
     ...domProps // ✅ Solo props válidas para el DOM
   } = restProps;
+
+  // Evitar warnings de unused vars
+  void _content;
+  void _size;
+  void _onPlay;
+  void _onFavorite;
+  void _showRating;
+  void _showMeta;
+  void _showCategory;
 
   // Construir clases CSS
   const cardClasses = [
@@ -114,9 +121,8 @@ const ContentCard = ({
     onClick?.(content);
   };
 
-  const handleImageError = (e) => {
+  const handleImageError = () => {
     // ContentImage ya maneja los errores automáticamente
-
   };
 
   return (
@@ -197,6 +203,34 @@ const ContentCard = ({
       </CardBody>
     </Card>
   );
+};
+
+// PropTypes para validación
+ContentCard.propTypes = {
+  content: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    title: PropTypes.string.isRequired,
+    cover: PropTypes.string.isRequired,
+    category: PropTypes.string,
+    year: PropTypes.number.isRequired,
+    rating: PropTypes.number,
+    type: PropTypes.oneOf(['movie', 'series']).isRequired,
+    duration: PropTypes.string,
+    seasons: PropTypes.number,
+    episodes: PropTypes.number
+  }).isRequired,
+  size: PropTypes.oneOf(['sm', 'md', 'lg', 'xl']),
+  onClick: PropTypes.func,
+  onPlay: PropTypes.func,
+  onFavorite: PropTypes.func,
+  showRating: PropTypes.bool,
+  showMeta: PropTypes.bool,
+  showCategory: PropTypes.bool,
+  loading: PropTypes.bool,
+  disabled: PropTypes.bool,
+  variant: PropTypes.oneOf(['elevated', 'outlined', 'default']),
+  rounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl']),
+  className: PropTypes.string
 };
 
 // Memoizar ContentCard - se usa en grids de películas/series

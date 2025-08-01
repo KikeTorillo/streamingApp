@@ -1,7 +1,7 @@
 // ===== MOVIE EDIT PAGE - SOLO CAMPOS PERMITIDOS =====
 // src/Pages/Admin/Movies/MovieEditPage/MovieEditPage.jsx
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
@@ -111,7 +111,7 @@ function MovieEditPage() {
   /**
    * Cargar datos de la película usando el contexto
    */
-  const loadMovieData = async () => {
+  const loadMovieData = useCallback(async () => {
     try {
       setLocalError(null);
 
@@ -141,10 +141,9 @@ function MovieEditPage() {
       }
       
     } catch (error) {
-
       setLocalError(error.message || 'Error al cargar datos de la película');
     }
-  };
+  }, []);
 
   // ===== FUNCIONES DE MANEJO =====
   

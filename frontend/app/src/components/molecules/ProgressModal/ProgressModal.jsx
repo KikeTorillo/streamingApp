@@ -1,4 +1,5 @@
 // src/components/molecules/ProgressModal/ProgressModal.jsx
+import PropTypes from 'prop-types';
 import { Modal } from "../Modal/Modal";
 import { UploadProgress } from "../../atoms/UploadProgress/UploadProgress";
 import "./ProgressModal.css";
@@ -85,5 +86,15 @@ function ProgressModal({
     </Modal>
   );
 }
+
+ProgressModal.propTypes = {
+  isVisible: PropTypes.bool,
+  progress: PropTypes.number,
+  status: PropTypes.oneOf(['uploading', 'processing', 'transcoding', 'completed', 'failed']),
+  message: PropTypes.string,
+  showPercentage: PropTypes.bool,
+  size: PropTypes.oneOf(['sm', 'md', 'lg']),
+  onClose: PropTypes.func
+};
 
 export { ProgressModal };

@@ -1,4 +1,5 @@
 // molecules/ContentCard/ContentCard.stories.jsx
+import { useState } from 'react';
 import { ContentCard } from './ContentCard';
 import './ContentCard.css';
 

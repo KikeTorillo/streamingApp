@@ -163,7 +163,7 @@ function UsersListPage() {
   ];
 
   // ===== ESTADÍSTICAS - USA FUNCIÓN DEL CONTEXTO =====
-  const stats = getUserStats();
+  getUserStats();
 
   // ===== RENDER =====
   return (

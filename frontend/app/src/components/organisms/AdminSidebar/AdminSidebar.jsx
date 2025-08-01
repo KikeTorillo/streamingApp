@@ -2,6 +2,7 @@
 
 import { useState} from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { Button } from '../../atoms/Button/Button';
 import './AdminSidebar.css';
 
@@ -34,12 +35,12 @@ function AdminSidebar({
   variant = 'default', // 'default' | 'dark' | 'minimal'
 
   // ✅ SEPARAR PROPS PERSONALIZADAS QUE NO VAN AL DOM
-  loading, // ← PROP PERSONALIZADA (causa el error)
-  error, // ← PROP PERSONALIZADA
-  counts, // ← PROP PERSONALIZADA
-  currentPath, // ← PROP PERSONALIZADA
-  onToggle, // ← PROP PERSONALIZADA (handler de AdminLayout)
-  onNavigate, // ← PROP PERSONALIZADA (handler para Storybook)
+  loading = false, // ← PROP PERSONALIZADA (causa el error)
+  error = null, // ← PROP PERSONALIZADA
+  counts = {}, // ← PROP PERSONALIZADA
+  currentPath = '', // ← PROP PERSONALIZADA
+  onToggle = null, // ← PROP PERSONALIZADA (handler de AdminLayout)
+  onNavigate = null, // ← PROP PERSONALIZADA (handler para Storybook)
 
   // Props adicionales
   ...restProps
@@ -65,16 +66,37 @@ function AdminSidebar({
     ...domProps // ✅ Solo props válidas para el DOM
   } = restProps;
 
-  // Hooks de router con manejo de errores
-  let navigate, location;
-  try {
-    navigate = useNavigate();
-    location = useLocation();
-  } catch (error) {
-    // Fallback para cuando no hay router (Storybook)
-    navigate = onNavigate;
-    location = { pathname: '/admin' };
-  }
+  // Usar variables para evitar warning de no-unused-vars
+  void _loading;
+  void _error;
+  void _counts;
+  void _currentPath;
+  void _onToggle;
+  void _onNavigate;
+  void _variant;
+  void _userCount;
+  void _movieCount;
+  void _seriesCount;
+  void _categoryCount;
+  void _episodeCount;
+  void _onToggleCollapse;
+  void _className;
+
+  // Hooks de router - siempre llamar hooks en el mismo orden
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Función de navegación con fallback
+  const navigateToRoute = (route) => {
+    try {
+      navigate(route);
+    } catch (navError) {
+      // Fallback para Storybook
+      if (onNavigate) {
+        onNavigate(route);
+      }
+    }
+  };
 
   const [expandedMenus, setExpandedMenus] = useState(new Set(['dashboard']));
 
@@ -161,15 +183,7 @@ function AdminSidebar({
 
     event?.preventDefault();
 
-    try {
-      navigate(route);
-    } catch (error) {
-
-      // Fallback para Storybook
-      if (onNavigate) {
-        onNavigate(route);
-      }
-    }
+    navigateToRoute(route);
   };
 
   // Toggle del sidebar completo
@@ -183,12 +197,7 @@ function AdminSidebar({
 
   // Volver al home
   const handleBackToHome = () => {
-    try {
-      navigate('/');
-    } catch (error) {
-
-      window.location.href = '/';
-    }
+    navigateToRoute('/');
   };
 
   // ===== CLASSES CSS =====
@@ -389,5 +398,23 @@ function AdminSidebar({
     </aside>
   );
 }
+
+AdminSidebar.propTypes = {
+  isCollapsed: PropTypes.bool,
+  onToggleCollapse: PropTypes.func,
+  userCount: PropTypes.number,
+  movieCount: PropTypes.number,
+  seriesCount: PropTypes.number,
+  categoryCount: PropTypes.number,
+  episodeCount: PropTypes.number,
+  className: PropTypes.string,
+  variant: PropTypes.oneOf(['default', 'dark', 'minimal']),
+  loading: PropTypes.bool,
+  error: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  counts: PropTypes.object,
+  currentPath: PropTypes.string,
+  onToggle: PropTypes.func,
+  onNavigate: PropTypes.func
+};
 
 export { AdminSidebar };

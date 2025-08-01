@@ -1,5 +1,5 @@
 // FilterBar.jsx
-import React from 'react';
+import PropTypes from 'prop-types';
 import { Button } from '../../atoms/Button/Button';
 import './FilterBar.css';
 
@@ -45,6 +45,16 @@ function FilterBar({
     actions: _actions,
     ...domProps // ✅ Solo props válidas para el DOM
   } = restProps;
+
+  // Usar variables para evitar warning de no-unused-vars
+  void _loading;
+  void _error;
+  void _variant;
+  void _size;
+  void _categories;
+  void _selectedCategory;
+  void _onCategoryChange;
+  void _actions;
   
   // Clases CSS dinámicas
   const filterBarClasses = [
@@ -106,5 +116,22 @@ function FilterBar({
     </div>
   );
 }
+
+FilterBar.propTypes = {
+  categories: PropTypes.arrayOf(PropTypes.shape({
+    value: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+    icon: PropTypes.string
+  })),
+  selectedCategory: PropTypes.string,
+  onCategoryChange: PropTypes.func,
+  actions: PropTypes.node,
+  variant: PropTypes.oneOf(['default', 'primary', 'secondary']),
+  size: PropTypes.oneOf(['sm', 'md', 'lg']),
+  className: PropTypes.string,
+  loading: PropTypes.bool,
+  error: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  disabled: PropTypes.bool
+};
 
 export { FilterBar };

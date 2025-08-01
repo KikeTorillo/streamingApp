@@ -1,5 +1,6 @@
 // atoms/ContentImage/ContentImage.jsx
 import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import './ContentImage.css';
 
 /**
@@ -129,6 +130,24 @@ const ContentImage = ({
       )}
     </div>
   );
+};
+
+ContentImage.propTypes = {
+  src: PropTypes.string.isRequired,
+  alt: PropTypes.string.isRequired,
+  aspectRatio: PropTypes.oneOf(['1/1', '4/3', '3/2', '16/9', '2/3', '3/4', 'auto']),
+  objectFit: PropTypes.oneOf(['cover', 'contain', 'fill', 'scale-down', 'none']),
+  rounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'full']),
+  loading: PropTypes.oneOf(['eager', 'lazy']),
+  fetchPriority: PropTypes.oneOf(['high', 'low', 'auto']),
+  onLoad: PropTypes.func,
+  onError: PropTypes.func,
+  placeholder: PropTypes.string,
+  contentType: PropTypes.oneOf(['movie', 'series', 'generic']),
+  showFallback: PropTypes.bool,
+  blur: PropTypes.bool,
+  className: PropTypes.string,
+  style: PropTypes.object
 };
 
 export { ContentImage };

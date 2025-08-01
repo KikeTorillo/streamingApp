@@ -1,5 +1,6 @@
 // molecules/TextSelect/TextSelect.jsx
-import React, { useState, forwardRef } from 'react';
+import { useState, forwardRef } from 'react';
+import PropTypes from 'prop-types';
 import './TextSelect.css';
 import { Select } from '../../atoms/Select/Select';
 
@@ -61,10 +62,10 @@ const TextSelect = forwardRef(({
     errorText,
     leftIcon,
     onLeftIconClick,
-    searchable = false,
+    // searchable = false,
     ariaLabel,
     ariaDescribedBy,
-    ariaErrorMessage,
+    // ariaErrorMessage,
     ...restProps
 }, ref) => {
     // Estado interno para manejar focus (igual que TextInput)
@@ -191,5 +192,39 @@ const TextSelect = forwardRef(({
 });
 
 TextSelect.displayName = 'TextSelect';
+
+TextSelect.propTypes = {
+    options: PropTypes.arrayOf(PropTypes.shape({
+        value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+        label: PropTypes.string.isRequired,
+        disabled: PropTypes.bool
+    })),
+    placeholder: PropTypes.string,
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    onChange: PropTypes.func,
+    onBlur: PropTypes.func,
+    onFocus: PropTypes.func,
+    name: PropTypes.string,
+    id: PropTypes.string,
+    className: PropTypes.string,
+    size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
+    variant: PropTypes.oneOf(['default', 'success', 'warning', 'error']),
+    rounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'full']),
+    disabled: PropTypes.bool,
+    required: PropTypes.bool,
+    autoFocus: PropTypes.bool,
+    fullWidth: PropTypes.bool,
+    compact: PropTypes.bool,
+    label: PropTypes.string,
+    helperText: PropTypes.string,
+    errorText: PropTypes.string,
+    leftIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+    onLeftIconClick: PropTypes.func,
+    searchable: PropTypes.bool,
+    ariaLabel: PropTypes.string,
+    ariaDescribedBy: PropTypes.string,
+    ariaErrorMessage: PropTypes.string
+};
 
 export { TextSelect };

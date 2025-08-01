@@ -1,7 +1,7 @@
 // ===== MAIN PAGE - REFACTORIZADA CON CONTEXTOS =====
 // src/Pages/MainPage/MainPage.jsx
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMovieNavigation } from '../../hooks/useMovieNavigation';
 import { useAlertContext } from '../../app/context/AlertContext';
@@ -15,24 +15,23 @@ import { AppHeader } from '../../components/organisms/AppHeader/AppHeader';
 import { FilterBar } from '../../components/molecules/FilterBar/FilterBar';
 import { ContentSection } from '../../components/molecules/ContentSection/ContentSection';
 import { ContentCard } from '../../components/molecules/ContentCard/ContentCard';
-import { EmptyState } from '../../components/molecules/EmptyState/EmptyState';
 import { logoutService } from '../../services/Auth/logoutService';
 
 function MainPage() {
     const navigate = useNavigate();
-    const { handleContentCardClick, handleContentCardPlay } = useMovieNavigation();
+    const { handleContentCardClick } = useMovieNavigation();
     const { showPermissionError, showConfirm } = useAlertContext();
     
     // ✅ CONTEXTOS - Usar datos centralizados en lugar de llamadas directas
     const { movies, loading: loadingMovies, error: moviesError, loadMovies } = useMovies();
     const { series, loading: loadingSeries, error: seriesError, loadSeries } = useSeries();
-    const { categories, loading: loadingCategories, error: categoriesError, loadCategories } = useCategories();
+    const { categories, loading: loadingCategories, loadCategories } = useCategories();
 
     // Estados locales reducidos
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [user, setUser] = useState(null);
-    const [searching, setSearching] = useState(false);
+    const [searching] = useState(false);
 
     // ===== VERIFICAR AUTENTICACIÓN =====
     useEffect(() => {
@@ -45,7 +44,7 @@ function MainPage() {
         try {
             const userData = JSON.parse(sessionUser);
             setUser(userData);
-        } catch (err) {
+        } catch {
 
             navigate('/login');
         }
@@ -119,7 +118,7 @@ function MainPage() {
                     cancelText: 'Cancelar'
                 }
             );
-        } catch (error) {
+        } catch {
 
             // En caso de error, forzar limpieza y redirigir
             sessionStorage.removeItem('sessionUser');
@@ -225,7 +224,7 @@ function MainPage() {
             loadMovies();     // Solo se dispara si no hay datos
             loadSeries();     // Solo se dispara si no hay datos
         }
-    }, [user]); // Solo depender del usuario, no de las funciones
+    }, [user]); // Agregar dependencias
 
     // ===== FILTRADO CON DATOS DE CONTEXTOS =====
     const mappedMovies = getMappedMovies();

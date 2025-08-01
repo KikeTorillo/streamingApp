@@ -1,4 +1,5 @@
 // molecules/EpisodeListItem/EpisodeListItem.jsx
+import PropTypes from 'prop-types';
 import { Button } from '../../atoms/Button/Button';
 import { Badge } from '../../atoms/Badge/Badge';
 import { ContentImage } from '../../atoms/ContentImage/ContentImage';
@@ -171,6 +172,29 @@ const EpisodeListItem = ({
       </div>
     </div>
   );
+};
+
+EpisodeListItem.propTypes = {
+  episode: PropTypes.shape({
+    id: PropTypes.string,
+    title: PropTypes.string.isRequired,
+    season: PropTypes.number.isRequired,
+    episode_number: PropTypes.number.isRequired,
+    description: PropTypes.string,
+    cover: PropTypes.string,
+    duration: PropTypes.string,
+    rating: PropTypes.number,
+    watched: PropTypes.bool
+  }).isRequired,
+  onPlay: PropTypes.func,
+  onClick: PropTypes.func,
+  showThumbnail: PropTypes.bool,
+  showDescription: PropTypes.bool,
+  showRating: PropTypes.bool,
+  loading: PropTypes.bool,
+  disabled: PropTypes.bool,
+  variant: PropTypes.oneOf(['compact', 'normal', 'detailed']),
+  className: PropTypes.string
 };
 
 export { EpisodeListItem };

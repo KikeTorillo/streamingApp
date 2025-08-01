@@ -1,5 +1,6 @@
 // src/components/molecules/ImageCropField/ImageCropField.jsx
 import { useState, useCallback } from 'react';
+import PropTypes from 'prop-types';
 import './ImageCropField.css';
 import { useImageCropper } from '../../../hooks/useImageCropper';
 import { FileInput } from '../../atoms/FileInput/FileInput';
@@ -91,9 +92,9 @@ function ImageCropField({
   // Hook de recorte de imágenes
   const {
     isOpen: isCropperOpen,
-    originalFile,
+    // originalFile,
     imageUrl: cropperImageUrl,
-    croppedFile,
+    // croppedFile,
     openCropper,
     closeCropper,
     handleCroppedImage,
@@ -180,8 +181,8 @@ function ImageCropField({
     
     try {
       return URL.createObjectURL(value);
-    } catch (error) {
-
+    } catch (previewError) {
+      void previewError; // Evitar warning unused-vars
       return null;
     }
   }, [value]);
@@ -326,5 +327,34 @@ function ImageCropField({
     </div>
   );
 }
+
+ImageCropField.propTypes = {
+  name: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.object, PropTypes.instanceOf(File)]),
+  onChange: PropTypes.func,
+  label: PropTypes.string,
+  helperText: PropTypes.string,
+  errorText: PropTypes.string,
+  required: PropTypes.bool,
+  disabled: PropTypes.bool,
+  fullWidth: PropTypes.bool,
+  compact: PropTypes.bool,
+  className: PropTypes.string,
+  aspect: PropTypes.number,
+  showPreview: PropTypes.bool,
+  maxFileSize: PropTypes.string,
+  acceptedFormats: PropTypes.arrayOf(PropTypes.string),
+  previewAlt: PropTypes.string,
+  previewDimensions: PropTypes.shape({
+    width: PropTypes.number,
+    height: PropTypes.number
+  }),
+  cropButtonText: PropTypes.string,
+  changeButtonText: PropTypes.string,
+  selectButtonText: PropTypes.string,
+  size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
+  variant: PropTypes.oneOf(['default', 'success', 'warning', 'danger']),
+  rounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'full'])
+};
 
 export { ImageCropField };

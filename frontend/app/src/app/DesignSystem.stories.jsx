@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import './App.css';
 
 export default {
@@ -463,7 +464,7 @@ const ZIndexDemo = ({ onCopy }) => (
           label: 'Tooltip',
           recommendation: 'Tooltips, elementos que deben estar sobre todo'
         },
-      ].map((z, index) => (
+      ].map((z) => (
         <div
           key={z.name}
           style={{
@@ -555,6 +556,51 @@ const ZIndexDemo = ({ onCopy }) => (
     </div>
   </div>
 );
+
+// PropTypes para componentes
+Notification.propTypes = {
+  message: PropTypes.string.isRequired
+};
+
+Section.propTypes = {
+  title: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired
+};
+
+ColorBox.propTypes = {
+  name: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+  onCopy: PropTypes.func.isRequired
+};
+
+ColorPalette.propTypes = {
+  title: PropTypes.string.isRequired,
+  prefix: PropTypes.string.isRequired,
+  range: PropTypes.arrayOf(PropTypes.number),
+  onCopy: PropTypes.func.isRequired
+};
+
+DemoButton.propTypes = {
+  label: PropTypes.string,
+  variant: PropTypes.string,
+  hover: PropTypes.string
+};
+
+ShadowDemo.propTypes = {
+  onCopy: PropTypes.func.isRequired
+};
+
+RadiusDemo.propTypes = {
+  onCopy: PropTypes.func.isRequired
+};
+
+SpacingDemo.propTypes = {
+  onCopy: PropTypes.func.isRequired
+};
+
+ZIndexDemo.propTypes = {
+  onCopy: PropTypes.func.isRequired
+};
 
 export const Variables = () => {
   const [darkMode, setDarkMode] = useState(false);

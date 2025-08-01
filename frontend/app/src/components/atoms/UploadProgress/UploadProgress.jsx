@@ -1,4 +1,5 @@
 // src/components/atoms/UploadProgress/UploadProgress.jsx
+import PropTypes from 'prop-types';
 import "./UploadProgress.css";
 
 const UploadProgress = ({ 
@@ -61,6 +62,14 @@ const UploadProgress = ({
     
   </div>
   );
+};
+
+UploadProgress.propTypes = {
+  progress: PropTypes.number,
+  message: PropTypes.string,
+  status: PropTypes.oneOf(['uploading', 'processing', 'transcoding', 'completed', 'failed']),
+  showPercentage: PropTypes.bool,
+  size: PropTypes.oneOf(['sm', 'md', 'lg'])
 };
 
 export { UploadProgress };

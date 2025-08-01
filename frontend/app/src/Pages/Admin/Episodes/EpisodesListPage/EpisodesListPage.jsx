@@ -166,7 +166,7 @@ function EpisodesListPage() {
 
       setSeriesData(seriesList);
 
-    } catch (err) {
+    } catch {
 
       setSeriesError('Error al cargar series');
     } finally {

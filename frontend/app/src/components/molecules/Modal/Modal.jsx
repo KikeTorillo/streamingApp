@@ -2,6 +2,7 @@
 // src/components/molecules/Modal/Modal.jsx
 
 import { useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import './Modal.css';
 
 /**
@@ -24,7 +25,7 @@ function Modal({
   
   // Configuración
   size = 'md', // 'sm', 'md', 'lg', 'xl'
-  backdrop = true, // Mostrar backdrop
+  // backdrop = true, // Mostrar backdrop
   closeOnBackdrop = true, // Cerrar al hacer clic en backdrop
   closeOnEscape = true, // Cerrar con tecla ESC
   
@@ -156,5 +157,22 @@ function Modal({
     </dialog>
   );
 }
+
+Modal.propTypes = {
+  isOpen: PropTypes.bool,
+  onClose: PropTypes.func,
+  children: PropTypes.node,
+  title: PropTypes.string,
+  size: PropTypes.oneOf(['sm', 'md', 'lg', 'xl']),
+  backdrop: PropTypes.bool,
+  closeOnBackdrop: PropTypes.bool,
+  closeOnEscape: PropTypes.bool,
+  className: PropTypes.string,
+  'aria-label': PropTypes.string,
+  'aria-labelledby': PropTypes.string,
+  'aria-describedby': PropTypes.string,
+  onOpen: PropTypes.func,
+  onClosed: PropTypes.func
+};
 
 export { Modal };

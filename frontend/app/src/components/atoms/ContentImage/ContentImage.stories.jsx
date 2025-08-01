@@ -403,14 +403,12 @@ Variants.parameters = {
 export const States = () => {
   const [imageStates, setImageStates] = useState({});
 
-  const handleLoad = (key) => (e) => {
+  const handleLoad = (key) => () => {
     setImageStates(prev => ({ ...prev, [key]: 'loaded' }));
-
   };
 
-  const handleError = (key) => (e) => {
+  const handleError = (key) => () => {
     setImageStates(prev => ({ ...prev, [key]: 'error' }));
-
   };
 
   return (
@@ -524,7 +522,7 @@ export const Interactive = () => {
     }));
   };
 
-  const handleImageError = (id) => (e) => {
+  const handleImageError = (id) => () => {
     setLoadingStats(prev => ({ 
       ...prev, 
       [id]: { status: 'error', time: 'N/A', size: 'N/A' }

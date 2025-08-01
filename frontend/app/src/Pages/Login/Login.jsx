@@ -1,7 +1,7 @@
 // ===== LOGIN PAGE CORREGIDO =====
 // src/Pages/Login/Login.jsx
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 
 // Servicios de autenticación
@@ -48,7 +48,7 @@ function Login() {
         setError(errorMessage);
       }
       
-    } catch (err) {
+    } catch {
       console.error('Error en login:', err); // Solo este log es útil para debugging
       
       const errorMessage = err.message || 'Error de conexión. Inténtalo de nuevo.';
@@ -82,7 +82,7 @@ function Login() {
       await recoveryService(username);
       setError('✅ Email de recuperación enviado. Revisa tu bandeja de entrada.');
       
-    } catch (err) {
+    } catch {
 
       setError('❌ Error al enviar email de recuperación.');
       
@@ -102,7 +102,7 @@ function Login() {
         if (user?.sub) {
           navigate('/main-page');
         }
-      } catch (err) {
+      } catch {
         sessionStorage.removeItem('sessionUser');
       }
     }

@@ -123,8 +123,7 @@ function UserCreatePage() {
 
         // El error ya se maneja en el contexto
       }
-    } catch (error) {
-
+    } catch {
       // El error ya se maneja en el contexto
     }
   };
@@ -141,7 +140,7 @@ function UserCreatePage() {
    * Navegar de vuelta
    */
   const handleGoBack = () => {
-    if (hasChanges && !success) {
+    if (hasChanges) {
       const confirmed = window.confirm(
         '¿Estás seguro de que quieres salir? Los cambios no guardados se perderán.'
       );

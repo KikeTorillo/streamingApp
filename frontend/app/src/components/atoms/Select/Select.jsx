@@ -1,5 +1,6 @@
 // atoms/Select/Select.jsx
 import { forwardRef } from 'react';
+import PropTypes from 'prop-types';
 import './Select.css';
 
 /**
@@ -133,5 +134,35 @@ const Select = forwardRef(({
 });
 
 Select.displayName = 'Select';
+
+Select.propTypes = {
+  options: PropTypes.arrayOf(
+    PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.shape({
+        value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+        label: PropTypes.string.isRequired,
+        disabled: PropTypes.bool
+      })
+    ])
+  ),
+  size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
+  variant: PropTypes.oneOf(['default', 'error', 'success', 'warning']),
+  rounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'full']),
+  className: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  onChange: PropTypes.func,
+  onFocus: PropTypes.func,
+  onBlur: PropTypes.func,
+  placeholder: PropTypes.string,
+  disabled: PropTypes.bool,
+  required: PropTypes.bool,
+  autoFocus: PropTypes.bool,
+  compact: PropTypes.bool,
+  ariaLabel: PropTypes.string,
+  ariaDescribedBy: PropTypes.string,
+  ariaErrorMessage: PropTypes.string
+};
 
 export { Select };

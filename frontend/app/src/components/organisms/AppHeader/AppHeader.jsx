@@ -1,4 +1,5 @@
 // AppHeader.jsx
+import PropTypes from 'prop-types';
 import { Button } from '../../atoms/Button/Button';
 import { TextInput } from '../../molecules/TextInput/TextInput';
 import { ThemeSelector } from '../../atoms/ThemeSelector';
@@ -90,5 +91,19 @@ function AppHeader({
     </header>
   );
 }
+
+AppHeader.propTypes = {
+  appTitle: PropTypes.string,
+  onTitleClick: PropTypes.func,
+  userName: PropTypes.string,
+  onLogout: PropTypes.func,
+  searchValue: PropTypes.string,
+  onSearchChange: PropTypes.func,
+  searchPlaceholder: PropTypes.string,
+  showSearch: PropTypes.bool,
+  variant: PropTypes.oneOf(['default', 'dark', 'light']),
+  size: PropTypes.oneOf(['sm', 'md', 'lg']),
+  className: PropTypes.string
+};
 
 export { AppHeader };

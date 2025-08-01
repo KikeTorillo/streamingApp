@@ -309,7 +309,7 @@ export const Interactive = () => {
         marginTop: 'var(--space-md)',
         fontStyle: 'italic'
       }}>
-        Haz clic en "Iniciar" para ver la animacion automatica
+        Haz clic en &quot;Iniciar&quot; para ver la animacion automatica
       </div>
     </div>
   );

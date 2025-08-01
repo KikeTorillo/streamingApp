@@ -151,8 +151,8 @@ Perfecto para formularios donde necesitas:
 const Template = (args) => (
   <FileInputField 
     {...args} 
-    onChange={(e) => {
-
+    onChange={() => {
+      // Handle file change
     }}
   />
 );

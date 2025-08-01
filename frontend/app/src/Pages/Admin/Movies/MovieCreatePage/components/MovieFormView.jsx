@@ -1,7 +1,8 @@
 // ===== MOVIE FORM VIEW - VERSIÓN SIMPLIFICADA CON IMAGECROPFIELD =====
 // src/Pages/Admin/Movies/MovieCreatePage/components/MovieFormView.jsx
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { DynamicForm } from '../../../../../components/molecules/DynamicForm/DynamicForm';
 import { Card, CardBody } from '../../../../../components/atoms/Card/Card';
 import { Button } from '../../../../../components/atoms/Button/Button';
@@ -25,9 +26,7 @@ function MovieFormView({
   loading = false,
   error = null,
   success = false,
-  hasChanges = false,
   onChange,
-  selectedItem = null,
   showBackButton = false,
   onBackToSearch
 }) {
@@ -72,7 +71,7 @@ function MovieFormView({
       setImagePreview(null);
       setImageType(null);
     }
-  }, [currentFormData.coverImageUrl, currentFormData.coverImage, currentFormData.coverImageFile]);
+  }, [currentFormData.coverImageUrl, currentFormData.coverImage, currentFormData.coverImageFile, currentFormData, imagePreview]);
 
   // ===== CLEANUP DE URLs AL DESMONTAR =====
   useEffect(() => {
@@ -226,5 +225,18 @@ function MovieFormView({
     </div>
   );
 }
+
+MovieFormView.propTypes = {
+  fields: PropTypes.array,
+  initialData: PropTypes.object,
+  onSubmit: PropTypes.func.isRequired,
+  categoryOptions: PropTypes.array,
+  loading: PropTypes.bool,
+  error: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  success: PropTypes.bool,
+  onChange: PropTypes.func,
+  showBackButton: PropTypes.bool,
+  onBackToSearch: PropTypes.func
+};
 
 export { MovieFormView };

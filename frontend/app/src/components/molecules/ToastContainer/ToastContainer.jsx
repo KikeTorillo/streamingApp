@@ -1,6 +1,7 @@
 // ===== TOAST CONTAINER MOLECULE =====
 // src/components/molecules/ToastContainer/ToastContainer.jsx
 
+import PropTypes from 'prop-types';
 import { Toast } from '../../atoms/Toast/Toast';
 import './ToastContainer.css';
 
@@ -108,5 +109,28 @@ function ToastContainer({
     </div>
   );
 }
+
+ToastContainer.propTypes = {
+  toasts: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    isOpen: PropTypes.bool,
+    type: PropTypes.oneOf(['success', 'error', 'warning', 'info']),
+    title: PropTypes.string,
+    message: PropTypes.string,
+    autoClose: PropTypes.bool,
+    autoCloseDelay: PropTypes.number,
+    action: PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      onClick: PropTypes.func.isRequired
+    }),
+    showCloseButton: PropTypes.bool,
+    onAutoClose: PropTypes.func
+  })),
+  position: PropTypes.oneOf(['top-right', 'top-left', 'bottom-right', 'bottom-left']),
+  maxToasts: PropTypes.number,
+  gap: PropTypes.oneOf(['sm', 'md', 'lg']),
+  onRemoveToast: PropTypes.func,
+  className: PropTypes.string
+};
 
 export { ToastContainer };

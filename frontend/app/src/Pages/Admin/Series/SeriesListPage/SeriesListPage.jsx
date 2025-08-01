@@ -1,7 +1,7 @@
 // ===== SERIES LIST PAGE - COLUMNAS CORREGIDAS PARA BACKEND REAL =====
 // src/Pages/Admin/Series/SeriesListPage/SeriesListPage.jsx
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { DataTable } from '../../../../components/organisms/DataTable/DataTable';
@@ -103,9 +103,8 @@ function SeriesListPage() {
       id: 'category',
       accessorKey: 'category_name',
       header: 'Categoría',
-      cell: ({ getValue, row }) => {
+      cell: ({ getValue }) => {
         const categoryName = getValue();
-        const categoryId = row.original.category_id;
         
         return (
           <Badge 
@@ -253,7 +252,7 @@ function SeriesListPage() {
   }, []);
 
   // ===== ESTADÍSTICAS DESDE EL CONTEXTO =====
-  const stats = getSeriesStats();
+  getSeriesStats();
 
   // ===== RENDER =====
   return (

@@ -1,7 +1,7 @@
 // ===== SERIES EDIT PAGE - USANDO CONTEXTO =====
 // src/Pages/Admin/Series/SeriesEditPage/SeriesEditPage.jsx
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
@@ -108,7 +108,7 @@ function SeriesEditPage() {
   /**
    * Cargar datos de la serie desde el contexto
    */
-  const loadSeriesData = async () => {
+  const loadSeriesData = useCallback(async () => {
     try {
 
       // Cargar serie y categorías en paralelo
@@ -143,10 +143,10 @@ function SeriesEditPage() {
         // coverImage no se incluye en initialData porque es un archivo
       });
       
-    } catch (error) {
-
+    } catch {
+      // Error silencioso al procesar datos iniciales
     }
-  };
+  }, []);
 
   // ===== FUNCIONES DE MANEJO =====
   
@@ -219,8 +219,8 @@ function SeriesEditPage() {
         navigate('/admin/series');
       }, 2500);
 
-    } catch (err) {
-
+    } catch {
+      // Error manejado por el contexto
     }
   };
 

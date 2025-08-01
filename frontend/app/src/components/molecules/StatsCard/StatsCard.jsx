@@ -1,5 +1,6 @@
 // ===== STATS CARD MOLECULE =====
 // src/components/molecules/StatsCard/StatsCard.jsx
+import PropTypes from 'prop-types';
 import { Card } from '../../atoms/Card/Card';
 import './StatsCard.css';
 
@@ -24,7 +25,7 @@ function StatsCard({
   
   // Cambio porcentual
   change,
-  changeLabel,
+  // changeLabel,
   changeDirection, // 'up' | 'down' | 'neutral' | auto-detect from change
   
   // Configuración visual
@@ -96,20 +97,20 @@ function StatsCard({
     className
   ].filter(Boolean).join(' ');
 
-  const changeClasses = [
-    'stats-card__change',
-    `stats-card__change--${finalChangeDirection}`
-  ].filter(Boolean).join(' ');
+  // const changeClasses = [
+  //   'stats-card__change',
+  //   `stats-card__change--${finalChangeDirection}`
+  // ].filter(Boolean).join(' ');
 
   // ===== ICONOS DE CAMBIO =====
-  const getChangeIcon = () => {
+  // const getChangeIcon = () => {
     switch (finalChangeDirection) {
       case 'up': return '📈';
       case 'down': return '📉';
       case 'neutral': return '➡️';
       default: return '';
     }
-  };
+  // };
 
   // ===== HANDLERS =====
   const handleClick = (e) => {
@@ -207,5 +208,22 @@ function StatsCard({
     </Card>
   );
 }
+
+StatsCard.propTypes = {
+  title: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  change: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  changeLabel: PropTypes.string,
+  changeDirection: PropTypes.oneOf(['up', 'down', 'neutral']),
+  color: PropTypes.oneOf(['blue', 'green', 'red', 'yellow', 'purple', 'gray']),
+  variant: PropTypes.oneOf(['default', 'minimal', 'bordered', 'gradient']),
+  size: PropTypes.oneOf(['sm', 'md', 'lg']),
+  loading: PropTypes.bool,
+  error: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  onClick: PropTypes.func,
+  href: PropTypes.string,
+  className: PropTypes.string
+};
 
 export { StatsCard };

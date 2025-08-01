@@ -1,5 +1,5 @@
 // src/Pages/SeriesDetail/SeriesDetailPage.jsx
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useMovieNavigation } from '../../hooks/useMovieNavigation';
 import { Button } from '../../components/atoms/Button/Button';
@@ -25,7 +25,7 @@ function SeriesDetailPage() {
     const [user, setUser] = useState(null);
     
     // Estados de carga
-    const [loadingSerie, setLoadingSerie] = useState(true);
+    const [, setLoadingSerie] = useState(true);
     const [loadingEpisodes, setLoadingEpisodes] = useState(true);
     
     // Estados de error
@@ -43,7 +43,7 @@ function SeriesDetailPage() {
         try {
             const userData = JSON.parse(sessionUser);
             setUser(userData);
-        } catch (err) {
+        } catch {
 
             navigate('/login');
         }
@@ -64,7 +64,7 @@ function SeriesDetailPage() {
                 } else {
                     throw new Error(response.message || 'Error al cargar la serie');
                 }
-            } catch (error) {
+            } catch {
 
                 setSerieError(error.message);
             } finally {
@@ -92,7 +92,7 @@ function SeriesDetailPage() {
                 } else {
                     throw new Error(response.message || 'Error al cargar episodios');
                 }
-            } catch (error) {
+            } catch {
 
                 setEpisodesError(error.message);
             } finally {
@@ -149,7 +149,7 @@ function SeriesDetailPage() {
             // Limpiar sesión y redirigir
             sessionStorage.removeItem('sessionUser');
             navigate('/login');
-        } catch (error) {
+        } catch {
 
             window.location.href = '/login';
         }

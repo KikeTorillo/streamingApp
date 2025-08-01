@@ -2,6 +2,7 @@
 // src/components/molecules/ImageCropperModal/ImageCropperModal.jsx
 
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 import Cropper from 'react-easy-crop';
 import { Modal } from '../Modal/Modal';
 import { Button } from '../../atoms/Button/Button';
@@ -91,7 +92,7 @@ function ImageCropperModal({
   className = '',
   
   // Filtrar props específicos del modal para evitar warnings de React
-  ...restProps
+  // ...restProps
 }) {
   
   // ===== ESTADOS DEL CROPPER =====
@@ -112,6 +113,7 @@ function ImageCropperModal({
    * Manejar cambios en el área de recorte
    */
   const onCropCompleteHandler = (croppedArea, croppedAreaPixels) => {
+    void croppedArea; // Evitar warning unused-vars
     setCroppedAreaPixels(croppedAreaPixels);
   };
   
@@ -120,15 +122,16 @@ function ImageCropperModal({
    */
   const handleConfirmCrop = async () => {
     if (!croppedAreaPixels || !imageSrc) {
-
+      console.warn('No se puede recortar: falta área de recorte o imagen');
       return;
     }
     
     try {
       const croppedBlob = await getCroppedImg(imageSrc, croppedAreaPixels);
       onComplete?.(croppedBlob);
-    } catch (error) {
-
+    } catch (cropError) {
+      console.error('Error al recortar imagen:', cropError);
+      void cropError; // Evitar warning unused-vars
     }
   };
   
@@ -209,5 +212,21 @@ function ImageCropperModal({
     </Modal>
   );
 }
+
+ImageCropperModal.propTypes = {
+  isOpen: PropTypes.bool,
+  onClose: PropTypes.func,
+  onComplete: PropTypes.func,
+  imageSrc: PropTypes.string,
+  aspect: PropTypes.number,
+  title: PropTypes.string,
+  description: PropTypes.string,
+  helpText: PropTypes.string,
+  cancelText: PropTypes.string,
+  size: PropTypes.oneOf(['sm', 'md', 'lg', 'xl']),
+  closeOnBackdrop: PropTypes.bool,
+  closeOnEscape: PropTypes.bool,
+  className: PropTypes.string
+};
 
 export { ImageCropperModal };

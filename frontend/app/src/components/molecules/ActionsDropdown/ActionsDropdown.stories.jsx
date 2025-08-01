@@ -1,5 +1,6 @@
 // ===== ACTIONS DROPDOWN STORIES =====
 // src/components/molecules/ActionsDropdown/ActionsDropdown.stories.jsx
+import { useState } from 'react';
 import { ActionsDropdown } from './ActionsDropdown';
 import './ActionsDropdown.css';
 
@@ -270,7 +271,7 @@ const ACTIONS_WITH_SHORTCUTS = [
   {
     label: 'Imprimir',
     icon: '🖨️',
-    onClick: (data) => window.print(),
+    onClick: () => window.print(),
     shortcut: '⌘P'
   }
 ];

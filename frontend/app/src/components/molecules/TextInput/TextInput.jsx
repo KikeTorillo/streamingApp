@@ -1,5 +1,6 @@
 // molecules/TextInput.jsx
 import React, { useState, forwardRef } from 'react';
+import PropTypes from 'prop-types';
 import './TextInput.css';
 import { Input } from '../../atoms/Input/Input';
 
@@ -285,5 +286,43 @@ const TextInput = forwardRef(({
 
 // Display name para debugging
 TextInput.displayName = 'TextInput';
+
+// PropTypes para validación
+TextInput.propTypes = {
+    placeholder: PropTypes.string,
+    value: PropTypes.string,
+    defaultValue: PropTypes.string,
+    onChange: PropTypes.func,
+    onBlur: PropTypes.func,
+    onFocus: PropTypes.func,
+    type: PropTypes.oneOf(['text', 'password', 'email', 'number', 'tel', 'url', 'search', 'date', 'time', 'datetime-local']),
+    name: PropTypes.string,
+    id: PropTypes.string,
+    className: PropTypes.string,
+    size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
+    variant: PropTypes.oneOf(['default', 'success', 'warning', 'error']),
+    rounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'full']),
+    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
+    required: PropTypes.bool,
+    autoFocus: PropTypes.bool,
+    fullWidth: PropTypes.bool,
+    compact: PropTypes.bool,
+    label: PropTypes.string,
+    helperText: PropTypes.string,
+    errorText: PropTypes.string,
+    leftIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+    rightIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+    onRightIconClick: PropTypes.func,
+    onLeftIconClick: PropTypes.func,
+    maxLength: PropTypes.number,
+    minLength: PropTypes.number,
+    showCharCount: PropTypes.bool,
+    pattern: PropTypes.string,
+    autoComplete: PropTypes.string,
+    ariaLabel: PropTypes.string,
+    ariaDescribedBy: PropTypes.string,
+    ariaErrorMessage: PropTypes.string
+};
 
 export { TextInput };

@@ -1,4 +1,5 @@
 // ContentSection.jsx
+import PropTypes from 'prop-types';
 import { Card } from '../../atoms/Card/Card';
 import { EmptyState } from '../EmptyState/EmptyState';
 import './ContentSection.css';
@@ -148,5 +149,25 @@ function ContentSection({
     </section>
   );
 }
+
+ContentSection.propTypes = {
+  title: PropTypes.string,
+  icon: PropTypes.string,
+  children: PropTypes.node,
+  loading: PropTypes.bool,
+  error: PropTypes.string,
+  empty: PropTypes.bool,
+  emptyIcon: PropTypes.string,
+  emptyTitle: PropTypes.string,
+  emptyDescription: PropTypes.string,
+  emptyAction: PropTypes.object,
+  variant: PropTypes.string,
+  size: PropTypes.oneOf(['sm', 'md', 'lg']),
+  showDivider: PropTypes.bool,
+  gridColumns: PropTypes.string,
+  gridGap: PropTypes.string,
+  className: PropTypes.string,
+  id: PropTypes.string
+};
 
 export { ContentSection };

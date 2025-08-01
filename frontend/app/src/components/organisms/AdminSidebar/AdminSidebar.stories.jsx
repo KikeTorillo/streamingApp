@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { AdminSidebar } from './AdminSidebar';
 import './AdminSidebar.css';
 
@@ -11,6 +12,10 @@ const RouterWrapper = ({ children }) => (
     {children}
   </BrowserRouter>
 );
+
+RouterWrapper.propTypes = {
+  children: PropTypes.node.isRequired
+};
 
 export default {
   title: 'Components/Organism/AdminSidebar',

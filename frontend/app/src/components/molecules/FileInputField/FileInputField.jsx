@@ -1,5 +1,6 @@
 // src/components/molecules/FileInputField/FileInputField.jsx
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 import './FileInputField.css';
 import { FileInput } from '../../atoms/FileInput/FileInput';
 
@@ -155,5 +156,29 @@ function FileInputField({
     </div>
   );
 }
+
+FileInputField.propTypes = {
+  label: PropTypes.string,
+  helperText: PropTypes.string,
+  errorText: PropTypes.string,
+  required: PropTypes.bool,
+  fullWidth: PropTypes.bool,
+  compact: PropTypes.bool,
+  className: PropTypes.string,
+  id: PropTypes.string,
+  name: PropTypes.string,
+  accept: PropTypes.string,
+  multiple: PropTypes.bool,
+  disabled: PropTypes.bool,
+  size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
+  variant: PropTypes.oneOf(['default', 'success', 'warning', 'danger']),
+  rounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'full']),
+  text: PropTypes.string,
+  onChange: PropTypes.func,
+  onFocus: PropTypes.func,
+  onBlur: PropTypes.func,
+  ariaLabel: PropTypes.string,
+  ariaDescribedBy: PropTypes.string
+};
 
 export { FileInputField };

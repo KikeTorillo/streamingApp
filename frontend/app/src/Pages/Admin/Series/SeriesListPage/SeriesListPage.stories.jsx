@@ -2,6 +2,7 @@
 // src/Pages/Admin/Series/SeriesListPage/SeriesListPage.stories.jsx
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { BrowserRouter } from 'react-router-dom';
 import { SeriesListPage } from './SeriesListPage';
 import './SeriesListPage.css';
@@ -28,6 +29,10 @@ const RouterWrapper = ({ children }) => {
       {children}
     </BrowserRouter>
   );
+};
+
+RouterWrapper.propTypes = {
+  children: PropTypes.node.isRequired
 };
 
 export default {

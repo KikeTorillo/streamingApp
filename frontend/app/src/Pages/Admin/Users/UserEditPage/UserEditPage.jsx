@@ -1,7 +1,7 @@
 // ===== USER EDIT PAGE - SIGUIENDO SISTEMA DE DISEÑO (CORREGIDO) =====
 // src/Pages/Admin/Users/UserEditPage/UserEditPage.jsx
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
@@ -28,7 +28,6 @@ function UserEditPage() {
     updateUser,
     loadUserById,
     isCurrentUser,
-    getRoleName,
     setError 
   } = useUsers();
 
@@ -115,7 +114,7 @@ function UserEditPage() {
   /**
    * Cargar datos del usuario - Usa función del contexto
    */
-  const loadUserData = async () => {
+  const loadUserData = useCallback(async () => {
 
     try {
       const result = await loadUserById(id);
@@ -133,11 +132,10 @@ function UserEditPage() {
 
         // El error ya se maneja en el contexto
       }
-    } catch (error) {
-
+    } catch {
       // El error ya se maneja en el contexto
     }
-  };
+  }, []);
 
   // ===== FUNCIONES DE MANEJO =====
   
@@ -183,8 +181,7 @@ function UserEditPage() {
 
         // El error ya se maneja en el contexto
       }
-    } catch (error) {
-
+    } catch {
       // El error ya se maneja en el contexto
     }
   };
@@ -210,9 +207,9 @@ function UserEditPage() {
       loadUserData();
     } else {
       setError('ID de usuario no proporcionado');
-      setLoading(false);
+      // Error: ID no proporcionado
     }
-  }, [id]);
+  }, [id, loadUserData, setError]);
 
   // ===== RENDER =====
   

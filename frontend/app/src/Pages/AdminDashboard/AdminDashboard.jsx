@@ -1,7 +1,7 @@
 // ===== ADMIN DASHBOARD PAGE =====
 // src/Pages/Admin/AdminDashboard/AdminDashboard.jsx
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../components/templates/AdminLayout/AdminLayout';
 import { StatsCard } from '../../components/molecules/StatsCard/StatsCard';
@@ -85,8 +85,7 @@ function AdminDashboard() {
 
         setStats(newStats);
 
-      } catch (error) {
-
+      } catch {
         setError('Error al cargar los datos del dashboard');
       } finally {
         setLoading(false);

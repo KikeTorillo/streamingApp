@@ -1,8 +1,9 @@
 // ===== ADMIN LAYOUT COMPONENT =====
 // src/components/templates/AdminLayout/AdminLayout.jsx
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { AdminSidebar } from '../../organisms/AdminSidebar/AdminSidebar';
 import { Button } from '../../atoms/Button/Button';
 import './AdminLayout.css';
@@ -87,9 +88,9 @@ function AdminLayout({
       }
 
       setUser(userData);
-    } catch (error) {
-
+    } catch (authError) {
       navigate('/login');
+      void authError; // Evitar warning unused-vars
     }
   }, [navigate]);
 
@@ -127,9 +128,9 @@ function AdminLayout({
         };
 
         setCounts(newCounts);
-      } catch (error) {
-
+      } catch (countsLoadError) {
         setCountsError('Error al cargar contadores');
+        void countsLoadError; // Evitar warning unused-vars
       } finally {
         setLoadingCounts(false);
       }
@@ -156,10 +157,10 @@ function AdminLayout({
   };
 
   // ===== MANEJAR LOGOUT =====
-  const handleLogout = () => {
-    sessionStorage.removeItem('sessionUser');
-    navigate('/login');
-  };
+  // const handleLogout = () => {
+  //   sessionStorage.removeItem('sessionUser');
+  //   navigate('/login');
+  // };
 
   // ===== GENERAR BREADCRUMBS AUTOMÁTICOS =====
   const generateBreadcrumbs = () => {
@@ -251,5 +252,20 @@ function AdminLayout({
     </div>
   );
 }
+
+AdminLayout.propTypes = {
+  children: PropTypes.node,
+  title: PropTypes.string,
+  subtitle: PropTypes.string,
+  breadcrumbs: PropTypes.arrayOf(PropTypes.shape({
+    label: PropTypes.string.isRequired,
+    href: PropTypes.string
+  })),
+  headerActions: PropTypes.node,
+  sidebarCollapsed: PropTypes.bool,
+  onSidebarToggle: PropTypes.func,
+  className: PropTypes.string,
+  variant: PropTypes.oneOf(['default', 'compact', 'full'])
+};
 
 export { AdminLayout };

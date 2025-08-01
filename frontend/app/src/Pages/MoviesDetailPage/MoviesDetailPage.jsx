@@ -1,5 +1,5 @@
 // src/Pages/MoviesDetailPage/MoviesDetailPage.jsx
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useMovieNavigation } from '../../hooks/useMovieNavigation';
 import { Button } from '../../components/atoms/Button/Button';
@@ -35,7 +35,7 @@ function MoviesDetailPage() {
         try {
             const userData = JSON.parse(sessionUser);
             setUser(userData);
-        } catch (err) {
+        } catch {
 
             navigate('/login');
         }
@@ -56,7 +56,7 @@ function MoviesDetailPage() {
                 } else {
                     throw new Error(response.message || 'Error al cargar la película');
                 }
-            } catch (error) {
+            } catch {
 
                 setMovieError(error.message);
             } finally {
@@ -101,7 +101,7 @@ function MoviesDetailPage() {
             // Limpiar sesión y redirigir
             sessionStorage.removeItem('sessionUser');
             navigate('/login');
-        } catch (error) {
+        } catch {
 
             window.location.href = '/login';
         }

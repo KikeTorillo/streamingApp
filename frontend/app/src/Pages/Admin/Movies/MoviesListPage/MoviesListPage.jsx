@@ -89,9 +89,8 @@ function MoviesListPage() {
       accessorKey: 'title',
       header: 'Título',
       size: 250,
-      cell: ({ getValue, row }) => {
+      cell: ({ getValue }) => {
         const title = getValue();
-        const mediaType = row.original.media_type || 'movie';
 
         return (
           <div>
@@ -113,9 +112,8 @@ function MoviesListPage() {
       id: 'category',
       accessorKey: 'category_name',
       header: 'Categoría',
-      cell: ({ getValue, row }) => {
+      cell: ({ getValue }) => {
         const categoryName = getValue();
-        const categoryId = row.original.category_id;
 
         return (
           <Badge
@@ -220,7 +218,7 @@ function MoviesListPage() {
   }, []);
 
   // ===== ESTADÍSTICAS - USA FUNCIÓN DEL CONTEXTO =====
-  const stats = getMoviesStats();
+  getMoviesStats();
 
   // ===== RENDER =====
   return (

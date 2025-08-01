@@ -1,5 +1,6 @@
 // atoms/Input.jsx
 import { forwardRef } from 'react';
+import PropTypes from 'prop-types';
 import './Input.css';
 
 /**
@@ -109,5 +110,31 @@ const Input = forwardRef(({
 });
 
 Input.displayName = 'Input';
+
+Input.propTypes = {
+  type: PropTypes.oneOf(['text', 'password', 'email', 'number', 'tel', 'url', 'search', 'date', 'time', 'datetime-local']),
+  size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
+  variant: PropTypes.oneOf(['default', 'error', 'success', 'warning']),
+  rounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'full']),
+  className: PropTypes.string,
+  value: PropTypes.string,
+  defaultValue: PropTypes.string,
+  onChange: PropTypes.func,
+  onFocus: PropTypes.func,
+  onBlur: PropTypes.func,
+  placeholder: PropTypes.string,
+  disabled: PropTypes.bool,
+  readOnly: PropTypes.bool,
+  required: PropTypes.bool,
+  autoFocus: PropTypes.bool,
+  compact: PropTypes.bool,
+  ariaLabel: PropTypes.string,
+  ariaDescribedBy: PropTypes.string,
+  ariaErrorMessage: PropTypes.string,
+  autoComplete: PropTypes.string,
+  maxLength: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  minLength: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  pattern: PropTypes.string
+};
 
 export { Input };

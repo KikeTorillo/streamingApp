@@ -1,5 +1,6 @@
 // src/components/atoms/FileInput/FileInput.jsx
 import { useState } from "react";
+import PropTypes from "prop-types";
 import "./FileInput.css";
 
 /**
@@ -195,5 +196,26 @@ function FileInput({
     </div>
   );
 }
+
+FileInput.propTypes = {
+  id: PropTypes.string,
+  name: PropTypes.string,
+  accept: PropTypes.string,
+  multiple: PropTypes.bool,
+  disabled: PropTypes.bool,
+  required: PropTypes.bool,
+  size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
+  variant: PropTypes.oneOf(['default', 'success', 'warning', 'error']),
+  rounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'full']),
+  text: PropTypes.string,
+  helperText: PropTypes.string,
+  errorText: PropTypes.string,
+  className: PropTypes.string,
+  onChange: PropTypes.func,
+  onFocus: PropTypes.func,
+  onBlur: PropTypes.func,
+  ariaLabel: PropTypes.string,
+  ariaDescribedBy: PropTypes.string
+};
 
 export { FileInput };

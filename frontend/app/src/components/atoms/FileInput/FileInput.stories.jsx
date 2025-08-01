@@ -399,7 +399,7 @@ export const Accessibility = () => (
         <li>✅ Estados aria-required y aria-invalid</li>
         <li>✅ Navegación por teclado (Tab, Enter, Space)</li>
         <li>✅ Focus visible con outline</li>
-        <li>✅ Mensajes de error con role="alert"</li>
+        <li>✅ Mensajes de error con role=&quot;alert&quot;</li>
         <li>✅ Área táctil mínima de 44px</li>
       </ul>
     </div>

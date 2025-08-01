@@ -2,6 +2,7 @@
 // src/app/context/AlertContext.jsx
 
 import { createContext, useContext } from 'react';
+import PropTypes from 'prop-types';
 import { AlertModal } from '../../components/molecules/AlertModal/AlertModal';
 import { ToastContainer } from '../../components/molecules/ToastContainer/ToastContainer';
 import { useAlert } from '../../hooks/useAlert';
@@ -83,5 +84,9 @@ function useAlertContext() {
   }
   return context;
 }
+
+AlertProvider.propTypes = {
+  children: PropTypes.node.isRequired
+};
 
 export { AlertProvider, useAlertContext };

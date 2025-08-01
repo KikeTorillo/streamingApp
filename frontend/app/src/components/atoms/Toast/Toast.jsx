@@ -1,7 +1,8 @@
 // ===== TOAST ATOM =====
 // src/components/atoms/Toast/Toast.jsx
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import PropTypes from 'prop-types';
 import { Button } from '../Button/Button';
 import './Toast.css';
 
@@ -76,7 +77,7 @@ function Toast({
   const config = typeConfig[type] || typeConfig.info;
   
   // Manejar cierre con animación
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setIsAnimating(false);
     
     // Esperar a que termine la animación antes de ocultar
@@ -89,7 +90,7 @@ function Toast({
         onAutoClose();
       }
     }, 300); // Duración de la animación CSS
-  };
+  }, [onClose, onAutoClose]);
 
   // Manejar apertura y animaciones
   useEffect(() => {
@@ -109,7 +110,7 @@ function Toast({
     } else {
       handleClose();
     }
-  }, [isOpen, autoClose, autoCloseDelay, onClose, onAutoClose]);
+  }, [isOpen, autoClose, autoCloseDelay, handleClose]);
   
   // Manejar acción
   const handleAction = () => {
@@ -199,5 +200,23 @@ function Toast({
     </div>
   );
 }
+
+Toast.propTypes = {
+  isOpen: PropTypes.bool,
+  onClose: PropTypes.func,
+  type: PropTypes.oneOf(['success', 'error', 'info', 'warning']),
+  title: PropTypes.string,
+  message: PropTypes.string,
+  autoClose: PropTypes.bool,
+  autoCloseDelay: PropTypes.number,
+  onAutoClose: PropTypes.func,
+  action: PropTypes.shape({
+    text: PropTypes.string.isRequired,
+    onClick: PropTypes.func.isRequired
+  }),
+  position: PropTypes.oneOf(['top-right', 'top-left', 'bottom-right', 'bottom-left']),
+  showCloseButton: PropTypes.bool,
+  className: PropTypes.string
+};
 
 export { Toast };

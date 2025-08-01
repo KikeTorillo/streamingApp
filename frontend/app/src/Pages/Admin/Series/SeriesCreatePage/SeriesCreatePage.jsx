@@ -1,14 +1,13 @@
 // ===== SERIES CREATE PAGE - USANDO CONTEXTO =====
 // src/Pages/Admin/Series/SeriesCreatePage/SeriesCreatePage.jsx
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // ===== LAYOUTS Y COMPONENTES =====
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { Container } from '../../../../components/atoms/Container/Container';
 import { Button } from '../../../../components/atoms/Button/Button';
-import { Card, CardHeader, CardBody, CardTitle } from '../../../../components/atoms/Card/Card';
 
 // ===== COMPONENTES ESPECÍFICOS =====
 import { TMDBSearchView } from '../../../../components/organisms/TMDBSearchView/TMDBSearchView';
@@ -16,7 +15,6 @@ import { SeriesFormView } from './components/SeriesFormView';
 
 // ===== CONTEXTO Y HOOKS =====
 import { useSeries } from '../../../../app/context/SeriesContext';
-import { tmdbService } from '../../../../services/tmdb/TMDBService';
 import { Spinner } from "../../../../components/atoms/Spinner/Spinner";
 import { useCategories } from "../../../../hooks/useCategories";
 import { useFormNavigation } from "../../../../hooks/useFormNavigation";
@@ -44,7 +42,6 @@ function SeriesCreatePage() {
     creating,
     processing,
     uploadProgress,
-    uploadStatus,
     error: contextError,
     createSeries,
     resetCreationState
@@ -61,12 +58,11 @@ function SeriesCreatePage() {
     hasChanges,
     handleSelectFromTMDB,
     handleManualCreate,
-    markAsChanged,
-    resetNavigation
+    markAsChanged
   } = useFormNavigation();
 
   // ===== HOOK DE ÉXITO HOMOLOGADO =====
-  const { triggerSuccess } = useSuccessRedirect('/admin/series');
+  useSuccessRedirect('/admin/series');
 
   // ===== WRAPPER PARA NAVEGACIÓN CON RESET DE ERRORES =====
   const handleSelectFromTMDBWithReset = (item) => {
@@ -175,14 +171,9 @@ function SeriesCreatePage() {
   };
 
   // ===== CALLBACK PARA PROGRESO DEL CONTEXTO =====
-  const handleProgressCallback = (progress, status, message) => {
+  const handleProgressCallback = (_, __, message) => {
 
     setProgressMessage(message);
-    
-    if (status === 'completed') {
-      triggerSuccess('¡Serie creada exitosamente!');
-      resetNavigation();
-    }
   };
 
   // ===== HANDLER DEL FORMULARIO USANDO CONTEXTO =====
@@ -197,7 +188,7 @@ function SeriesCreatePage() {
         throw new Error(result.error || 'Error al crear serie');
       }
 
-    } catch (err) {
+    } catch {
 
       // El error ya se maneja en el contexto
     }

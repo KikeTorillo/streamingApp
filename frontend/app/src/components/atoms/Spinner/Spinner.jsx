@@ -1,4 +1,5 @@
 // src/components/atoms/Spinner/Spinner.jsx
+import PropTypes from 'prop-types';
 import "./Spinner.css";
 
 /**
@@ -83,5 +84,14 @@ function Spinner({
     </div>
   );
 }
+
+Spinner.propTypes = {
+  variant: PropTypes.oneOf(['circle', 'dots', 'pulse', 'bars']),
+  size: PropTypes.oneOf(['sm', 'md', 'lg']),
+  color: PropTypes.oneOf(['primary', 'secondary', 'success', 'danger']),
+  message: PropTypes.string,
+  overlay: PropTypes.bool,
+  className: PropTypes.string
+};
 
 export { Spinner };

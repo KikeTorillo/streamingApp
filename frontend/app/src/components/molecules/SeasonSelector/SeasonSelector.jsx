@@ -1,4 +1,5 @@
 // molecules/SeasonSelector/SeasonSelector.jsx
+import PropTypes from 'prop-types';
 import { Select } from '../../atoms/Select/Select';
 import { Badge } from '../../atoms/Badge/Badge';
 import './SeasonSelector.css';
@@ -35,12 +36,12 @@ const SeasonSelector = ({
 }) => {
   // Validación de datos requeridos
   if (!seasons || seasons.length === 0) {
-
+    console.warn('SeasonSelector: No se proporcionaron temporadas');
     return null;
   }
 
   if (typeof onSeasonChange !== 'function') {
-
+    console.warn('SeasonSelector: onSeasonChange debe ser una función');
     return null;
   }
 
@@ -135,6 +136,22 @@ const SeasonSelector = ({
       </div>
     </div>
   );
+};
+
+SeasonSelector.propTypes = {
+  seasons: PropTypes.arrayOf(PropTypes.shape({
+    number: PropTypes.number.isRequired,
+    episodeCount: PropTypes.number.isRequired,
+    title: PropTypes.string
+  })).isRequired,
+  selectedSeason: PropTypes.number,
+  onSeasonChange: PropTypes.func.isRequired,
+  showEpisodeCount: PropTypes.bool,
+  loading: PropTypes.bool,
+  disabled: PropTypes.bool,
+  variant: PropTypes.oneOf(['compact', 'normal', 'detailed']),
+  size: PropTypes.oneOf(['sm', 'md', 'lg']),
+  className: PropTypes.string
 };
 
 export { SeasonSelector };

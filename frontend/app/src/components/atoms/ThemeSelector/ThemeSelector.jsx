@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { useTheme } from '../../../app/context/ThemeContext';
 import { Select } from '../Select/Select';
 import { Button } from '../Button/Button';
@@ -67,5 +68,12 @@ function ThemeSelector({
     </div>
   );
 }
+
+ThemeSelector.propTypes = {
+  size: PropTypes.oneOf(['sm', 'md', 'lg']),
+  variant: PropTypes.string,
+  showLabels: PropTypes.bool,
+  className: PropTypes.string
+};
 
 export { ThemeSelector };

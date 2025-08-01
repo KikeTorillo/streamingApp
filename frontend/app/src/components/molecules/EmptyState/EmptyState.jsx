@@ -1,4 +1,5 @@
 // EmptyState.jsx
+import PropTypes from 'prop-types';
 import { Card } from '../../atoms/Card/Card';
 import './EmptyState.css';
 
@@ -68,5 +69,15 @@ function EmptyState({
     </Card>
   );
 }
+
+EmptyState.propTypes = {
+  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  title: PropTypes.string,
+  description: PropTypes.string,
+  action: PropTypes.node,
+  size: PropTypes.oneOf(['sm', 'md', 'lg']),
+  variant: PropTypes.oneOf(['default', 'muted', 'primary', 'success', 'warning', 'danger']),
+  className: PropTypes.string
+};
 
 export { EmptyState };

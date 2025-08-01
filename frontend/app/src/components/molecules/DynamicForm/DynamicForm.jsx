@@ -1,5 +1,6 @@
 // molecules/DynamicForm/DynamicForm.jsx
 import React, { useState, useEffect, memo } from 'react';
+import PropTypes from 'prop-types';
 import { TextInput } from '../TextInput/TextInput';
 import { TextSelect } from '../TextSelect/TextSelect'; // ← NUEVA IMPORTACIÓN
 import { Button } from '../../atoms/Button/Button';
@@ -146,7 +147,6 @@ const DynamicForm = ({
 
   // Función para validar un campo
   const validateField = (field, value) => {
-    const fieldName = typeof field === 'string' ? field : field.name;
     const fieldRequired = typeof field === 'string' ? false : (field.required || false);
     const fieldValidation = typeof field === 'string' ? null : field.validation;
     const fieldType = typeof field === 'string' ? 'text' : (field.type || 'text');
@@ -164,7 +164,7 @@ const DynamicForm = ({
           }
           break;
         case 'tel':
-          if (!/^[\+]?[1-9][\d]{0,15}$/.test(value.replace(/[\s\-\(\)]/g, ''))) {
+          if (!/^[+]?[1-9][\d]{0,15}$/.test(value.replace(/[\s\-()]/g, ''))) {
             return 'Por favor ingresa un teléfono válido';
           }
           break;
@@ -640,6 +640,83 @@ const DynamicForm = ({
       )}
     </div>
   );
+};
+
+// Definir PropTypes
+DynamicForm.propTypes = {
+  fields: PropTypes.arrayOf(
+    PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        type: PropTypes.string,
+        label: PropTypes.string,
+        placeholder: PropTypes.string,
+        required: PropTypes.bool,
+        disabled: PropTypes.bool,
+        options: PropTypes.array,
+        validation: PropTypes.func,
+        defaultValue: PropTypes.any,
+        helperText: PropTypes.string,
+        leftIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+        variant: PropTypes.string,
+        size: PropTypes.string,
+        rounded: PropTypes.string,
+        fullWidth: PropTypes.bool,
+        maxLength: PropTypes.number,
+        showCharCount: PropTypes.bool,
+        aspect: PropTypes.number,
+        showPreview: PropTypes.bool,
+        acceptedFormats: PropTypes.array,
+        maxFileSize: PropTypes.string,
+        previewDimensions: PropTypes.object,
+        cropButtonText: PropTypes.string,
+        changeButtonText: PropTypes.string,
+        selectButtonText: PropTypes.string,
+        previewAlt: PropTypes.string,
+        className: PropTypes.string
+      })
+    ])
+  ).isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  onChange: PropTypes.func,
+  initialData: PropTypes.object,
+  columnsPerRow: PropTypes.number,
+  tabletColumns: PropTypes.number,
+  mobileColumns: PropTypes.number,
+  responsive: PropTypes.bool,
+  validateOnChange: PropTypes.bool,
+  validateOnBlur: PropTypes.bool,
+  loading: PropTypes.bool,
+  disabled: PropTypes.bool,
+  compact: PropTypes.bool,
+  className: PropTypes.string,
+  fieldSize: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
+  fieldRounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'full']),
+  submitVariant: PropTypes.oneOf(['primary', 'secondary', 'success', 'danger', 'outline', 'ghost', 'warning']),
+  submitSize: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
+  submitRounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'full']),
+  submitText: PropTypes.string,
+  submitIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  submitFullWidth: PropTypes.bool,
+  actions: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string,
+      type: PropTypes.string,
+      variant: PropTypes.string,
+      size: PropTypes.string,
+      rounded: PropTypes.string,
+      leftIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+      rightIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+      loading: PropTypes.bool,
+      disabled: PropTypes.bool,
+      fullWidth: PropTypes.bool,
+      onClick: PropTypes.func,
+      text: PropTypes.string,
+      children: PropTypes.node,
+      show: PropTypes.bool
+    })
+  )
 };
 
 // Memoizar DynamicForm - formularios complejos con muchos campos

@@ -493,7 +493,7 @@ export const Interactive = () => {
       />
       
       <small style={{ color: 'var(--text-muted)' }}>
-        Valor actual: "{value}"
+        Valor actual: &quot;{value}&quot;
       </small>
       
       <small style={{ color: 'var(--text-muted)' }}>

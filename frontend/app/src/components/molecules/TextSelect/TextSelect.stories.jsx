@@ -1,5 +1,5 @@
 // molecules/TextSelect/TextSelect.stories.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { TextSelect } from './TextSelect';
 import './TextSelect.css';
 

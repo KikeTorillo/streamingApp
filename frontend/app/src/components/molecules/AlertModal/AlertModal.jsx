@@ -1,6 +1,7 @@
 // ===== ALERT MODAL MOLECULE =====
 // src/components/molecules/AlertModal/AlertModal.jsx
 
+import PropTypes from 'prop-types';
 import { Modal } from '../Modal/Modal';
 import { Button } from '../../atoms/Button/Button';
 import './AlertModal.css';
@@ -161,5 +162,20 @@ function AlertModal({
     </Modal>
   );
 }
+
+// PropTypes para validación
+AlertModal.propTypes = {
+  isOpen: PropTypes.bool,
+  onClose: PropTypes.func,
+  type: PropTypes.oneOf(['info', 'success', 'error', 'confirm', 'delete', 'permission']),
+  title: PropTypes.string,
+  message: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  onConfirm: PropTypes.func,
+  confirmText: PropTypes.string,
+  cancelText: PropTypes.string,
+  size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
+  closeOnBackdrop: PropTypes.bool,
+  className: PropTypes.string
+};
 
 export { AlertModal };

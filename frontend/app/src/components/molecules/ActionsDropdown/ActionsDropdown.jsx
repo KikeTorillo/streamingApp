@@ -1,7 +1,8 @@
 // ===== ACTIONS DROPDOWN COMPONENT - VERSIÓN CORREGIDA =====
 // src/components/molecules/ActionsDropdown/ActionsDropdown.jsx
 
-import { useState, useEffect, useRef, memo } from 'react';
+import { useState, useEffect, useRef, memo, useCallback } from 'react';
+import PropTypes from 'prop-types';
 import { Button } from '../../atoms/Button/Button';
 import './ActionsDropdown.css';
 
@@ -67,7 +68,6 @@ function ActionsDropdown({
           // Usar position fixed y calcular posición
           const triggerRect = trigger.getBoundingClientRect();
           const menuHeight = menu.offsetHeight;
-          const menuWidth = menu.offsetWidth;
           
           // Determinar si hay espacio abajo o arriba
           const spaceBelow = window.innerHeight - triggerRect.bottom;
@@ -109,7 +109,7 @@ function ActionsDropdown({
   /**
    * Cerrar el menú
    */
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     if (!isOpen) return;
     
     setIsOpen(false);
@@ -119,7 +119,7 @@ function ActionsDropdown({
     setTimeout(() => {
       triggerRef.current?.focus();
     }, 50);
-  };
+  }, [isOpen, onClose, data]);
 
   /**
    * Toggle del menú
@@ -139,7 +139,7 @@ function ActionsDropdown({
     try {
       action.onClick?.(data);
     } catch (error) {
-
+      console.error('Error al ejecutar acción:', error);
     }
     
     handleClose();
@@ -166,7 +166,7 @@ function ActionsDropdown({
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('touchstart', handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, handleClose]);
 
   /**
    * Manejo de teclas (ESC para cerrar, flechas para navegar)
@@ -181,21 +181,23 @@ function ActionsDropdown({
           handleClose();
           break;
         
-        case 'ArrowDown':
+        case 'ArrowDown': {
           event.preventDefault();
           const nextItem = document.activeElement.nextElementSibling;
           if (nextItem && nextItem.classList.contains('actions-dropdown__item')) {
             nextItem.focus();
           }
           break;
+        }
         
-        case 'ArrowUp':
+        case 'ArrowUp': {
           event.preventDefault();
           const prevItem = document.activeElement.previousElementSibling;
           if (prevItem && prevItem.classList.contains('actions-dropdown__item')) {
             prevItem.focus();
           }
           break;
+        }
       }
     }
 
@@ -206,7 +208,7 @@ function ActionsDropdown({
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen]);
+  }, [isOpen, handleClose]);
 
   // ===== RENDER =====
   
@@ -298,6 +300,28 @@ function ActionsDropdown({
     </div>
   );
 }
+
+ActionsDropdown.propTypes = {
+  actions: PropTypes.arrayOf(PropTypes.shape({
+    label: PropTypes.string.isRequired,
+    icon: PropTypes.string,
+    onClick: PropTypes.func,
+    variant: PropTypes.oneOf(['danger']),
+    disabled: PropTypes.bool,
+    key: PropTypes.string,
+    description: PropTypes.string,
+    shortcut: PropTypes.string
+  })),
+  data: PropTypes.object,
+  size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg']),
+  variant: PropTypes.oneOf(['ghost', 'outline']),
+  position: PropTypes.oneOf(['bottom-right', 'bottom-left', 'top-right', 'top-left']),
+  disabled: PropTypes.bool,
+  triggerIcon: PropTypes.string,
+  triggerLabel: PropTypes.string,
+  onOpen: PropTypes.func,
+  onClose: PropTypes.func
+};
 
 // Memoizar ActionsDropdown - se usa en cada fila de DataTable
 const MemoizedActionsDropdown = memo(ActionsDropdown);
