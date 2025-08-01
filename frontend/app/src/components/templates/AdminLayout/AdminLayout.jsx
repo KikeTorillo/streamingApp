@@ -33,7 +33,7 @@ function AdminLayout({
   // Configuración del header
   title,
   subtitle,
-  breadcrumbs = [],
+  // breadcrumbs = [],
 
   // Acciones del header
   headerActions,
@@ -162,26 +162,6 @@ function AdminLayout({
   //   navigate('/login');
   // };
 
-  // ===== GENERAR BREADCRUMBS AUTOMÁTICOS =====
-  const generateBreadcrumbs = () => {
-    if (breadcrumbs.length > 0) return breadcrumbs;
-
-    // Generar breadcrumbs automáticos basados en la ruta
-    const pathSegments = location.pathname.split('/').filter(Boolean);
-    const autoBreadcrumbs = [];
-
-    pathSegments.forEach((segment, index) => {
-      const href = '/' + pathSegments.slice(0, index + 1).join('/');
-      const label = segment.charAt(0).toUpperCase() + segment.slice(1);
-
-      autoBreadcrumbs.push({
-        label,
-        href: index === pathSegments.length - 1 ? undefined : href
-      });
-    });
-
-    return autoBreadcrumbs;
-  };
 
   // ===== CLASSES CSS =====
   const layoutClasses = [

@@ -7,7 +7,6 @@ import { getEpisodesBySerieService } from '../../../services/Episodes/getEpisode
 import { getSerieByIdService } from '../../../services/Series/getSerieByIdService';
 import { VideoPlayerOverlay } from '../../../components/organisms/VideoPlayerOverlay/VideoPlayerOverlay';
 import { useVideoPreferences } from '../../../hooks/useVideoPreferences';
-import { useAuth } from '../../../app/context/AuthContext';
 
 // Componentes extraídos
 import { VideoPlayerLoadingScreen } from './VideoPlayerLoadingScreen';
@@ -45,8 +44,7 @@ export const VideoPlayerContainer = () => {
     loading: preferencesLoading
   } = useVideoPreferences();
   
-  // Hook de autenticación
-  const { } = useAuth();
+  // Hook de autenticación (se mantiene para verificar autenticación)
   
   // Referencias para el overlay
   const overlayContainerRef = useRef(null);
@@ -553,7 +551,7 @@ export const VideoPlayerContainer = () => {
       // El autoadvance lo maneja automáticamente la playlist de Video.js
     });
 
-  }, [playerRef, updatePlayerState, movieData, cdnUrl, currentHash, setupTextTracks, loadPlayerPreferences, savePlayerPreferences, playlistData, currentEpisodeIndex, resolutions, playlistKey, navigate]);
+  }, [playerRef, updatePlayerState, movieData, cdnUrl, currentHash, setupTextTracks, loadPlayerPreferences, savePlayerPreferences, playlistData, currentEpisodeIndex, resolutions, playlistKey]);
 
   // ===== CALLBACK CUANDO SE DISPONE EL PLAYER =====
   const handlePlayerDispose = useCallback(() => {

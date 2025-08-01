@@ -48,7 +48,7 @@ function Login() {
         setError(errorMessage);
       }
       
-    } catch {
+    } catch (err) {
       console.error('Error en login:', err); // Solo este log es útil para debugging
       
       const errorMessage = err.message || 'Error de conexión. Inténtalo de nuevo.';
@@ -82,8 +82,8 @@ function Login() {
       await recoveryService(username);
       setError('✅ Email de recuperación enviado. Revisa tu bandeja de entrada.');
       
-    } catch {
-
+    } catch (err) {
+      console.error('Error en recovery:', err);
       setError('❌ Error al enviar email de recuperación.');
       
     } finally {

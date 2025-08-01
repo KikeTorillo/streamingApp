@@ -1,7 +1,9 @@
 // ===== USER CONTEXT - GESTI�N CENTRALIZADA DE USUARIOS =====
 // src/app/context/UserContext.jsx
 
-import { createContext, useContext, useState } from 'react';
+/* eslint-disable react-refresh/only-export-components */
+
+import { createContext, useContext, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
 // Servicios de usuarios
@@ -90,7 +92,7 @@ function UsersProvider({ children }) {
   /**
    * Cargar usuarios desde el backend
    */
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -130,15 +132,15 @@ function UsersProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   /**
    * Refrescar lista de usuarios
    */
-  const refreshUsers = () => {
+  const refreshUsers = useCallback(() => {
 
     loadUsers();
-  };
+  }, [loadUsers]);
 
   /**
    * Limpiar estado de usuarios (�til para logout)

@@ -52,15 +52,10 @@ const getMovieByIdService = async (movieId) => {
 
 const getMovieByHashService = async (fileHash) => {
     const { urlBackend } = environmentService();
-    try {
-        const response = await axios.get(`${urlBackend}/api/v1/movies/by-hash/${fileHash}`, {
-            withCredentials: true,
-        });
-        return response.data;
-    } catch (error) {
-
-        throw error;
-    }
+    const response = await axios.get(`${urlBackend}/api/v1/movies/by-hash/${fileHash}`, {
+        withCredentials: true,
+    });
+    return response.data;
 };
 
 export { getMovieByIdService, getMovieByHashService };

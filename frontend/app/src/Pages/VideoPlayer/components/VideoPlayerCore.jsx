@@ -226,7 +226,6 @@ export const VideoPlayerCore = ({
         className={className}
         // Atributos básicos requeridos por Video.js
         playsInline
-        webkitPlaysinline="true"
       />
     </div>
   );

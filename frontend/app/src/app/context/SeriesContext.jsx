@@ -1,6 +1,8 @@
 // ===== SERIES CONTEXT - GESTIÓN CENTRALIZADA DE SERIES =====
 // src/app/context/SeriesContext.jsx
 
+/* eslint-disable react-refresh/only-export-components */
+
 import { createContext, useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 
@@ -476,7 +478,7 @@ function SeriesProvider({ children }) {
         };
       }
 
-      await updateSeriesService(seriesId, updateData);
+      const response = await updateSeriesService(seriesId, updateData);
 
       // ===== MANEJO DE RESPUESTA =====
       if (!response || (response.error && !response.success)) {

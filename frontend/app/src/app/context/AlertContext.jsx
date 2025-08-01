@@ -1,6 +1,8 @@
 // ===== ALERT CONTEXT - GESTIÓN CENTRALIZADA DE ALERTS + TOASTS =====
 // src/app/context/AlertContext.jsx
 
+/* eslint-disable react-refresh/only-export-components */
+
 import { createContext, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { AlertModal } from '../../components/molecules/AlertModal/AlertModal';

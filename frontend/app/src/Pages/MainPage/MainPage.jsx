@@ -224,7 +224,7 @@ function MainPage() {
             loadMovies();     // Solo se dispara si no hay datos
             loadSeries();     // Solo se dispara si no hay datos
         }
-    }, [user]); // Agregar dependencias
+    }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // ===== FILTRADO CON DATOS DE CONTEXTOS =====
     const mappedMovies = getMappedMovies();

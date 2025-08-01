@@ -24,9 +24,9 @@ function StatsCard({
   icon,
   
   // Cambio porcentual
-  change,
+  // change,
   // changeLabel,
-  changeDirection, // 'up' | 'down' | 'neutral' | auto-detect from change
+  // changeDirection, // 'up' | 'down' | 'neutral' | auto-detect from change
   
   // Configuración visual
   color = 'blue', // 'blue' | 'green' | 'red' | 'yellow' | 'purple' | 'gray'
@@ -47,24 +47,6 @@ function StatsCard({
   // Props adicionales
   ...restProps
 }) {
-  // ===== LÓGICA DE CAMBIO PORCENTUAL =====
-  
-  /**
-   * Detecta la dirección del cambio automáticamente
-   */
-  const getChangeDirection = () => {
-    if (changeDirection) return changeDirection;
-    if (!change) return 'neutral';
-    
-    // Si change es un string, intentar extraer el número
-    const numericChange = typeof change === 'string' 
-      ? parseFloat(change.replace(/[^\d.-]/g, ''))
-      : change;
-    
-    if (numericChange > 0) return 'up';
-    if (numericChange < 0) return 'down';
-    return 'neutral';
-  };
 
   /**
    * Formatea el valor para mostrar
@@ -82,7 +64,6 @@ function StatsCard({
     return val;
   };
 
-  const finalChangeDirection = getChangeDirection();
   const formattedValue = formatValue(value);
 
   // ===== CLASES CSS =====
@@ -102,15 +83,6 @@ function StatsCard({
   //   `stats-card__change--${finalChangeDirection}`
   // ].filter(Boolean).join(' ');
 
-  // ===== ICONOS DE CAMBIO =====
-  // const getChangeIcon = () => {
-    switch (finalChangeDirection) {
-      case 'up': return '📈';
-      case 'down': return '📉';
-      case 'neutral': return '➡️';
-      default: return '';
-    }
-  // };
 
   // ===== HANDLERS =====
   const handleClick = (e) => {

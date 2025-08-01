@@ -81,7 +81,7 @@ const getLocalStorageDataForMigration = () => {
             watchProgress: parsedWatchProgress
         };
     } catch (error) {
-
+        console.error('Error parsing local storage data:', error);
         return {
             watchProgress: {}
         };
@@ -99,7 +99,7 @@ const clearLocalStorageAfterMigration = (keys = ['watchProgress']) => {
         });
 
     } catch (error) {
-
+        console.error('Error clearing localStorage after migration:', error);
     }
 };
 

@@ -146,7 +146,7 @@ function SeriesEditPage() {
     } catch {
       // Error silencioso al procesar datos iniciales
     }
-  }, []);
+  }, [currentSeries?.category_id, currentSeries?.cover_image, currentSeries?.release_year, currentSeries?.title, getSeriesCoverUrl, id, loadSeriesById]);
 
   // ===== FUNCIONES DE MANEJO =====
   
@@ -249,7 +249,7 @@ function SeriesEditPage() {
     return () => {
       clearCurrentSeries();
     };
-  }, [id]);
+  }, [clearCurrentSeries, id, loadSeriesData]);
 
   // Efecto para actualizar datos cuando se carga la serie desde el contexto
   useEffect(() => {
@@ -266,7 +266,7 @@ function SeriesEditPage() {
         releaseYear: currentSeries.release_year || new Date().getFullYear(),
       });
     }
-  }, [currentSeries]);
+  }, [currentSeries, getSeriesCoverUrl]);
 
   // ===== RENDER =====
   

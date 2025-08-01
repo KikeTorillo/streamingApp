@@ -12,7 +12,7 @@ const deleteUserService = async (id) => {
     const { urlBackend } = environmentService();
 
     try {
-        const response = await axios.delete(`${urlBackend}/api/v1/users/${id}`, {
+        await axios.delete(`${urlBackend}/api/v1/users/${id}`, {
             withCredentials: true,
         });
 

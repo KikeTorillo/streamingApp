@@ -1,6 +1,8 @@
 // ===== EPISODES CONTEXT - GESTIÓN CENTRALIZADA DE EPISODIOS =====
 // src/app/context/EpisodesContext.jsx
 
+/* eslint-disable react-refresh/only-export-components */
+
 import { createContext, useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 
@@ -637,7 +639,7 @@ function EpisodesProvider({ children }) {
         };
       }
 
-      await updateEpisodeService(episodeId, updateData);
+      const response = await updateEpisodeService(episodeId, updateData);
 
       if (!response || (response.error && !response.success)) {
         throw new Error(response?.error || 'Error al actualizar episodio');

@@ -1,4 +1,5 @@
 // Container.stories.jsx
+import PropTypes from 'prop-types';
 import { Container, CONTAINER_SIZES, CONTAINER_VARIANTS } from './Container';
 
 export default {
@@ -96,6 +97,11 @@ const ExampleContent = ({ title, description }) => (
     </p>
   </div>
 );
+
+ExampleContent.propTypes = {
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired
+};
 
 // ========== DEFAULT ==========
 export const Default = {

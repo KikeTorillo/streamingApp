@@ -1,6 +1,8 @@
 // ===== VIDEO PLAYER CONTEXT - GESTIÓN CENTRALIZADA DEL REPRODUCTOR =====
 // src/app/context/VideoPlayerContext.jsx
 
+/* eslint-disable react-refresh/only-export-components */
+
 import { createContext, useContext, useState, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 

@@ -11,16 +11,11 @@ import { environmentService } from "../environmentService";
  */
 const getEpisodesService = async (filters = {}) => {
     const { urlBackend } = environmentService();
-    try {
-        const response = await axios.get(`${urlBackend}/api/v1/episodes`, {
-            params: filters,
-            withCredentials: true,
-        });
-        return response.data;
-    } catch (error) {
-
-        throw error;
-    }
+    const response = await axios.get(`${urlBackend}/api/v1/episodes`, {
+        params: filters,
+        withCredentials: true,
+    });
+    return response.data;
 };
 
 export { getEpisodesService };

@@ -249,7 +249,7 @@ function SeriesListPage() {
   // ===== EFECTOS =====
   useEffect(() => {
     loadSeries();
-  }, []);
+  }, [loadSeries]);
 
   // ===== ESTADÍSTICAS DESDE EL CONTEXTO =====
   getSeriesStats();

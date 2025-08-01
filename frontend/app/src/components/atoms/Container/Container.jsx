@@ -1,4 +1,7 @@
 // Container.jsx - VERSIÓN CORREGIDA
+
+/* eslint-disable react-refresh/only-export-components */
+
 import PropTypes from 'prop-types';
 import './Container.css';
 

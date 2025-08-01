@@ -1,6 +1,8 @@
 // ===== MOVIES CONTEXT - GESTIÓN CENTRALIZADA DE PELÍCULAS =====
 // src/app/context/MoviesContext.jsx
 
+/* eslint-disable react-refresh/only-export-components */
+
 import { createContext, useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 
@@ -583,7 +585,7 @@ function MoviesProvider({ children }) {
         };
       }
 
-      await updateMovieService(movieId, updateData);
+      const response = await updateMovieService(movieId, updateData);
 
       // ✅ MIGRADO: Manejo de respuesta como en MovieEditPage
       if (!response || (response.error && !response.success)) {

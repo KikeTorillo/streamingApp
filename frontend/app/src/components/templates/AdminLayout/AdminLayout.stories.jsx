@@ -288,7 +288,9 @@ MockAdminLayout.propTypes = {
   breadcrumbs: PropTypes.array,
   headerActions: PropTypes.node,
   sidebarCollapsed: PropTypes.bool,
-  onSidebarToggle: PropTypes.func
+  onSidebarToggle: PropTypes.func,
+  variant: PropTypes.string,
+  className: PropTypes.string
 };
 
 // ===== WRAPPER CON ROUTER =====

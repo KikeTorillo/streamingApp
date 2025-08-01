@@ -26,7 +26,7 @@ const useSeries = () => {
         if (seriesData.length === 0) {
           setError('No hay series disponibles. Ve a Administrar > Series para crear una.');
         }
-      } catch (err) {
+      } catch {
 
         setError('Error al cargar las series disponibles. Verifica tu conexión.');
         setSeries([]);

@@ -112,7 +112,7 @@ function useImageCropper(options = {}) {
       setImageUrl(url);
       setIsOpen(true);
     } catch (error) {
-
+      console.error('Error processing image file:', error);
     }
   }, [isFileProcessed]);
 
@@ -168,7 +168,7 @@ function useImageCropper(options = {}) {
       }, 50);
 
     } catch (error) {
-
+      console.error('Error handling cropped image:', error);
     }
   }, [originalFile, croppedFilePrefix, closeCropper, onCropComplete]);
 

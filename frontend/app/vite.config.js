@@ -1,10 +1,9 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import path from 'path'
+import { fileURLToPath, URL } from 'node:url'
 
-export default defineConfig(({ command, mode }) => {
-  // Detectar si es build o desarrollo
-  const isProduction = command === 'build'
+export default defineConfig(() => {
   
   return {
     plugins: [react()],
@@ -12,10 +11,10 @@ export default defineConfig(({ command, mode }) => {
     // Aliases útiles para imports más limpios
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, './src'),
-        '@components': path.resolve(__dirname, './src/components'),
-        '@services': path.resolve(__dirname, './src/services'),
-        '@assets': path.resolve(__dirname, './src/assets'),
+        '@': path.resolve(fileURLToPath(new URL('./src', import.meta.url))),
+        '@components': path.resolve(fileURLToPath(new URL('./src/components', import.meta.url))),
+        '@services': path.resolve(fileURLToPath(new URL('./src/services', import.meta.url))),
+        '@assets': path.resolve(fileURLToPath(new URL('./src/assets', import.meta.url))),
       },
     },
     

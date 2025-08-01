@@ -1,6 +1,8 @@
 // ===== AUTH CONTEXT - GESTIÓN CENTRALIZADA DE AUTENTICACIÓN =====
 // src/app/context/AuthContext.jsx
 
+/* eslint-disable react-refresh/only-export-components */
+
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 

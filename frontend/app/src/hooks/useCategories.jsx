@@ -25,8 +25,8 @@ const useCategories = () => {
         if (data.length === 0) {
           setError('No hay categorías disponibles. Ve a Administrar > Categorías para crear una.');
         }
-      } catch (err) {
-
+      } catch (error) {
+        console.error('Error loading categories:', error);
         setError('Error al cargar categorías. Verifica tu conexión.');
         setCategories([]);
       } finally {

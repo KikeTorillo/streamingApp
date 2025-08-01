@@ -4,16 +4,11 @@ import { environmentService } from "../environmentService";
 
 const searchSeriesService = async (title) => {
     const { urlBackend } = environmentService();
-    try {
-        const response = await axios.get(`${urlBackend}/api/v1/series/search`, {
-            params: { title },
-            withCredentials: true,
-        });
-        return response.data;
-    } catch (error) {
-
-        throw error;
-    }
+    const response = await axios.get(`${urlBackend}/api/v1/series/search`, {
+        params: { title },
+        withCredentials: true,
+    });
+    return response.data;
 };
 
 export { searchSeriesService };

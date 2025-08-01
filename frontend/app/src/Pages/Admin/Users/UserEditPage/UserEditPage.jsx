@@ -135,7 +135,7 @@ function UserEditPage() {
     } catch {
       // El error ya se maneja en el contexto
     }
-  }, []);
+  }, [id, loadUserById]);
 
   // ===== FUNCIONES DE MANEJO =====
   

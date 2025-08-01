@@ -215,7 +215,7 @@ function MoviesListPage() {
   // ===== EFECTOS =====
   useEffect(() => {
     loadMovies();
-  }, []);
+  }, [loadMovies]);
 
   // ===== ESTADÍSTICAS - USA FUNCIÓN DEL CONTEXTO =====
   getMoviesStats();

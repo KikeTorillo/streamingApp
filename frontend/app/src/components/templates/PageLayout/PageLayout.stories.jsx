@@ -1,5 +1,4 @@
 // PageLayout.stories.jsx
-import React from 'react';
 import { PageLayout } from './PageLayout';
 import { AppHeader } from '../../organisms/AppHeader/AppHeader';
 import { FilterBar } from '../../molecules/FilterBar/FilterBar';

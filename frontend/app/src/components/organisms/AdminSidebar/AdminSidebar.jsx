@@ -37,8 +37,6 @@ function AdminSidebar({
   // ✅ SEPARAR PROPS PERSONALIZADAS QUE NO VAN AL DOM
   loading = false, // ← PROP PERSONALIZADA (causa el error)
   error = null, // ← PROP PERSONALIZADA
-  counts = {}, // ← PROP PERSONALIZADA
-  currentPath = '', // ← PROP PERSONALIZADA
   onToggle = null, // ← PROP PERSONALIZADA (handler de AdminLayout)
   onNavigate = null, // ← PROP PERSONALIZADA (handler para Storybook)
 
@@ -51,8 +49,6 @@ function AdminSidebar({
     // Props personalizadas a filtrar (evitar error de React)
     loading: _loading,
     error: _error,
-    counts: _counts,
-    currentPath: _currentPath,
     onToggle: _onToggle,
     onNavigate: _onNavigate,
     variant: _variant,
@@ -69,8 +65,6 @@ function AdminSidebar({
   // Usar variables para evitar warning de no-unused-vars
   void _loading;
   void _error;
-  void _counts;
-  void _currentPath;
   void _onToggle;
   void _onNavigate;
   void _variant;
@@ -90,7 +84,7 @@ function AdminSidebar({
   const navigateToRoute = (route) => {
     try {
       navigate(route);
-    } catch (navError) {
+    } catch {
       // Fallback para Storybook
       if (onNavigate) {
         onNavigate(route);
@@ -411,8 +405,6 @@ AdminSidebar.propTypes = {
   variant: PropTypes.oneOf(['default', 'dark', 'minimal']),
   loading: PropTypes.bool,
   error: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-  counts: PropTypes.object,
-  currentPath: PropTypes.string,
   onToggle: PropTypes.func,
   onNavigate: PropTypes.func
 };

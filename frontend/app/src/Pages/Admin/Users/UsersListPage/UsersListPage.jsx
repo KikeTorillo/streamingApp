@@ -34,8 +34,7 @@ function UsersListPage() {
     refreshUsers,
     deleteUser,
     formatUserDate,
-    isCurrentUser,
-    getUserStats
+    isCurrentUser
   } = useUsers();
 
   const { showInfo } = useAlertContext();
@@ -43,7 +42,7 @@ function UsersListPage() {
   // ===== EFECTOS =====
   useEffect(() => {
     loadUsers();
-  }, []);
+  }, [loadUsers]);
 
   // ===== MANEJO DE SESIÓN EXPIRADA =====
   useEffect(() => {
@@ -163,7 +162,8 @@ function UsersListPage() {
   ];
 
   // ===== ESTADÍSTICAS - USA FUNCIÓN DEL CONTEXTO =====
-  getUserStats();
+  // Remover llamada directa que causa loop infinito
+  // const stats = getUserStats(); // Si necesitas usar las estadísticas, descomenta esta línea
 
   // ===== RENDER =====
   return (

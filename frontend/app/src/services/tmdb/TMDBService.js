@@ -17,7 +17,7 @@ class TMDBService {
 
     // Verificar que la API key existe
     if (!this.apiKey) {
-
+      console.warn('TMDB API key not configured. Some features may not work.');
     }
   }
 
@@ -112,54 +112,42 @@ class TMDBService {
    * Obtener detalles completos de una película
    */
   async getMovieDetails(tmdbId) {
-    try {
-      const params = new URLSearchParams({
-        api_key: this.apiKey,
-        language: 'es-ES',
-        append_to_response: 'credits,videos,images'
-      });
+    const params = new URLSearchParams({
+      api_key: this.apiKey,
+      language: 'es-ES',
+      append_to_response: 'credits,videos,images'
+    });
 
-      const url = `${this.baseUrl}/movie/${tmdbId}?${params}`;
-      const response = await fetch(url);
+    const url = `${this.baseUrl}/movie/${tmdbId}?${params}`;
+    const response = await fetch(url);
 
-      if (!response.ok) {
-        throw new Error(`Error HTTP ${response.status}`);
-      }
-
-      const data = await response.json();
-      return this.transformMovieData(data, true);
-
-    } catch (error) {
-
-      throw error;
+    if (!response.ok) {
+      throw new Error(`Error HTTP ${response.status}`);
     }
+
+    const data = await response.json();
+    return this.transformMovieData(data, true);
   }
 
   /**
    * Obtener detalles completos de una serie
    */
   async getTVDetails(tmdbId) {
-    try {
-      const params = new URLSearchParams({
-        api_key: this.apiKey,
-        language: 'es-ES',
-        append_to_response: 'credits,videos,images'
-      });
+    const params = new URLSearchParams({
+      api_key: this.apiKey,
+      language: 'es-ES',
+      append_to_response: 'credits,videos,images'
+    });
 
-      const url = `${this.baseUrl}/tv/${tmdbId}?${params}`;
-      const response = await fetch(url);
+    const url = `${this.baseUrl}/tv/${tmdbId}?${params}`;
+    const response = await fetch(url);
 
-      if (!response.ok) {
-        throw new Error(`Error HTTP ${response.status}`);
-      }
-
-      const data = await response.json();
-      return this.transformTVData(data, true);
-
-    } catch (error) {
-
-      throw error;
+    if (!response.ok) {
+      throw new Error(`Error HTTP ${response.status}`);
     }
+
+    const data = await response.json();
+    return this.transformTVData(data, true);
   }
 
   /**
@@ -293,7 +281,7 @@ class TMDBService {
       };
 
     } catch (error) {
-
+      console.error('Error fetching TMDB configuration:', error);
       return null;
     }
   }

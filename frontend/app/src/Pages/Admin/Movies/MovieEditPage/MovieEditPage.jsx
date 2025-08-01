@@ -143,7 +143,7 @@ function MovieEditPage() {
     } catch (error) {
       setLocalError(error.message || 'Error al cargar datos de la película');
     }
-  }, []);
+  }, [getMovieCoverUrl, id, loadMovieById]);
 
   // ===== FUNCIONES DE MANEJO =====
   
@@ -251,7 +251,7 @@ function MovieEditPage() {
     return () => {
       clearCurrentMovie();
     };
-  }, [id]);
+  }, [clearCurrentMovie, id, loadMovieData]);
 
   // ===== RENDER =====
   

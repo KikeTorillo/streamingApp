@@ -8,15 +8,10 @@ import { environmentService } from "../environmentService";
  */
 const getUserByIdService = async (id) => {
     const { urlBackend } = environmentService();
-    try {
-        const response = await axios.get(`${urlBackend}/api/v1/users/${id}`, {
-            withCredentials: true,
-        });
-        return response.data;
-    } catch (error) {
-
-        throw error;
-    }
+    const response = await axios.get(`${urlBackend}/api/v1/users/${id}`, {
+        withCredentials: true,
+    });
+    return response.data;
 };
 
 export { getUserByIdService };

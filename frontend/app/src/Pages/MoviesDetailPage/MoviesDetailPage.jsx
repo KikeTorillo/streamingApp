@@ -56,8 +56,8 @@ function MoviesDetailPage() {
                 } else {
                     throw new Error(response.message || 'Error al cargar la película');
                 }
-            } catch {
-
+            } catch (error) {
+                console.error('Error al cargar película:', error);
                 setMovieError(error.message);
             } finally {
                 setLoadingMovie(false);

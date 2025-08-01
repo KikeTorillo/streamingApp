@@ -23,16 +23,11 @@ const createEpisodeService = async (episodeData) => {
     formData.append("description", episodeData.description || "");
     formData.append("video", episodeData.video);
 
-    try {
-        const response = await axios.post(`${urlBackend}/api/v1/episodes`, formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-            withCredentials: true,
-        });
-        return response.data;
-    } catch (error) {
-
-        throw error;
-    }
+    const response = await axios.post(`${urlBackend}/api/v1/episodes`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
+    });
+    return response.data;
 };
 
 export { createEpisodeService };

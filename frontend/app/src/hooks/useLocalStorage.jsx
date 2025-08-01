@@ -36,7 +36,7 @@ function useLocalStorage(itemName, intialValue) {
                 
                 // Finaliza estado de carga
                 setLoading(false);
-            } catch (error) {
+            } catch {
                 // Captura errores y actualiza estado de error
                 setLoading(false);
                 setError(true);
