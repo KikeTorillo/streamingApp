@@ -1,7 +1,7 @@
 // useVideoPreferences.jsx
 // Hook personalizado para manejar preferencias de video del usuario
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from '../app/context/AuthContext';
 import { getUserPreferencesService } from '../services/UserPreferences/getUserPreferencesService';
 import { updateUserPreferencesService } from '../services/UserPreferences/updateUserPreferencesService';
@@ -34,7 +34,7 @@ function useVideoPreferences() {
     const [isUsingFallback, setIsUsingFallback] = useState(false);
 
     // Preferencias por defecto - IMPORTANTE: usar camelCase para consistencia con backend
-    const defaultPreferences = {
+    const defaultPreferences = useMemo(() => ({
         volume: 1.0,
         playbackRate: 1.0, // camelCase para backend Joi schema
         autoplay: false,
@@ -47,7 +47,7 @@ function useVideoPreferences() {
         pictureInPictureEnabled: true, // camelCase para backend Joi schema
         hotkeyEnabled: true, // camelCase para backend Joi schema
         watchProgress: {} // camelCase para backend Joi schema
-    };
+    }), []);
 
     /**
      * Obtener progreso de localStorage como fallback
@@ -61,8 +61,7 @@ function useVideoPreferences() {
                 ...defaultPreferences,
                 watch_progress: parsedProgress
             };
-        } catch (error) {
-
+        } catch {
             return defaultPreferences;
         }
     }, [defaultPreferences]);
@@ -75,8 +74,8 @@ function useVideoPreferences() {
             if (updatedPreferences.watch_progress) {
                 localStorage.setItem('watchProgress', JSON.stringify(updatedPreferences.watch_progress));
             }
-        } catch (error) {
-
+        } catch {
+            // Error ignorado intencionalmente
         }
     }, []);
 
@@ -99,11 +98,11 @@ function useVideoPreferences() {
                     setPreferences(result.data);
                     clearLocalStorageAfterMigration();
                 } else {
-
+                    // Error de migración ignorado intencionalmente
                 }
             }
-        } catch (error) {
-
+        } catch {
+            // Error de migración ignorado intencionalmente
         }
     }, [userId, isAuthenticated, isUsingFallback]);
 
@@ -135,8 +134,7 @@ function useVideoPreferences() {
                 setPreferences(fallbackPrefs);
                 setIsUsingFallback(true);
             }
-        } catch (error) {
-
+        } catch {
             // Usar localStorage como fallback en caso de error
             const fallbackPrefs = getLocalStorageFallback();
             setPreferences(fallbackPrefs);
@@ -184,8 +182,7 @@ function useVideoPreferences() {
                 setIsUsingFallback(true);
                 return true;
             }
-        } catch (error) {
-
+        } catch {
             // Fallback a localStorage en caso de error
             const updatedPrefs = { ...preferences, ...newPreferences };
             setPreferences(updatedPrefs);
@@ -236,7 +233,6 @@ function useVideoPreferences() {
                 return true;
             } else {
                 // Fallback a localStorage
-
                 const updatedProgress = {
                     ...preferences.watch_progress,
                     [contentId]: {
@@ -254,8 +250,7 @@ function useVideoPreferences() {
                 setIsUsingFallback(true);
                 return true;
             }
-        } catch (error) {
-
+        } catch {
             // Seguir con fallback...
             return false;
         }
@@ -292,8 +287,7 @@ function useVideoPreferences() {
             }
             
             return null;
-        } catch (error) {
-
+        } catch {
             // Fallback silencioso al cache local
             if (preferences?.watch_progress) {
                 return preferences.watch_progress[contentId] || null;
@@ -323,7 +317,7 @@ function useVideoPreferences() {
     // Cargar preferencias al montar el componente o cambiar usuario
     useEffect(() => {
         loadPreferences();
-    }, [userId, isAuthenticated]); // Solo dependencias primitivas
+    }, [userId, isAuthenticated, loadPreferences]);
 
     return {
         // Estados

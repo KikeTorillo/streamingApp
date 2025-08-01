@@ -56,8 +56,7 @@ const loginService = async (userValue, passValue) => {
                 message: 'Usuario o contraseña inválidos'
             };
         }
-    } catch (error) {
-
+    } catch {
         return {
             success: false,
             error: 'Error de conexión',

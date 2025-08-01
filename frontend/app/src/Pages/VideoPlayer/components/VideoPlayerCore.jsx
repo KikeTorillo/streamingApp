@@ -194,7 +194,7 @@ export const VideoPlayerCore = ({
 
       }
     };
-  }, []); // Solo ejecutar una vez al montar/desmontar
+  }, [getBaseConfig, onDispose, onReady]); // Dependencias necesarias
 
   /**
    * Efecto para manejar cambios de configuración
@@ -226,7 +226,7 @@ export const VideoPlayerCore = ({
         className={className}
         // Atributos básicos requeridos por Video.js
         playsInline
-        webkit-playsinline="true"
+        webkitPlaysinline="true"
       />
     </div>
   );

@@ -32,12 +32,11 @@ const logoutService = async () => {
             const data = await response.json();
             
             if (data?.success) {
-
+                // Logout exitoso
             } else {
-
+                // Error en logout pero continuamos
             }
-        } catch (backendError) {
-
+        } catch {
             // No bloqueamos el logout local si el backend falla
         }
 
@@ -61,8 +60,7 @@ const logoutService = async () => {
             message: 'Logout completado exitosamente'
         };
 
-    } catch (error) {
-
+    } catch {
         // Aunque haya error, ejecutar logout local de emergencia
 
         sessionStorage.removeItem('sessionUser');

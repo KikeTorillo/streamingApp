@@ -2,6 +2,7 @@
 // src/app/context/AuthContext.jsx
 
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import PropTypes from 'prop-types';
 
 // ===== CONTEXTO =====
 const AuthContext = createContext();
@@ -51,7 +52,7 @@ function AuthProvider({ children }) {
         // Datos originales para compatibilidad
         ...parsedUser
       };
-    } catch (error) {
+    } catch {
       return null;
     }
   }, []);
@@ -128,7 +129,7 @@ function AuthProvider({ children }) {
             iat: parsedUser.iat,
             ...parsedUser
           };
-        } catch (error) {
+        } catch {
               return null;
         }
       };
@@ -153,7 +154,7 @@ function AuthProvider({ children }) {
 
       setUser(sessionUser);
       setIsAuthenticated(true);
-    } catch (error) {
+    } catch {
 
       setUser(null);
       setIsAuthenticated(false);
@@ -177,7 +178,7 @@ function AuthProvider({ children }) {
       setIsAuthenticated(true);
 
       return true;
-    } catch (error) {
+    } catch {
 
       return false;
     }
@@ -197,7 +198,7 @@ function AuthProvider({ children }) {
       setIsAuthenticated(false);
 
       return true;
-    } catch (error) {
+    } catch {
 
       return false;
     }
@@ -239,7 +240,7 @@ function AuthProvider({ children }) {
   useEffect(() => {
 
     loadUser();
-  }, []); // Sin dependencias para evitar bucle infinito
+  }, [loadUser]); // Incluir loadUser en dependencias
 
   /**
    * Escuchar cambios en sessionStorage (para logout desde otras pestañas)
@@ -312,5 +313,10 @@ function useAuth() {
   }
   return context;
 }
+
+// PropTypes para validación
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired
+};
 
 export { AuthContext, AuthProvider, useAuth };

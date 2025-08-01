@@ -2,6 +2,7 @@
 // src/app/context/UserContext.jsx
 
 import { createContext, useContext, useState } from 'react';
+import PropTypes from 'prop-types';
 
 // Servicios de usuarios
 import { getUsersService } from '../../services/Users/getUsersService';
@@ -55,7 +56,7 @@ function UsersProvider({ children }) {
         hour: '2-digit',
         minute: '2-digit'
       });
-    } catch (error) {
+    } catch {
       return 'Fecha inv�lida';
     }
   };
@@ -582,5 +583,10 @@ function useUsers() {
   }
   return context;
 }
+
+// PropTypes para validaci�n
+UsersProvider.propTypes = {
+  children: PropTypes.node.isRequired
+};
 
 export { UserContext, UsersProvider, useUsers };

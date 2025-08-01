@@ -64,8 +64,7 @@ function SeriesDetailPage() {
                 } else {
                     throw new Error(response.message || 'Error al cargar la serie');
                 }
-            } catch {
-
+            } catch (error) {
                 setSerieError(error.message);
             } finally {
                 setLoadingSerie(false);
@@ -92,8 +91,7 @@ function SeriesDetailPage() {
                 } else {
                     throw new Error(response.message || 'Error al cargar episodios');
                 }
-            } catch {
-
+            } catch (error) {
                 setEpisodesError(error.message);
             } finally {
                 setLoadingEpisodes(false);

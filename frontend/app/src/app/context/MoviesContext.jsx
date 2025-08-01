@@ -2,6 +2,7 @@
 // src/app/context/MoviesContext.jsx
 
 import { createContext, useContext, useState } from 'react';
+import PropTypes from 'prop-types';
 
 // Servicios de películas
 import { getMoviesService } from '../../services/Movies/getMoviesService';
@@ -91,7 +92,7 @@ function MoviesProvider({ children }) {
           day: 'numeric'
         });
       }
-    } catch (error) {
+    } catch {
       return 'Fecha inválida';
     }
   };
@@ -175,7 +176,7 @@ function MoviesProvider({ children }) {
       // ===== PROCESO DE ELIMINACIÓN =====
       setDeleting(movie.id);
 
-      const response = await deleteMovieService(movie.id);
+      await deleteMovieService(movie.id);
 
       // ===== ACTUALIZAR ESTADO LOCAL =====
       setMovies(prevMovies => {
@@ -342,7 +343,11 @@ function MoviesProvider({ children }) {
     } catch (error) {
 
       // ✅ Limpiar listener en caso de error
-      window.removeEventListener('uploadProgress', handleUploadProgress);
+      window.removeEventListener('uploadProgress', (event) => {
+        if (event.detail && event.detail.progress !== undefined) {
+          setUploadProgress(event.detail.progress);
+        }
+      });
       
       // ===== MANEJO DE ERRORES (LÓGICA MIGRADA) =====
       let errorMessage = 'Error desconocido al crear el contenido.';
@@ -467,13 +472,14 @@ function MoviesProvider({ children }) {
       } catch (error) {
 
         // ✅ ARREGLO: Manejo de errores según el hook original
-        let errorMessage = 'Error de conexión consultando progreso';
+        // Evitar warning de variable no usada
+        const errorMessage = error.message.includes('Tarea no encontrada') 
+          ? 'Tarea no encontrada'
+          : error.message.includes('timeout')
+          ? 'Timeout consultando progreso'
+          : 'Error de conexión consultando progreso';
         
-        if (error.message.includes('Tarea no encontrada')) {
-          errorMessage = 'Tarea no encontrada';
-        } else if (error.message.includes('timeout')) {
-          errorMessage = 'Timeout consultando progreso';
-        }
+        console.log('Error en progreso:', errorMessage);
 
         // Si hay error, asumir que está completado para no bloquear la UI
         setProcessing(false);
@@ -577,7 +583,7 @@ function MoviesProvider({ children }) {
         };
       }
 
-      const response = await updateMovieService(movieId, updateData);
+      await updateMovieService(movieId, updateData);
 
       // ✅ MIGRADO: Manejo de respuesta como en MovieEditPage
       if (!response || (response.error && !response.success)) {
@@ -706,5 +712,10 @@ function useMovies() {
   }
   return context;
 }
+
+// PropTypes para validación
+MoviesProvider.propTypes = {
+  children: PropTypes.node.isRequired
+};
 
 export { MoviesContext, MoviesProvider, useMovies };

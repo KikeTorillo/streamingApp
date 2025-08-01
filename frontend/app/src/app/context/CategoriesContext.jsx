@@ -2,6 +2,7 @@
 // src/app/context/CategoriesContext.jsx
 
 import { createContext, useContext, useState, useCallback } from 'react';
+import PropTypes from 'prop-types';
 
 // Servicios de categorías
 import { getCategoriesService } from '../../services/Categories/getCategoriesService';
@@ -27,7 +28,7 @@ const CategoriesContext = createContext();
  */
 function CategoriesProvider({ children }) {
   // ===== HOOKS =====
-  const { showDeleteConfirm, showSuccess, showError } = useAlertContext();
+  const { showDeleteConfirm, showSuccess } = useAlertContext();
   
   // ===== ESTADOS PRINCIPALES =====
   const [categories, setCategories] = useState([]);
@@ -60,7 +61,7 @@ function CategoriesProvider({ children }) {
         hour: '2-digit',
         minute: '2-digit'
       });
-    } catch (error) {
+    } catch {
       return 'Fecha inválida';
     }
   }, []);
@@ -211,7 +212,7 @@ function CategoriesProvider({ children }) {
       setEditing(true);
       setEditError(null);
       
-      const response = await updateCategoryService(categoryId, newName);
+      await updateCategoryService(categoryId, newName);
 
       // ===== ACTUALIZAR ESTADO LOCAL =====
       setCategories(prevCategories => 
@@ -460,5 +461,10 @@ function useCategories() {
   }
   return context;
 }
+
+// PropTypes para validación
+CategoriesProvider.propTypes = {
+  children: PropTypes.node.isRequired
+};
 
 export { CategoriesContext, CategoriesProvider, useCategories };

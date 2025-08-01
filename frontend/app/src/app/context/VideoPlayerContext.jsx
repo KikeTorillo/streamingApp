@@ -2,6 +2,7 @@
 // src/app/context/VideoPlayerContext.jsx
 
 import { createContext, useContext, useState, useRef, useCallback } from 'react';
+import PropTypes from 'prop-types';
 
 // ===== CONTEXTO =====
 const VideoPlayerContext = createContext();
@@ -87,8 +88,8 @@ function VideoPlayerProvider({ children }) {
     try {
       playerRef.current.currentTime(newTime);
 
-    } catch (error) {
-
+    } catch {
+      // Error silencioso al hacer skip
     }
   }, []);
 
@@ -253,6 +254,11 @@ function useVideoPlayerContext() {
   
   return context;
 }
+
+// PropTypes para validación
+VideoPlayerProvider.propTypes = {
+  children: PropTypes.node.isRequired
+};
 
 // ===== EXPORTS =====
 export { VideoPlayerProvider, useVideoPlayerContext };

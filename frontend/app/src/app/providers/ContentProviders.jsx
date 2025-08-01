@@ -1,6 +1,7 @@
 import { MoviesProvider } from "../context/MoviesContext";
 import { SeriesProvider } from "../context/SeriesContext";
 import { CategoriesProvider } from "../context/CategoriesContext";
+import PropTypes from 'prop-types';
 
 /**
  * ContentProviders - Contextos de contenido para páginas que necesitan datos de movies/series
@@ -24,3 +25,8 @@ export function ContentProviders({ children }) {
     </CategoriesProvider>
   );
 }
+
+// PropTypes para validación
+ContentProviders.propTypes = {
+  children: PropTypes.node.isRequired
+};

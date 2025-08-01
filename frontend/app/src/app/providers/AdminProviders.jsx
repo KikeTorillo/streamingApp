@@ -1,6 +1,7 @@
 import { UsersProvider } from "../context/UserContext";
 import { EpisodesProvider } from "../context/EpisodesContext";
 import { ContentProviders } from "./ContentProviders";
+import PropTypes from 'prop-types';
 
 /**
  * AdminProviders - Contextos específicos del panel de administración
@@ -24,3 +25,8 @@ export function AdminProviders({ children }) {
     </ContentProviders>
   );
 }
+
+// PropTypes para validación
+AdminProviders.propTypes = {
+  children: PropTypes.node.isRequired
+};

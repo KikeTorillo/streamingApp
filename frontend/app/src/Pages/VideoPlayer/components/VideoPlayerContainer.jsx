@@ -7,7 +7,6 @@ import { getEpisodesBySerieService } from '../../../services/Episodes/getEpisode
 import { getSerieByIdService } from '../../../services/Series/getSerieByIdService';
 import { VideoPlayerOverlay } from '../../../components/organisms/VideoPlayerOverlay/VideoPlayerOverlay';
 import { useVideoPreferences } from '../../../hooks/useVideoPreferences';
-import { environmentService } from '../../../services/environmentService';
 import { useAuth } from '../../../app/context/AuthContext';
 
 // Componentes extraídos
@@ -47,8 +46,7 @@ export const VideoPlayerContainer = () => {
   } = useVideoPreferences();
   
   // Hook de autenticación
-  const { isAuthenticated, user } = useAuth();
-  const userId = user?.id;
+  const { } = useAuth();
   
   // Referencias para el overlay
   const overlayContainerRef = useRef(null);
@@ -62,9 +60,7 @@ export const VideoPlayerContainer = () => {
     playerRef,
     actions: {
       updateContentState,
-      updatePlayerState,
-      handleSkip,
-      togglePlayPause
+      updatePlayerState
     },
     actions
   } = useVideoPlayer();
@@ -124,10 +120,10 @@ export const VideoPlayerContainer = () => {
             mode: 'cors'
           });
           if (response.ok) {
-
+            // Subtítulo precargado correctamente
           }
-        } catch (error) {
-
+        } catch {
+          // Error al precargar subtítulo
         }
       });
       
@@ -155,11 +151,11 @@ export const VideoPlayerContainer = () => {
                 const trackElement = textTrack.track;
                 
                 trackElement.addEventListener('load', () => {
-
+                  // Subtítulo cargado exitosamente
                 });
                 
-                trackElement.addEventListener('error', (error) => {
-
+                trackElement.addEventListener('error', () => {
+                  // Error al cargar subtítulo
                 });
               }
             });
@@ -174,7 +170,7 @@ export const VideoPlayerContainer = () => {
           // Timeout de seguridad
           setTimeout(() => {
             if (player.readyState() < 1) {
-
+              // Timeout de seguridad alcanzado
               setupTracks();
             }
           }, 3000);
@@ -258,8 +254,8 @@ export const VideoPlayerContainer = () => {
       };
       localStorage.setItem('contentPositions', JSON.stringify(contentPositions));
       
-    } catch (error) {
-
+    } catch {
+      // Error al guardar preferencias
     }
   }, [getContentProgressId, updatePreferences, updateWatchProgress, preferences, contentType, playlistData, currentEpisodeIndex, movieId, playerRef]);
 
@@ -297,7 +293,7 @@ export const VideoPlayerContainer = () => {
             player.currentTime(position);
 
           } else {
-
+            // No se necesita ajustar posición
           }
         };
 
@@ -330,8 +326,8 @@ export const VideoPlayerContainer = () => {
         }
       }
       
-    } catch (error) {
-
+    } catch {
+      // Error al cargar preferencias
     }
   }, [getContentProgressId, preferences, getWatchProgress]);
 
@@ -435,8 +431,8 @@ export const VideoPlayerContainer = () => {
             .then(() => {
 
             })
-            .catch((err) => {
-
+            .catch(() => {
+              // Error al entrar en pantalla completa
             });
         }
       });
@@ -475,7 +471,7 @@ export const VideoPlayerContainer = () => {
       // Configurar subtítulos con precarga
       setupTextTracks(player, subtitleTracks);
     } else {
-
+      // No hay subtítulos disponibles
     }
 
     // ===== EVENTOS PARA GUARDAR PROGRESO =====
@@ -537,8 +533,8 @@ export const VideoPlayerContainer = () => {
               };
               sessionStorage.setItem(playlistKey, JSON.stringify(playlistDataToSave));
 
-            } catch (error) {
-
+            } catch {
+              // Error al actualizar sessionStorage
             }
 
           }
@@ -671,14 +667,12 @@ export const VideoPlayerContainer = () => {
                 }
               }
             }
-          } catch (playlistError) {
-
+          } catch {
             // No fallar la carga del video, solo log del error
           }
         }
         
-      } catch (error) {
-
+      } catch {
         updateContentState({ 
           error: 'Error al cargar el contenido. Por favor, intenta de nuevo.' 
         });

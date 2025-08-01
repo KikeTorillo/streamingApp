@@ -2,6 +2,7 @@
 // src/app/context/EpisodesContext.jsx
 
 import { createContext, useContext, useState } from 'react';
+import PropTypes from 'prop-types';
 
 // Servicios de episodios
 import { getEpisodesService } from '../../services/Episodes/getEpisodesService';
@@ -103,7 +104,7 @@ function EpisodesProvider({ children }) {
           day: 'numeric'
         });
       }
-    } catch (error) {
+    } catch {
       return 'Fecha inválida';
     }
   };
@@ -252,7 +253,7 @@ function EpisodesProvider({ children }) {
       // ===== PROCESO DE ELIMINACIÓN =====
       setDeleting(episode.id);
 
-      const response = await deleteEpisodeService(episode.id);
+      await deleteEpisodeService(episode.id);
 
       // ===== ACTUALIZAR ESTADO LOCAL =====
       setEpisodes(prevEpisodes => {
@@ -541,7 +542,7 @@ function EpisodesProvider({ children }) {
           setTimeout(checkProgress, 1000);
         }
         
-      } catch (error) {
+      } catch {
 
         setProcessing(false);
         setUploadStatus('completed');
@@ -636,7 +637,7 @@ function EpisodesProvider({ children }) {
         };
       }
 
-      const response = await updateEpisodeService(episodeId, updateData);
+      await updateEpisodeService(episodeId, updateData);
 
       if (!response || (response.error && !response.success)) {
         throw new Error(response?.error || 'Error al actualizar episodio');
@@ -776,5 +777,10 @@ function useEpisodes() {
   }
   return context;
 }
+
+// PropTypes para validación
+EpisodesProvider.propTypes = {
+  children: PropTypes.node.isRequired
+};
 
 export { EpisodesContext, EpisodesProvider, useEpisodes };

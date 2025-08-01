@@ -1,6 +1,7 @@
 import { ThemeProvider } from "../context/ThemeContext";
 import { AuthProvider } from "../context/AuthContext";
 import { AlertProvider } from "../context/AlertContext";
+import PropTypes from 'prop-types';
 
 /**
  * CoreProviders - Contextos esenciales que necesita toda la aplicación
@@ -24,3 +25,8 @@ export function CoreProviders({ children }) {
     </ThemeProvider>
   );
 }
+
+// PropTypes para validación
+CoreProviders.propTypes = {
+  children: PropTypes.node.isRequired
+};

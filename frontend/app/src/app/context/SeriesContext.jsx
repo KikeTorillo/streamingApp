@@ -2,6 +2,7 @@
 // src/app/context/SeriesContext.jsx
 
 import { createContext, useContext, useState } from 'react';
+import PropTypes from 'prop-types';
 
 // Servicios de series
 import { getSeriesService } from '../../services/Series/getSeriesService';
@@ -91,7 +92,7 @@ function SeriesProvider({ children }) {
           day: 'numeric'
         });
       }
-    } catch (err) {
+    } catch {
       return 'Fecha inválida';
     }
   };
@@ -181,7 +182,7 @@ function SeriesProvider({ children }) {
       // ===== PROCESO DE ELIMINACIÓN =====
       setDeleting(seriesItem.id);
 
-      const response = await deleteSeriesService(seriesItem.id);
+      await deleteSeriesService(seriesItem.id);
 
       // ===== ACTUALIZAR ESTADO LOCAL =====
       setSeries(prevSeries => {
@@ -357,9 +358,11 @@ function SeriesProvider({ children }) {
     } catch (error) {
 
       // ✅ Limpiar listener en caso de error
-      if (typeof handleUploadProgress !== 'undefined') {
-        window.removeEventListener('uploadProgress', handleUploadProgress);
-      }
+      window.removeEventListener('uploadProgress', (event) => {
+        if (event.detail && event.detail.progress !== undefined) {
+          setUploadProgress(event.detail.progress);
+        }
+      });
       
       // ===== MANEJO DE ERRORES =====
       let errorMessage = 'Error desconocido al crear la serie.';
@@ -473,7 +476,7 @@ function SeriesProvider({ children }) {
         };
       }
 
-      const response = await updateSeriesService(seriesId, updateData);
+      await updateSeriesService(seriesId, updateData);
 
       // ===== MANEJO DE RESPUESTA =====
       if (!response || (response.error && !response.success)) {
@@ -602,5 +605,10 @@ function useSeries() {
   }
   return context;
 }
+
+// PropTypes para validación
+SeriesProvider.propTypes = {
+  children: PropTypes.node.isRequired
+};
 
 export { SeriesContext, SeriesProvider, useSeries };

@@ -1,5 +1,7 @@
 // src/services/Auth/recoveryService.js - VERSIÓN MEJORADA
 
+import { environmentService } from "../environmentService";
+
 const recoveryService = async (emailValue) => {
     const { urlBackend, apiKey } = environmentService();
     
@@ -43,8 +45,7 @@ const recoveryService = async (emailValue) => {
                 };
             }
         }
-    } catch (error) {
-
+    } catch {
         return {
             success: false,
             error: 'Error de conexión',

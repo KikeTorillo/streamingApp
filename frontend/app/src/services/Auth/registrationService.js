@@ -55,8 +55,7 @@ const registrationService = async (userData) => {
                 };
             }
         }
-    } catch (error) {
-
+    } catch {
         return {
             success: false,
             error: 'Error de conexión',

@@ -1,3 +1,5 @@
+import { environmentService } from "../environmentService";
+
 const resetPassService = async (token, newPasswordValue) => {
     const { urlBackend, apiKey } = environmentService();
     
@@ -48,8 +50,7 @@ const resetPassService = async (token, newPasswordValue) => {
                 };
             }
         }
-    } catch (error) {
-
+    } catch {
         return {
             success: false,
             error: 'Error de conexión',

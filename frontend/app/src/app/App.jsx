@@ -1,5 +1,4 @@
 // App.jsx - Optimizado con Route-Based Code Splitting
-import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // Providers optimizados

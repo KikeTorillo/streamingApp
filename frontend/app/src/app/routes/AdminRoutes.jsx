@@ -1,4 +1,5 @@
 import { useRoutes } from "react-router-dom";
+import PropTypes from 'prop-types';
 
 // Páginas del panel de administración
 import { AdminDashboard } from "../../Pages/AdminDashboard/AdminDashboard";
@@ -82,6 +83,11 @@ function AdminRoute({ children }) {
 
   return children;
 }
+
+// PropTypes para validación
+AdminRoute.propTypes = {
+  children: PropTypes.node.isRequired
+};
 
 /**
  * AdminRoutes - Configuración de todas las rutas del panel de administración
