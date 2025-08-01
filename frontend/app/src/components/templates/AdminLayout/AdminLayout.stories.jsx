@@ -2,6 +2,7 @@
 // src/components/templates/AdminLayout/AdminLayout.stories.jsx
 
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { BrowserRouter } from 'react-router-dom';
 import { AdminLayout } from './AdminLayout';
 import { Button } from '../../atoms/Button/Button';
@@ -280,12 +281,26 @@ const MockAdminLayout = ({ children, ...props }) => {
   );
 };
 
+MockAdminLayout.propTypes = {
+  children: PropTypes.node,
+  title: PropTypes.string,
+  subtitle: PropTypes.string,
+  breadcrumbs: PropTypes.array,
+  headerActions: PropTypes.node,
+  sidebarCollapsed: PropTypes.bool,
+  onSidebarToggle: PropTypes.func
+};
+
 // ===== WRAPPER CON ROUTER =====
 const RouterWrapper = ({ children }) => (
   <BrowserRouter>
     {children}
   </BrowserRouter>
 );
+
+RouterWrapper.propTypes = {
+  children: PropTypes.node
+};
 
 export default {
   title: 'Components/Templates/AdminLayout',
@@ -634,10 +649,10 @@ export const Dashboard = () => (
           fontSize: 'var(--font-size-sm)',
           lineHeight: 1.6
         }}>
-          <p>• Nueva película "Spider-Man" agregada hace 2 horas</p>
-          <p>• Serie "Breaking Bad" actualizada hace 4 horas</p>
+          <p>• Nueva película &ldquo;Spider-Man&rdquo; agregada hace 2 horas</p>
+          <p>• Serie &ldquo;Breaking Bad&rdquo; actualizada hace 4 horas</p>
           <p>• 3 nuevos usuarios registrados hoy</p>
-          <p>• Categoría "Documentales" creada ayer</p>
+          <p>• Categoría &ldquo;Documentales&rdquo; creada ayer</p>
         </div>
       </div>
     </div>

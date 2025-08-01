@@ -1,5 +1,5 @@
 // components/atoms/Checkbox/Checkbox.jsx
-import React from 'react';
+import PropTypes from 'prop-types';
 import './Checkbox.css';
 
 /**
@@ -109,5 +109,21 @@ function Checkbox({
     </div>
   );
 }
+
+// Validación de PropTypes
+Checkbox.propTypes = {
+  checked: PropTypes.bool,
+  onChange: PropTypes.func,
+  disabled: PropTypes.bool,
+  label: PropTypes.string,
+  helperText: PropTypes.string,
+  error: PropTypes.string,
+  size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg']),
+  name: PropTypes.string,
+  value: PropTypes.string,
+  id: PropTypes.string,
+  required: PropTypes.bool,
+  className: PropTypes.string
+};
 
 export { Checkbox };

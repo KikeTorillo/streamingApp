@@ -1,5 +1,5 @@
 // atoms/Input.jsx
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import './Input.css';
 
 /**

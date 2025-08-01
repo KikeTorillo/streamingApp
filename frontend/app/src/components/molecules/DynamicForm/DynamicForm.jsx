@@ -1,5 +1,5 @@
 // molecules/DynamicForm/DynamicForm.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { TextInput } from '../TextInput/TextInput';
 import { TextSelect } from '../TextSelect/TextSelect'; // ← NUEVA IMPORTACIÓN
 import { Button } from '../../atoms/Button/Button';
@@ -642,4 +642,7 @@ const DynamicForm = ({
   );
 };
 
-export { DynamicForm };
+// Memoizar DynamicForm - formularios complejos con muchos campos
+const MemoizedDynamicForm = memo(DynamicForm);
+
+export { MemoizedDynamicForm as DynamicForm };

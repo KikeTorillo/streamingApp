@@ -1,5 +1,5 @@
 // FilterBar.stories.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { FilterBar } from './FilterBar';
 import { Button } from '../../atoms/Button/Button';
 import './FilterBar.css';

@@ -1,5 +1,5 @@
 // src/components/atoms/FileInput/FileInput.jsx
-import React, { useState } from "react";
+import { useState } from "react";
 import "./FileInput.css";
 
 /**

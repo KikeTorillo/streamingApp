@@ -1,7 +1,7 @@
 // ===== INPUT STORIES =====
 // src/components/atoms/Input/Input.stories.jsx
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Input } from './Input';
 
 export default {

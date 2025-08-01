@@ -1,5 +1,5 @@
 // atoms/Card.jsx
-import React from 'react';
+import PropTypes from 'prop-types';
 import './Card.css';
 
 /**
@@ -141,6 +141,61 @@ const CardDescription = ({ children, className = '', as: Component = 'p', ...pro
     {children}
   </Component>
 );
+
+// ===== VALIDACIÓN DE PROPTYPES =====
+
+// PropTypes para Card principal
+Card.propTypes = {
+  children: PropTypes.node,
+  className: PropTypes.string,
+  padding: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl', '2xl']),
+  shadow: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'none']),
+  rounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'full']),
+  variant: PropTypes.oneOf(['default', 'elevated', 'outlined']),
+  hoverable: PropTypes.bool,
+  clickable: PropTypes.bool,
+  onClick: PropTypes.func,
+  maxWidth: PropTypes.string,
+  fullWidth: PropTypes.bool,
+  loading: PropTypes.bool,
+  ariaLabel: PropTypes.string,
+  role: PropTypes.string,
+  tabIndex: PropTypes.number
+};
+
+// PropTypes para componentes auxiliares
+CardHeader.propTypes = {
+  children: PropTypes.node,
+  className: PropTypes.string
+};
+
+CardBody.propTypes = {
+  children: PropTypes.node,
+  className: PropTypes.string
+};
+
+CardFooter.propTypes = {
+  children: PropTypes.node,
+  className: PropTypes.string
+};
+
+CardTitle.propTypes = {
+  children: PropTypes.node,
+  className: PropTypes.string,
+  as: PropTypes.elementType
+};
+
+CardSubtitle.propTypes = {
+  children: PropTypes.node,
+  className: PropTypes.string,
+  as: PropTypes.elementType
+};
+
+CardDescription.propTypes = {
+  children: PropTypes.node,
+  className: PropTypes.string,
+  as: PropTypes.elementType
+};
 
 // Exportar componente principal y auxiliares
 export { 

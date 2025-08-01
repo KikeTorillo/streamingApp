@@ -1,6 +1,7 @@
 // ===== DATA TABLE ORGANISM - CON COMPONENTES BUTTON =====
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, memo } from 'react';
+import PropTypes from 'prop-types';
 import {
   useReactTable,
   getCoreRowModel,
@@ -79,54 +80,10 @@ function DataTable({
   className = '',
   variant = 'default', // 'default' | 'striped' | 'bordered' | 'compact'
 
-  // ✅ SEPARAR PROPS ADICIONALES PERSONALIZADAS QUE PODRÍAN CAUSAR ERRORES
-  pagination, // ← PROP PERSONALIZADA (objeto de configuración)
-  onRefresh, // ← PROP PERSONALIZADA (handler)
-  rowClassName, // ← ✅ AGREGAR ESTA LÍNEA
+  // Props adicionales
+  onRefresh,
   ...restProps
 }) {
-
-  // ✅ FILTRAR PROPS QUE NO DEBEN IR AL DOM
-  const {
-    // Props de datos (personalizadas)
-    data: _data,
-    columns: _columns,
-
-    // Props de estado (personalizadas)
-    loading: _loading,
-    error: _error,
-    deleting: _deleting,
-
-    // Props de acciones (personalizadas)
-    showActions: _showActions,
-    onEdit: _onEdit,
-    onDelete: _onDelete,
-    onView: _onView,
-    actionsColumnHeader: _actionsColumnHeader,
-
-    // Props de búsqueda y paginación (personalizadas)
-    searchable: _searchable,
-    searchPlaceholder: _searchPlaceholder,
-    pageSize: _pageSize,
-    pageSizeOptions: _pageSizeOptions,
-
-    // Props de estados vacíos (personalizadas)
-    emptyTitle: _emptyTitle,
-    emptyDescription: _emptyDescription,
-    emptyIcon: _emptyIcon,
-    emptyAction: _emptyAction,
-    emptyMessage: _emptyMessage, // ✅ FILTRAR ESTA PROP PROBLEMÁTICA
-
-    // Props de customización (personalizadas)
-    variant: _variant,
-
-    // Props adicionales personalizadas
-    emptyState: _emptyState,      // ← AGREGAR ESTA
-    pagination: _pagination,
-    onRefresh: _onRefresh,
-    rowClassName: _rowClassName,
-    ...domProps // ✅ Solo props válidas para el DOM
-  } = restProps;
 
   // ===== LÓGICA PARA MANEJAR emptyMessage =====
   // Si se pasa emptyMessage, usarlo como emptyDescription
@@ -248,7 +205,7 @@ function DataTable({
     return (
       <div
         className={`data-table data-table--empty data-table--${variant} ${className}`}
-        {...domProps} // ✅ Solo props válidas del DOM
+        {...restProps}
       >
         <div className="data-table__empty">
           <EmptyState
@@ -266,7 +223,7 @@ function DataTable({
   return (
     <div
       className={`data-table data-table--${variant} ${className}`}
-      {...domProps} // ✅ Solo props válidas del DOM
+      {...restProps}
     >
       {/* ===== CONTROLES SUPERIORES ===== */}
       {searchable && (
@@ -383,7 +340,7 @@ function DataTable({
                   <div className="data-table__no-results">
                     <span className="data-table__no-results-icon">🔍</span>
                     <span className="data-table__no-results-message">
-                      No se encontraron resultados para "{debouncedGlobalFilter}"
+                      No se encontraron resultados para &ldquo;{debouncedGlobalFilter}&rdquo;
                     </span>
                   </div>
                 </td>
@@ -474,4 +431,45 @@ function DataTable({
   );
 }
 
-export { DataTable };
+DataTable.propTypes = {
+  // Props de datos
+  data: PropTypes.array,
+  columns: PropTypes.array,
+  
+  // Props de estado
+  loading: PropTypes.bool,
+  error: PropTypes.string,
+  deleting: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  
+  // Props de acciones
+  showActions: PropTypes.bool,
+  onEdit: PropTypes.func,
+  onDelete: PropTypes.func,
+  onView: PropTypes.func,
+  actionsColumnHeader: PropTypes.string,
+  
+  // Props de búsqueda y paginación
+  searchable: PropTypes.bool,
+  searchPlaceholder: PropTypes.string,
+  pageSize: PropTypes.number,
+  pageSizeOptions: PropTypes.array,
+  
+  // Props de estados vacíos
+  emptyTitle: PropTypes.string,
+  emptyDescription: PropTypes.string,
+  emptyIcon: PropTypes.string,
+  emptyAction: PropTypes.node,
+  emptyMessage: PropTypes.string,
+  
+  // Props de customización
+  className: PropTypes.string,
+  variant: PropTypes.oneOf(['default', 'striped', 'bordered', 'compact']),
+  
+  // Props adicionales
+  onRefresh: PropTypes.func
+};
+
+// Memoizar DataTable para evitar re-renders innecesarios con props complejas
+const MemoizedDataTable = memo(DataTable);
+
+export { MemoizedDataTable as DataTable };

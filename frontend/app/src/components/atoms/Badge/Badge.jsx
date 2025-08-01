@@ -1,5 +1,6 @@
 // atoms/Badge.jsx
 import React from 'react';
+import PropTypes from 'prop-types';
 import './Badge.css';
 
 /**
@@ -196,6 +197,27 @@ const Badge = ({
       )}
     </span>
   );
+};
+
+Badge.propTypes = {
+  children: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  text: PropTypes.string,
+  variant: PropTypes.oneOf(['primary', 'secondary', 'success', 'warning', 'danger', 'info', 'neutral']),
+  size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
+  style: PropTypes.oneOf(['soft', 'solid', 'outline', 'dot']),
+  rounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'full']),
+  className: PropTypes.string,
+  onClick: PropTypes.func,
+  onRemove: PropTypes.func,
+  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  iconPosition: PropTypes.oneOf(['left', 'right']),
+  pulse: PropTypes.bool,
+  loading: PropTypes.bool,
+  disabled: PropTypes.bool,
+  uppercase: PropTypes.bool,
+  maxCount: PropTypes.number,
+  ariaLabel: PropTypes.string,
+  title: PropTypes.string
 };
 
 export { Badge };

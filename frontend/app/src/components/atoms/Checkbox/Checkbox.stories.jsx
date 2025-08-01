@@ -1,5 +1,5 @@
 // components/atoms/Checkbox/Checkbox.stories.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Checkbox } from './Checkbox';
 
 export default {

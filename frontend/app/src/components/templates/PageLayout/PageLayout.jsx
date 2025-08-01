@@ -1,5 +1,5 @@
 // PageLayout.jsx
-import React from 'react';
+import PropTypes from 'prop-types';
 import './PageLayout.css';
 
 /**
@@ -62,5 +62,22 @@ function PageLayout({
     </div>
   );
 }
+
+PageLayout.propTypes = {
+  // Secciones del layout
+  header: PropTypes.node,
+  filters: PropTypes.node,
+  children: PropTypes.node,
+  
+  // Configuración del contenido  
+  containerMaxWidth: PropTypes.string,
+  contentPadding: PropTypes.string,
+  
+  // Estilos
+  variant: PropTypes.string,
+  
+  // Props adicionales
+  className: PropTypes.string
+};
 
 export { PageLayout };

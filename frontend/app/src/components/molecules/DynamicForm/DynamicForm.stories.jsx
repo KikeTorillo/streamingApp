@@ -1,5 +1,5 @@
 // molecules/DynamicForm/DynamicForm.stories.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { DynamicForm } from './DynamicForm';
 import './DynamicForm.css';
 

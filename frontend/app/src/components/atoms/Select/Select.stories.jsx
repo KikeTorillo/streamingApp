@@ -1,7 +1,7 @@
 // ===== SELECT ATOM STORIES =====
 // src/components/atoms/Select/Select.stories.jsx
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Select } from './Select';
 
 export default {

@@ -1,4 +1,3 @@
-import React from "react";
 import { UsersProvider } from "../context/UserContext";
 import { EpisodesProvider } from "../context/EpisodesContext";
 import { ContentProviders } from "./ContentProviders";

@@ -1,4 +1,3 @@
-import React from 'react';
 import { useTheme } from '../../../app/context/ThemeContext';
 import { Select } from '../Select/Select';
 import { Button } from '../Button/Button';

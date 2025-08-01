@@ -1,5 +1,5 @@
 // src/components/molecules/ImageCropField/ImageCropField.jsx
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import './ImageCropField.css';
 import { useImageCropper } from '../../../hooks/useImageCropper';
 import { FileInput } from '../../atoms/FileInput/FileInput';

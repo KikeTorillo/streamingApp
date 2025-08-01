@@ -1,5 +1,5 @@
 // src/components/atoms/Button/Button.jsx
-import React from 'react';
+import PropTypes from 'prop-types';
 import './Button.css';
 
 /**
@@ -143,5 +143,23 @@ function Button({
     </button>
   );
 }
+
+Button.propTypes = {
+  children: PropTypes.node,
+  text: PropTypes.string,
+  size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
+  variant: PropTypes.oneOf(['primary', 'secondary', 'outline', 'ghost', 'danger', 'success', 'warning']),
+  rounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'full']),
+  disabled: PropTypes.bool,
+  loading: PropTypes.bool,
+  fullWidth: PropTypes.bool,
+  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  iconPosition: PropTypes.oneOf(['left', 'right']),
+  iconOnly: PropTypes.bool,
+  type: PropTypes.oneOf(['button', 'submit', 'reset']),
+  onClick: PropTypes.func,
+  ariaLabel: PropTypes.string,
+  className: PropTypes.string
+};
 
 export { Button };

@@ -320,7 +320,7 @@ export const CompleteDemo = () => {
       
       setEditModal({ isOpen: false, category: null });
       
-    } catch (err) {
+    } catch {
       setError('Error al guardar la categoría. Inténtalo de nuevo.');
     } finally {
       setSaving(false);

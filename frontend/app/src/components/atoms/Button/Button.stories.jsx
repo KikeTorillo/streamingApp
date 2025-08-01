@@ -1,5 +1,4 @@
 // src/components/atoms/Button/Button.stories.jsx
-import React from 'react';
 import { Button } from './Button';
 
 export default {

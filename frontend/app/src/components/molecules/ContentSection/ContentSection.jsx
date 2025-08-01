@@ -1,5 +1,4 @@
 // ContentSection.jsx
-import React from 'react';
 import { Card } from '../../atoms/Card/Card';
 import { EmptyState } from '../EmptyState/EmptyState';
 import './ContentSection.css';

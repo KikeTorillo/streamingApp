@@ -1,5 +1,4 @@
 // Container.stories.jsx
-import React from 'react';
 import { Container, CONTAINER_SIZES, CONTAINER_VARIANTS } from './Container';
 
 export default {

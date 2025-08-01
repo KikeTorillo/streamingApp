@@ -1,6 +1,7 @@
 // ===== TMDB SEARCH VIEW - VERSIÓN ACTUALIZADA CON API REAL =====
 
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { Button } from '../../atoms/Button/Button';
 import { Card, CardHeader, CardBody, CardTitle } from '../../atoms/Card/Card';
 import { DynamicForm } from '../../molecules/DynamicForm/DynamicForm';
@@ -164,7 +165,7 @@ function TMDBSearchView({
     }
   }, []);
 
-  const handleSearchSubmit = useCallback((formData) => {
+  const handleSearchSubmit = useCallback(() => {
     performSearch();
   }, [performSearch]);
 
@@ -376,5 +377,17 @@ function TMDBSearchView({
     </div>
   );
 }
+
+TMDBSearchView.propTypes = {
+  onSelectItem: PropTypes.func,
+  onManualCreate: PropTypes.func,
+  contentType: PropTypes.string,
+  title: PropTypes.string,
+  description: PropTypes.string,
+  placeholder: PropTypes.string,
+  helperText: PropTypes.string,
+  showManualCreate: PropTypes.bool,
+  sortOptions: PropTypes.array
+};
 
 export { TMDBSearchView };

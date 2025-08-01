@@ -1,6 +1,6 @@
 // ===== ADMINSIDEBAR COMPONENT =====
 
-import React, { useState, useEffect } from 'react';
+import { useState} from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '../../atoms/Button/Button';
 import './AdminSidebar.css';

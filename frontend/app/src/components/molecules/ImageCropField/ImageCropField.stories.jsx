@@ -1,5 +1,5 @@
 // src/components/molecules/ImageCropField/ImageCropField.stories.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ImageCropField } from './ImageCropField';
 import './ImageCropField.css';
 

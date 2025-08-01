@@ -1,7 +1,7 @@
 // ===== ACTIONS DROPDOWN COMPONENT - VERSIÓN CORREGIDA =====
 // src/components/molecules/ActionsDropdown/ActionsDropdown.jsx
 
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, memo } from 'react';
 import { Button } from '../../atoms/Button/Button';
 import './ActionsDropdown.css';
 
@@ -299,5 +299,8 @@ function ActionsDropdown({
   );
 }
 
+// Memoizar ActionsDropdown - se usa en cada fila de DataTable
+const MemoizedActionsDropdown = memo(ActionsDropdown);
+
 // ===== EXPORT =====
-export { ActionsDropdown };
+export { MemoizedActionsDropdown as ActionsDropdown };

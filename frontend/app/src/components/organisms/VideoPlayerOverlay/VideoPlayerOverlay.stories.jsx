@@ -1,5 +1,6 @@
 import { VideoPlayerOverlay } from './VideoPlayerOverlay';
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 
 export default {
   title: 'Organisms/VideoPlayerOverlay',
@@ -79,6 +80,11 @@ const VideoPlayerWrapper = ({ children, showOverlay = true }) => (
     )}
   </div>
 );
+
+VideoPlayerWrapper.propTypes = {
+  children: PropTypes.node,
+  showOverlay: PropTypes.bool
+};
 
 // Template base
 const Template = (args) => {

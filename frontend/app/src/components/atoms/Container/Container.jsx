@@ -1,5 +1,4 @@
 // Container.jsx - VERSIÓN CORREGIDA
-import React from 'react';
 import PropTypes from 'prop-types';
 import './Container.css';
 

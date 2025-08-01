@@ -1,6 +1,6 @@
 // ===== DATA TABLE STORIES =====
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { DataTable } from './DataTable';
 import { Button } from '../../atoms/Button/Button';
 import './DataTable.css';

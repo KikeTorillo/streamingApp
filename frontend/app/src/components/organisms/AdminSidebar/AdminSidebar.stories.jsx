@@ -1,6 +1,6 @@
 // ===== ADMIN SIDEBAR STORIES =====
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { AdminSidebar } from './AdminSidebar';
 import './AdminSidebar.css';

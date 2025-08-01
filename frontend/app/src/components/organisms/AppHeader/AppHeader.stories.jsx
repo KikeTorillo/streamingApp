@@ -1,5 +1,5 @@
 // AppHeader.stories.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { AppHeader } from './AppHeader';
 import './AppHeader.css';
 

@@ -1,5 +1,4 @@
 // src/components/atoms/FileInput/FileInput.stories.jsx
-import React from 'react';
 import { FileInput } from './FileInput';
 
 export default {

@@ -1,5 +1,5 @@
 // components/organisms/LoginCard/LoginCard.stories.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { LoginCard } from './LoginCard';
 import './LoginCard.css';
 
@@ -295,12 +295,10 @@ export const PageIntegration = () => (
       </div>
       
       <LoginCard
-        onSubmit={(data) => {
-
+        onSubmit={() => {
           alert('Login simulado');
         }}
-        onForgotPassword={(username) => {
-
+        onForgotPassword={() => {
           alert('Recuperación simulada');
         }}
         onRegisterClick={() => {

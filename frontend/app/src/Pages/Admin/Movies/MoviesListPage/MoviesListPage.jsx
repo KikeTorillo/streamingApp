@@ -1,7 +1,7 @@
 // ===== MOVIES LIST PAGE - COLUMNAS CORREGIDAS PARA BACKEND REAL =====
 // src/Pages/Admin/Movies/MoviesListPage/MoviesListPage.jsx
 
-import { useEffect } from 'react';
+import { useEffect, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { DataTable } from '../../../../components/organisms/DataTable/DataTable';
@@ -298,4 +298,7 @@ function MoviesListPage() {
   );
 }
 
-export { MoviesListPage };
+// Memoizar página para evitar re-renders innecesarios
+const MemoizedMoviesListPage = memo(MoviesListPage);
+
+export { MemoizedMoviesListPage as MoviesListPage };

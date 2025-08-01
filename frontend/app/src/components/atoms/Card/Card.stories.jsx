@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardHeader, CardBody, CardFooter, CardTitle, CardSubtitle, CardDescription } from './Card';
 import './Card.css';
 
@@ -761,7 +761,7 @@ export const AccessibilityExample = () => (
     >
       <CardTitle>Card Clickeable</CardTitle>
       <CardDescription>
-        Esta card es completamente accesible: role="button", navegación por teclado, aria-label descriptivo.
+        Esta card es completamente accesible: role=&ldquo;button&rdquo;, navegación por teclado, aria-label descriptivo.
       </CardDescription>
       <small style={{ color: 'var(--text-muted)' }}>
         Prueba con Tab + Enter/Space
@@ -771,7 +771,7 @@ export const AccessibilityExample = () => (
     <Card tabIndex={0} role="region" ariaLabel="Información del usuario">
       <CardTitle>Card Semántica</CardTitle>
       <CardDescription>
-        Card con role="region" personalizado y navegable por teclado para contenido importante.
+        Card con role=&ldquo;region&rdquo; personalizado y navegable por teclado para contenido importante.
       </CardDescription>
       <small style={{ color: 'var(--text-muted)' }}>
         Estructurada semánticamente

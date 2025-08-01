@@ -1,7 +1,5 @@
 // ===== STATS CARD MOLECULE =====
 // src/components/molecules/StatsCard/StatsCard.jsx
-
-import React from 'react';
 import { Card } from '../../atoms/Card/Card';
 import './StatsCard.css';
 

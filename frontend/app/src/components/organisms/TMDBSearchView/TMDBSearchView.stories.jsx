@@ -1,7 +1,7 @@
 // ===== TMDB SEARCH VIEW STORIES =====
 // src/components/organisms/TMDBSearchView/TMDBSearchView.stories.jsx
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { TMDBSearchView } from './TMDBSearchView';
 import './TMDBSearchView.css';
 

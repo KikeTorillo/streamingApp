@@ -1,7 +1,5 @@
 // ===== ACTIONS DROPDOWN STORIES =====
 // src/components/molecules/ActionsDropdown/ActionsDropdown.stories.jsx
-
-import React, { useState } from 'react';
 import { ActionsDropdown } from './ActionsDropdown';
 import './ActionsDropdown.css';
 

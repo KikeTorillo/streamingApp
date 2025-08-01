@@ -140,11 +140,11 @@ function EpisodeEditPage() {
           episodeNumber: episodeInfo.episode_number || 1,
         });
       } else {
-
+        // Error cargando episodio - mantener estado por defecto
       }
       
-    } catch (error) {
-
+    } catch {
+      // Error de red - mantener estado por defecto
     }
   };
 
@@ -216,11 +216,11 @@ function EpisodeEditPage() {
           navigate('/admin/episodes');
         }, 2500);
       } else {
-
+        // Error en actualización - el usuario ya fue notificado
       }
 
-    } catch (err) {
-
+    } catch {
+      // Error de red durante actualización
     }
   };
 

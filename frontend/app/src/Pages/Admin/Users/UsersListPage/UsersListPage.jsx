@@ -1,7 +1,7 @@
 // ===== USERS LIST PAGE - HOMOLOGADO CON BACKEND =====
 // src/Pages/Admin/Users/UsersListPage/UsersListPage.jsx
 
-import React, { useEffect } from 'react';
+import { useEffect, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { DataTable } from '../../../../components/organisms/DataTable/DataTable';
@@ -224,4 +224,7 @@ function UsersListPage() {
   );
 }
 
-export { UsersListPage };
+// Memoizar página para evitar re-renders cuando se navega de vuelta
+const MemoizedUsersListPage = memo(UsersListPage);
+
+export { MemoizedUsersListPage as UsersListPage };

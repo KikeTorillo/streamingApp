@@ -224,8 +224,8 @@ function EpisodesCreatePage() {
       };
 
       // Usar createEpisode del contexto con callback de progreso
-      const result = await createEpisode(processedData, (progress, status, message) => {
-
+      const result = await createEpisode(processedData, () => {
+        // Callback de progreso - manejado por el contexto
       });
 
       if (result.success) {
@@ -239,8 +239,8 @@ function EpisodesCreatePage() {
           monitorProgress(
             result.taskId,
             'episodes',
-            (status, progress, message) => {
-
+            () => {
+              // Callback de progreso para monitoreo
             },
             (finished, err) => {
               if (finished) {
@@ -260,11 +260,11 @@ function EpisodesCreatePage() {
           resetCreationState();
         }
       } else {
-
+        // Error en creación - el usuario ya fue notificado por el contexto
       }
 
-    } catch (err) {
-
+    } catch {
+      // Error de red durante creación
     }
   };
 

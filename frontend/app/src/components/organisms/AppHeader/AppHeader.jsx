@@ -1,5 +1,4 @@
 // AppHeader.jsx
-import React from 'react';
 import { Button } from '../../atoms/Button/Button';
 import { TextInput } from '../../molecules/TextInput/TextInput';
 import { ThemeSelector } from '../../atoms/ThemeSelector';

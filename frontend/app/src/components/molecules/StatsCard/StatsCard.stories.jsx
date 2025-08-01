@@ -1,7 +1,7 @@
 // ===== STATS CARD STORIES =====
 // src/components/molecules/StatsCard/StatsCard.stories.jsx
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { StatsCard } from './StatsCard';
 import './StatsCard.css';
 

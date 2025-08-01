@@ -1,4 +1,3 @@
-import React from "react";
 import { MoviesProvider } from "../context/MoviesContext";
 import { SeriesProvider } from "../context/SeriesContext";
 import { CategoriesProvider } from "../context/CategoriesContext";

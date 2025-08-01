@@ -1,7 +1,6 @@
 // molecules/ContentCard/ContentCard.jsx
-import React from 'react';
+import { memo } from 'react';
 import { Card, CardBody, CardTitle, CardSubtitle } from '../../atoms/Card/Card';
-import { Button } from '../../atoms/Button/Button';
 import { Badge } from '../../atoms/Badge/Badge';
 import { ContentImage } from '../../atoms/ContentImage/ContentImage';
 import './ContentCard.css';
@@ -200,4 +199,7 @@ const ContentCard = ({
   );
 };
 
-export { ContentCard };
+// Memoizar ContentCard - se usa en grids de películas/series
+const MemoizedContentCard = memo(ContentCard);
+
+export { MemoizedContentCard as ContentCard };

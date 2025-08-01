@@ -1,5 +1,5 @@
 // src/components/atoms/Avatar/Avatar.jsx
-import React from 'react';
+import PropTypes from 'prop-types';
 import './Avatar.css';
 
 /**
@@ -172,5 +172,22 @@ function Avatar({
     </div>
   );
 }
+
+Avatar.propTypes = {
+  src: PropTypes.string,
+  name: PropTypes.string,
+  size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
+  variant: PropTypes.oneOf(['default', 'elevated', 'bordered', 'minimal']),
+  shape: PropTypes.oneOf(['circle', 'rounded', 'square']),
+  status: PropTypes.oneOf(['online', 'offline', 'away', 'busy']),
+  badge: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  className: PropTypes.string,
+  onClick: PropTypes.func,
+  loading: PropTypes.bool,
+  alt: PropTypes.string,
+  fallbackIcon: PropTypes.string,
+  disabled: PropTypes.bool,
+  ariaLabel: PropTypes.string
+};
 
 export { Avatar };

@@ -151,7 +151,7 @@ function CategoriesListContent() {
       const result = await saveFromModal(newName);
       
       if (result.success) {
-
+        // Éxito - no se requiere acción, el contexto ya actualizó la lista
       } else if (result.error === 'SESSION_EXPIRED') {
 
         navigate('/login');

@@ -1,5 +1,5 @@
 // atoms/ContentImage/ContentImage.jsx
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './ContentImage.css';
 
 /**

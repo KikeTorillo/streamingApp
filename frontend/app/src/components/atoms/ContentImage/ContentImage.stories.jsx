@@ -1,7 +1,7 @@
 // ===== CONTENT IMAGE ATOM STORIES - COMPLETADO =====
 // src/components/atoms/ContentImage/ContentImage.stories.jsx
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ContentImage } from './ContentImage';
 import './ContentImage.css';
 

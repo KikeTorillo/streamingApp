@@ -1,5 +1,5 @@
 // src/components/molecules/FileInputField/FileInputField.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './FileInputField.css';
 import { FileInput } from '../../atoms/FileInput/FileInput';
 

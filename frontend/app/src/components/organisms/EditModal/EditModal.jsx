@@ -2,6 +2,7 @@
 // src/components/organisms/EditModal/EditModal.jsx
 
 import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { Modal } from '../../molecules/Modal/Modal';
 import { TextInput } from '../../molecules/TextInput/TextInput';
 import { Button } from '../../atoms/Button/Button';
@@ -30,7 +31,6 @@ function EditModal({
   
   // Valores
   initialValue = '',
-  currentValue = '',
   
   // Validación
   required = true,
@@ -132,9 +132,8 @@ function EditModal({
     if (onSave) {
       try {
         await onSave(value.trim());
-      } catch (err) {
+      } catch {
         // El error se maneja en el componente padre
-
       }
     }
   };
@@ -246,5 +245,41 @@ function EditModal({
     </Modal>
   );
 }
+
+EditModal.propTypes = {
+  // Control del modal
+  isOpen: PropTypes.bool,
+  onClose: PropTypes.func,
+  onSave: PropTypes.func,
+  
+  // Configuración del campo
+  title: PropTypes.string,
+  fieldLabel: PropTypes.string,
+  fieldPlaceholder: PropTypes.string,
+  fieldType: PropTypes.string,
+  
+  // Valores
+  initialValue: PropTypes.string,
+  
+  // Validación
+  required: PropTypes.bool,
+  minLength: PropTypes.number,
+  maxLength: PropTypes.number,
+  pattern: PropTypes.string,
+  
+  // Estados
+  loading: PropTypes.bool,
+  error: PropTypes.string,
+  
+  // Textos de botones
+  cancelText: PropTypes.string,
+  saveText: PropTypes.string,
+  
+  // Configuración del modal
+  size: PropTypes.string,
+  
+  // Iconos
+  icon: PropTypes.string
+};
 
 export { EditModal };

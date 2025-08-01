@@ -1,6 +1,5 @@
 // Modal.jsx
 
-import React from "react";
 import { useContext } from "react"; // Para acceder al contexto
 import { createPortal } from "react-dom"; // Para renderizar fuera del árbol DOM principal
 import { TodoContext } from "../app/context/TodoContext"; // Contexto de la aplicación

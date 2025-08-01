@@ -1,5 +1,4 @@
 // src/components/atoms/Avatar/Avatar.stories.jsx
-import React from 'react';
 import { Avatar } from './Avatar';
 
 export default {

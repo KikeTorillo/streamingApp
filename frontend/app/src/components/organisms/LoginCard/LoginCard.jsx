@@ -1,5 +1,6 @@
 // components/organisms/LoginCard/LoginCard.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Card, CardHeader, CardBody, CardFooter, CardTitle } from '../../atoms/Card/Card';
 import { TextInput } from '../../molecules/TextInput/TextInput';
 import { Button } from '../../atoms/Button/Button';
@@ -219,6 +220,17 @@ const LoginCard = ({
       </CardFooter>
     </Card>
   );
+};
+
+LoginCard.propTypes = {
+  loading: PropTypes.bool,
+  error: PropTypes.string,
+  onSubmit: PropTypes.func,
+  onForgotPassword: PropTypes.func,
+  showRegisterLink: PropTypes.bool,
+  onRegisterClick: PropTypes.func,
+  size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
+  rounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl'])
 };
 
 export { LoginCard };
