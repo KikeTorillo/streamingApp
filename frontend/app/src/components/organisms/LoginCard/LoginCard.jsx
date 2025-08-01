@@ -142,6 +142,7 @@ const LoginCard = ({
             required
             disabled={loading}
             variant={touched.username && formErrors.username ? 'error' : 'default'}
+            autoComplete="username"
           />
 
           <TextInput
@@ -153,6 +154,7 @@ const LoginCard = ({
             onChange={handleFieldChange('password')}
             onBlur={handleFieldBlur('password')}
             errorText={touched.password ? formErrors.password : ''}
+            autoComplete="current-password"
             helperText={!touched.password || !formErrors.password ? 'Tu contraseña secreta' : ''}
             leftIcon="🔒"
             size={size}

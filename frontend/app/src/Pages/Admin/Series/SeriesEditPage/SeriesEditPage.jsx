@@ -109,8 +109,9 @@ function SeriesEditPage() {
    * Cargar datos de la serie desde el contexto
    */
   const loadSeriesData = useCallback(async () => {
-    try {
+    if (!id) return;
 
+    try {
       // Cargar serie y categorías en paralelo
       const [seriesResponse, categoriesResponse] = await Promise.all([
         loadSeriesById(id),
@@ -128,25 +129,13 @@ function SeriesEditPage() {
       } else if (categoriesResponse.success && Array.isArray(categoriesResponse.data)) {
         categoriesData = categoriesResponse.data;
       }
-
-      // Configurar imagen preview actual usando función del contexto
-      if (currentSeries?.cover_image) {
-        const currentImageUrl = getSeriesCoverUrl(currentSeries.cover_image);
-        setImagePreview(currentImageUrl);
-      }
       
       setCategories(categoriesData);
-      setInitialData({ 
-        title: currentSeries?.title || '',
-        categoryId: currentSeries?.category_id || '',
-        releaseYear: currentSeries?.release_year || new Date().getFullYear(),
-        // coverImage no se incluye en initialData porque es un archivo
-      });
       
     } catch {
       // Error silencioso al procesar datos iniciales
     }
-  }, [currentSeries?.category_id, currentSeries?.cover_image, currentSeries?.release_year, currentSeries?.title, getSeriesCoverUrl, id, loadSeriesById]);
+  }, [id, loadSeriesById]);
 
   // ===== FUNCIONES DE MANEJO =====
   
@@ -241,15 +230,13 @@ function SeriesEditPage() {
 
   // ===== EFECTOS =====
   useEffect(() => {
-    if (id) {
-      loadSeriesData();
-    }
+    loadSeriesData();
     
     // Limpiar al desmontar el componente
     return () => {
       clearCurrentSeries();
     };
-  }, [clearCurrentSeries, id, loadSeriesData]);
+  }, [loadSeriesData, clearCurrentSeries]);
 
   // Efecto para actualizar datos cuando se carga la serie desde el contexto
   useEffect(() => {

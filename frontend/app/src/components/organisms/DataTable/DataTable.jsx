@@ -85,6 +85,37 @@ function DataTable({
   ...restProps
 }) {
 
+  // ===== FILTRAR PROPS PERSONALIZADAS PARA DOM =====
+  const {
+    data: _data,
+    columns: _columns,
+    loading: _loading,
+    error: _error,
+    deleting: _deleting,
+    showActions: _showActions,
+    onEdit: _onEdit,
+    onDelete: _onDelete,
+    onView: _onView,
+    actionsColumnHeader: _actionsColumnHeader,
+    searchable: _searchable,
+    searchPlaceholder: _searchPlaceholder,
+    pageSize: _pageSize,
+    pageSizeOptions: _pageSizeOptions,
+    emptyTitle: _emptyTitle,
+    emptyDescription: _emptyDescription,
+    emptyIcon: _emptyIcon,
+    emptyAction: _emptyAction,
+    emptyMessage: _emptyMessage,
+    variant: _variant,
+    onRefresh: _onRefresh,
+    ...domProps
+  } = { 
+    data, columns, loading, error, deleting, showActions, onEdit, onDelete, onView,
+    actionsColumnHeader, searchable, searchPlaceholder, pageSize, pageSizeOptions,
+    emptyTitle, emptyDescription, emptyIcon, emptyAction, emptyMessage, variant, onRefresh,
+    ...restProps 
+  };
+
   // ===== LÓGICA PARA MANEJAR emptyMessage =====
   // Si se pasa emptyMessage, usarlo como emptyDescription
   const finalEmptyDescription = emptyMessage || emptyDescription;
@@ -205,7 +236,7 @@ function DataTable({
     return (
       <div
         className={`data-table data-table--empty data-table--${variant} ${className}`}
-        {...restProps}
+        {...domProps}
       >
         <div className="data-table__empty">
           <EmptyState
@@ -223,7 +254,7 @@ function DataTable({
   return (
     <div
       className={`data-table data-table--${variant} ${className}`}
-      {...restProps}
+      {...domProps}
     >
       {/* ===== CONTROLES SUPERIORES ===== */}
       {searchable && (

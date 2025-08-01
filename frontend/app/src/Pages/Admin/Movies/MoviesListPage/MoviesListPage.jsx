@@ -34,8 +34,7 @@ function MoviesListPage() {
     refreshMovies,
     deleteMovie,
     formatMovieDate,
-    getMovieCoverUrl,
-    getMoviesStats
+    getMovieCoverUrl
   } = useMovies();
 
   // ===== MANEJO DE SESIÓN EXPIRADA =====
@@ -216,9 +215,6 @@ function MoviesListPage() {
   useEffect(() => {
     loadMovies();
   }, [loadMovies]);
-
-  // ===== ESTADÍSTICAS - USA FUNCIÓN DEL CONTEXTO =====
-  getMoviesStats();
 
   // ===== RENDER =====
   return (

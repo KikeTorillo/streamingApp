@@ -20,8 +20,10 @@ import './Button.css';
  * @param {boolean} [props.disabled=false] - Si está deshabilitado
  * @param {boolean} [props.loading=false] - Estado de carga con spinner
  * @param {boolean} [props.fullWidth=false] - Ocupa todo el ancho
- * @param {string|React.ReactNode} [props.icon] - Icono del botón
- * @param {'left'|'right'} [props.iconPosition='left'] - Posición del icono
+ * @param {string|React.ReactNode} [props.icon] - Icono del botón (método original)
+ * @param {string|React.ReactNode} [props.leftIcon] - Icono izquierdo (método simplificado)
+ * @param {string|React.ReactNode} [props.rightIcon] - Icono derecho (método simplificado)
+ * @param {'left'|'right'} [props.iconPosition='left'] - Posición del icono (usado con prop icon)
  * @param {boolean} [props.iconOnly=false] - Solo muestra el icono
  * @param {'button'|'submit'|'reset'} [props.type='button'] - Tipo HTML
  * @param {function} [props.onClick] - Handler de click
@@ -38,6 +40,8 @@ function Button({
   loading = false,
   fullWidth = false,
   icon,
+  leftIcon, // ← PROP NUEVA para compatibilidad
+  rightIcon, // ← PROP NUEVA para compatibilidad
   iconPosition = 'left',
   iconOnly = false,
   type = 'button',
@@ -46,8 +50,26 @@ function Button({
   className = '',
   ...restProps
 }) {
+  // ✅ EXTRAER PROPS PERSONALIZADAS para evitar pasarlas al DOM
+  const { leftIcon: leftIconProp, rightIcon: rightIconProp, ...domProps } = restProps;
   // Determinar el contenido del botón
   const buttonContent = children || text;
+
+  // ✅ LÓGICA DE COMPATIBILIDAD - Determinar icono y posición
+  let finalIcon = icon;
+  let finalIconPosition = iconPosition;
+  
+  // Si se proporciona leftIcon, usar como icono izquierdo
+  if (leftIcon) {
+    finalIcon = leftIcon;
+    finalIconPosition = 'left';
+  }
+  
+  // Si se proporciona rightIcon, usar como icono derecho
+  if (rightIcon) {
+    finalIcon = rightIcon;
+    finalIconPosition = 'right';
+  }
 
   // Generar clases CSS
   const buttonClasses = [
@@ -96,12 +118,12 @@ function Button({
       aria-disabled={disabled || loading}
       aria-busy={loading}
       aria-label={finalAriaLabel}
-      {...restProps}
+      {...domProps}
     >
       {/* Icono izquierdo */}
-      {icon && iconPosition === 'left' && !iconOnly && (
+      {finalIcon && finalIconPosition === 'left' && !iconOnly && (
         <span className="btn__icon btn__icon--left">
-          {renderIcon(icon)}
+          {renderIcon(finalIcon)}
         </span>
       )}
       
@@ -113,16 +135,16 @@ function Button({
       )}
       
       {/* Solo icono (para botones icon-only) */}
-      {iconOnly && icon && (
+      {iconOnly && finalIcon && (
         <span className="btn__icon">
-          {renderIcon(icon)}
+          {renderIcon(finalIcon)}
         </span>
       )}
       
       {/* Icono derecho */}
-      {icon && iconPosition === 'right' && !iconOnly && (
+      {finalIcon && finalIconPosition === 'right' && !iconOnly && (
         <span className="btn__icon btn__icon--right">
-          {renderIcon(icon)}
+          {renderIcon(finalIcon)}
         </span>
       )}
       
@@ -154,6 +176,8 @@ Button.propTypes = {
   loading: PropTypes.bool,
   fullWidth: PropTypes.bool,
   icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  leftIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]), // ✅ NUEVA PROP
+  rightIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]), // ✅ NUEVA PROP
   iconPosition: PropTypes.oneOf(['left', 'right']),
   iconOnly: PropTypes.bool,
   type: PropTypes.oneOf(['button', 'submit', 'reset']),

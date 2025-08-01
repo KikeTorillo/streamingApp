@@ -209,10 +209,6 @@ function EpisodesListPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Solo ejecutar al montar el componente
 
-  // ===== ESTADÍSTICAS =====
-  // const stats = getEpisodesStats();
-  // const selectedSerie = seriesData.find(s => s.id.toString() === selectedSerieId);
-
   // ===== RENDER =====
   return (
     <AdminLayout

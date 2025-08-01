@@ -135,7 +135,8 @@ function UserEditPage() {
     } catch {
       // El error ya se maneja en el contexto
     }
-  }, [id, loadUserById]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]); // ✅ CORREGIDO: Solo 'id' en dependencias, loadUserById es estable
 
   // ===== FUNCIONES DE MANEJO =====
   

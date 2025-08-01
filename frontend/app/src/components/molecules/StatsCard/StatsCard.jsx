@@ -23,10 +23,10 @@ function StatsCard({
   value,
   icon,
   
-  // Cambio porcentual
-  // change,
-  // changeLabel,
-  // changeDirection, // 'up' | 'down' | 'neutral' | auto-detect from change
+  // Cambio porcentual (props no utilizadas pero enviadas desde AdminDashboard)
+  change, // ← PROP NO UTILIZADA (filtrar para evitar error DOM)
+  changeLabel, // ← PROP NO UTILIZADA (filtrar para evitar error DOM)
+  changeDirection, // ← PROP NO UTILIZADA (filtrar para evitar error DOM)
   
   // Configuración visual
   color = 'blue', // 'blue' | 'green' | 'red' | 'yellow' | 'purple' | 'gray'
@@ -47,6 +47,30 @@ function StatsCard({
   // Props adicionales
   ...restProps
 }) {
+
+  // ===== FILTRAR PROPS PERSONALIZADAS PARA DOM =====
+  const {
+    // Props específicas de StatsCard (filtrar para evitar errores DOM)
+    title: _title,
+    value: _value,
+    icon: _icon,
+    change: _change,
+    changeLabel: _changeLabel,
+    changeDirection: _changeDirection,
+    color: _color,
+    variant: _variant,
+    size: _size,
+    loading: _loading,
+    error: _error,
+    onClick: _onClick,
+    href: _href,
+    className: _className,
+    ...domProps // ✅ Solo props válidas para el DOM
+  } = { 
+    title, value, icon, change, changeLabel, changeDirection, 
+    color, variant, size, loading, error, onClick, href, className,
+    ...restProps 
+  };
 
   /**
    * Formatea el valor para mostrar
@@ -152,7 +176,7 @@ function StatsCard({
     'aria-label': (onClick || href) ? `${title}: ${formattedValue}` : undefined,
     'aria-busy': loading,
     'aria-invalid': !!error,
-    ...restProps
+    ...domProps
   };
 
   // ===== RENDER =====

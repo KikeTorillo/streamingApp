@@ -35,7 +35,6 @@ function SeriesListPage() {
     deleting,
     loadSeries,
     deleteSeries,
-    getSeriesStats,
     getSeriesCoverUrl
   } = useSeries();
 
@@ -250,9 +249,6 @@ function SeriesListPage() {
   useEffect(() => {
     loadSeries();
   }, [loadSeries]);
-
-  // ===== ESTADÍSTICAS DESDE EL CONTEXTO =====
-  getSeriesStats();
 
   // ===== RENDER =====
   return (

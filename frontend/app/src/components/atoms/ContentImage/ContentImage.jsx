@@ -1,5 +1,5 @@
 // atoms/ContentImage/ContentImage.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import './ContentImage.css';
 
@@ -44,14 +44,16 @@ const ContentImage = ({
 }) => {
   const [imageState, setImageState] = useState('loading'); // 'loading' | 'loaded' | 'error'
   const [imageSrc, setImageSrc] = useState(src);
+  const prevSrcRef = useRef(src);
 
   // Actualizar imageSrc cuando cambie el prop src
   useEffect(() => {
-    if (src !== imageSrc) {
+    if (src !== prevSrcRef.current) {
+      prevSrcRef.current = src;
       setImageSrc(src);
       setImageState('loading'); // Resetear estado cuando cambie la imagen
     }
-  }, [src, imageSrc]);
+  }, [src]);
 
   // Generar placeholder SVG según tipo de contenido
   const generateFallbackSvg = () => {

@@ -52,7 +52,6 @@ function CategoriesListContent() {
     closeEditModal,
     saveFromModal,
     formatCategoryDate
-    // getCategoriesStats - disponible para uso futuro
   } = useCategories();
 
   // ===== FUNCIONES AUXILIARES =====
@@ -107,15 +106,6 @@ function CategoriesListContent() {
       )
     }
   ];
-
-  // ===== ESTADÍSTICAS CALCULADAS =====
-  
-  // Estadísticas se obtienen del contexto (disponible para uso futuro)
-  // const stats = getCategoriesStats();
-
-  // ===== FUNCIONES DE DATOS =====
-  
-  // loadCategories se obtiene del contexto
 
   // ===== FUNCIONES DE ACCIONES =====
   
@@ -254,13 +244,6 @@ function CategoriesListContent() {
             deleting={deleting}
             editing={editing}
             className={deleting ? 'categories-list__table--deleting' : ''}
-            rowClassName={(row) => {
-              const classes = [];
-              if (deleting === row.original.id) {
-                classes.push('categories-list__row--deleting');
-              }
-              return classes.join(' ');
-            }}
           />
         </div>
       </div>

@@ -3,7 +3,7 @@
 
 /* eslint-disable react-refresh/only-export-components */
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
 // Servicios de películas
@@ -46,7 +46,7 @@ function MoviesProvider({ children }) {
   const [creating, setCreating] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [uploadStatus, setUploadStatus] = useState('idle'); // idle, uploading, processing, completed, error
+  const [uploadStatus, setUploadStatus] = useState('idle');
 
   // ===== ESTADOS DE EDICIÓN =====
   const [editing, setEditing] = useState(false);
@@ -102,18 +102,18 @@ function MoviesProvider({ children }) {
   /**
    * Construir URL de imagen de portada
    */
-  const getMovieCoverUrl = (coverImage) => {
+  const getMovieCoverUrl = useCallback((coverImage) => {
     if (!coverImage) return null;
     const cdnUrl = import.meta.env.VITE_CDN_URL || 'http://localhost:8082';
     return `${cdnUrl}/covers/${coverImage}/cover.jpg`;
-  };
+  }, []);
 
   // ===== FUNCIONES PRINCIPALES =====
 
   /**
    * Cargar películas desde el backend
    */
-  const loadMovies = async () => {
+  const loadMovies = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -129,15 +129,15 @@ function MoviesProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   /**
    * Refrescar lista de películas
    */
-  const refreshMovies = () => {
+  const refreshMovies = useCallback(() => {
 
     loadMovies();
-  };
+  }, [loadMovies]);
 
   /**
    * Limpiar estado de películas
@@ -155,7 +155,6 @@ function MoviesProvider({ children }) {
   const deleteMovie = (movie) => {
 
     // ===== CONFIRMACIÓN CON ALERT PROVIDER =====
-    // Usar AlertProvider en lugar de window.confirm
     showDeleteConfirm(
       movie.title,
       async () => {
@@ -300,7 +299,6 @@ function MoviesProvider({ children }) {
       // ✅ Limpiar listener de upload
       window.removeEventListener('uploadProgress', handleUploadProgress);
 
-      // ✅ Cambiar a estado de procesamiento (continuar desde 50%)
       setUploadProgress(50);
       setUploadStatus('processing');
       
@@ -309,7 +307,6 @@ function MoviesProvider({ children }) {
         onProgressCallback(50, 'processing', processingMessage);
       }
 
-      // ✅ Marcar que está procesando
       setProcessing(true);
 
       const taskId = result?.taskId || result?.task_id || result?.id;
@@ -369,7 +366,6 @@ function MoviesProvider({ children }) {
       setError(errorMessage);
       setProcessing(false);
       
-      // Callback opcional para errores
       if (onProgressCallback) {
         onProgressCallback(0, 'error', errorMessage);
       }
@@ -391,7 +387,6 @@ function MoviesProvider({ children }) {
 
     const checkProgress = async () => {
       try {
-        // ✅ ARREGLO: Usar URL y endpoint correctos según el hook original
         const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
         const endpoint = `${backendUrl}/api/v1/${contentType}/progress/${taskId}`;
 
@@ -400,8 +395,8 @@ function MoviesProvider({ children }) {
           headers: {
             'Content-Type': 'application/json',
           },
-          credentials: 'include', // ✅ ARREGLO: Incluir cookies de autenticación
-          timeout: 10000, // 10 segundos timeout
+          credentials: 'include',
+          timeout: 10000,
         });
         
         // ✅ ARREGLO: Manejo de errores específicos según el hook original
@@ -518,7 +513,7 @@ function MoviesProvider({ children }) {
    * Cargar película por ID con datos completos
    * MIGRADO DESDE MovieEditPage (lógica funcional comprobada)
    */
-  const loadMovieById = async (movieId) => {
+  const loadMovieById = useCallback(async (movieId) => {
     try {
 
       setLoadingMovie(true);
@@ -555,7 +550,7 @@ function MoviesProvider({ children }) {
     } finally {
       setLoadingMovie(false);
     }
-  };
+  }, []);
 
   /**
    * Actualizar película existente
@@ -629,12 +624,12 @@ function MoviesProvider({ children }) {
   /**
    * Limpiar película actual
    */
-  const clearCurrentMovie = () => {
+  const clearCurrentMovie = useCallback(() => {
 
     setCurrentMovie(null);
     setLoadingMovie(false);
     setEditing(false);
-  };
+  }, []);
 
   /**
    * Obtener película por ID desde estado local

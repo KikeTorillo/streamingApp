@@ -78,14 +78,14 @@ function UsersProvider({ children }) {
   /**
    * Obtener nombre del rol por ID
    */
-  const getRoleName = (roleId) => {
+  const getRoleName = useCallback((roleId) => {
     const roles = {
       1: 'Administrador',
       2: 'Editor', 
       3: 'Usuario Regular'
     };
     return roles[roleId] || 'Desconocido';
-  };
+  }, []);
 
   // ===== FUNCIONES PRINCIPALES =====
 
@@ -352,7 +352,7 @@ function UsersProvider({ children }) {
   /**
    * Actualizar usuario existente con validaciones completas
    */
-  const updateUser = async (userId, formData, initialData) => {
+  const updateUser = useCallback(async (userId, formData, initialData) => {
     try {
 
       setLoading(true);
@@ -460,7 +460,7 @@ function UsersProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [users]); // ✅ AGREGADO: useCallback con dependencias (users para validaciones)
 
   /**
    * Obtener usuario por ID desde estado local
@@ -473,7 +473,7 @@ function UsersProvider({ children }) {
   /**
    * Cargar usuario individual desde backend (para edición)
    */
-  const loadUserById = async (userId) => {
+  const loadUserById = useCallback(async (userId) => {
     try {
 
       setLoading(true);
@@ -534,7 +534,7 @@ function UsersProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getRoleName]); // ✅ AGREGADO: useCallback con dependencias
 
   // ===== VALOR DEL CONTEXTO =====
   const value = {

@@ -33,8 +33,7 @@ function UsersListPage() {
     loadUsers,
     refreshUsers,
     deleteUser,
-    formatUserDate,
-    isCurrentUser
+    formatUserDate
   } = useUsers();
 
   const { showInfo } = useAlertContext();
@@ -51,11 +50,6 @@ function UsersListPage() {
     }
   }, [error, navigate]);
 
-  // ===== FUNCIONES DE MANEJO =====
-
-  /**
-   * Ver usuario - TODO: Implementar modal de detalles
-   */
   const handleViewUser = (user) => {
 
     showInfo(
@@ -81,8 +75,6 @@ function UsersListPage() {
    * Eliminar usuario - Usa función del contexto
    */
   const handleDeleteUser = (user) => {
-
-    // El contexto maneja toda la lógica de confirmación y mensajes
     deleteUser(user);
   };
 
@@ -161,10 +153,6 @@ function UsersListPage() {
     },
   ];
 
-  // ===== ESTADÍSTICAS - USA FUNCIÓN DEL CONTEXTO =====
-  // Remover llamada directa que causa loop infinito
-  // const stats = getUserStats(); // Si necesitas usar las estadísticas, descomenta esta línea
-
   // ===== RENDER =====
   return (
     <AdminLayout
@@ -211,12 +199,6 @@ function UsersListPage() {
             onEdit={handleEditUser}
             onDelete={handleDeleteUser}
             className={deleting ? 'users-list__table--deleting' : ''}
-            rowClassName={(row) => {
-              const classes = [];
-              if (deleting === row.original.id) classes.push('users-list__row--deleting');
-              if (isCurrentUser(row.original.id)) classes.push('users-list__row--current');
-              return classes.join(' ');
-            }}
           />
         </div>
       </div>
@@ -224,7 +206,6 @@ function UsersListPage() {
   );
 }
 
-// Memoizar página para evitar re-renders cuando se navega de vuelta
 const MemoizedUsersListPage = memo(UsersListPage);
 
 export { MemoizedUsersListPage as UsersListPage };

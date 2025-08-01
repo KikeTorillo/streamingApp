@@ -39,6 +39,7 @@ function AdminSidebar({
   error = null, // ← PROP PERSONALIZADA
   onToggle = null, // ← PROP PERSONALIZADA (handler de AdminLayout)
   onNavigate = null, // ← PROP PERSONALIZADA (handler para Storybook)
+  currentPath = null, // ← PROP PERSONALIZADA (pasada desde AdminLayout)
 
   // Props adicionales
   ...restProps
@@ -51,6 +52,7 @@ function AdminSidebar({
     error: _error,
     onToggle: _onToggle,
     onNavigate: _onNavigate,
+    currentPath: _currentPath,
     variant: _variant,
     userCount: _userCount,
     movieCount: _movieCount,
@@ -67,6 +69,7 @@ function AdminSidebar({
   void _error;
   void _onToggle;
   void _onNavigate;
+  void _currentPath;
   void _variant;
   void _userCount;
   void _movieCount;
@@ -406,7 +409,8 @@ AdminSidebar.propTypes = {
   loading: PropTypes.bool,
   error: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   onToggle: PropTypes.func,
-  onNavigate: PropTypes.func
+  onNavigate: PropTypes.func,
+  currentPath: PropTypes.string
 };
 
 export { AdminSidebar };

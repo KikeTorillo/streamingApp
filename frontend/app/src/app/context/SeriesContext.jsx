@@ -3,7 +3,7 @@
 
 /* eslint-disable react-refresh/only-export-components */
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
 // Servicios de series
@@ -102,11 +102,11 @@ function SeriesProvider({ children }) {
   /**
    * Construir URL de imagen de portada
    */
-  const getSeriesCoverUrl = (coverImage) => {
+  const getSeriesCoverUrl = useCallback((coverImage) => {
     if (!coverImage) return null;
     const cdnUrl = import.meta.env.VITE_CDN_URL || 'http://localhost:8082';
     return `${cdnUrl}/covers/${coverImage}/cover.jpg`;
-  };
+  }, []);
 
   /**
    * Obtener serie actual para edición (alias para compatibilidad)
@@ -120,7 +120,7 @@ function SeriesProvider({ children }) {
   /**
    * Cargar series desde el backend
    */
-  const loadSeries = async () => {
+  const loadSeries = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -136,15 +136,15 @@ function SeriesProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   /**
    * Refrescar lista de series
    */
-  const refreshSeries = () => {
+  const refreshSeries = useCallback(() => {
 
     loadSeries();
-  };
+  }, [loadSeries]);
 
   /**
    * Limpiar estado de series
@@ -412,7 +412,7 @@ function SeriesProvider({ children }) {
   /**
    * Cargar serie por ID con datos completos
    */
-  const loadSeriesById = async (seriesId) => {
+  const loadSeriesById = useCallback(async (seriesId) => {
     try {
 
       setLoadingSeries(true);
@@ -449,7 +449,7 @@ function SeriesProvider({ children }) {
     } finally {
       setLoadingSeries(false);
     }
-  };
+  }, []);
 
   /**
    * Actualizar serie existente
@@ -522,12 +522,12 @@ function SeriesProvider({ children }) {
   /**
    * Limpiar serie actual
    */
-  const clearCurrentSeries = () => {
+  const clearCurrentSeries = useCallback(() => {
 
     setCurrentSeries(null);
     setLoadingSeries(false);
     setEditing(false);
-  };
+  }, []);
 
   /**
    * Obtener serie por ID desde estado local

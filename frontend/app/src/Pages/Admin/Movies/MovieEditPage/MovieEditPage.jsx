@@ -112,6 +112,11 @@ function MovieEditPage() {
    * Cargar datos de la película usando el contexto
    */
   const loadMovieData = useCallback(async () => {
+    if (!id) {
+      setLocalError('ID de película no proporcionado');
+      return;
+    }
+
     try {
       setLocalError(null);
 
@@ -136,14 +141,13 @@ function MovieEditPage() {
         });
         
       } else {
-
         setLocalError(result.error || 'Error al cargar datos de la película');
       }
       
     } catch (error) {
       setLocalError(error.message || 'Error al cargar datos de la película');
     }
-  }, [getMovieCoverUrl, id, loadMovieById]);
+  }, [id, loadMovieById, getMovieCoverUrl]);
 
   // ===== FUNCIONES DE MANEJO =====
   
@@ -241,17 +245,13 @@ function MovieEditPage() {
 
   // ===== EFECTOS =====
   useEffect(() => {
-    if (id) {
-      loadMovieData();
-    } else {
-      setLocalError('ID de película no proporcionado');
-    }
+    loadMovieData();
     
     // Cleanup al desmontar
     return () => {
       clearCurrentMovie();
     };
-  }, [clearCurrentMovie, id, loadMovieData]);
+  }, [loadMovieData, clearCurrentMovie]);
 
   // ===== RENDER =====
   
