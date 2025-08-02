@@ -31,14 +31,15 @@ function EpisodeEditPage() {
   const [success, setSuccess] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [initialData, setInitialData] = useState(null);
+  const [localError, setLocalError] = useState(null);
 
-  // ===== CONTEXT =====
+  // ===== CONTEXTOS =====
   const {
     // Estados principales
     currentEpisode,
     loadingEpisode,
     editing,
-    error,
+    error: contextError,
     
     // Estados de series
     seriesData,
@@ -49,6 +50,7 @@ function EpisodeEditPage() {
     updateEpisode,
     clearCurrentEpisode
   } = useEpisodes();
+
 
   // ===== CONFIGURACIÓN DEL FORMULARIO =====
   
@@ -122,15 +124,21 @@ function EpisodeEditPage() {
    * Cargar datos del episodio usando el contexto
    */
   const loadEpisodeData = async () => {
-    try {
+    if (!id) {
+      setLocalError('ID de episodio no proporcionado');
+      return;
+    }
 
-      // Cargar episodio y series usando el contexto
-      const [episodeResult] = await Promise.all([
-        loadEpisodeById(id),
-        loadSeries()
-      ]);
+    try {
+      setLocalError(null);
+
+      // Cargar series primero (función síncrona)
+      await loadSeries();
       
-      if (episodeResult.success && episodeResult.data) {
+      // Luego cargar el episodio
+      const episodeResult = await loadEpisodeById(id);
+      
+      if (episodeResult.success && episodeResult.data && typeof episodeResult.data === 'object') {
         const episodeInfo = episodeResult.data;
 
         setInitialData({ 
@@ -139,12 +147,13 @@ function EpisodeEditPage() {
           season: episodeInfo.season || 1,
           episodeNumber: episodeInfo.episode_number || 1,
         });
+        
       } else {
-        // Error cargando episodio - mantener estado por defecto
+        setLocalError(episodeResult.error || 'Error al cargar datos del episodio');
       }
       
-    } catch {
-      // Error de red - mantener estado por defecto
+    } catch (error) {
+      setLocalError(error.message || 'Error al cargar datos del episodio');
     }
   };
 
@@ -172,6 +181,7 @@ function EpisodeEditPage() {
    */
   const handleSubmit = async (formData) => {
     try {
+      setLocalError(null);
 
       // Preparar datos para el backend (solo campos que cambiaron)
       const updateData = {};
@@ -192,17 +202,11 @@ function EpisodeEditPage() {
         updateData.episodeNumber = parseInt(formData.episodeNumber);
       }
 
-      // Si no hay cambios reales, no enviar
-      if (Object.keys(updateData).length === 0) {
-        alert('No hay cambios para guardar');
-        return;
-      }
-
       // Usar updateEpisode del contexto
       const result = await updateEpisode(id, updateData);
 
       if (result.success) {
-
+        // Éxito
         setSuccess(true);
         setHasChanges(false);
 
@@ -215,12 +219,17 @@ function EpisodeEditPage() {
         setTimeout(() => {
           navigate('/admin/episodes');
         }, 2500);
+        
       } else {
-        // Error en actualización - el usuario ya fue notificado
+        if (result.error === 'No hay cambios para guardar') {
+          alert('No hay cambios para guardar');
+        } else {
+          setLocalError(result.error || 'Error al actualizar episodio');
+        }
       }
 
-    } catch {
-      // Error de red durante actualización
+    } catch (err) {
+      setLocalError(err.message || 'Error al actualizar episodio');
     }
   };
 
@@ -241,9 +250,7 @@ function EpisodeEditPage() {
 
   // ===== EFECTOS =====
   useEffect(() => {
-    if (id) {
-      loadEpisodeData();
-    }
+    loadEpisodeData();
     
     // Limpiar episodio actual al desmontar
     return () => {
@@ -273,7 +280,7 @@ function EpisodeEditPage() {
     );
   }
 
-  if (error && !currentEpisode) {
+  if ((contextError && !currentEpisode) || localError) {
     return (
       <AdminLayout
         title="Error"
@@ -287,7 +294,7 @@ function EpisodeEditPage() {
         <div className="episode-edit__error">
           <div className="episode-edit__error-icon">❌</div>
           <h2>Error al cargar episodio</h2>
-          <p>{error}</p>
+          <p>{localError || contextError}</p>
           <Button onClick={() => navigate('/admin/episodes')} variant="primary">
             Volver a la lista
           </Button>
@@ -343,12 +350,12 @@ function EpisodeEditPage() {
           </div>
         )}
 
-        {error && (
+        {(localError || contextError) && (
           <div className="episode-edit__error-message">
             <div className="episode-edit__error-icon">⚠️</div>
             <div className="episode-edit__error-content">
               <h4>Error al guardar</h4>
-              <p>{error}</p>
+              <p>{localError || contextError}</p>
             </div>
           </div>
         )}
@@ -363,11 +370,11 @@ function EpisodeEditPage() {
               <div className="episode-edit__info-grid">
                 <div className="episode-edit__current-info-item">
                   <span className="episode-edit__current-info-label">ID:</span>
-                  <span className="episode-edit__current-info-value">{currentEpisode?.id}</span>
+                  <span className="episode-edit__current-info-value">{currentEpisode?.id || `Parámetro: ${id}`}</span>
                 </div>
                 <div className="episode-edit__current-info-item">
                   <span className="episode-edit__current-info-label">Título:</span>
-                  <span className="episode-edit__current-info-value">{currentEpisode?.title}</span>
+                  <span className="episode-edit__current-info-value">{currentEpisode?.title || 'No cargado'}</span>
                 </div>
                 <div className="episode-edit__current-info-item">
                   <span className="episode-edit__current-info-label">Serie:</span>
@@ -378,17 +385,21 @@ function EpisodeEditPage() {
                 <div className="episode-edit__current-info-item">
                   <span className="episode-edit__current-info-label">Temporada:</span>
                   <span className="episode-edit__current-info-value">
-                    <Badge variant="info" size="sm" style="soft">
-                      T{currentEpisode?.season}
-                    </Badge>
+                    {currentEpisode?.season ? (
+                      <Badge variant="info" size="sm" style="soft">
+                        T{currentEpisode.season}
+                      </Badge>
+                    ) : 'No cargado'}
                   </span>
                 </div>
                 <div className="episode-edit__current-info-item">
                   <span className="episode-edit__current-info-label">Episodio:</span>
                   <span className="episode-edit__current-info-value">
-                    <Badge variant="success" size="sm" style="soft">
-                      E{currentEpisode?.episode_number}
-                    </Badge>
+                    {currentEpisode?.episode_number ? (
+                      <Badge variant="success" size="sm" style="soft">
+                        E{currentEpisode.episode_number}
+                      </Badge>
+                    ) : 'No cargado'}
                   </span>
                 </div>
                 <div className="episode-edit__current-info-item">
@@ -410,15 +421,33 @@ function EpisodeEditPage() {
               <p>Modifica los campos que necesites. Solo se enviarán los campos que cambies.</p>
             </CardHeader>
             <CardBody>
-              {currentEpisode && (
+              {loadingEpisode ? (
+                <div className="episode-edit__loading-form">
+                  <div className="episode-edit__loading-spinner">⏳</div>
+                  <p>Cargando formulario de edición...</p>
+                </div>
+              ) : (localError || contextError) && !currentEpisode ? (
+                <div className="episode-edit__error-form">
+                  <div className="episode-edit__error-icon">❌</div>
+                  <h4>Error al cargar episodio</h4>
+                  <p>{localError || contextError}</p>
+                  <Button 
+                    onClick={() => loadEpisodeData()} 
+                    variant="outline"
+                    size="sm"
+                  >
+                    Reintentar
+                  </Button>
+                </div>
+              ) : (
                 <DynamicForm
                   id="episode-edit-form"
                   fields={getEditFormFields()}
                   initialData={{
-                    title: currentEpisode.title || '',
-                    serieId: currentEpisode.serie_id || '',
-                    season: currentEpisode.season || 1,
-                    episodeNumber: currentEpisode.episode_number || 1
+                    title: currentEpisode?.title || '',
+                    serieId: currentEpisode?.serie_id || '',
+                    season: currentEpisode?.season || 1,
+                    episodeNumber: currentEpisode?.episode_number || 1
                   }}
                   onSubmit={handleSubmit}
                   onChange={handleFormChange}

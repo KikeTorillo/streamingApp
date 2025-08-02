@@ -39,6 +39,7 @@ function EpisodesListPage() {
     deleteEpisode,
     changeSelectedSerie,
     formatEpisodeDate,
+    loadEpisodes,
     setSeriesData,
     setSeriesLoading,
     setSeriesError
@@ -208,6 +209,43 @@ function EpisodesListPage() {
     loadSeries();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Solo ejecutar al montar el componente
+
+  // ✅ REFRESCAR EPISODIOS AL REGRESAR A LA PÁGINA
+  useEffect(() => {
+    // Si hay una serie seleccionada, refrescar la lista al montar/regresar
+    if (selectedSerieId) {
+      loadEpisodes();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedSerieId]); // Ejecutar cuando cambie la serie seleccionada
+
+  // ✅ LISTENER PARA REFRESCAR AL REGRESAR DE OTRA PÁGINA
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      // Refrescar datos cuando la página vuelve a estar visible
+      if (!document.hidden && selectedSerieId) {
+        loadEpisodes();
+      }
+    };
+
+    // Listener para cuando cambias de tab y regresas
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    // Listener para cuando regresas con el botón atrás del navegador
+    const handleFocus = () => {
+      if (selectedSerieId) {
+        loadEpisodes();
+      }
+    };
+    
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedSerieId]);
 
   // ===== RENDER =====
   return (

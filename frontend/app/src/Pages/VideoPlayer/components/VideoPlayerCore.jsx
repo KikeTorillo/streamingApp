@@ -112,17 +112,24 @@ export const VideoPlayerCore = ({
    * Sigue el patrón oficial de Video.js para React
    */
   useEffect(() => {
+    const videoElement = videoRef.current; // Capturar referencia al inicio
+
     // Solo inicializar si no existe un player y el elemento está disponible
-    if (!playerRef.current && videoRef.current) {
+    if (!playerRef.current && videoElement) {
+      // Verificar si el elemento ya tiene una instancia de Video.js
+      if (videoElement.player) {
+        return;
+      }
+
       // Esperar a que el elemento esté en el DOM
-      if (!document.body.contains(videoRef.current)) {
+      if (!document.body.contains(videoElement)) {
         return;
       }
 
       const finalConfig = getBaseConfig();
 
       // ✅ Patrón oficial: Inicializar Video.js
-      const player = videojs(videoRef.current, finalConfig);
+      const player = videojs(videoElement, finalConfig);
       
       // ✅ Patrón oficial: Usar player.ready() para configuración adicional
       player.ready(() => {
@@ -192,9 +199,14 @@ export const VideoPlayerCore = ({
         playerRef.current.dispose();
         playerRef.current = null;
 
+        // Limpiar la referencia del elemento también
+        if (videoElement && videoElement.player) {
+          videoElement.player = null;
+        }
       }
     };
-  }, [getBaseConfig, onDispose, onReady]); // Dependencias necesarias
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Solo ejecutar una vez al montar el componente
 
   /**
    * Efecto para manejar cambios de configuración

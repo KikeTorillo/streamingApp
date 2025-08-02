@@ -62,7 +62,7 @@ function SeriesCreatePage() {
   } = useFormNavigation();
 
   // ===== HOOK DE ÉXITO HOMOLOGADO =====
-  useSuccessRedirect('/admin/series');
+  const { triggerSuccess } = useSuccessRedirect('/admin/series');
 
   // ===== WRAPPER PARA NAVEGACIÓN CON RESET DE ERRORES =====
   const handleSelectFromTMDBWithReset = (item) => {
@@ -184,7 +184,11 @@ function SeriesCreatePage() {
       
       const result = await createSeries(seriesData, handleProgressCallback);
 
-      if (!result.success) {
+      if (result.success) {
+        // ✅ Éxito - navegar de regreso al listado
+        triggerSuccess('¡Serie creada exitosamente!');
+        resetCreationState();
+      } else {
         throw new Error(result.error || 'Error al crear serie');
       }
 

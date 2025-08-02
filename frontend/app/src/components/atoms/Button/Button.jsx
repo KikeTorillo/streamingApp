@@ -51,7 +51,9 @@ function Button({
   ...restProps
 }) {
   // ✅ EXTRAER PROPS PERSONALIZADAS para evitar pasarlas al DOM
-  const { leftIcon: leftIconProp, rightIcon: rightIconProp, ...domProps } = restProps;
+  const { leftIcon: leftIconFromRest, rightIcon: rightIconFromRest, ...domProps } = restProps;
+  // Variables no usadas pero necesarias para filtrar del DOM
+  void leftIconFromRest; void rightIconFromRest;
   // Determinar el contenido del botón
   const buttonContent = children || text;
 

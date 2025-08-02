@@ -43,7 +43,6 @@ function CategoriesListContent() {
     loading,
     error,
     deleting,
-    editing,
     editModal,
     editError,
     loadCategories,
@@ -242,7 +241,6 @@ function CategoriesListContent() {
             onEdit={handleEditCategory}
             onDelete={handleDeleteCategory}
             deleting={deleting}
-            editing={editing}
             className={deleting ? 'categories-list__table--deleting' : ''}
           />
         </div>
@@ -257,7 +255,7 @@ function CategoriesListContent() {
         fieldLabel="Nombre de la Categoría"
         fieldPlaceholder="Ej: Acción, Comedia, Drama..."
         initialValue={editModal.category?.name || ''}
-        loading={editing}
+        loading={false}
         error={editError}
         icon="📂"
         required

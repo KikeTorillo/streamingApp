@@ -43,8 +43,18 @@ function AppHeader({
     className
   ].filter(Boolean).join(' ');
 
+  // Filtrar props que no deben propagarse al DOM
+  const {
+    showBackButton,
+    onBackClick,
+    ...validDOMProps
+  } = restProps;
+
+  // Evitar warnings de variables no usadas (necesarias para filtrar del DOM)
+  void showBackButton; void onBackClick;
+
   return (
-    <header className={headerClasses} {...restProps}>
+    <header className={headerClasses} {...validDOMProps}>
       {/* Brand/Logo */}
       <div className="app-header__brand">
         <h1 

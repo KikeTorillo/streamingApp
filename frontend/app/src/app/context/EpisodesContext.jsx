@@ -585,22 +585,25 @@ function EpisodesProvider({ children }) {
       
       const episodeResponse = await getEpisodeByIdService(episodeId);
 
-      let episodeInfo = null;
-      if (episodeResponse.success) {
-        episodeInfo = episodeResponse.data;
-      } else if (episodeResponse.id) {
-        episodeInfo = episodeResponse;
+      if (episodeResponse.success && episodeResponse.data) {
+        const episodeInfo = episodeResponse.data;
+        setCurrentEpisode(episodeInfo);
+        
+        return { 
+          success: true, 
+          data: episodeInfo,
+          message: 'Episodio cargado exitosamente' 
+        };
       } else {
-        throw new Error('Formato de respuesta inesperado del backend');
+        // Manejar error del servicio
+        const errorMessage = episodeResponse.error || 'Error al cargar episodio';
+        setError(errorMessage);
+        
+        return { 
+          success: false, 
+          error: errorMessage 
+        };
       }
-
-      setCurrentEpisode(episodeInfo);
-      
-      return { 
-        success: true, 
-        data: episodeInfo,
-        message: 'Episodio cargado exitosamente' 
-      };
 
     } catch (error) {
 
@@ -645,6 +648,7 @@ function EpisodesProvider({ children }) {
         throw new Error(response?.error || 'Error al actualizar episodio');
       }
 
+      // ✅ ACTUALIZAR ESTADO LOCAL
       setEpisodes(prevEpisodes => {
         return prevEpisodes.map(episode => {
           if (episode.id.toString() === episodeId.toString()) {
@@ -656,6 +660,13 @@ function EpisodesProvider({ children }) {
 
       if (currentEpisode && currentEpisode.id.toString() === episodeId.toString()) {
         setCurrentEpisode(prevEpisode => ({ ...prevEpisode, ...updateData }));
+      }
+
+      // ✅ SI SE CAMBIÓ LA SERIE, RECARGAR LISTA PARA MOSTRAR CAMBIOS
+      if (updateData.serieId && updateData.serieId !== currentEpisode?.serie_id) {
+        setTimeout(() => {
+          loadEpisodes();
+        }, 500);
       }
 
       return { 

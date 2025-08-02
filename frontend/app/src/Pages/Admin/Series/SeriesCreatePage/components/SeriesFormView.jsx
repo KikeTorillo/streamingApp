@@ -1,7 +1,7 @@
 // ===== SERIES FORM VIEW - BASADO EN MOVIEFORMVIEW =====
 // src/Pages/Admin/Series/SeriesCreatePage/components/SeriesFormView.jsx
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { DynamicForm } from '../../../../../components/molecules/DynamicForm/DynamicForm';
 import { Card, CardBody } from '../../../../../components/atoms/Card/Card';
@@ -48,30 +48,46 @@ function SeriesFormView({
   /**
    * ✅ MEJORADO: Preview para URLs externas Y archivos del cropper
    */
-  useEffect(() => {
-    const { coverImageUrl, coverImage, coverImageFile } = currentFormData;
+  const updateImagePreview = useCallback((coverImageUrl, coverImage, coverImageFile) => {
+    let newImagePreview = null;
+    let newImageType = null;
     
-    // Limpiar URL previa si existe
-    if (imagePreview && imagePreview.startsWith('blob:')) {
-      URL.revokeObjectURL(imagePreview);
-    }
-    
-    // Prioridad: 1. Archivo recortado (SIEMPRE tiene prioridad), 2. URL externa, 3. coverImage
+    // Determinar nueva imagen y tipo sin cambiar estado aún
     if (coverImageFile && coverImageFile instanceof File) {
-      const fileUrl = URL.createObjectURL(coverImageFile);
-      setImageType('file');
-      setImagePreview(fileUrl);
+      newImagePreview = URL.createObjectURL(coverImageFile);
+      newImageType = 'file';
     } else if (coverImageUrl && typeof coverImageUrl === 'string' && coverImageUrl.trim()) {
-      setImageType(coverImageUrl.includes('image.tmdb.org') ? 'tmdb' : 'url');
-      setImagePreview(coverImageUrl);
+      newImagePreview = coverImageUrl;
+      newImageType = coverImageUrl.includes('image.tmdb.org') ? 'tmdb' : 'url';
     } else if (typeof coverImage === 'string' && coverImage.trim()) {
-      setImageType(coverImage.includes('image.tmdb.org') ? 'tmdb' : 'url');
-      setImagePreview(coverImage);
-    } else {
-      setImagePreview(null);
-      setImageType(null);
+      newImagePreview = coverImage;
+      newImageType = coverImage.includes('image.tmdb.org') ? 'tmdb' : 'url';
     }
-  }, [currentFormData.coverImageUrl, currentFormData.coverImage, currentFormData.coverImageFile, currentFormData, imagePreview]);
+    
+    // Solo actualizar si realmente cambió (evita loop infinito)
+    setImagePreview(prevPreview => {
+      if (newImagePreview !== prevPreview) {
+        // Limpiar URL previa si existe
+        if (prevPreview && prevPreview.startsWith('blob:')) {
+          URL.revokeObjectURL(prevPreview);
+        }
+        return newImagePreview;
+      }
+      return prevPreview;
+    });
+    
+    setImageType(newImageType);
+  }, []);
+
+  const imageData = useMemo(() => ({
+    coverImageUrl: currentFormData?.coverImageUrl,
+    coverImage: currentFormData?.coverImage,
+    coverImageFile: currentFormData?.coverImageFile
+  }), [currentFormData?.coverImageUrl, currentFormData?.coverImage, currentFormData?.coverImageFile]);
+
+  useEffect(() => {
+    updateImagePreview(imageData.coverImageUrl, imageData.coverImage, imageData.coverImageFile);
+  }, [imageData.coverImageUrl, imageData.coverImage, imageData.coverImageFile, updateImagePreview]);
 
   // ===== CLEANUP DE URLs AL DESMONTAR =====
   useEffect(() => {

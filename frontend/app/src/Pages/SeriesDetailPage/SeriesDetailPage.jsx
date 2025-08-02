@@ -86,7 +86,6 @@ function SeriesDetailPage() {
                 const response = await getEpisodesBySerieService(id);
                 
                 if (response.success) {
-                    console.log('Episodios cargados:', response.data);
                     setEpisodes(response.data || []);
                 } else {
                     throw new Error(response.message || 'Error al cargar episodios');

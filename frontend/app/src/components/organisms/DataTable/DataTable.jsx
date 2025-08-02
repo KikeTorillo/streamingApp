@@ -87,27 +87,27 @@ function DataTable({
 
   // ===== FILTRAR PROPS PERSONALIZADAS PARA DOM =====
   const {
-    data: _data,
-    columns: _columns,
-    loading: _loading,
-    error: _error,
-    deleting: _deleting,
-    showActions: _showActions,
-    onEdit: _onEdit,
-    onDelete: _onDelete,
-    onView: _onView,
-    actionsColumnHeader: _actionsColumnHeader,
-    searchable: _searchable,
-    searchPlaceholder: _searchPlaceholder,
-    pageSize: _pageSize,
-    pageSizeOptions: _pageSizeOptions,
-    emptyTitle: _emptyTitle,
-    emptyDescription: _emptyDescription,
-    emptyIcon: _emptyIcon,
-    emptyAction: _emptyAction,
-    emptyMessage: _emptyMessage,
-    variant: _variant,
-    onRefresh: _onRefresh,
+    data: tableData,
+    columns: tableColumns,
+    loading: tableLoading,
+    error: tableError,
+    deleting: tableDeleting,
+    showActions: tableShowActions,
+    onEdit: tableOnEdit,
+    onDelete: tableOnDelete,
+    onView: tableOnView,
+    actionsColumnHeader: tableActionsColumnHeader,
+    searchable: tableSearchable,
+    searchPlaceholder: tableSearchPlaceholder,
+    pageSize: tablePageSize,
+    pageSizeOptions: tablePageSizeOptions,
+    emptyTitle: tableEmptyTitle,
+    emptyDescription: tableEmptyDescription,
+    emptyIcon: tableEmptyIcon,
+    emptyAction: tableEmptyAction,
+    emptyMessage: tableEmptyMessage,
+    variant: tableVariant,
+    onRefresh: tableOnRefresh,
     ...domProps
   } = { 
     data, columns, loading, error, deleting, showActions, onEdit, onDelete, onView,
@@ -115,6 +115,13 @@ function DataTable({
     emptyTitle, emptyDescription, emptyIcon, emptyAction, emptyMessage, variant, onRefresh,
     ...restProps 
   };
+
+  // Evitar warnings de variables no usadas (necesarias para filtrar del DOM)
+  void tableData; void tableColumns; void tableLoading; void tableError; void tableDeleting;
+  void tableShowActions; void tableOnEdit; void tableOnDelete; void tableOnView; void tableActionsColumnHeader;
+  void tableSearchable; void tableSearchPlaceholder; void tablePageSize; void tablePageSizeOptions;
+  void tableEmptyTitle; void tableEmptyDescription; void tableEmptyIcon; void tableEmptyAction;
+  void tableEmptyMessage; void tableVariant; void tableOnRefresh;
 
   // ===== LÓGICA PARA MANEJAR emptyMessage =====
   // Si se pasa emptyMessage, usarlo como emptyDescription

@@ -39,7 +39,7 @@ function AdminSidebar({
   error = null, // ← PROP PERSONALIZADA
   onToggle = null, // ← PROP PERSONALIZADA (handler de AdminLayout)
   onNavigate = null, // ← PROP PERSONALIZADA (handler para Storybook)
-  currentPath = null, // ← PROP PERSONALIZADA (pasada desde AdminLayout)
+  currentPath: _currentPath = null, // ← PROP PERSONALIZADA (pasada desde AdminLayout)
 
   // Props adicionales
   ...restProps
@@ -52,7 +52,7 @@ function AdminSidebar({
     error: _error,
     onToggle: _onToggle,
     onNavigate: _onNavigate,
-    currentPath: _currentPath,
+    currentPath: _currentPathFiltered,
     variant: _variant,
     userCount: _userCount,
     movieCount: _movieCount,
@@ -70,6 +70,7 @@ function AdminSidebar({
   void _onToggle;
   void _onNavigate;
   void _currentPath;
+  void _currentPathFiltered;
   void _variant;
   void _userCount;
   void _movieCount;

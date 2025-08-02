@@ -265,14 +265,13 @@ router.get(
   async (req, res, next) => {
     try {
       const { id } = req.params;
-      console.log('📺 Obteniendo episodio por ID:', id);
       const episode = await service.findOne(id);
       
-      if (!episode || episode.length === 0) {
+      if (!episode) {
         return res.status(404).json({ error: 'Episodio no encontrado' });
       }
       
-      res.json(episode[0]);
+      res.json(episode);
     } catch (error) {
       next(error);
     }

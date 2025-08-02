@@ -44,6 +44,7 @@ const ContentImage = ({
 }) => {
   const [imageState, setImageState] = useState('loading'); // 'loading' | 'loaded' | 'error'
   const [imageSrc, setImageSrc] = useState(src);
+  const [hasErrored, setHasErrored] = useState(false);
   const prevSrcRef = useRef(src);
 
   // Actualizar imageSrc cuando cambie el prop src
@@ -51,7 +52,8 @@ const ContentImage = ({
     if (src !== prevSrcRef.current) {
       prevSrcRef.current = src;
       setImageSrc(src);
-      setImageState('loading'); // Resetear estado cuando cambie la imagen
+      setImageState('loading');
+      setHasErrored(false); // Resetear error state
     }
   }, [src]);
 
@@ -75,10 +77,14 @@ const ContentImage = ({
   };
 
   const handleImageError = (e) => {
-    setImageState('error');
-    
-    if (showFallback) {
-      setImageSrc(generateFallbackSvg());
+    // Solo manejar el error si no hemos fallado antes
+    if (!hasErrored) {
+      setImageState('error');
+      setHasErrored(true);
+      
+      if (showFallback) {
+        setImageSrc(generateFallbackSvg());
+      }
     }
     
     onError?.(e);

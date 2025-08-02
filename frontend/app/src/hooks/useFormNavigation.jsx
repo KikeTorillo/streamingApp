@@ -12,10 +12,7 @@ const useFormNavigation = () => {
 
   // Manejar selección desde TMDB
   const handleSelectFromTMDB = (item, contentType = 'movie') => {
-    // Emoji para logging futuro
-    const emoji = contentType === 'movie' ? '🎬' : '📺';
-    console.log(`${emoji} Selected item from TMDB:`, item);
-
+    void contentType; // Evitar warning de variable no usada
     setSelectedItem(item);
     setCurrentView('form');
     setHasChanges(false);

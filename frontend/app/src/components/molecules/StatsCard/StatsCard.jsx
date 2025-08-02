@@ -51,26 +51,31 @@ function StatsCard({
   // ===== FILTRAR PROPS PERSONALIZADAS PARA DOM =====
   const {
     // Props específicas de StatsCard (filtrar para evitar errores DOM)
-    title: _title,
-    value: _value,
-    icon: _icon,
-    change: _change,
-    changeLabel: _changeLabel,
-    changeDirection: _changeDirection,
-    color: _color,
-    variant: _variant,
-    size: _size,
-    loading: _loading,
-    error: _error,
-    onClick: _onClick,
-    href: _href,
-    className: _className,
+    title: cardTitle,
+    value: cardValue,
+    icon: cardIcon,
+    change: cardChange,
+    changeLabel: cardChangeLabel,
+    changeDirection: cardChangeDirection,
+    color: cardColor,
+    variant: cardVariant,
+    size: cardSize,
+    loading: cardLoading,
+    error: cardError,
+    onClick: cardOnClick,
+    href: cardHref,
+    className: cardClassName,
     ...domProps // ✅ Solo props válidas para el DOM
   } = { 
     title, value, icon, change, changeLabel, changeDirection, 
     color, variant, size, loading, error, onClick, href, className,
     ...restProps 
   };
+
+  // Evitar warnings de variables no usadas (necesarias para filtrar del DOM)
+  void cardTitle; void cardValue; void cardIcon; void cardChange; void cardChangeLabel;
+  void cardChangeDirection; void cardColor; void cardVariant; void cardSize; void cardLoading;
+  void cardError; void cardOnClick; void cardHref; void cardClassName;
 
   /**
    * Formatea el valor para mostrar
