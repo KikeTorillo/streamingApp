@@ -113,15 +113,15 @@
 }
 
 .badge--info.badge--solid {
-  background-color: var(--blue-500);
+  background-color: var(--color-info);
   color: var(--text-on-primary);
-  border-color: var(--blue-500);
+  border-color: var(--color-info);
 }
 
 .badge--neutral.badge--solid {
-  background-color: var(--gray-500);
+  background-color: var(--color-neutral);
   color: var(--text-on-primary);
-  border-color: var(--gray-500);
+  border-color: var(--color-neutral);
 }
 
 /* VARIANTES DE COLOR - Estilo SOFT */
@@ -156,14 +156,14 @@
 }
 
 .badge--info.badge--soft {
-  background-color: var(--blue-100);
-  color: var(--blue-700);
+  background-color: var(--color-info-light);
+  color: var(--color-info);
   border-color: transparent;
 }
 
 .badge--neutral.badge--soft {
-  background-color: var(--gray-100);
-  color: var(--gray-700);
+  background-color: var(--color-neutral-light);
+  color: var(--color-neutral);
   border-color: transparent;
 }
 
@@ -200,14 +200,14 @@
 
 .badge--info.badge--outline {
   background-color: transparent;
-  color: var(--blue-500);
-  border-color: var(--blue-500);
+  color: var(--color-info);
+  border-color: var(--color-info);
 }
 
 .badge--neutral.badge--outline {
   background-color: transparent;
-  color: var(--gray-500);
-  border-color: var(--gray-500);
+  color: var(--color-neutral);
+  border-color: var(--color-neutral);
 }
 
 /* VARIANTES DE COLOR - Estilo DOT */
@@ -247,11 +247,11 @@
 }
 
 .badge--info.badge--dot {
-  background-color: var(--blue-500);
+  background-color: var(--color-info);
 }
 
 .badge--neutral.badge--dot {
-  background-color: var(--gray-500);
+  background-color: var(--color-neutral);
 }
 
 /* BORDER RADIUS - Usando variables del sistema */
@@ -410,7 +410,7 @@
 
 .badge__remove:hover {
   opacity: 1;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: var(--bg-hover-light);
   transform: scale(1.1);
 }
 
@@ -516,38 +516,38 @@
 }
 
 .dark .badge--primary.badge--soft {
-  background-color: rgba(59, 130, 246, 0.2);
-  color: var(--blue-300);
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
 }
 
 .dark .badge--secondary.badge--soft {
-  background-color: rgba(107, 114, 128, 0.2);
-  color: var(--gray-300);
+  background-color: var(--color-secondary-light);
+  color: var(--color-secondary);
 }
 
 .dark .badge--success.badge--soft {
-  background-color: rgba(34, 197, 94, 0.2);
-  color: var(--green-300);
+  background-color: var(--color-success-light);
+  color: var(--color-success);
 }
 
 .dark .badge--warning.badge--soft {
-  background-color: rgba(245, 158, 11, 0.2);
-  color: var(--yellow-300);
+  background-color: var(--color-warning-light);
+  color: var(--color-warning);
 }
 
 .dark .badge--danger.badge--soft {
-  background-color: rgba(239, 68, 68, 0.2);
-  color: var(--red-300);
+  background-color: var(--color-danger-light);
+  color: var(--color-danger);
 }
 
 .dark .badge--info.badge--soft {
-  background-color: rgba(59, 130, 246, 0.2);
-  color: var(--blue-300);
+  background-color: var(--color-info-light);
+  color: var(--color-info);
 }
 
 .dark .badge--neutral.badge--soft {
-  background-color: rgba(107, 114, 128, 0.2);
-  color: var(--gray-300);
+  background-color: var(--color-neutral-light);
+  color: var(--color-neutral);
 }
 
 /* Outline en modo oscuro */

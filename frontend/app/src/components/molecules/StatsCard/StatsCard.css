@@ -21,27 +21,27 @@
 
 /* ===== VARIANTES DE COLOR ===== */
 .stats-card--blue {
-  --stats-card-color: var(--blue-500);
-  --stats-card-color-light: var(--blue-50);
-  --stats-card-color-dark: var(--blue-700);
+  --stats-card-color: var(--color-info);
+  --stats-card-color-light: var(--color-info-light);
+  --stats-card-color-dark: var(--color-info-dark);
 }
 
 .stats-card--green {
-  --stats-card-color: var(--green-500);
-  --stats-card-color-light: var(--green-50);
-  --stats-card-color-dark: var(--green-700);
+  --stats-card-color: var(--color-success);
+  --stats-card-color-light: var(--color-success-light);
+  --stats-card-color-dark: var(--color-success-dark);
 }
 
 .stats-card--red {
-  --stats-card-color: var(--red-500);
-  --stats-card-color-light: var(--red-50);
-  --stats-card-color-dark: var(--red-700);
+  --stats-card-color: var(--color-danger);
+  --stats-card-color-light: var(--color-danger-light);
+  --stats-card-color-dark: var(--color-danger-dark);
 }
 
 .stats-card--yellow {
-  --stats-card-color: var(--yellow-500);
-  --stats-card-color-light: var(--yellow-50);
-  --stats-card-color-dark: var(--yellow-700);
+  --stats-card-color: var(--color-warning);
+  --stats-card-color-light: var(--color-warning-light);
+  --stats-card-color-dark: var(--color-warning-dark);
 }
 
 .stats-card--purple {
@@ -51,9 +51,9 @@
 }
 
 .stats-card--gray {
-  --stats-card-color: var(--gray-500);
-  --stats-card-color-light: var(--gray-50);
-  --stats-card-color-dark: var(--gray-700);
+  --stats-card-color: var(--color-neutral);
+  --stats-card-color-light: var(--color-neutral-light);
+  --stats-card-color-dark: var(--color-neutral-dark);
 }
 
 /* ===== VARIANTES DE ESTILO ===== */
@@ -230,11 +230,11 @@
 }
 
 .stats-card__change--up {
-  color: var(--green-600);
+  color: var(--color-success);
 }
 
 .stats-card__change--down {
-  color: var(--red-600);
+  color: var(--color-danger);
 }
 
 .stats-card__change--neutral {
@@ -308,7 +308,7 @@
 
 /* ===== ESTADO DE ERROR ===== */
 .stats-card--error {
-  border-color: var(--red-200);
+  border-color: var(--color-danger-light);
 }
 
 .stats-card__error-message {
@@ -318,13 +318,13 @@
   gap: var(--space-xs);
   
   /* Colores */
-  color: var(--red-600);
-  background-color: var(--red-50);
+  color: var(--color-danger);
+  background-color: var(--color-danger-light);
   
   /* Espaciado */
   padding: var(--space-sm);
   border-radius: var(--radius-sm);
-  border: 0.1rem solid var(--red-200);
+  border: 0.1rem solid var(--color-danger-light);
   
   /* Tipografía */
   font-size: var(--font-size-sm);

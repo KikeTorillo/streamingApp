@@ -7,14 +7,8 @@ const ThemeContext = createContext();
 const AVAILABLE_THEMES = [
   'light',
   'dark',
-  'ocean-light',
-  'ocean-dark',
-  'forest-light',
-  'forest-dark',
-  'sunset-light',
-  'sunset-dark',
-  'purple-light',
-  'purple-dark'
+  'tierra-light',
+  'tierra-dark'
 ];
 
 function ThemeProvider({ children }) {
@@ -36,16 +30,18 @@ function ThemeProvider({ children }) {
 
   const applyTheme = (p, m) => {
     const root = document.documentElement;
+    // Remover todas las clases de tema existentes
     root.classList.remove(
-      'palette-ocean',
-      'palette-forest',
-      'palette-sunset',
-      'palette-purple',
+      'palette-tierra',
       'dark'
     );
+    
+    // Aplicar la paleta si no es el tema por defecto (matcha)
     if (p !== 'default') {
       root.classList.add(`palette-${p}`);
     }
+    
+    // Aplicar modo oscuro si está seleccionado
     if (m === 'dark') {
       root.classList.add('dark');
     }

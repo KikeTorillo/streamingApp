@@ -7,7 +7,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.5); /* Mantener para overlay universal */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -15,11 +15,11 @@
 }
 
 .spinner-overlay__container {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 8px;
+  background-color: var(--bg-primary);
+  padding: var(--space-xl);
+  border-radius: var(--radius-md);
   text-align: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-strong);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -27,11 +27,11 @@
 }
 
 .spinner-overlay__spinner {
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-lg);
 }
 
 .spinner-overlay__message {
-  color: #333;
+  color: var(--text-primary);
 }
 
 /* ===== INLINE MODE ===== */
@@ -39,95 +39,95 @@
   display: inline-flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-sm);
 }
 
 .spinner-inline__message {
-  color: #666;
+  color: var(--text-secondary);
   text-align: center;
 }
 
 /* ===== TAMAÑOS ===== */
 .spinner--sm {
-  width: 32px;
-  height: 32px;
+  width: 3.2rem;
+  height: 3.2rem;
 }
 
 .spinner--md {
-  width: 48px;
-  height: 48px;
+  width: 4.8rem;
+  height: 4.8rem;
 }
 
 .spinner--lg {
-  width: 64px;
-  height: 64px;
+  width: 6.4rem;
+  height: 6.4rem;
 }
 
 .spinner__message--sm {
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
 }
 
 .spinner__message--md {
-  font-size: 1rem;
+  font-size: var(--font-size-base);
 }
 
 .spinner__message--lg {
-  font-size: 1.25rem;
+  font-size: var(--font-size-lg);
 }
 
 /* ===== VARIANTES ===== */
 
 /* Circle Spinner */
 .spinner-circle {
-  border: 4px solid #f3f3f3;
+  border: 0.4rem solid var(--border-light);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 
 .spinner-circle--primary {
-  border-top: 4px solid #3498db;
+  border-top: 0.4rem solid var(--color-primary);
 }
 
 .spinner-circle--secondary {
-  border-top: 4px solid #6c757d;
+  border-top: 0.4rem solid var(--color-secondary);
 }
 
 .spinner-circle--success {
-  border-top: 4px solid #28a745;
+  border-top: 0.4rem solid var(--color-success);
 }
 
 .spinner-circle--danger {
-  border-top: 4px solid #dc3545;
+  border-top: 0.4rem solid var(--color-danger);
 }
 
 /* Dots Spinner */
 .spinner-dots {
   display: flex;
-  gap: 4px;
+  gap: 0.4rem;
   align-items: center;
 }
 
 .spinner-dot {
-  width: 8px;
-  height: 8px;
+  width: 0.8rem;
+  height: 0.8rem;
   border-radius: 50%;
   animation: spinnerDots 1.4s ease-in-out infinite;
 }
 
 .spinner-dot--primary {
-  background-color: #3498db;
+  background-color: var(--color-primary);
 }
 
 .spinner-dot--secondary {
-  background-color: #6c757d;
+  background-color: var(--color-secondary);
 }
 
 .spinner-dot--success {
-  background-color: #28a745;
+  background-color: var(--color-success);
 }
 
 .spinner-dot--danger {
-  background-color: #dc3545;
+  background-color: var(--color-danger);
 }
 
 .spinner-dot:nth-child(1) {
@@ -149,49 +149,49 @@
 }
 
 .spinner-pulse--primary {
-  background-color: #3498db;
+  background-color: var(--color-primary);
 }
 
 .spinner-pulse--secondary {
-  background-color: #6c757d;
+  background-color: var(--color-secondary);
 }
 
 .spinner-pulse--success {
-  background-color: #28a745;
+  background-color: var(--color-success);
 }
 
 .spinner-pulse--danger {
-  background-color: #dc3545;
+  background-color: var(--color-danger);
 }
 
 /* Bars Spinner */
 .spinner-bars {
   display: flex;
-  gap: 2px;
+  gap: 0.2rem;
   align-items: center;
 }
 
 .spinner-bar {
-  width: 4px;
+  width: 0.4rem;
   height: 100%;
-  border-radius: 2px;
+  border-radius: 0.2rem;
   animation: spinnerBars 1.2s ease-in-out infinite;
 }
 
 .spinner-bar--primary {
-  background-color: #3498db;
+  background-color: var(--color-primary);
 }
 
 .spinner-bar--secondary {
-  background-color: #6c757d;
+  background-color: var(--color-secondary);
 }
 
 .spinner-bar--success {
-  background-color: #28a745;
+  background-color: var(--color-success);
 }
 
 .spinner-bar--danger {
-  background-color: #dc3545;
+  background-color: var(--color-danger);
 }
 
 .spinner-bar:nth-child(1) {

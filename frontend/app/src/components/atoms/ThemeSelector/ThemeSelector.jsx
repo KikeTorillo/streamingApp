@@ -17,18 +17,12 @@ function ThemeSelector({
     setTheme(e.target.value);
   };
 
-  // Opciones para el Select con grupos
+  // Opciones para el Select - Solo dos temas disponibles
   const themeOptions = [
-    { value: 'light', label: '☀️ Claro (Defecto)' },
-    { value: 'dark', label: '🌙 Oscuro (Defecto)' },
-    { value: 'ocean-light', label: '🌊 Océano Claro' },
-    { value: 'ocean-dark', label: '🌊 Océano Oscuro' },
-    { value: 'forest-light', label: '🌲 Bosque Claro' },
-    { value: 'forest-dark', label: '🌲 Bosque Oscuro' },
-    { value: 'sunset-light', label: '🌅 Atardecer Claro' },
-    { value: 'sunset-dark', label: '🌅 Atardecer Oscuro' },
-    { value: 'purple-light', label: '💜 Violeta Claro' },
-    { value: 'purple-dark', label: '💜 Violeta Oscuro' }
+    { value: 'light', label: '🌊 Océano Claro' },
+    { value: 'dark', label: '🌊 Océano Oscuro' },
+    { value: 'tierra-light', label: '🌿 Tierra Claro' },
+    { value: 'tierra-dark', label: '🌿 Tierra Oscuro' }
   ];
 
   const selectorClasses = [

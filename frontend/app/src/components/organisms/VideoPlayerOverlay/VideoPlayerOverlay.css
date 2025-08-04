@@ -25,7 +25,7 @@
 }
 
 .video-player-overlay__control-btn {
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: var(--backdrop-dark);
   backdrop-filter: blur(8px);
   border: 0.2rem solid var(--bg-primary);
   color: var(--text-on-primary);
@@ -61,7 +61,7 @@
 
 .video-player-overlay__control-btn--skip-back,
 .video-player-overlay__control-btn--skip-forward {
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: var(--backdrop-dark);
   backdrop-filter: blur(8px);
   border: 0.2rem solid var(--bg-primary);
   width: 6rem;
@@ -84,7 +84,7 @@
 
 .video-player-overlay__control-btn--skip-back:hover,
 .video-player-overlay__control-btn--skip-forward:hover {
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: var(--backdrop-darker);
   transform: scale(1.1);
 }
 
@@ -173,7 +173,7 @@
 
 .video-player-overlay--light {
   .video-player-overlay__control-btn {
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: var(--backdrop-light);
     color: var(--text-primary);
     border-color: var(--border-default);
   }

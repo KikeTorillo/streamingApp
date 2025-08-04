@@ -37,7 +37,7 @@
 
 /* ===== BACKDROP ===== */
 .modal::backdrop {
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--backdrop-default);
   backdrop-filter: blur(4px);
   opacity: 0;
   transition: opacity 0.2s ease;
@@ -57,7 +57,7 @@
   /* Layout */
   background: var(--bg-primary);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--border-default);
+  border: 0.1rem solid var(--border-default);
   box-shadow: var(--shadow-lg);
   
   /* Positioning */
@@ -99,7 +99,7 @@
   padding-bottom: var(--space-md);
   
   /* Styling */
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 0.1rem solid var(--border-light);
 }
 
 .modal__title {
@@ -151,8 +151,8 @@
 }
 
 .modal__close:focus {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+  outline: 0.2rem solid var(--border-focus);
+  outline-offset: 0.2rem;
 }
 
 /* ===== BODY ===== */
@@ -209,6 +209,6 @@ body:has(.modal[open]) {
 /* ===== DARK MODE ===== */
 @media (prefers-color-scheme: dark) {
   .modal::backdrop {
-    background: rgba(0, 0, 0, 0.7);
+    background: var(--backdrop-dark);
   }
 }

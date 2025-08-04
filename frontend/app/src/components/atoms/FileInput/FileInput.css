@@ -138,7 +138,7 @@
 
 .file-input--focused .file-input__button {
   border-color: var(--border-focus);
-  box-shadow: 0 0 0 0.3rem rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 0.3rem var(--color-primary-light);
   outline: 0.2rem solid var(--border-focus);
   outline-offset: 0.2rem;
   z-index: 1;
@@ -172,7 +172,7 @@
 
 .file-input--success.file-input--focused .file-input__button {
   border-color: var(--color-success);
-  box-shadow: 0 0 0 0.3rem rgba(34, 197, 94, 0.1);
+  box-shadow: 0 0 0 0.3rem var(--color-success-light);
   outline-color: var(--color-success);
 }
 
@@ -190,7 +190,7 @@
 
 .file-input--warning.file-input--focused .file-input__button {
   border-color: var(--color-warning);
-  box-shadow: 0 0 0 0.3rem rgba(245, 158, 11, 0.1);
+  box-shadow: 0 0 0 0.3rem var(--color-warning-light);
   outline-color: var(--color-warning);
 }
 
@@ -208,7 +208,7 @@
 
 .file-input--danger.file-input--focused .file-input__button {
   border-color: var(--color-danger);
-  box-shadow: 0 0 0 0.3rem rgba(239, 68, 68, 0.1);
+  box-shadow: 0 0 0 0.3rem var(--color-danger-light);
   outline-color: var(--color-danger);
 }
 
@@ -245,7 +245,7 @@
 /* ===== ESTADO CON ARCHIVOS SELECCIONADOS ===== */
 .file-input--has-files .file-input__button {
   border-color: var(--color-success);
-  background-color: rgba(34, 197, 94, 0.02);
+  background-color: var(--color-success-light);
 }
 
 .file-input--has-files .file-input__text {
@@ -376,21 +376,21 @@
 }
 
 .dark .file-input--focused .file-input__button {
-  box-shadow: 0 0 0 0.3rem rgba(96, 165, 250, 0.1);
+  box-shadow: 0 0 0 0.3rem var(--color-primary-light);
 }
 
 /* Soporte para prefers-color-scheme */
 @media (prefers-color-scheme: dark) {
   .file-input--focused .file-input__button {
-    box-shadow: 0 0 0 0.3rem rgba(96, 165, 250, 0.1);
+    box-shadow: 0 0 0 0.3rem var(--color-primary-light);
   }
 }
 
 /* ===== HERRAMIENTAS DE DEBUGGING ===== */
 /* Solo activo cuando se agrega clase .debug-heights al body */
 .debug-heights .file-input__button {
-  outline: 2px dashed blue !important;
-  outline-offset: -2px;
+  outline: 0.2rem dashed var(--color-primary) !important;
+  outline-offset: -0.2rem;
 }
 
 .debug-heights .file-input__button::after {
@@ -398,8 +398,8 @@
   position: absolute;
   top: -2rem;
   left: 0;
-  background: blue;
-  color: white;
+  background: var(--color-primary);
+  color: var(--text-on-primary);
   font-size: 1rem;
   padding: 0.2rem 0.4rem;
   border-radius: 0.2rem;
@@ -411,7 +411,7 @@
 /* ===== PRINT STYLES ===== */
 @media print {
   .file-input__button {
-    border: 0.1rem solid #000;
+    border: 0.1rem solid var(--text-primary);
     box-shadow: none;
   }
   

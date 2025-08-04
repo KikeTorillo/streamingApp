@@ -76,7 +76,7 @@
 
 .dynamic-form__select:focus {
   border-color: var(--border-focus);
-  box-shadow: 0 0 0 0.3rem rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 0.3rem var(--color-primary-light);
   outline: 0.2rem solid var(--border-focus);
   outline-offset: 0.1rem;
 }
@@ -115,7 +115,7 @@
 
 .dynamic-form__textarea:focus {
   border-color: var(--border-focus);
-  box-shadow: 0 0 0 0.3rem rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 0.3rem var(--color-primary-light);
   outline: 0.2rem solid var(--border-focus);
   outline-offset: 0.1rem;
 }
@@ -514,8 +514,8 @@
   }
   
   .dynamic-form__error-message {
-    color: #000;
-    font-weight: bold;
+    color: var(--text-primary);
+    font-weight: var(--font-weight-bold);
   }
 }
 
@@ -543,7 +543,7 @@
 .dynamic-form__field--error .dynamic-form__textarea:focus,
 .dynamic-form__field--error .dynamic-form__select:focus {
   border-color: var(--color-danger);
-  box-shadow: 0 0 0 0.3rem rgba(239, 68, 68, 0.1);
+  box-shadow: 0 0 0 0.3rem var(--color-danger-light);
   outline-color: var(--color-danger);
 }
 
@@ -556,6 +556,6 @@
 .dynamic-form__field--success .dynamic-form__textarea:focus,
 .dynamic-form__field--success .dynamic-form__select:focus {
   border-color: var(--color-success);
-  box-shadow: 0 0 0 0.3rem rgba(34, 197, 94, 0.1);
+  box-shadow: 0 0 0 0.3rem var(--color-success-light);
   outline-color: var(--color-success);
 }

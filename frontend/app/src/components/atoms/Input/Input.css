@@ -46,7 +46,7 @@
   padding: var(--component-padding-lg);        
   font-size: var(--component-font-lg);         
   min-height: var(--component-height-lg);      
-  line-height: var(--lint-normal);
+  line-height: var(--line-height-normal);
 }
 
 .input-base--xl {
@@ -84,8 +84,8 @@
 
 .input-base:focus {
   border-color: var(--border-focus);
-  box-shadow: 0 0 0 0.3rem rgba(59, 130, 246, 0.1);
-  outline: 0.2rem solid var(--border-e-heighfocus);
+  box-shadow: 0 0 0 0.3rem var(--shadow-focus);
+  outline: 0.2rem solid var(--border-focus);
   outline-offset: 0.2rem;
   z-index: 1;
 }
@@ -106,7 +106,7 @@
 }
 
 .input-base:read-only:focus {
-  box-shadow: 0 0 0 0.3rem rgba(107, 114, 128, 0.1);
+  box-shadow: 0 0 0 0.3rem var(--shadow-muted);
   border-color: var(--border-secondary);
   outline-color: var(--border-secondary);
 }
@@ -142,7 +142,7 @@
 
 .input-base--error:focus {
   border-color: var(--color-danger);
-  box-shadow: 0 0 0 0.3rem rgba(239, 68, 68, 0.1);
+  box-shadow: 0 0 0 0.3rem var(--shadow-danger);
   outline-color: var(--color-danger);
 }
 
@@ -159,7 +159,7 @@
 
 .input-base--success:focus {
   border-color: var(--color-success);
-  box-shadow: 0 0 0 0.3rem rgba(34, 197, 94, 0.1);
+  box-shadow: 0 0 0 0.3rem var(--shadow-success);
   outline-color: var(--color-success);
 }
 
@@ -176,7 +176,7 @@
 
 .input-base--warning:focus {
   border-color: var(--color-warning);
-  box-shadow: 0 0 0 0.3rem rgba(245, 158, 11, 0.1);
+  box-shadow: 0 0 0 0.3rem var(--shadow-warning);
   outline-color: var(--color-warning);
 }
 
@@ -270,13 +270,13 @@
 }
 
 .dark .input-base:focus {
-  box-shadow: 0 0 0 0.3rem rgba(96, 165, 250, 0.1);
+  box-shadow: 0 0 0 0.3rem var(--shadow-focus);
 }
 
 /* Clase forzada para modo oscuro con prefers-color-scheme */
 @media (prefers-color-scheme: dark) {
   .input-base:focus {
-    box-shadow: 0 0 0 0.3rem rgba(96, 165, 250, 0.1);
+    box-shadow: 0 0 0 0.3rem var(--shadow-focus);
   }
 }
 
