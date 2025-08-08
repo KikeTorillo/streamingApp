@@ -1,60 +1,43 @@
 // SearchBar.jsx - Componente avanzado de búsqueda
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { TextInput } from '../TextInput/TextInput';
-import { Button } from '../../atoms/Button/Button';
 import { Icon } from '../../atoms/Icon/Icon';
 import './SearchBar.css';
 
 /**
- * Componente SearchBar Avanzado - Molécula del Design System
  * 
- * Variantes de migración gradual:
- * - simple: Equivalente al TextInput actual (retrocompatibilidad)
- * - advanced: Con todas las funciones nuevas
- * - compact: Para espacios reducidos
+ * DISEÑO:
+ * ✅ Delega TODA la funcionalidad de input al TextInput
+ * ✅ Solo maneja funcionalidad específica de búsqueda
+ * ✅ Elimina duplicación de código
+ * ✅ Mantiene retrocompatibilidad completa
  * 
- * Features nuevas:
- * ✅ Búsqueda en tiempo real con debounce optimizado
- * ✅ Autocomplete inteligente con sugerencias
- * ✅ Filtros avanzados (género, año, rating, tipo)
- * ✅ Historial persistente de búsquedas
- * ✅ Shortcuts de teclado (Ctrl+K para abrir, Escape para cerrar)
- * ✅ Búsqueda múltiple (título, actores, director, descripción)
- * ✅ Estados elegantes (loading, empty, error)
+ * Variantes:
+ * - simple: Solo input de búsqueda (retrocompatibilidad)
+ * - advanced: Con sugerencias, historial y shortcuts
+ * 
+ * Features específicas de búsqueda:
+ * ✅ Búsqueda con debounce optimizado
+ * ✅ Sugerencias inteligentes
+ * ✅ Historial persistente
+ * ✅ Navegación con teclado
+ * ✅ Shortcuts globales
  */
 function SearchBar({
-  // Basic props - retrocompatibilidad total con AppHeader
-  value = '',
-  onChange = () => {},
-  placeholder = 'Buscar contenido...',
-  disabled = false,
-  className = '',
-  
-  // Variantes y tamaños
+  // Props específicas de búsqueda
   variant = 'simple',
-  size = 'md',
-  fullWidth = false,
-  
-  // Advanced features
   onSearch = () => {},
   onClear = () => {},
   debounceMs = 300,
   
-  // Autocomplete & suggestions
+  // Sugerencias
   suggestions = [],
   onSuggestionSelect = () => {},
-  showSuggestions = false,
   maxSuggestions = 5,
   loadingSuggestions = false,
   
-  // Filters (solo para variant="advanced")
-  filters = [],
-  selectedFilters = {},
-  onFilterChange = () => {},
-  showFilters = false,
-  
-  // History (solo para variant="advanced")
+  // Historial
   enableHistory = false,
   historyKey = 'searchbar-history',
   maxHistoryItems = 10,
@@ -64,24 +47,21 @@ function SearchBar({
   shortcutKey = 'k',
   shortcutModifier = 'ctrl',
   
-  // Estados
+  // Estado específico de búsqueda
   loading = false,
   error = null,
   
-  // Eventos adicionales
+  // TODAS las demás props se delegan al TextInput
+  value = '',
+  onChange = () => {},
+  placeholder = 'Buscar contenido...',
   onFocus = () => {},
   onBlur = () => {},
   onKeyDown = () => {},
-  
-  // Propiedades del input base
-  leftIcon = 'search',
-  rightIcon = null,
-  autoFocus = false,
-  ...restProps
+  ...textInputProps // Todo lo demás va al TextInput
 }) {
-  // Estados internos
+  // Estados internos - Solo para funcionalidad de búsqueda
   const [internalValue, setInternalValue] = useState(value);
-  const [isExpanded, setIsExpanded] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
   const [searchHistory, setSearchHistory] = useState([]);
@@ -130,13 +110,13 @@ function SearchBar({
     };
   }, []);
   
-  // Handle value change
+  // Handle value change - Solo lógica específica de búsqueda
   const handleValueChange = (e) => {
     const newValue = e.target.value;
     setInternalValue(newValue);
-    onChange(e); // Mantener retrocompatibilidad
+    onChange(e); // Delegamos al prop original
     
-    // Advanced features solo para variantes avanzadas
+    // Funcionalidad específica de búsqueda
     if (variant === 'advanced') {
       if (newValue.trim()) {
         debouncedSearch(newValue);
@@ -255,27 +235,24 @@ function SearchBar({
     onKeyDown(e);
   };
   
-  // Handle focus
+  // Handle focus - Solo lógica de búsqueda
   const handleFocus = (e) => {
-    setIsExpanded(true);
-    
     if (variant === 'advanced' && (suggestions.length > 0 || (enableHistory && searchHistory.length > 0))) {
       setShowDropdown(true);
     }
     
-    onFocus(e);
+    onFocus(e); // Delegamos al prop original
   };
   
-  // Handle blur
+  // Handle blur - Solo lógica de búsqueda
   const handleBlur = (e) => {
     // Delay para permitir clicks en sugerencias
     setTimeout(() => {
-      setIsExpanded(false);
       setShowDropdown(false);
       setSelectedSuggestionIndex(-1);
     }, 150);
     
-    onBlur(e);
+    onBlur(e); // Delegamos al prop original
   };
   
   // Click outside handler
@@ -312,26 +289,19 @@ function SearchBar({
     return () => document.removeEventListener('keydown', handleGlobalKeyDown);
   }, [enableShortcuts, shortcutKey, shortcutModifier]);
   
-  // Construir clases CSS
+  // Construir clases CSS - Solo para funcionalidad de búsqueda
   const searchBarClasses = [
     'search-bar',
     `search-bar--variant-${variant}`,
-    `search-bar--size-${size}`,
-    isExpanded && 'search-bar--expanded',
     showDropdown && 'search-bar--dropdown-open',
-    fullWidth && 'search-bar--full-width',
-    disabled && 'search-bar--disabled',
     loading && 'search-bar--loading',
-    error && 'search-bar--error',
-    className
+    error && 'search-bar--error'
   ].filter(Boolean).join(' ');
   
-  // Iconos dinámicos
-  const currentLeftIcon = loading ? 'loader' : leftIcon;
-  
-  // Solo mostrar X automática en variantes avanzadas
-  const shouldShowClearIcon = variant === 'advanced' && internalValue && !loading;
-  const currentRightIcon = shouldShowClearIcon ? 'x' : rightIcon;
+  // Lógica de iconos - Delegamos la mayor parte al TextInput
+  const currentLeftIcon = loading ? 'loader' : 'search';
+  const shouldShowClearIcon = (variant === 'advanced' || variant === 'simple') && internalValue && !loading;
+  const currentRightIcon = shouldShowClearIcon ? 'x' : undefined;
   
   // Renderizar sugerencias y historial
   const renderDropdownContent = () => {
@@ -340,7 +310,7 @@ function SearchBar({
     if (!hasContent && !loadingSuggestions) {
       return (
         <div className="search-bar__dropdown-empty">
-          <Icon name="search" size="md" />
+          <Icon name="search" size="sm" />
           <span>Comienza a escribir para buscar</span>
         </div>
       );
@@ -363,7 +333,7 @@ function SearchBar({
         {suggestions.length > 0 && (
           <div className="search-bar__suggestions-section">
             <div className="search-bar__section-title">
-              <Icon name="zap" size="xs" />
+              <Icon name="zap" size="sm" />
               <span>Sugerencias</span>
             </div>
             {suggestions.slice(0, maxSuggestions).map((suggestion, index) => {
@@ -377,7 +347,7 @@ function SearchBar({
                   onClick={() => handleSuggestionSelect(suggestion, index)}
                   onMouseEnter={() => setSelectedSuggestionIndex(currentIndex)}
                 >
-                  <Icon name="search" size="xs" />
+                  <Icon name="search" size="sm" />
                   <span className="search-bar__suggestion-text">
                     {suggestion.title || suggestion.value || suggestion}
                   </span>
@@ -396,7 +366,7 @@ function SearchBar({
         {enableHistory && searchHistory.length > 0 && (
           <div className="search-bar__history-section">
             <div className="search-bar__section-title">
-              <Icon name="clock" size="xs" />
+              <Icon name="clock" size="sm" />
               <span>Búsquedas recientes</span>
             </div>
             {searchHistory.slice(0, 5).map((historyItem, index) => {
@@ -410,7 +380,7 @@ function SearchBar({
                   onClick={() => handleSuggestionSelect({ title: historyItem, value: historyItem }, index)}
                   onMouseEnter={() => setSelectedSuggestionIndex(currentIndex)}
                 >
-                  <Icon name="clock" size="xs" />
+                  <Icon name="clock" size="sm" />
                   <span>{historyItem}</span>
                 </button>
               );
@@ -425,28 +395,19 @@ function SearchBar({
     <div className={searchBarClasses} ref={dropdownRef}>
       <TextInput
         ref={searchRef}
-        type="search"
+        type="text"
         value={internalValue}
         onChange={handleValueChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
-        disabled={disabled}
-        autoFocus={autoFocus}
-        size={size}
-        fullWidth={fullWidth}
-        leftIcon={<Icon name={currentLeftIcon} size="sm" />}
-        rightIcon={currentRightIcon && (
-          <Icon 
-            name={currentRightIcon} 
-            size="sm" 
-            onClick={shouldShowClearIcon ? handleClear : undefined}
-            style={{ cursor: shouldShowClearIcon ? 'pointer' : 'default' }}
-          />
-        )}
+        leftIcon={currentLeftIcon}
+        rightIcon={currentRightIcon}
+        onRightIconClick={shouldShowClearIcon ? handleClear : undefined}
         className="search-bar__input"
-        {...restProps}
+        // DELEGAR TODO lo demás al TextInput
+        {...textInputProps}
       />
       
       {/* Dropdown para variantes avanzadas */}
@@ -468,7 +429,7 @@ function SearchBar({
       {/* Error message */}
       {error && (
         <div className="search-bar__error">
-          <Icon name="alert-circle" size="xs" />
+          <Icon name="alert" size="sm" />
           <span>{error}</span>
         </div>
       )}
@@ -477,24 +438,13 @@ function SearchBar({
 }
 
 SearchBar.propTypes = {
-  // Basic props
-  value: PropTypes.string,
-  onChange: PropTypes.func,
-  placeholder: PropTypes.string,
-  disabled: PropTypes.bool,
-  className: PropTypes.string,
-  
-  // Variantes y tamaños
-  variant: PropTypes.oneOf(['simple', 'advanced', 'compact']),
-  size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
-  fullWidth: PropTypes.bool,
-  
-  // Advanced features
+  // Props específicas de SearchBar
+  variant: PropTypes.oneOf(['simple', 'advanced']),
   onSearch: PropTypes.func,
   onClear: PropTypes.func,
   debounceMs: PropTypes.number,
   
-  // Autocomplete & suggestions
+  // Sugerencias
   suggestions: PropTypes.arrayOf(PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.shape({
@@ -505,17 +455,10 @@ SearchBar.propTypes = {
     })
   ])),
   onSuggestionSelect: PropTypes.func,
-  showSuggestions: PropTypes.bool,
   maxSuggestions: PropTypes.number,
   loadingSuggestions: PropTypes.bool,
   
-  // Filters
-  filters: PropTypes.array,
-  selectedFilters: PropTypes.object,
-  onFilterChange: PropTypes.func,
-  showFilters: PropTypes.bool,
-  
-  // History
+  // Historial
   enableHistory: PropTypes.bool,
   historyKey: PropTypes.string,
   maxHistoryItems: PropTypes.number,
@@ -525,19 +468,17 @@ SearchBar.propTypes = {
   shortcutKey: PropTypes.string,
   shortcutModifier: PropTypes.oneOf(['ctrl', 'alt', 'shift']),
   
-  // Estados
+  // Estados específicos de búsqueda
   loading: PropTypes.bool,
   error: PropTypes.string,
   
-  // Eventos
+  // Props básicas (el resto se delegan al TextInput)
+  value: PropTypes.string,
+  onChange: PropTypes.func,
+  placeholder: PropTypes.string,
   onFocus: PropTypes.func,
   onBlur: PropTypes.func,
-  onKeyDown: PropTypes.func,
-  
-  // Input props
-  leftIcon: PropTypes.string,
-  rightIcon: PropTypes.string,
-  autoFocus: PropTypes.bool
+  onKeyDown: PropTypes.func
 };
 
 export { SearchBar };

@@ -406,8 +406,8 @@ export const ComponentArchitecture = () => (
     <TextInput
       label="TextInput - Molécula completa"
       placeholder="Heredando capacidades del átomo Input"
-      leftIcon="⚛️"
-      rightIcon="🧬"
+      leftIcon="zap"
+      rightIcon="circle"
       helperText="Combinando átomo base + funcionalidades de molécula"
       maxLength={60}
       showCharCount
@@ -468,7 +468,7 @@ export const InheritedVariants = () => {
         value={values.default}
         onChange={handleChange('default')}
         helperText="Usa las mismas variables CSS del sistema"
-        leftIcon="📝"
+        leftIcon="edit"
       />
       <TextInput
         label="Success (heredado del átomo)"
@@ -478,7 +478,7 @@ export const InheritedVariants = () => {
         value={values.success}
         onChange={handleChange('success')}
         helperText="Background y border del átomo Input mejorado"
-        leftIcon="✅"
+        leftIcon="check"
       />
       <TextInput
         label="Warning (heredado del átomo)"
@@ -488,7 +488,7 @@ export const InheritedVariants = () => {
         value={values.warning}
         onChange={handleChange('warning')}
         helperText="Colores y estados heredados automáticamente"
-        leftIcon="⚠️"
+        leftIcon="alert-triangle"
       />
       <TextInput
         label="Error (heredado del átomo)"
@@ -498,7 +498,7 @@ export const InheritedVariants = () => {
         value={values.error}
         onChange={handleChange('error')}
         errorText="Mensaje de error con live regions de TextInput"
-        leftIcon="❌"
+        leftIcon="x"
       />
     </div>
   );
@@ -520,11 +520,11 @@ export const InheritedBorderRadius = () => (
     alignItems: 'center',
     flexWrap: 'wrap'
   }}>
-    <TextInput rounded="sm" placeholder="Small" label="Border Radius SM" leftIcon="📐" />
-    <TextInput rounded="md" placeholder="Medium (default)" label="Border Radius MD" leftIcon="📐" />
-    <TextInput rounded="lg" placeholder="Large" label="Border Radius LG" leftIcon="📐" />
-    <TextInput rounded="xl" placeholder="Extra Large" label="Border Radius XL" leftIcon="📐" />
-    <TextInput rounded="full" placeholder="Full" label="Border Radius Full" leftIcon="📐" />
+    <TextInput rounded="sm" placeholder="Small" label="Border Radius SM" leftIcon="tool" />
+    <TextInput rounded="md" placeholder="Medium (default)" label="Border Radius MD" leftIcon="tool" />
+    <TextInput rounded="lg" placeholder="Large" label="Border Radius LG" leftIcon="tool" />
+    <TextInput rounded="xl" placeholder="Extra Large" label="Border Radius XL" leftIcon="tool" />
+    <TextInput rounded="full" placeholder="Full" label="Border Radius Full" leftIcon="tool" />
   </div>
 );
 InheritedBorderRadius.parameters = {
@@ -585,8 +585,8 @@ export const ClickableIcons = () => {
       <TextInput
         label="Búsqueda con iconos dinámicos"
         placeholder="Buscar productos..."
-        leftIcon="🔍"
-        rightIcon={values.search ? "❌" : "🎯"}
+        leftIcon="search"
+        rightIcon={values.search ? "x" : "zap"}
         value={values.search}
         onChange={handleChange('search')}
         onLeftIconClick={handleSearch}
@@ -599,8 +599,8 @@ export const ClickableIcons = () => {
         type={showPassword ? 'text' : 'password'}
         label="Contraseña con toggle"
         placeholder="Tu contraseña segura"
-        leftIcon="🔒"
-        rightIcon={showPassword ? "🙈" : "👁️"}
+        leftIcon="lock"
+        rightIcon={showPassword ? "eye-off" : "eye"}
         value={values.password}
         onChange={handleChange('password')}
         onRightIconClick={togglePassword}
@@ -611,8 +611,8 @@ export const ClickableIcons = () => {
       <TextInput
         label="Validación en tiempo real"
         placeholder="Email para validar"
-        leftIcon="📧"
-        rightIcon={isValidating ? "⏳" : "✅"}
+        leftIcon="mail"
+        rightIcon={isValidating ? "loader" : "check"}
         value={values.validation}
         onChange={handleChange('validation')}
         onRightIconClick={validateField}
@@ -624,8 +624,8 @@ export const ClickableIcons = () => {
       <TextInput
         label="Ambos iconos clickeables"
         placeholder="Click en cualquier icono"
-        leftIcon="👈"
-        rightIcon="👉"
+        leftIcon="chevron-left"
+        rightIcon="chevron-right"
         value={values.both}
         onChange={handleChange('both')}
         onLeftIconClick={() => handleBothIcons('izquierdo')}
@@ -721,8 +721,8 @@ export const AdvancedValidation = () => {
         type="email"
         label="Correo electrónico"
         placeholder="tu@ejemplo.com"
-        leftIcon="📧"
-        rightIcon={formData.email && !errors.email ? "✅" : ""}
+        leftIcon="mail"
+        rightIcon={formData.email && !errors.email ? "check" : ""}
         value={formData.email}
         onChange={handleChange('email')}
         required
@@ -737,7 +737,7 @@ export const AdvancedValidation = () => {
         type="text"
         label="Nombre de usuario"
         placeholder="usuario123"
-        leftIcon="👤"
+        leftIcon="user"
         value={formData.username}
         onChange={handleChange('username')}
         required
@@ -754,7 +754,7 @@ export const AdvancedValidation = () => {
         type="password"
         label="Contraseña"
         placeholder="Mínimo 8 caracteres"
-        leftIcon="🔒"
+        leftIcon="lock"
         value={formData.password}
         onChange={handleChange('password')}
         required
@@ -771,8 +771,8 @@ export const AdvancedValidation = () => {
         type="password"
         label="Confirmar contraseña"
         placeholder="Repite la contraseña"
-        leftIcon="🔒"
-        rightIcon={formData.confirmPassword && !errors.confirmPassword ? "✅" : ""}
+        leftIcon="lock"
+        rightIcon={formData.confirmPassword && !errors.confirmPassword ? "check" : ""}
         value={formData.confirmPassword}
         onChange={handleChange('confirmPassword')}
         required
@@ -828,8 +828,8 @@ export const IntelligentCounter = () => {
         showCharCount
         helperText="Comparte lo que piensas con el mundo"
         variant={getTweetVariant()}
-        leftIcon="🐦"
-        rightIcon={tweet.length > 250 ? "⚠️" : ""}
+        leftIcon="twitter"
+        rightIcon={tweet.length > 250 ? "alert-triangle" : ""}
         rounded="lg"
       />
       
@@ -842,8 +842,8 @@ export const IntelligentCounter = () => {
         showCharCount
         helperText="Descripción que aparecerá en tu perfil público"
         variant={getBioVariant()}
-        leftIcon="👤"
-        rightIcon={bio.length >= 160 ? "🚫" : bio.length > 140 ? "⚠️" : bio.length > 50 ? "✅" : ""}
+        leftIcon="user"
+        rightIcon={bio.length >= 160 ? "x-circle" : bio.length > 140 ? "alert-triangle" : bio.length > 50 ? "check" : ""}
         rounded="xl"
       />
       
@@ -856,7 +856,7 @@ export const IntelligentCounter = () => {
         showCharCount
         helperText="Resumen que aparecerá en la lista de artículos"
         variant={post.length > 450 ? 'warning' : post.length > 100 ? 'success' : 'default'}
-        leftIcon="📝"
+        leftIcon="edit"
         rounded="lg"
       />
     </div>
@@ -896,8 +896,8 @@ export const ResponsiveMobile = () => (
         size="xs" 
         label="XS - Se ajusta en móvil"
         placeholder="Área táctil mínima 44px"
-        leftIcon="📱"
-        rightIcon="👆"
+        leftIcon="smartphone"
+        rightIcon="hand"
         onRightIconClick={() => alert('Área táctil 44px')}
         helperText="Heredado del átomo Input"
       />
@@ -906,7 +906,7 @@ export const ResponsiveMobile = () => (
         size="lg" 
         label="LG - Se reduce en móvil"
         placeholder="Optimizado para touch"
-        leftIcon="🖥️"
+        leftIcon="monitor"
         rightIcon="📱"
         helperText="Responsive automático"
         variant="success"
@@ -917,8 +917,8 @@ export const ResponsiveMobile = () => (
         size="xl" 
         label="XL - iOS optimizado"
         placeholder="Sin zoom en iOS"
-        leftIcon="📲"
-        rightIcon="🍎"
+        leftIcon="phone"
+        rightIcon="apple"
         helperText="font-size: max(1.6rem, 16px)"
         variant="warning"
         rounded="xl"
@@ -977,8 +977,8 @@ export const LoginForm = () => {
         type="email"
         label="Usuario o Email"
         placeholder="tu@ejemplo.com"
-        leftIcon="👤"
-        rightIcon={formData.username ? "✅" : ""}
+        leftIcon="user"
+        rightIcon={formData.username ? "check" : ""}
         value={formData.username}
         onChange={handleChange('username')}
         required
@@ -993,8 +993,8 @@ export const LoginForm = () => {
         type={showPassword ? 'text' : 'password'}
         label="Contraseña"
         placeholder="••••••••"
-        leftIcon="🔒"
-        rightIcon={showPassword ? "🙈" : "👁️"}
+        leftIcon="lock"
+        rightIcon={showPassword ? "eye-off" : "eye"}
         value={formData.password}
         onChange={handleChange('password')}
         onRightIconClick={() => setShowPassword(!showPassword)}
@@ -1069,8 +1069,8 @@ export const SearchInterface = () => {
         type="search"
         label="Términos de búsqueda"
         placeholder="Buscar productos, marcas, categorías..."
-        leftIcon="🔍"
-        rightIcon={searchData.query ? "❌" : "🎯"}
+        leftIcon="search"
+        rightIcon={searchData.query ? "x" : "zap"}
         value={searchData.query}
         onChange={handleChange('query')}
         onLeftIconClick={handleSearch}
@@ -1090,8 +1090,8 @@ export const SearchInterface = () => {
         <TextInput
           label="Categoría"
           placeholder="ej: electrónicos"
-          leftIcon="📂"
-          rightIcon={searchData.category ? "❌" : ""}
+          leftIcon="folder"
+          rightIcon={searchData.category ? "x" : ""}
           value={searchData.category}
           onChange={handleChange('category')}
           onRightIconClick={searchData.category ? () => handleClear('category') : undefined}
@@ -1102,8 +1102,8 @@ export const SearchInterface = () => {
         <TextInput
           label="Tags"
           placeholder="ej: ofertas, nuevo"
-          leftIcon="🏷️"
-          rightIcon={searchData.tags ? "❌" : ""}
+          leftIcon="tag"
+          rightIcon={searchData.tags ? "x" : ""}
           value={searchData.tags}
           onChange={handleChange('tags')}
           onRightIconClick={searchData.tags ? () => handleClear('tags') : undefined}
@@ -1143,7 +1143,7 @@ export const DarkModeExample = () => (
       <TextInput 
         label="Campo normal"
         placeholder="TextInput heredando modo oscuro del átomo" 
-        leftIcon="🌙"
+        leftIcon="moon"
         helperText="Variables CSS automáticas del sistema"
         rounded="lg"
       />
@@ -1151,7 +1151,7 @@ export const DarkModeExample = () => (
       <TextInput 
         label="Campo con error"
         placeholder="Campo con error en modo oscuro" 
-        leftIcon="❌"
+        leftIcon="x"
         errorText="Error con live regions en modo oscuro"
         variant="error"
         rounded="lg"
@@ -1161,8 +1161,8 @@ export const DarkModeExample = () => (
         label="Campo exitoso"
         placeholder="Campo validado en modo oscuro" 
         value="Contenido válido en dark mode"
-        leftIcon="✅"
-        rightIcon="🌟"
+        leftIcon="check"
+        rightIcon="star"
         variant="success"
         helperText="Variante success heredada del átomo"
         readOnly
@@ -1173,7 +1173,7 @@ export const DarkModeExample = () => (
       <TextInput 
         label="Campo con contador"
         placeholder="Escribir en modo oscuro..." 
-        leftIcon="✍️"
+        leftIcon="edit"
         helperText="Contador inteligente en modo oscuro"
         maxLength={50}
         showCharCount

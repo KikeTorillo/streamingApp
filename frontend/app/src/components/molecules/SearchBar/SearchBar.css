@@ -23,19 +23,6 @@
   width: 100%;
 }
 
-/* Variantes de funcionalidad */
-.search-bar--variant-simple .search-bar__input {
-  /* Mantener estilo simple para retrocompatibilidad */
-}
-
-.search-bar--variant-advanced {
-  /* Estilos mejorados para versión avanzada */
-}
-
-.search-bar--variant-compact {
-  /* Versión compacta */
-}
-
 .search-bar--variant-compact .search-bar__input {
   --text-input-padding-vertical: var(--space-xs);
 }
@@ -66,6 +53,7 @@
 .search-bar__input {
   width: 100%;
 }
+
 
 /* ========================================
    Dropdown & Sugerencias

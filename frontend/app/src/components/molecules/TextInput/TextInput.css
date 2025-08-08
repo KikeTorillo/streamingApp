@@ -147,7 +147,6 @@
 
 .text-input__icon--clickable:hover {
     background-color: var(--bg-secondary);
-    color: var(--color-primary);
     transform: translateY(-50%) scale(1.1);
 }
 
@@ -333,6 +332,7 @@
         text-align: right;
     }
 }
+
 
 /* ===== VERSIÓN COMPACTA (ESPECÍFICA DE TEXTINPUT) ===== */
 .text-input-wrapper--compact {

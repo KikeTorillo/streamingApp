@@ -3,6 +3,7 @@ import React, { useState, forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import './TextInput.css';
 import { Input } from '../../atoms/Input/Input';
+import { Icon } from '../../atoms/Icon/Icon';
 
 /**
  * Componente TextInput mejorado - Molécula que extiende el átomo Input
@@ -31,8 +32,8 @@ import { Input } from '../../atoms/Input/Input';
  * @param {string} [props.label] - Etiqueta del campo
  * @param {string} [props.helperText] - Texto de ayuda debajo del input
  * @param {string} [props.errorText] - Mensaje de error (sobrescribe helperText y variant)
- * @param {string|React.ReactNode} [props.leftIcon] - Icono izquierdo
- * @param {string|React.ReactNode} [props.rightIcon] - Icono derecho
+ * @param {string|React.ReactNode} [props.leftIcon] - Icono izquierdo (SOLO nombres de Feather Icons del sistema de diseño o componente React)
+ * @param {string|React.ReactNode} [props.rightIcon] - Icono derecho (SOLO nombres de Feather Icons del sistema de diseño o componente React)
  * @param {function} [props.onRightIconClick] - Handler para click en icono derecho
  * @param {function} [props.onLeftIconClick] - Handler para click en icono izquierdo
  * @param {number} [props.maxLength] - Longitud máxima del texto
@@ -118,22 +119,26 @@ const TextInput = forwardRef(({
         onBlur?.(e);
     };
 
-    // Función para renderizar iconos (mejorada)
+    // Función para renderizar iconos - SOLO sistema de diseño uniforme
     const renderIcon = (icon) => {
+        // Si es un componente React, usarlo tal como viene
         if (React.isValidElement(icon)) {
             return icon;
         }
         
-        if (typeof icon === 'string') {
-            // Detectar clases de iconos
-            if (icon.includes('fa-') || icon.includes('icon-') || icon.includes('bi-') || icon.includes('material-icons')) {
-                return <i className={icon} aria-hidden="true" />;
-            }
-            // Para emojis y texto
-            return <span aria-hidden="true">{icon}</span>;
+        // Si es string, usar SOLO el componente Icon del sistema
+        if (typeof icon === 'string' && icon) {
+            return (
+                <Icon 
+                    name={icon} 
+                    size="sm"
+                    color="current"
+                    aria-hidden="true"
+                />
+            );
         }
         
-        return icon;
+        return null;
     };
 
     // IDs únicos para accesibilidad
@@ -311,6 +316,8 @@ TextInput.propTypes = {
     label: PropTypes.string,
     helperText: PropTypes.string,
     errorText: PropTypes.string,
+    // SOLO acepta nombres de Feather Icons (string) del sistema de diseño o componentes React
+    // No compatible con emojis o clases CSS legacy
     leftIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
     rightIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
     onRightIconClick: PropTypes.func,
