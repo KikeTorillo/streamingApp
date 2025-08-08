@@ -2,7 +2,7 @@
 import { SearchBar } from './SearchBar';
 
 const meta = {
-  title: 'Design System/Molecules/SearchBar',
+  title: 'Components/Molecules/SearchBar',
   component: SearchBar,
   parameters: {
     layout: 'padded',

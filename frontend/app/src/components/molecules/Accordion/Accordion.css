@@ -1,0 +1,336 @@
+/* Accordion.css - Estilos para componente de acordeón */
+
+/* ================================ */
+/* BASE ACCORDION STYLES */
+/* ================================ */
+
+.accordion {
+  --accordion-border-radius: var(--border-radius-md);
+  --accordion-border-color: var(--color-border-primary);
+  --accordion-bg-color: var(--color-bg-primary);
+  --accordion-shadow: var(--shadow-sm);
+  
+  /* Spacing */
+  --accordion-spacing: var(--spacing-md);
+  --accordion-spacing-sm: var(--spacing-sm);
+  --accordion-spacing-lg: var(--spacing-lg);
+  
+  /* Typography */
+  --accordion-title-weight: var(--font-weight-medium);
+  --accordion-subtitle-weight: var(--font-weight-normal);
+  
+  /* Transitions */
+  --accordion-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --accordion-content-transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.accordion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  width: 100%;
+}
+
+/* ================================ */
+/* ACCORDION VARIANTS */
+/* ================================ */
+
+/* Default variant */
+.accordion--variant-default {
+  gap: 2px;
+}
+
+.accordion--variant-default .accordion__item {
+  border: 1px solid var(--accordion-border-color);
+  border-radius: var(--accordion-border-radius);
+  background: var(--accordion-bg-color);
+  box-shadow: var(--accordion-shadow);
+}
+
+/* Bordered variant */
+.accordion--variant-bordered {
+  border: 1px solid var(--accordion-border-color);
+  border-radius: var(--accordion-border-radius);
+  overflow: hidden;
+}
+
+.accordion--variant-bordered .accordion__item {
+  border-bottom: 1px solid var(--accordion-border-color);
+}
+
+.accordion--variant-bordered .accordion__item:last-child {
+  border-bottom: none;
+}
+
+/* Separated variant */
+.accordion--variant-separated {
+  gap: var(--spacing-md);
+}
+
+.accordion--variant-separated .accordion__item {
+  border: 1px solid var(--accordion-border-color);
+  border-radius: var(--accordion-border-radius);
+  background: var(--accordion-bg-color);
+  box-shadow: var(--accordion-shadow);
+}
+
+/* Minimal variant */
+.accordion--variant-minimal .accordion__item {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.accordion--variant-minimal .accordion__header {
+  border-bottom: 1px solid var(--accordion-border-color);
+}
+
+/* ================================ */
+/* SIZE VARIANTS */
+/* ================================ */
+
+.accordion--size-sm {
+  --accordion-spacing: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+}
+
+.accordion--size-md {
+  --accordion-spacing: var(--spacing-md);
+  font-size: var(--font-size-base);
+}
+
+.accordion--size-lg {
+  --accordion-spacing: var(--spacing-lg);
+  font-size: var(--font-size-lg);
+}
+
+/* ================================ */
+/* ACCORDION ITEM */
+/* ================================ */
+
+.accordion__item {
+  position: relative;
+  transition: var(--accordion-transition);
+  overflow: hidden;
+}
+
+.accordion__item--disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* ================================ */
+/* ACCORDION HEADER */
+/* ================================ */
+
+.accordion__header {
+  position: relative;
+}
+
+.accordion__button {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+  padding: var(--accordion-spacing);
+  
+  /* Reset button styles */
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  
+  /* Typography */
+  font-size: inherit;
+  font-family: inherit;
+  text-align: left;
+  
+  /* Transitions */
+  transition: var(--accordion-transition);
+  
+  /* Hover state */
+  &:hover:not(:disabled) {
+    background: var(--color-bg-secondary);
+  }
+  
+  /* Focus state */
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+  }
+  
+  /* Active state */
+  &:active:not(:disabled) {
+    background: var(--color-bg-tertiary);
+  }
+  
+  /* Disabled state */
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+/* ================================ */
+/* ACCORDION CONTENT ELEMENTS */
+/* ================================ */
+
+.accordion__item-icon {
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+}
+
+.accordion__title {
+  flex: 1;
+  font-weight: var(--accordion-title-weight);
+  color: var(--color-text-primary);
+}
+
+.accordion__subtitle {
+  font-weight: var(--accordion-subtitle-weight);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  margin-left: auto;
+}
+
+.accordion__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 var(--spacing-xs);
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+  border-radius: var(--border-radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+}
+
+.accordion__toggle-icon {
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+  transition: transform 0.2s ease-in-out;
+  margin-left: auto;
+}
+
+.accordion__toggle-icon.rotate-180 {
+  transform: rotate(180deg);
+}
+
+/* ================================ */
+/* ACCORDION CONTENT */
+/* ================================ */
+
+.accordion__content {
+  overflow: hidden;
+}
+
+.accordion__content--no-animation {
+  transition: none !important;
+}
+
+.accordion__content-inner {
+  padding: 0 var(--accordion-spacing) var(--accordion-spacing);
+}
+
+/* Spacing adjustments for different variants */
+.accordion--variant-minimal .accordion__content-inner {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.accordion--variant-bordered .accordion__content-inner {
+  border-top: 1px solid var(--accordion-border-color);
+  margin-top: 0;
+}
+
+/* ================================ */
+/* OPEN STATE */
+/* ================================ */
+
+.accordion__item--open .accordion__button {
+  background: var(--color-bg-secondary);
+}
+
+.accordion__item--open .accordion__title {
+  color: var(--color-primary);
+}
+
+/* ================================ */
+/* DARK THEME SUPPORT */
+/* ================================ */
+
+[data-theme="dark"] .accordion {
+  --accordion-border-color: var(--color-border-secondary);
+  --accordion-bg-color: var(--color-bg-secondary);
+  --accordion-shadow: var(--shadow-dark-sm);
+}
+
+[data-theme="dark"] .accordion__button:hover:not(:disabled) {
+  background: var(--color-bg-tertiary);
+}
+
+[data-theme="dark"] .accordion__button:active:not(:disabled) {
+  background: var(--color-bg-quaternary);
+}
+
+[data-theme="dark"] .accordion__item--open .accordion__button {
+  background: var(--color-bg-tertiary);
+}
+
+/* ================================ */
+/* ACCESSIBILITY & REDUCED MOTION */
+/* ================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .accordion__content,
+  .accordion__toggle-icon,
+  .accordion__button {
+    transition: none !important;
+  }
+}
+
+/* ================================ */
+/* RESPONSIVE DESIGN */
+/* ================================ */
+
+@media (max-width: 768px) {
+  .accordion--size-lg {
+    --accordion-spacing: var(--spacing-md);
+    font-size: var(--font-size-base);
+  }
+  
+  .accordion--size-md {
+    --accordion-spacing: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+  }
+  
+  .accordion__button {
+    gap: var(--spacing-xs);
+  }
+  
+  .accordion__subtitle {
+    display: none; /* Hide on mobile for space */
+  }
+}
+
+/* ================================ */
+/* PRINT STYLES */
+/* ================================ */
+
+@media print {
+  .accordion__content {
+    height: auto !important;
+    overflow: visible !important;
+  }
+  
+  .accordion__toggle-icon {
+    display: none;
+  }
+  
+  .accordion__button {
+    cursor: default;
+    background: transparent !important;
+  }
+}

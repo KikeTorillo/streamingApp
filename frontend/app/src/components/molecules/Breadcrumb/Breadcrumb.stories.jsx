@@ -2,7 +2,7 @@
 import { Breadcrumb } from './Breadcrumb';
 
 const meta = {
-  title: 'Design System/Molecules/Breadcrumb',
+  title: 'Components/Molecules/Breadcrumb',
   component: Breadcrumb,
   parameters: {
     layout: 'padded',

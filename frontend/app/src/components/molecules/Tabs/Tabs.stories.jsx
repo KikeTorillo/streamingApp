@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Tabs } from './Tabs';
 
 const meta = {
-  title: 'Design System/Molecules/Tabs',
+  title: 'Components/Molecules/Tabs',
   component: Tabs,
   parameters: {
     layout: 'padded',

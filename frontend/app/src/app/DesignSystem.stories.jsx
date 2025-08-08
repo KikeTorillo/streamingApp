@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import './App.css';
 
 export default {
-  title: 'Design System/Variables',
+  title: 'Components/Variables',
 };
 
 // Componente para mostrar notificaciones de copiado
