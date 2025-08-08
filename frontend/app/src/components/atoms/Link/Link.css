@@ -1,0 +1,294 @@
+/* ===== LINK ATOM STYLES ===== */
+
+.link {
+  /* Base */
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  text-decoration: none;
+  color: inherit;
+  font-family: inherit;
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  position: relative;
+  
+  /* Focus outline */
+  outline: none;
+  
+  /* Reset button/anchor defaults */
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+/* ===== TAMAÑOS ===== */
+.link--size-xs {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-tight);
+  gap: calc(var(--space-xs) * 0.5);
+}
+
+.link--size-sm {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-tight);
+  gap: var(--space-xs);
+}
+
+.link--size-md {
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-normal);
+  gap: var(--space-xs);
+}
+
+.link--size-lg {
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-normal);
+  gap: var(--space-sm);
+}
+
+.link--size-xl {
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height-normal);
+  gap: var(--space-sm);
+}
+
+/* ===== VARIANTES DE COLOR ===== */
+.link--variant-primary {
+  color: var(--color-primary);
+}
+
+.link--variant-primary:hover {
+  color: var(--color-primary-dark);
+}
+
+.link--variant-primary:active {
+  color: var(--color-primary-darker);
+}
+
+.link--variant-secondary {
+  color: var(--color-secondary);
+}
+
+.link--variant-secondary:hover {
+  color: var(--color-secondary-dark);
+}
+
+.link--variant-secondary:active {
+  color: var(--color-secondary-darker);
+}
+
+.link--variant-danger {
+  color: var(--color-danger);
+}
+
+.link--variant-danger:hover {
+  color: var(--color-danger-dark);
+}
+
+.link--variant-danger:active {
+  color: var(--color-danger-darker);
+}
+
+.link--variant-muted {
+  color: var(--text-muted);
+}
+
+.link--variant-muted:hover {
+  color: var(--text-secondary);
+}
+
+.link--variant-muted:active {
+  color: var(--text-primary);
+}
+
+.link--variant-inherit {
+  color: inherit;
+}
+
+.link--variant-inherit:hover {
+  opacity: 0.8;
+}
+
+.link--variant-inherit:active {
+  opacity: 0.6;
+}
+
+/* ===== SUBRAYADO ===== */
+.link--underline {
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.link--underline:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* ===== ESTADO DESHABILITADO ===== */
+.link--disabled {
+  color: var(--text-disabled) !important;
+  cursor: not-allowed !important;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.link--disabled:hover,
+.link--disabled:active,
+.link--disabled:focus {
+  color: var(--text-disabled) !important;
+  text-decoration: none !important;
+}
+
+/* ===== ESTADOS INTERACTIVOS ===== */
+.link:hover {
+  transform: translateY(-1px);
+}
+
+.link:active {
+  transform: translateY(0);
+}
+
+/* Focus visible (navegación por teclado) */
+.link:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ===== ICONOS ===== */
+.link__icon {
+  flex-shrink: 0;
+  transition: transform var(--transition-normal);
+}
+
+.link__icon--left {
+  order: -1;
+}
+
+.link__icon--right {
+  order: 1;
+}
+
+.link:hover .link__icon {
+  transform: scale(1.1);
+}
+
+.link:active .link__icon {
+  transform: scale(0.95);
+}
+
+/* ===== TEXTO ===== */
+.link__text {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ===== ENLACES EXTERNOS ===== */
+.link[target="_blank"]::after {
+  content: "";
+  display: inline-block;
+  width: 0.75em;
+  height: 0.75em;
+  margin-left: var(--space-xs);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6'%3E%3C/path%3E%3Cpolyline points='15,3 21,3 21,9'%3E%3C/polyline%3E%3Cline x1='10' y1='14' x2='21' y2='3'%3E%3C/line%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.7;
+  transition: opacity var(--transition-normal);
+}
+
+.link[target="_blank"]:hover::after {
+  opacity: 1;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  /* En móvil, reducir gaps para ahorrar espacio */
+  .link--size-lg,
+  .link--size-xl {
+    gap: var(--space-xs);
+  }
+  
+  /* Enlaces más fáciles de tocar */
+  .link {
+    min-height: 44px;
+    align-items: center;
+  }
+}
+
+/* ===== MODO OSCURO ===== */
+[data-theme="dark"] .link--variant-primary {
+  color: var(--color-primary-light);
+}
+
+[data-theme="dark"] .link--variant-primary:hover {
+  color: var(--color-primary);
+}
+
+[data-theme="dark"] .link--variant-secondary {
+  color: var(--color-secondary-light);
+}
+
+[data-theme="dark"] .link--variant-secondary:hover {
+  color: var(--color-secondary);
+}
+
+[data-theme="dark"] .link--variant-muted {
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .link--variant-muted:hover {
+  color: var(--text-secondary);
+}
+
+/* ===== ANIMACIONES ESPECIALES ===== */
+.link--with-icon {
+  overflow: hidden;
+}
+
+.link--with-icon .link__icon--right {
+  transition: transform var(--transition-normal);
+}
+
+.link--with-icon:hover .link__icon--right {
+  transform: translateX(2px);
+}
+
+.link--with-icon .link__icon--left {
+  transition: transform var(--transition-normal);
+}
+
+.link--with-icon:hover .link__icon--left {
+  transform: translateX(-2px);
+}
+
+/* ===== HIGH CONTRAST MODE ===== */
+@media (prefers-contrast: high) {
+  .link {
+    text-decoration: underline;
+  }
+  
+  .link:focus-visible {
+    outline: 3px solid;
+    outline-offset: 3px;
+  }
+}
+
+/* ===== REDUCED MOTION ===== */
+@media (prefers-reduced-motion: reduce) {
+  .link,
+  .link__icon {
+    transition: none;
+  }
+  
+  .link:hover {
+    transform: none;
+  }
+  
+  .link:active {
+    transform: none;
+  }
+}

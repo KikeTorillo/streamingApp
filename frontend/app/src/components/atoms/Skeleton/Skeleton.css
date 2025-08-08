@@ -1,0 +1,382 @@
+/* ===== SKELETON ATOM STYLES ===== */
+
+.skeleton {
+  /* Base */
+  display: block;
+  background-color: var(--bg-skeleton, #e5e7eb);
+  border-radius: var(--radius-sm);
+  position: relative;
+  overflow: hidden;
+  
+  /* Eliminamos cualquier contenido de texto */
+  color: transparent;
+  user-select: none;
+  pointer-events: none;
+  
+  /* Base dimensions */
+  min-height: 1em;
+  
+  /* Transition suave */
+  transition: background-color var(--transition-normal);
+}
+
+/* ===== ANIMACIÓN SHIMMER ===== */
+.skeleton--animate::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: shimmer 1.5s infinite ease-in-out;
+  z-index: 1;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* ===== VARIANTES ===== */
+
+/* Text */
+.skeleton--variant-text {
+  height: 1em;
+  border-radius: var(--radius-xs);
+}
+
+/* Avatar */
+.skeleton--variant-avatar {
+  flex-shrink: 0;
+}
+
+/* Image */
+.skeleton--variant-image {
+  width: 100%;
+  border-radius: var(--radius-md);
+}
+
+/* Card */
+.skeleton--variant-card {
+  width: 100%;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+}
+
+/* Custom - sin estilos predefinidos, solo base */
+.skeleton--variant-custom {
+  background-color: var(--bg-skeleton, #e5e7eb);
+}
+
+/* ===== TAMAÑOS ===== */
+
+/* Para text */
+.skeleton--variant-text.skeleton--size-xs {
+  height: 0.75em;
+  font-size: var(--font-size-xs);
+}
+
+.skeleton--variant-text.skeleton--size-sm {
+  height: 0.875em;
+  font-size: var(--font-size-sm);
+}
+
+.skeleton--variant-text.skeleton--size-md {
+  height: 1em;
+  font-size: var(--font-size-md);
+}
+
+.skeleton--variant-text.skeleton--size-lg {
+  height: 1.125em;
+  font-size: var(--font-size-lg);
+}
+
+.skeleton--variant-text.skeleton--size-xl {
+  height: 1.25em;
+  font-size: var(--font-size-xl);
+}
+
+/* Para avatar */
+.skeleton--variant-avatar.skeleton--size-xs {
+  width: 24px;
+  height: 24px;
+}
+
+.skeleton--variant-avatar.skeleton--size-sm {
+  width: 32px;
+  height: 32px;
+}
+
+.skeleton--variant-avatar.skeleton--size-md {
+  width: 40px;
+  height: 40px;
+}
+
+.skeleton--variant-avatar.skeleton--size-lg {
+  width: 48px;
+  height: 48px;
+}
+
+.skeleton--variant-avatar.skeleton--size-xl {
+  width: 64px;
+  height: 64px;
+}
+
+/* Para image */
+.skeleton--variant-image.skeleton--size-xs {
+  height: 120px;
+}
+
+.skeleton--variant-image.skeleton--size-sm {
+  height: 160px;
+}
+
+.skeleton--variant-image.skeleton--size-md {
+  height: 200px;
+}
+
+.skeleton--variant-image.skeleton--size-lg {
+  height: 240px;
+}
+
+.skeleton--variant-image.skeleton--size-xl {
+  height: 320px;
+}
+
+/* Para card */
+.skeleton--variant-card.skeleton--size-xs {
+  height: 120px;
+}
+
+.skeleton--variant-card.skeleton--size-sm {
+  height: 160px;
+}
+
+.skeleton--variant-card.skeleton--size-md {
+  height: 200px;
+}
+
+.skeleton--variant-card.skeleton--size-lg {
+  height: 240px;
+}
+
+.skeleton--variant-card.skeleton--size-xl {
+  height: 320px;
+}
+
+/* ===== FORMAS ===== */
+.skeleton--shape-rectangular {
+  border-radius: 0;
+}
+
+.skeleton--shape-rounded {
+  border-radius: var(--radius-md);
+}
+
+.skeleton--shape-circular {
+  border-radius: 50%;
+}
+
+/* ===== GRUPO DE SKELETONS ===== */
+.skeleton-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.skeleton-group .skeleton {
+  width: 100%;
+}
+
+/* ===== ESTADOS ESPECIALES ===== */
+
+/* Sin animación */
+.skeleton:not(.skeleton--animate) {
+  background-color: var(--bg-skeleton-static, #f3f4f6);
+}
+
+/* Loading state más sutil */
+.skeleton--subtle {
+  background-color: var(--bg-skeleton-subtle, #f9fafb);
+  border: 1px solid var(--border-light);
+}
+
+.skeleton--subtle::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 0, 0, 0.04),
+    transparent
+  );
+}
+
+/* ===== COMPOSICIONES COMUNES ===== */
+
+/* Lista de elementos */
+.skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.skeleton-list-item {
+  display: flex;
+  gap: var(--space-md);
+  align-items: flex-start;
+}
+
+.skeleton-list-item .skeleton--variant-avatar {
+  flex-shrink: 0;
+}
+
+.skeleton-list-item .skeleton-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+/* Grid de cards */
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-lg);
+}
+
+/* Card con contenido */
+.skeleton-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-md);
+}
+
+.skeleton-card-header {
+  display: flex;
+  gap: var(--space-md);
+  align-items: center;
+}
+
+.skeleton-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  /* En móvil, reducir tamaños para optimizar espacio */
+  .skeleton--variant-avatar.skeleton--size-lg {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .skeleton--variant-avatar.skeleton--size-xl {
+    width: 48px;
+    height: 48px;
+  }
+  
+  /* Reducir gaps en grupos */
+  .skeleton-group {
+    gap: calc(var(--space-xs) * 0.5);
+  }
+  
+  .skeleton-list {
+    gap: var(--space-sm);
+  }
+  
+  .skeleton-list-item {
+    gap: var(--space-sm);
+  }
+  
+  /* Grid más compacto */
+  .skeleton-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: var(--space-md);
+  }
+}
+
+/* ===== MODO OSCURO ===== */
+[data-theme="dark"] .skeleton {
+  background-color: var(--bg-skeleton-dark, #374151);
+}
+
+[data-theme="dark"] .skeleton--animate::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+}
+
+[data-theme="dark"] .skeleton:not(.skeleton--animate) {
+  background-color: var(--bg-skeleton-static-dark, #4b5563);
+}
+
+[data-theme="dark"] .skeleton--subtle {
+  background-color: var(--bg-skeleton-subtle-dark, #1f2937);
+  border-color: var(--border-dark);
+}
+
+[data-theme="dark"] .skeleton--variant-card {
+  border-color: var(--border-dark);
+}
+
+/* ===== HIGH CONTRAST MODE ===== */
+@media (prefers-contrast: high) {
+  .skeleton {
+    background-color: #d1d5db;
+    border: 1px solid #9ca3af;
+  }
+  
+  .skeleton--animate::before {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(0, 0, 0, 0.2),
+      transparent
+    );
+  }
+}
+
+/* ===== REDUCED MOTION ===== */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton--animate::before {
+    animation: none;
+  }
+  
+  .skeleton--animate {
+    background-image: linear-gradient(
+      90deg,
+      var(--bg-skeleton, #e5e7eb) 0%,
+      var(--bg-skeleton-light, #f3f4f6) 50%,
+      var(--bg-skeleton, #e5e7eb) 100%
+    );
+  }
+}
+
+/* ===== ACCESIBILIDAD ===== */
+@media (prefers-reduced-motion: no-preference) {
+  .skeleton--animate::before {
+    animation-duration: 1.5s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+}
+
+/* Focus para navegación por teclado (aunque normalmente no debería ser necesario) */
+.skeleton:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}

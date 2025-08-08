@@ -8,6 +8,13 @@
   cursor: pointer;
   position: relative;
   width: 100%;
+  
+  /* 🎨 CONTRASTE SUTIL - Fondo diferenciado del MainPage */
+  background-color: var(--bg-secondary);
+  border: 0.1rem solid var(--border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  
   /* El aspect ratio se manejará en el container de imagen */
 }
 

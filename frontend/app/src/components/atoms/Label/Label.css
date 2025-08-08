@@ -1,0 +1,404 @@
+/* ===== LABEL ATOM STYLES ===== */
+
+.label {
+  /* Base */
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-family: inherit;
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-tight);
+  color: var(--text-primary);
+  cursor: default;
+  position: relative;
+  
+  /* Transiciones suaves */
+  transition: all var(--transition-normal);
+  
+  /* Reset de estilos del navegador */
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== TAMAÑOS ===== */
+.label--size-xs {
+  font-size: var(--font-size-xs);
+  gap: calc(var(--space-xs) * 0.5);
+}
+
+.label--size-sm {
+  font-size: var(--font-size-sm);
+  gap: var(--space-xs);
+}
+
+.label--size-md {
+  font-size: var(--font-size-md);
+  gap: var(--space-xs);
+}
+
+.label--size-lg {
+  font-size: var(--font-size-lg);
+  gap: var(--space-sm);
+}
+
+.label--size-xl {
+  font-size: var(--font-size-xl);
+  gap: var(--space-sm);
+}
+
+/* ===== VARIANTES ===== */
+.label--variant-default {
+  color: var(--text-primary);
+}
+
+.label--variant-primary {
+  color: var(--color-primary);
+}
+
+.label--variant-secondary {
+  color: var(--color-secondary);
+}
+
+.label--variant-success {
+  color: var(--color-success);
+}
+
+.label--variant-warning {
+  color: var(--color-warning);
+}
+
+.label--variant-danger {
+  color: var(--color-danger);
+}
+
+/* ===== ESTADOS ===== */
+
+/* Negrita */
+.label--bold {
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Deshabilitado */
+.label--disabled {
+  color: var(--text-disabled) !important;
+  cursor: not-allowed !important;
+  opacity: 0.6;
+}
+
+.label--disabled .label__icon,
+.label--disabled .label__tooltip-icon {
+  opacity: 0.5;
+}
+
+/* Clickeable */
+.label--clickable {
+  cursor: pointer;
+}
+
+.label--clickable:hover:not(.label--disabled) {
+  opacity: 0.8;
+  transform: translateY(-1px);
+}
+
+.label--clickable:active:not(.label--disabled) {
+  transform: translateY(0);
+}
+
+/* Focus visible para navegación por teclado */
+.label:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ===== CONTENIDO ===== */
+.label__text {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--space-xs) * 0.5);
+  flex: 1;
+}
+
+/* ===== ICONOS ===== */
+.label__icon {
+  flex-shrink: 0;
+  transition: transform var(--transition-normal);
+}
+
+.label__icon--left {
+  order: -1;
+}
+
+.label__icon--right {
+  order: 1;
+}
+
+.label--clickable:hover .label__icon {
+  transform: scale(1.1);
+}
+
+.label--clickable:active .label__icon {
+  transform: scale(0.95);
+}
+
+/* ===== INDICADORES ===== */
+
+/* Required (asterisco) */
+.label__required {
+  color: var(--color-danger);
+  font-weight: var(--font-weight-bold);
+  margin-left: calc(var(--space-xs) * 0.25);
+  font-size: 1.1em;
+  line-height: 1;
+}
+
+/* Optional */
+.label__optional {
+  color: var(--text-muted);
+  font-weight: var(--font-weight-normal);
+  font-size: 0.9em;
+  margin-left: var(--space-xs);
+  font-style: italic;
+}
+
+/* ===== TOOLTIP ===== */
+.label__tooltip-icon {
+  flex-shrink: 0;
+  color: var(--text-muted);
+  cursor: help;
+  transition: color var(--transition-normal);
+  margin-left: var(--space-xs);
+}
+
+.label__tooltip-icon:hover {
+  color: var(--color-primary);
+}
+
+/* ===== INTEGRACIÓN CON INPUTS ===== */
+
+/* Cuando está asociado a un input */
+.label[for] {
+  cursor: pointer;
+}
+
+/* Estilos cuando el input asociado está focused */
+.label[for]:has(+ input:focus),
+.label[for]:has(+ textarea:focus),
+.label[for]:has(+ select:focus) {
+  color: var(--color-primary);
+}
+
+/* Estilos cuando el input asociado tiene error */
+.label[for]:has(+ input:invalid),
+.label[for]:has(+ textarea:invalid),
+.label[for]:has(+ select:invalid) {
+  color: var(--color-danger);
+}
+
+/* ===== AGRUPACIONES COMUNES ===== */
+
+/* Label group (múltiples labels relacionados) */
+.label-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.label-group .label {
+  margin-bottom: var(--space-xs);
+}
+
+/* Label inline (en línea con el input) */
+.label-inline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.label-inline .label {
+  flex-shrink: 0;
+  min-width: fit-content;
+}
+
+/* Label stack (label arriba del input) */
+.label-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  /* En móvil, reducir gaps para ahorrar espacio */
+  .label--size-lg,
+  .label--size-xl {
+    gap: var(--space-xs);
+  }
+  
+  /* Texto opcional más compacto */
+  .label__optional {
+    font-size: 0.8em;
+    margin-left: calc(var(--space-xs) * 0.5);
+  }
+  
+  /* Tooltip icon más pequeño en móvil */
+  .label__tooltip-icon {
+    margin-left: calc(var(--space-xs) * 0.5);
+  }
+  
+  /* Touch-friendly para labels clickeables */
+  .label--clickable {
+    min-height: 44px;
+    padding: var(--space-xs) 0;
+  }
+}
+
+/* ===== MODO OSCURO ===== */
+[data-theme="dark"] .label--variant-default {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .label--variant-primary {
+  color: var(--color-primary-light);
+}
+
+[data-theme="dark"] .label--variant-secondary {
+  color: var(--color-secondary-light);
+}
+
+[data-theme="dark"] .label__optional {
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .label__tooltip-icon {
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .label__tooltip-icon:hover {
+  color: var(--color-primary-light);
+}
+
+/* ===== HIGH CONTRAST MODE ===== */
+@media (prefers-contrast: high) {
+  .label {
+    font-weight: var(--font-weight-semibold);
+  }
+  
+  .label__required {
+    font-weight: var(--font-weight-bold);
+    text-shadow: 0 0 1px currentColor;
+  }
+  
+  .label:focus-visible {
+    outline: 3px solid;
+    outline-offset: 3px;
+  }
+  
+  .label__tooltip-icon {
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    padding: 1px;
+  }
+}
+
+/* ===== REDUCED MOTION ===== */
+@media (prefers-reduced-motion: reduce) {
+  .label,
+  .label__icon,
+  .label__tooltip-icon {
+    transition: none;
+  }
+  
+  .label--clickable:hover {
+    transform: none;
+  }
+  
+  .label--clickable:active {
+    transform: none;
+  }
+}
+
+/* ===== CASOS DE USO ESPECÍFICOS ===== */
+
+/* Label para checkboxes y radios */
+.label--checkbox,
+.label--radio {
+  cursor: pointer;
+  user-select: none;
+}
+
+.label--checkbox:hover:not(.label--disabled),
+.label--radio:hover:not(.label--disabled) {
+  background-color: var(--bg-hover);
+  border-radius: var(--radius-sm);
+  padding: var(--space-xs) var(--space-sm);
+  margin: calc(var(--space-xs) * -1) calc(var(--space-sm) * -1);
+}
+
+/* Label para secciones/fieldsets */
+.label--section {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: var(--space-xs);
+  margin-bottom: var(--space-md);
+  width: 100%;
+}
+
+/* Label con contador de caracteres */
+.label--with-counter {
+  justify-content: space-between;
+  width: 100%;
+}
+
+.label__counter {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  font-weight: var(--font-weight-normal);
+  margin-left: auto;
+}
+
+.label__counter--warning {
+  color: var(--color-warning);
+}
+
+.label__counter--danger {
+  color: var(--color-danger);
+}
+
+/* ===== ANIMACIONES ESPECIALES ===== */
+
+/* Animación de entrada para required */
+@keyframes requiredBounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-3px);
+  }
+  60% {
+    transform: translateY(-1px);
+  }
+}
+
+.label__required {
+  animation: requiredBounce 0.6s ease-in-out;
+}
+
+/* Hover effect para tooltip icon */
+.label__tooltip-icon:hover {
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

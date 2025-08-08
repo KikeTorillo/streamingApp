@@ -1,0 +1,419 @@
+/* ===== DIVIDER ATOM STYLES ===== */
+
+.divider {
+  /* Base */
+  border: none;
+  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+/* ===== ORIENTACIONES ===== */
+
+/* Horizontal (default) */
+.divider--horizontal {
+  width: 100%;
+  height: auto;
+  flex-direction: row;
+  align-items: center;
+}
+
+.divider--horizontal:not(.divider--with-text) {
+  height: 1px; /* Altura mínima para la línea */
+}
+
+/* Vertical */
+.divider--vertical {
+  width: auto;
+  height: 100%;
+  min-height: 20px; /* Altura mínima visible */
+  flex-direction: column;
+  justify-content: center;
+}
+
+.divider--vertical:not(.divider--with-text) {
+  width: 1px; /* Ancho mínimo para la línea */
+}
+
+/* ===== ESPACIADO ===== */
+.divider--spacing-none {
+  margin: 0;
+}
+
+.divider--spacing-xs.divider--horizontal {
+  margin: var(--space-xs) 0;
+}
+
+.divider--spacing-xs.divider--vertical {
+  margin: 0 var(--space-xs);
+}
+
+.divider--spacing-sm.divider--horizontal {
+  margin: var(--space-sm) 0;
+}
+
+.divider--spacing-sm.divider--vertical {
+  margin: 0 var(--space-sm);
+}
+
+.divider--spacing-md.divider--horizontal {
+  margin: var(--space-md) 0;
+}
+
+.divider--spacing-md.divider--vertical {
+  margin: 0 var(--space-md);
+}
+
+.divider--spacing-lg.divider--horizontal {
+  margin: var(--space-lg) 0;
+}
+
+.divider--spacing-lg.divider--vertical {
+  margin: 0 var(--space-lg);
+}
+
+.divider--spacing-xl.divider--horizontal {
+  margin: var(--space-xl) 0;
+}
+
+.divider--spacing-xl.divider--vertical {
+  margin: 0 var(--space-xl);
+}
+
+/* ===== GROSORES ===== */
+
+/* Thin */
+.divider--thickness-thin.divider--horizontal:not(.divider--with-text) {
+  height: 1px;
+}
+
+.divider--thickness-thin.divider--vertical:not(.divider--with-text) {
+  width: 1px;
+}
+
+.divider--thickness-thin .divider__line {
+  border-width: 1px;
+}
+
+/* Normal */
+.divider--thickness-normal.divider--horizontal:not(.divider--with-text) {
+  height: 1px;
+}
+
+.divider--thickness-normal.divider--vertical:not(.divider--with-text) {
+  width: 1px;
+}
+
+.divider--thickness-normal .divider__line {
+  border-width: 1px;
+}
+
+/* Thick */
+.divider--thickness-thick.divider--horizontal:not(.divider--with-text) {
+  height: 2px;
+}
+
+.divider--thickness-thick.divider--vertical:not(.divider--with-text) {
+  width: 2px;
+}
+
+.divider--thickness-thick .divider__line {
+  border-width: 2px;
+}
+
+/* ===== COLORES ===== */
+
+/* Muted (default) */
+.divider--color-muted.divider--horizontal:not(.divider--with-text) {
+  background-color: var(--border-muted);
+}
+
+.divider--color-muted.divider--vertical:not(.divider--with-text) {
+  background-color: var(--border-muted);
+}
+
+.divider--color-muted .divider__line {
+  border-color: var(--border-muted);
+}
+
+.divider--color-muted .divider__text {
+  color: var(--text-muted);
+}
+
+/* Light */
+.divider--color-light.divider--horizontal:not(.divider--with-text) {
+  background-color: var(--border-light);
+}
+
+.divider--color-light.divider--vertical:not(.divider--with-text) {
+  background-color: var(--border-light);
+}
+
+.divider--color-light .divider__line {
+  border-color: var(--border-light);
+}
+
+.divider--color-light .divider__text {
+  color: var(--text-secondary);
+}
+
+/* Primary */
+.divider--color-primary.divider--horizontal:not(.divider--with-text) {
+  background-color: var(--color-primary);
+}
+
+.divider--color-primary.divider--vertical:not(.divider--with-text) {
+  background-color: var(--color-primary);
+}
+
+.divider--color-primary .divider__line {
+  border-color: var(--color-primary);
+}
+
+.divider--color-primary .divider__text {
+  color: var(--color-primary);
+}
+
+/* Secondary */
+.divider--color-secondary.divider--horizontal:not(.divider--with-text) {
+  background-color: var(--color-secondary);
+}
+
+.divider--color-secondary.divider--vertical:not(.divider--with-text) {
+  background-color: var(--color-secondary);
+}
+
+.divider--color-secondary .divider__line {
+  border-color: var(--color-secondary);
+}
+
+.divider--color-secondary .divider__text {
+  color: var(--color-secondary);
+}
+
+/* Danger */
+.divider--color-danger.divider--horizontal:not(.divider--with-text) {
+  background-color: var(--color-danger);
+}
+
+.divider--color-danger.divider--vertical:not(.divider--with-text) {
+  background-color: var(--color-danger);
+}
+
+.divider--color-danger .divider__line {
+  border-color: var(--color-danger);
+}
+
+.divider--color-danger .divider__text {
+  color: var(--color-danger);
+}
+
+/* ===== VARIANTES ===== */
+
+/* Solid (default) - ya definido en colores */
+
+/* Dashed */
+.divider--variant-dashed.divider--horizontal:not(.divider--with-text) {
+  background: none;
+  border-top: 1px dashed;
+  border-color: inherit;
+}
+
+.divider--variant-dashed.divider--vertical:not(.divider--with-text) {
+  background: none;
+  border-left: 1px dashed;
+  border-color: inherit;
+}
+
+.divider--variant-dashed .divider__line {
+  background: none;
+  border-style: dashed;
+}
+
+.divider--variant-dashed.divider--horizontal .divider__line {
+  border-top-style: dashed;
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+}
+
+.divider--variant-dashed.divider--vertical .divider__line {
+  border-left-style: dashed;
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+}
+
+/* Dotted */
+.divider--variant-dotted.divider--horizontal:not(.divider--with-text) {
+  background: none;
+  border-top: 1px dotted;
+  border-color: inherit;
+}
+
+.divider--variant-dotted.divider--vertical:not(.divider--with-text) {
+  background: none;
+  border-left: 1px dotted;
+  border-color: inherit;
+}
+
+.divider--variant-dotted .divider__line {
+  background: none;
+  border-style: dotted;
+}
+
+.divider--variant-dotted.divider--horizontal .divider__line {
+  border-top-style: dotted;
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+}
+
+.divider--variant-dotted.divider--vertical .divider__line {
+  border-left-style: dotted;
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+}
+
+/* Gradient */
+.divider--variant-gradient.divider--horizontal:not(.divider--with-text) {
+  background: linear-gradient(to right, transparent, currentColor, transparent);
+}
+
+.divider--variant-gradient.divider--vertical:not(.divider--with-text) {
+  background: linear-gradient(to bottom, transparent, currentColor, transparent);
+}
+
+.divider--variant-gradient .divider__line {
+  background: currentColor;
+}
+
+.divider--variant-gradient.divider--horizontal .divider__line {
+  background: linear-gradient(to right, transparent, currentColor, transparent);
+}
+
+.divider--variant-gradient.divider--vertical .divider__line {
+  background: linear-gradient(to bottom, transparent, currentColor, transparent);
+}
+
+/* ===== DIVIDER CON TEXTO ===== */
+.divider--with-text {
+  gap: var(--space-md);
+  align-items: center;
+}
+
+.divider__line {
+  flex: 1;
+  height: 1px;
+  border: none;
+  border-top: 1px solid;
+  border-color: inherit;
+  background: none;
+}
+
+.divider__text {
+  flex-shrink: 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  padding: 0 var(--space-sm);
+  background-color: var(--bg-primary);
+  white-space: nowrap;
+}
+
+/* Alineación del texto */
+.divider--text-left .divider__line--before {
+  flex: 0.2;
+}
+
+.divider--text-left .divider__line--after {
+  flex: 1;
+}
+
+.divider--text-right .divider__line--before {
+  flex: 1;
+}
+
+.divider--text-right .divider__line--after {
+  flex: 0.2;
+}
+
+.divider--text-center .divider__line--before,
+.divider--text-center .divider__line--after {
+  flex: 1;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  /* En móvil, reducir espaciado */
+  .divider--spacing-lg.divider--horizontal {
+    margin: var(--space-md) 0;
+  }
+  
+  .divider--spacing-xl.divider--horizontal {
+    margin: var(--space-lg) 0;
+  }
+  
+  /* Texto más pequeño en móvil */
+  .divider__text {
+    font-size: var(--font-size-xs);
+    padding: 0 var(--space-xs);
+  }
+  
+  /* Gap más pequeño */
+  .divider--with-text {
+    gap: var(--space-sm);
+  }
+}
+
+/* ===== MODO OSCURO ===== */
+[data-theme="dark"] .divider__text {
+  background-color: var(--bg-primary);
+}
+
+[data-theme="dark"] .divider--color-muted.divider--horizontal:not(.divider--with-text) {
+  background-color: var(--border-muted);
+}
+
+[data-theme="dark"] .divider--color-muted .divider__line {
+  border-color: var(--border-muted);
+}
+
+[data-theme="dark"] .divider--color-light.divider--horizontal:not(.divider--with-text) {
+  background-color: var(--border-light);
+}
+
+[data-theme="dark"] .divider--color-light .divider__line {
+  border-color: var(--border-light);
+}
+
+/* ===== HIGH CONTRAST MODE ===== */
+@media (prefers-contrast: high) {
+  .divider--horizontal:not(.divider--with-text),
+  .divider--vertical:not(.divider--with-text) {
+    background-color: currentColor;
+  }
+  
+  .divider__line {
+    border-color: currentColor;
+  }
+  
+  .divider__text {
+    font-weight: var(--font-weight-bold);
+    border: 1px solid currentColor;
+    border-radius: var(--radius-sm);
+  }
+}
+
+/* ===== REDUCED MOTION ===== */
+@media (prefers-reduced-motion: reduce) {
+  .divider,
+  .divider__line,
+  .divider__text {
+    transition: none;
+  }
+}
