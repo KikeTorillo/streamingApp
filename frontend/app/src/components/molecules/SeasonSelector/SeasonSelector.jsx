@@ -91,7 +91,7 @@ const SeasonSelector = ({
             <Badge
               variant="secondary"
               size="sm"
-              style="soft"
+              appearance="soft"
             >
               {seasons.length} temporada{seasons.length !== 1 ? 's' : ''}
             </Badge>
@@ -100,7 +100,7 @@ const SeasonSelector = ({
               <Badge
                 variant="primary"
                 size="sm"
-                style="soft"
+                appearance="soft"
               >
                 {totalEpisodes} episodios totales
               </Badge>

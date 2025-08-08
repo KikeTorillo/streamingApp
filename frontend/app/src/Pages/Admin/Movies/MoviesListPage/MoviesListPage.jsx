@@ -99,7 +99,7 @@ function MoviesListPage() {
             <Badge
               variant="info"
               size="xs"
-              style="soft"
+              appearance="soft"
             >
               🎬 Película
             </Badge>
@@ -118,7 +118,7 @@ function MoviesListPage() {
           <Badge
             variant="neutral"
             size="sm"
-            style="soft"
+            appearance="soft"
           >
             📂 {categoryName || 'Sin categoría'}
           </Badge>
@@ -159,7 +159,7 @@ function MoviesListPage() {
             <Badge
               variant={badgeVariant}
               size="xs"
-              style="soft"
+              appearance="soft"
             >
               {timeDisplay}
             </Badge>
@@ -254,7 +254,7 @@ function MoviesListPage() {
               variant="danger"
               size="lg"
               icon="❌"
-              style="soft"
+              appearance="soft"
             >
               {error}
             </Badge>

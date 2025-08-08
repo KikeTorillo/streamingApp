@@ -90,7 +90,7 @@ function SeriesListPage() {
             <Badge 
               variant="warning"
               size="xs"
-              style="soft"
+              appearance="soft"
             >
               📺 Serie
             </Badge>
@@ -109,7 +109,7 @@ function SeriesListPage() {
           <Badge 
             variant="neutral"
             size="sm"
-            style="soft"
+            appearance="soft"
           >
             📂 {categoryName || 'Sin categoría'}
           </Badge>
@@ -138,7 +138,7 @@ function SeriesListPage() {
           <Badge 
             variant={count > 0 ? 'success' : 'neutral'}
             size="sm"
-            style="soft"
+            appearance="soft"
           >
             📹 {count}
           </Badge>
@@ -205,7 +205,7 @@ function SeriesListPage() {
             <Badge 
               variant={badgeVariant}
               size="xs"
-              style="soft"
+              appearance="soft"
             >
               {timeDisplay}
             </Badge>
@@ -274,7 +274,7 @@ function SeriesListPage() {
               variant="danger" 
               size="lg"
               icon="❌"
-              style="soft"
+              appearance="soft"
             >
               {error}
             </Badge>

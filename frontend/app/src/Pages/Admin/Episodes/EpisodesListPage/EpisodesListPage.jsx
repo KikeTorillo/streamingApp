@@ -85,7 +85,7 @@ function EpisodesListPage() {
           <Badge
             variant="primary"
             size="sm"
-            style="soft"
+            appearance="soft"
           >
             📺 {serieName || `Serie #${serieId}`}
           </Badge>
@@ -104,7 +104,7 @@ function EpisodesListPage() {
           <Badge
             variant="warning"
             size="xs"
-            style="soft"
+            appearance="soft"
           >
             T{season}E{episodeNumber}
           </Badge>
@@ -134,7 +134,7 @@ function EpisodesListPage() {
             <Badge
               variant={badgeVariant}
               size="xs"
-              style="soft"
+              appearance="soft"
             >
               {timeDisplay}
             </Badge>
@@ -294,7 +294,7 @@ function EpisodesListPage() {
               variant="danger"
               size="lg"
               icon="❌"
-              style="soft"
+              appearance="soft"
             >
               {seriesError}
             </Badge>
@@ -307,7 +307,7 @@ function EpisodesListPage() {
               variant="danger"
               size="lg"
               icon="❌"
-              style="soft"
+              appearance="soft"
             >
               {error}
             </Badge>

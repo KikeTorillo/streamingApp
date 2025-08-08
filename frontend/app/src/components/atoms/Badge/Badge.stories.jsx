@@ -18,7 +18,7 @@ Perfecto para notificaciones, tags, estados de proceso y clasificación de conte
 ## 🎯 Características principales
 
 - **7 variantes de color**: Primary, Secondary, Success, Warning, Danger, Info, Neutral
-- **4 estilos visuales**: Solid, Soft, Outline, Dot
+- **4 estilos visuales**: Solid, Soft, Outline, Dot (ahora usando prop 'appearance')
 - **5 tamaños**: XS, SM, MD, LG, XL (responsive con área táctil)
 - **Border radius personalizable**: SM, MD, LG, XL, Full
 - **Estados completos**: Normal, Hover, Loading, Disabled, Clickeable
@@ -39,11 +39,21 @@ import { Badge } from './atoms/Badge';
 // Badge con contador
 <Badge variant="danger" pulse>{notificationCount}</Badge>
 
-// Badge con icono
+// Badge con icono (nueva sintaxis)
+<Badge 
+  variant="success" 
+  leftIcon="✅" 
+  appearance="soft"
+>
+  Completado
+</Badge>
+
+// O usando sintaxis legacy
 <Badge 
   variant="success" 
   icon="✅" 
-  style="soft"
+  iconPosition="left"
+  appearance="soft"
 >
   Completado
 </Badge>
@@ -127,9 +137,9 @@ Usa automáticamente las variables del sistema:
         defaultValue: { summary: "'md'" }
       }
     },
-    style: {
-      name: 'Estilo visual',
-      description: 'Estilo de presentación del badge',
+    appearance: {
+      name: 'Apariencia visual',
+      description: 'Estilo de presentación del badge (anteriormente llamado "style")',
       control: 'select',
       options: ['solid', 'soft', 'outline', 'dot'],
       table: {
@@ -147,9 +157,25 @@ Usa automáticamente las variables del sistema:
         defaultValue: { summary: "'full'" }
       }
     },
+    leftIcon: {
+      name: 'Icono Izquierdo',
+      description: 'Icono a mostrar a la izquierda (método preferido)',
+      control: 'text',
+      table: {
+        type: { summary: 'string | ReactNode' }
+      }
+    },
+    rightIcon: {
+      name: 'Icono Derecho',
+      description: 'Icono a mostrar a la derecha (método preferido)',
+      control: 'text',
+      table: {
+        type: { summary: 'string | ReactNode' }
+      }
+    },
     icon: {
-      name: 'Icono',
-      description: 'Icono a mostrar (emoji, clase CSS, componente React)',
+      name: 'Icono (Legacy)',
+      description: 'Icono legacy - usar con iconPosition (usar leftIcon/rightIcon preferentemente)',
       control: 'text',
       table: {
         type: { summary: 'string | ReactNode' }
@@ -202,7 +228,7 @@ Playground.args = {
   children: 'Badge',
   variant: 'primary',
   size: 'md',
-  style: 'solid',
+  appearance: 'solid',
   rounded: 'full'
 };
 
@@ -234,9 +260,9 @@ export const VisualStyles = () => (
         Solid
       </h4>
       <div style={{ display: 'flex', gap: 'var(--space-sm)', flexWrap: 'wrap' }}>
-        <Badge variant="primary" style="solid">Primary</Badge>
-        <Badge variant="success" style="solid">Success</Badge>
-        <Badge variant="danger" style="solid">Danger</Badge>
+        <Badge variant="primary" appearance="solid">Primary</Badge>
+        <Badge variant="success" appearance="solid">Success</Badge>
+        <Badge variant="danger" appearance="solid">Danger</Badge>
       </div>
     </div>
     
@@ -245,9 +271,9 @@ export const VisualStyles = () => (
         Soft
       </h4>
       <div style={{ display: 'flex', gap: 'var(--space-sm)', flexWrap: 'wrap' }}>
-        <Badge variant="primary" style="soft">Primary</Badge>
-        <Badge variant="success" style="soft">Success</Badge>
-        <Badge variant="danger" style="soft">Danger</Badge>
+        <Badge variant="primary" appearance="soft">Primary</Badge>
+        <Badge variant="success" appearance="soft">Success</Badge>
+        <Badge variant="danger" appearance="soft">Danger</Badge>
       </div>
     </div>
     
@@ -256,9 +282,9 @@ export const VisualStyles = () => (
         Outline
       </h4>
       <div style={{ display: 'flex', gap: 'var(--space-sm)', flexWrap: 'wrap' }}>
-        <Badge variant="primary" style="outline">Primary</Badge>
-        <Badge variant="success" style="outline">Success</Badge>
-        <Badge variant="danger" style="outline">Danger</Badge>
+        <Badge variant="primary" appearance="outline">Primary</Badge>
+        <Badge variant="success" appearance="outline">Success</Badge>
+        <Badge variant="danger" appearance="outline">Danger</Badge>
       </div>
     </div>
     
@@ -267,9 +293,9 @@ export const VisualStyles = () => (
         Dot
       </h4>
       <div style={{ display: 'flex', gap: 'var(--space-md)', alignItems: 'center' }}>
-        <Badge variant="primary" style="dot">Online</Badge>
-        <Badge variant="warning" style="dot">Away</Badge>
-        <Badge variant="danger" style="dot" />
+        <Badge variant="primary" appearance="dot">Online</Badge>
+        <Badge variant="warning" appearance="dot">Away</Badge>
+        <Badge variant="danger" appearance="dot" />
       </div>
     </div>
   </div>
@@ -292,16 +318,36 @@ export const AllSizes = () => (
 
 export const WithIcons = () => (
   <div style={{
-    display: 'flex',
-    gap: 'var(--space-md)',
-    alignItems: 'center',
-    flexWrap: 'wrap'
+    display: 'grid',
+    gap: 'var(--space-xl)',
+    gridTemplateColumns: '1fr'
   }}>
-    <Badge variant="success" icon="✅">Completado</Badge>
-    <Badge variant="warning" icon="⏳">En progreso</Badge>
-    <Badge variant="danger" icon="❌">Error</Badge>
-    <Badge variant="info" icon="ℹ️">Información</Badge>
-    <Badge variant="primary" icon="🚀">Lanzar</Badge>
+    {/* Nuevo sistema de iconos */}
+    <div>
+      <h4 style={{ marginBottom: 'var(--space-md)', color: 'var(--text-primary)' }}>
+        Nuevo Sistema de Iconos (leftIcon/rightIcon)
+      </h4>
+      <div style={{ display: 'flex', gap: 'var(--space-md)', alignItems: 'center', flexWrap: 'wrap' }}>
+        <Badge variant="success" leftIcon="✅">Completado</Badge>
+        <Badge variant="warning" rightIcon="⏳">En progreso</Badge>
+        <Badge variant="danger" leftIcon="❌" rightIcon="🔄">Error/Reintentar</Badge>
+        <Badge variant="info" leftIcon="ℹ️">Información</Badge>
+        <Badge variant="primary" rightIcon="🚀">Lanzar</Badge>
+      </div>
+    </div>
+
+    {/* Sistema legacy para compatibilidad */}
+    <div>
+      <h4 style={{ marginBottom: 'var(--space-md)', color: 'var(--text-primary)' }}>
+        Sistema Legacy (icon + iconPosition)
+      </h4>
+      <div style={{ display: 'flex', gap: 'var(--space-md)', alignItems: 'center', flexWrap: 'wrap' }}>
+        <Badge variant="success" icon="✅" iconPosition="left">Completado</Badge>
+        <Badge variant="warning" icon="⏳" iconPosition="right">En progreso</Badge>
+        <Badge variant="danger" icon="❌" iconPosition="left">Error</Badge>
+        <Badge variant="info" icon="ℹ️" iconPosition="right">Información</Badge>
+      </div>
+    </div>
   </div>
 );
 
@@ -332,7 +378,7 @@ export const NotificationsAndCounters = () => {
         <div style={{ display: 'flex', gap: 'var(--space-md)', alignItems: 'center' }}>
           <Badge variant="danger" pulse>Nuevo</Badge>
           <Badge variant="warning" pulse size="sm">!</Badge>
-          <Badge variant="info" pulse icon="🔔">5</Badge>
+          <Badge variant="info" pulse leftIcon="🔔">5</Badge>
         </div>
       </div>
       
@@ -394,7 +440,7 @@ export const InteractiveStates = () => {
             <Badge 
               key={tag}
               variant="info" 
-              style="soft"
+              appearance="soft"
               onRemove={() => removeTag(tag)}
               size="md"
             >
@@ -423,10 +469,10 @@ export const StatusIndicators = () => (
         Estados de Usuario
       </h4>
       <div style={{ display: 'flex', gap: 'var(--space-sm)', flexDirection: 'column', alignItems: 'flex-start' }}>
-        <Badge variant="success" style="dot">Online</Badge>
-        <Badge variant="warning" style="dot">Away</Badge>
-        <Badge variant="danger" style="dot">Busy</Badge>
-        <Badge variant="neutral" style="dot">Offline</Badge>
+        <Badge variant="success" appearance="dot">Online</Badge>
+        <Badge variant="warning" appearance="dot">Away</Badge>
+        <Badge variant="danger" appearance="dot">Busy</Badge>
+        <Badge variant="neutral" appearance="dot">Offline</Badge>
       </div>
     </div>
     
@@ -435,10 +481,10 @@ export const StatusIndicators = () => (
         Estados de Proceso
       </h4>
       <div style={{ display: 'flex', gap: 'var(--space-sm)', flexDirection: 'column', alignItems: 'flex-start' }}>
-        <Badge variant="info" icon="📋">Pendiente</Badge>
-        <Badge variant="warning" icon="⏳">En progreso</Badge>
-        <Badge variant="success" icon="✅">Completado</Badge>
-        <Badge variant="danger" icon="❌">Cancelado</Badge>
+        <Badge variant="info" leftIcon="📋">Pendiente</Badge>
+        <Badge variant="warning" leftIcon="⏳">En progreso</Badge>
+        <Badge variant="success" leftIcon="✅">Completado</Badge>
+        <Badge variant="danger" leftIcon="❌">Cancelado</Badge>
       </div>
     </div>
     
@@ -491,7 +537,7 @@ export const TagSystemExample = () => {
               <Badge 
                 key={tag}
                 variant="primary" 
-                style="soft"
+                appearance="soft"
                 onRemove={() => removeTag(tag)}
                 size="md"
               >
@@ -517,7 +563,7 @@ export const TagSystemExample = () => {
               <Badge 
                 key={tag}
                 variant="neutral" 
-                style="outline"
+                appearance="outline"
                 onClick={() => addTag(tag)}
                 size="md"
               >
@@ -548,9 +594,9 @@ export const DarkModeExample = () => (
           Solid
         </h4>
         <div style={{ display: 'flex', gap: 'var(--space-sm)', flexWrap: 'wrap' }}>
-          <Badge variant="primary" style="solid">Primary</Badge>
-          <Badge variant="success" style="solid">Success</Badge>
-          <Badge variant="danger" style="solid">Danger</Badge>
+          <Badge variant="primary" appearance="solid">Primary</Badge>
+          <Badge variant="success" appearance="solid">Success</Badge>
+          <Badge variant="danger" appearance="solid">Danger</Badge>
         </div>
       </div>
       
@@ -559,9 +605,9 @@ export const DarkModeExample = () => (
           Soft
         </h4>
         <div style={{ display: 'flex', gap: 'var(--space-sm)', flexWrap: 'wrap' }}>
-          <Badge variant="primary" style="soft">Primary</Badge>
-          <Badge variant="success" style="soft">Success</Badge>
-          <Badge variant="danger" style="soft">Danger</Badge>
+          <Badge variant="primary" appearance="soft">Primary</Badge>
+          <Badge variant="success" appearance="soft">Success</Badge>
+          <Badge variant="danger" appearance="soft">Danger</Badge>
         </div>
       </div>
       
@@ -572,14 +618,14 @@ export const DarkModeExample = () => (
         <div style={{ display: 'flex', gap: 'var(--space-sm)', flexWrap: 'wrap' }}>
           <Badge 
             variant="warning" 
-            icon="⚠️"
+            leftIcon="⚠️"
             onClick={() => alert('Badge en modo oscuro')}
           >
             Clickeable
           </Badge>
           <Badge 
             variant="info" 
-            style="soft"
+            appearance="soft"
             onRemove={() => alert('Tag removido')}
           >
             Removible

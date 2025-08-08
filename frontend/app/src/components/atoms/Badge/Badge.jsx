@@ -12,13 +12,15 @@ import './Badge.css';
  * @param {string} [props.text] - Texto del badge (alternativa a children)
  * @param {'primary'|'secondary'|'success'|'warning'|'danger'|'info'|'neutral'} [props.variant='primary'] - Variante visual
  * @param {'xs'|'sm'|'md'|'lg'|'xl'} [props.size='md'] - Tamaño del badge
- * @param {'soft'|'solid'|'outline'|'dot'} [props.style='solid'] - Estilo visual
+ * @param {'soft'|'solid'|'outline'|'dot'} [props.appearance='solid'] - Estilo visual
  * @param {'sm'|'md'|'lg'|'xl'|'full'} [props.rounded='full'] - Radio de bordes
  * @param {string} [props.className=''] - Clases CSS adicionales
  * @param {function} [props.onClick] - Función a ejecutar al hacer clic (hace el badge clickeable)
  * @param {function} [props.onRemove] - Función para remover el badge (muestra X)
- * @param {string|React.ReactNode} [props.icon] - Icono a mostrar
- * @param {'left'|'right'} [props.iconPosition='left'] - Posición del icono
+ * @param {string|React.ReactNode} [props.leftIcon] - Icono izquierdo (preferido)
+ * @param {string|React.ReactNode} [props.rightIcon] - Icono derecho (preferido)
+ * @param {string|React.ReactNode} [props.icon] - Icono legacy (usar con iconPosition)
+ * @param {'left'|'right'} [props.iconPosition='left'] - Posición del icono legacy
  * @param {boolean} [props.pulse=false] - Animación de pulso (útil para notificaciones)
  * @param {boolean} [props.loading=false] - Estado de carga con spinner
  * @param {boolean} [props.disabled=false] - Estado deshabilitado
@@ -32,21 +34,22 @@ const Badge = ({
   text,
   variant = 'primary',
   size = 'md',
-  style = 'solid',
+  appearance = 'solid',
   rounded = 'full',
   className = '',
   onClick,
   onRemove,
-  icon,
-  iconPosition = 'left',
+  leftIcon,
+  rightIcon,
+  icon, // Legacy support
+  iconPosition = 'left', // Legacy support
   pulse = false,
   loading = false,
   disabled = false,
   uppercase = false,
   maxCount = 99,
   ariaLabel,
-  title,
-  ...restProps
+  title
 }) => {
   // Determinar el contenido final del badge
   const badgeContent = children || text || '';
@@ -61,12 +64,18 @@ const Badge = ({
 
   const finalContent = formatCount(badgeContent);
 
+  // Determinar iconos finales (nueva lógica unified)
+  const hasLeftIcon = leftIcon || (icon && iconPosition === 'left');
+  const hasRightIcon = rightIcon || (icon && iconPosition === 'right');
+  const finalLeftIcon = leftIcon || (icon && iconPosition === 'left' ? icon : null);
+  const finalRightIcon = rightIcon || (icon && iconPosition === 'right' ? icon : null);
+
   // Construir clases CSS dinámicamente
   const badgeClasses = [
     'badge',
     `badge--${variant}`,
     `badge--${size}`,
-    `badge--${style}`,
+    `badge--${appearance}`,
     rounded !== 'full' && `badge--rounded-${rounded}`,
     onClick && 'badge--clickable',
     onRemove && 'badge--removable',
@@ -74,8 +83,8 @@ const Badge = ({
     loading && 'badge--loading',
     disabled && 'badge--disabled',
     uppercase && 'badge--uppercase',
-    icon && 'badge--with-icon',
-    !finalContent && style === 'dot' && 'badge--dot-only',
+    (hasLeftIcon || hasRightIcon) && 'badge--with-icon',
+    !finalContent && appearance === 'dot' && 'badge--dot-only',
     className
   ].filter(Boolean).join(' ');
 
@@ -133,28 +142,27 @@ const Badge = ({
       aria-label={finalAriaLabel}
       aria-disabled={disabled}
       title={title}
-      {...restProps}
     >
       {/* Contenido principal del badge */}
       <span className="badge__content">
-        {/* Icono izquierdo */}
-        {icon && iconPosition === 'left' && (
+        {/* Icono izquierdo (nueva lógica unificada) */}
+        {hasLeftIcon && (
           <span className="badge__icon badge__icon--left">
-            {renderIcon(icon)}
+            {renderIcon(finalLeftIcon)}
           </span>
         )}
         
         {/* Texto principal (solo si no es dot-only) */}
-        {finalContent && !(style === 'dot' && !finalContent) && (
+        {finalContent && !(appearance === 'dot' && !finalContent) && (
           <span className="badge__text">
             {finalContent}
           </span>
         )}
         
-        {/* Icono derecho */}
-        {icon && iconPosition === 'right' && (
+        {/* Icono derecho (nueva lógica unificada) */}
+        {hasRightIcon && (
           <span className="badge__icon badge__icon--right">
-            {renderIcon(icon)}
+            {renderIcon(finalRightIcon)}
           </span>
         )}
         
@@ -204,13 +212,15 @@ Badge.propTypes = {
   text: PropTypes.string,
   variant: PropTypes.oneOf(['primary', 'secondary', 'success', 'warning', 'danger', 'info', 'neutral']),
   size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
-  style: PropTypes.oneOf(['soft', 'solid', 'outline', 'dot']),
+  appearance: PropTypes.oneOf(['soft', 'solid', 'outline', 'dot']),
   rounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'full']),
   className: PropTypes.string,
   onClick: PropTypes.func,
   onRemove: PropTypes.func,
-  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
-  iconPosition: PropTypes.oneOf(['left', 'right']),
+  leftIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  rightIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]), // Legacy support
+  iconPosition: PropTypes.oneOf(['left', 'right']), // Legacy support
   pulse: PropTypes.bool,
   loading: PropTypes.bool,
   disabled: PropTypes.bool,

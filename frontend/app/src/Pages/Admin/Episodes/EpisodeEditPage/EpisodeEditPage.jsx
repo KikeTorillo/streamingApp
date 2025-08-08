@@ -386,7 +386,7 @@ function EpisodeEditPage() {
                   <span className="episode-edit__current-info-label">Temporada:</span>
                   <span className="episode-edit__current-info-value">
                     {currentEpisode?.season ? (
-                      <Badge variant="info" size="sm" style="soft">
+                      <Badge variant="info" size="sm" appearance="soft">
                         T{currentEpisode.season}
                       </Badge>
                     ) : 'No cargado'}
@@ -396,7 +396,7 @@ function EpisodeEditPage() {
                   <span className="episode-edit__current-info-label">Episodio:</span>
                   <span className="episode-edit__current-info-value">
                     {currentEpisode?.episode_number ? (
-                      <Badge variant="success" size="sm" style="soft">
+                      <Badge variant="success" size="sm" appearance="soft">
                         E{currentEpisode.episode_number}
                       </Badge>
                     ) : 'No cargado'}

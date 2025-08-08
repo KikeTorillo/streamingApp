@@ -158,7 +158,7 @@ const ContentCard = ({
           <Badge
             variant={type === 'movie' ? 'primary' : 'secondary'}
             size="xs"
-            style="soft"
+            appearance="soft"
           >
             {type === 'movie' ? '🎬' : '📺'}
           </Badge>
@@ -192,7 +192,7 @@ const ContentCard = ({
               <Badge
                 variant="warning"
                 size="xs"
-                style="soft"
+                appearance="soft"
                 icon="⭐"
               >
                 {rating}

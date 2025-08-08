@@ -115,7 +115,7 @@ const EpisodeListItem = ({
               <Badge
                 variant="success"
                 size="xs"
-                style="soft"
+                appearance="soft"
                 icon="✓"
               />
             </div>
@@ -140,7 +140,7 @@ const EpisodeListItem = ({
               <Badge
                 variant="warning"
                 size="xs"
-                style="soft"
+                appearance="soft"
                 icon="⭐"
               >
                 {rating}
