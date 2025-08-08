@@ -1,7 +1,7 @@
 // AppHeader.jsx
 import PropTypes from 'prop-types';
 import { Button } from '../../atoms/Button/Button';
-import { TextInput } from '../../molecules/TextInput/TextInput';
+import { SearchBar } from '../../molecules/SearchBar/SearchBar';
 import { ThemeSelector } from '../../atoms/ThemeSelector';
 import './AppHeader.css';
 
@@ -69,12 +69,11 @@ function AppHeader({
       {/* Búsqueda */}
       {showSearch && (
         <div className="app-header__search">
-          <TextInput
-            type="search"
+          <SearchBar
+            variant="simple"
             placeholder={searchPlaceholder}
             value={searchValue}
             onChange={onSearchChange}
-            leftIcon="🔍"
             size={size === 'lg' ? 'lg' : 'md'}
             className="search-input"
           />

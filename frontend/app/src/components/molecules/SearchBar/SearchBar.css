@@ -1,0 +1,370 @@
+/* ========================================
+   SearchBar - Estilos del Design System
+   ======================================== */
+
+/* Container principal */
+.search-bar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Variantes de tamaño */
+.search-bar--size-xs { max-width: 200px; }
+.search-bar--size-sm { max-width: 280px; }
+.search-bar--size-md { max-width: 400px; }
+.search-bar--size-lg { max-width: 500px; }
+.search-bar--size-xl { max-width: 600px; }
+
+/* Full width override */
+.search-bar--full-width {
+  max-width: 100%;
+  width: 100%;
+}
+
+/* Variantes de funcionalidad */
+.search-bar--variant-simple .search-bar__input {
+  /* Mantener estilo simple para retrocompatibilidad */
+}
+
+.search-bar--variant-advanced {
+  /* Estilos mejorados para versión avanzada */
+}
+
+.search-bar--variant-compact {
+  /* Versión compacta */
+}
+
+.search-bar--variant-compact .search-bar__input {
+  --text-input-padding-vertical: var(--space-xs);
+}
+
+/* Estados del componente */
+.search-bar--expanded {
+  z-index: 100;
+}
+
+.search-bar--dropdown-open {
+  z-index: 101;
+}
+
+.search-bar--loading .search-bar__input {
+  position: relative;
+}
+
+.search-bar--error .search-bar__input {
+  border-color: var(--color-danger-500);
+}
+
+.search-bar--disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Input field styling */
+.search-bar__input {
+  width: 100%;
+}
+
+/* ========================================
+   Dropdown & Sugerencias
+   ======================================== */
+
+.search-bar__dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-lg);
+  margin-top: var(--space-xs);
+  max-height: 400px;
+  overflow-y: auto;
+  
+  /* Animación de entrada */
+  opacity: 0;
+  transform: translateY(-8px);
+  animation: searchDropdownSlideIn 0.2s ease-out forwards;
+}
+
+@keyframes searchDropdownSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Estados de dropdown */
+.search-bar__dropdown-empty,
+.search-bar__dropdown-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-lg);
+  text-align: center;
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-sm);
+}
+
+.search-bar__dropdown-loading svg {
+  animation: spin 1s linear infinite;
+}
+
+/* Contenido del dropdown */
+.search-bar__dropdown-content {
+  padding: var(--space-xs) 0;
+}
+
+/* Secciones (Sugerencias, Historial) */
+.search-bar__suggestions-section,
+.search-bar__history-section {
+  margin-bottom: var(--space-sm);
+}
+
+.search-bar__suggestions-section:last-child,
+.search-bar__history-section:last-child {
+  margin-bottom: 0;
+}
+
+.search-bar__section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--color-border-subtle);
+  background: var(--color-surface-secondary);
+}
+
+/* Items de sugerencias */
+.search-bar__suggestion-item,
+.search-bar__history-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--easing-standard);
+  border-radius: 0;
+}
+
+.search-bar__suggestion-item:hover,
+.search-bar__history-item:hover,
+.search-bar__suggestion-item--selected,
+.search-bar__history-item--selected {
+  background: var(--color-primary-50);
+  color: var(--color-primary-700);
+}
+
+.search-bar__suggestion-text {
+  flex: 1;
+  min-width: 0; /* Para truncate */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-bar__suggestion-category {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-subtle);
+  background: var(--color-surface-tertiary);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--border-radius-full);
+  white-space: nowrap;
+}
+
+/* Historial items styling */
+.search-bar__history-item {
+  font-style: italic;
+  opacity: 0.8;
+}
+
+.search-bar__history-item:hover,
+.search-bar__history-item--selected {
+  opacity: 1;
+}
+
+/* ========================================
+   Shortcuts hint
+   ======================================== */
+
+.search-bar__shortcuts-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-subtle);
+  border-top: 1px solid var(--color-border-subtle);
+  background: var(--color-surface-secondary);
+}
+
+.search-bar__shortcuts-hint kbd {
+  display: inline-block;
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  background: var(--color-surface-tertiary);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--border-radius-sm);
+  box-shadow: var(--shadow-xs);
+}
+
+/* ========================================
+   Error message
+   ======================================== */
+
+.search-bar__error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-top: var(--space-xs);
+  padding: var(--space-sm);
+  color: var(--color-danger-700);
+  background: var(--color-danger-50);
+  border: 1px solid var(--color-danger-200);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-sm);
+}
+
+/* ========================================
+   Responsivo
+   ======================================== */
+
+@media (max-width: 768px) {
+  .search-bar {
+    max-width: 100%;
+  }
+  
+  .search-bar__dropdown {
+    left: var(--space-sm);
+    right: var(--space-sm);
+    max-height: 300px;
+  }
+  
+  .search-bar__suggestion-item,
+  .search-bar__history-item {
+    padding: var(--space-md);
+    font-size: var(--font-size-md);
+  }
+  
+  .search-bar__shortcuts-hint {
+    display: none; /* Ocultar en móvil */
+  }
+}
+
+/* ========================================
+   Dark mode
+   ======================================== */
+
+[data-theme="dark"] .search-bar__dropdown {
+  background: var(--color-surface-elevated);
+  border-color: var(--color-border-subtle);
+  box-shadow: var(--shadow-lg);
+}
+
+[data-theme="dark"] .search-bar__section-title {
+  background: var(--color-surface-secondary);
+  border-color: var(--color-border-subtle);
+}
+
+[data-theme="dark"] .search-bar__suggestion-item:hover,
+[data-theme="dark"] .search-bar__history-item:hover,
+[data-theme="dark"] .search-bar__suggestion-item--selected,
+[data-theme="dark"] .search-bar__history-item--selected {
+  background: var(--color-primary-900);
+  color: var(--color-primary-100);
+}
+
+[data-theme="dark"] .search-bar__suggestion-category {
+  background: var(--color-surface-tertiary);
+}
+
+[data-theme="dark"] .search-bar__shortcuts-hint {
+  background: var(--color-surface-secondary);
+  border-color: var(--color-border-subtle);
+}
+
+[data-theme="dark"] .search-bar__shortcuts-hint kbd {
+  background: var(--color-surface-tertiary);
+  border-color: var(--color-border-subtle);
+}
+
+[data-theme="dark"] .search-bar__error {
+  background: var(--color-danger-900);
+  border-color: var(--color-danger-700);
+  color: var(--color-danger-100);
+}
+
+/* ========================================
+   Accesibilidad
+   ======================================== */
+
+/* Focus visible mejorado */
+.search-bar__suggestion-item:focus-visible,
+.search-bar__history-item:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: -2px;
+  background: var(--color-primary-50);
+}
+
+/* Reducir animaciones si es necesario */
+@media (prefers-reduced-motion: reduce) {
+  .search-bar__dropdown {
+    animation: none;
+  }
+  
+  .search-bar__dropdown-loading svg {
+    animation: none;
+  }
+  
+  .search-bar__suggestion-item,
+  .search-bar__history-item {
+    transition: none;
+  }
+}
+
+/* Alto contraste */
+@media (prefers-contrast: high) {
+  .search-bar__dropdown {
+    border-width: 2px;
+  }
+  
+  .search-bar__section-title {
+    border-bottom-width: 2px;
+  }
+  
+  .search-bar__shortcuts-hint kbd {
+    border-width: 2px;
+  }
+}
+
+/* ========================================
+   Loading animation
+   ======================================== */
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

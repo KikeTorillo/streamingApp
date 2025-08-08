@@ -1,0 +1,434 @@
+/* ========================================
+   Breadcrumb - Estilos del Design System
+   ======================================== */
+
+/* Container principal */
+.breadcrumb {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Lista de breadcrumbs */
+.breadcrumb__list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.breadcrumb__list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+/* ========================================
+   Items de breadcrumb
+   ======================================== */
+
+.breadcrumb__item,
+.breadcrumb__item-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--border-radius-sm);
+  text-decoration: none;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+  transition: all var(--duration-fast) var(--easing-standard);
+  white-space: nowrap;
+}
+
+.breadcrumb__item-link {
+  cursor: pointer;
+}
+
+.breadcrumb__item-link:hover {
+  background: var(--color-surface-secondary);
+  color: var(--color-text-primary);
+}
+
+.breadcrumb__item-link:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Item activo (página actual) */
+.breadcrumb__item--active,
+.breadcrumb__item-link--active {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
+  background: var(--color-surface-tertiary);
+}
+
+.breadcrumb__item-link--active {
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Contenido del item */
+.breadcrumb__item-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-width: 0; /* Para truncate */
+}
+
+.breadcrumb__item-icon {
+  flex-shrink: 0;
+}
+
+.breadcrumb__item-text {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.breadcrumb__loading-icon {
+  animation: spin 1s linear infinite;
+  margin-left: var(--space-xs);
+}
+
+/* ========================================
+   Separadores
+   ======================================== */
+
+.breadcrumb__separator {
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-sm);
+  user-select: none;
+  flex-shrink: 0;
+  padding: 0 var(--space-xs);
+}
+
+/* ========================================
+   Variantes de tamaño
+   ======================================== */
+
+.breadcrumb--size-sm {
+  font-size: var(--font-size-xs);
+}
+
+.breadcrumb--size-sm .breadcrumb__item,
+.breadcrumb--size-sm .breadcrumb__item-link {
+  padding: var(--space-xs);
+  font-size: var(--font-size-xs);
+}
+
+.breadcrumb--size-sm .breadcrumb__separator {
+  font-size: var(--font-size-xs);
+  padding: 0 var(--space-xs);
+}
+
+.breadcrumb--size-md {
+  /* Default styles */
+}
+
+.breadcrumb--size-lg .breadcrumb__item,
+.breadcrumb--size-lg .breadcrumb__item-link {
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-md);
+}
+
+.breadcrumb--size-lg .breadcrumb__separator {
+  font-size: var(--font-size-md);
+  padding: 0 var(--space-sm);
+}
+
+/* ========================================
+   Variantes de estilo
+   ======================================== */
+
+/* Variante default - Con fondos y bordes suaves */
+.breadcrumb--variant-default {
+  /* Estilos por defecto ya aplicados */
+}
+
+/* Variante simple - Solo texto, sin fondos */
+.breadcrumb--variant-simple .breadcrumb__item,
+.breadcrumb--variant-simple .breadcrumb__item-link {
+  background: transparent;
+  padding: var(--space-xs) 0;
+}
+
+.breadcrumb--variant-simple .breadcrumb__item-link:hover {
+  background: transparent;
+  color: var(--color-primary-600);
+}
+
+.breadcrumb--variant-simple .breadcrumb__item--active {
+  background: transparent;
+}
+
+/* Variante compact - Espaciado mínimo */
+.breadcrumb--variant-compact .breadcrumb__list {
+  gap: 2px;
+}
+
+.breadcrumb--variant-compact .breadcrumb__item,
+.breadcrumb--variant-compact .breadcrumb__item-link {
+  padding: var(--space-xs);
+}
+
+.breadcrumb--variant-compact .breadcrumb__separator {
+  padding: 0 var(--space-xs);
+}
+
+/* ========================================
+   Dropdown para items colapsados
+   ======================================== */
+
+.breadcrumb__collapsed-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.breadcrumb__collapsed-trigger {
+  min-width: auto;
+  padding: var(--space-xs) var(--space-sm);
+}
+
+.breadcrumb__collapsed-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  min-width: 180px;
+  max-width: 300px;
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-lg);
+  margin-top: var(--space-xs);
+  
+  /* Animación de entrada */
+  opacity: 0;
+  transform: translateY(-8px);
+  animation: breadcrumbDropdownSlideIn 0.2s ease-out forwards;
+}
+
+@keyframes breadcrumbDropdownSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.breadcrumb__collapsed-list {
+  padding: var(--space-xs) 0;
+}
+
+.breadcrumb__collapsed-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  transition: all var(--duration-fast) var(--easing-standard);
+}
+
+.breadcrumb__collapsed-item:hover {
+  background: var(--color-primary-50);
+  color: var(--color-primary-700);
+}
+
+.breadcrumb__collapsed-item:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: -2px;
+}
+
+/* ========================================
+   Estados del componente
+   ======================================== */
+
+.breadcrumb--disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.breadcrumb--loading {
+  position: relative;
+}
+
+.breadcrumb--collapsed .breadcrumb__item-text {
+  max-width: 120px; /* Truncate más agresivo en collapsed */
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+@media (max-width: 768px) {
+  .breadcrumb__list {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: var(--space-xs);
+  }
+  
+  .breadcrumb__list::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .breadcrumb__item-text {
+    max-width: 100px;
+  }
+  
+  .breadcrumb__collapsed-menu {
+    right: 0;
+    left: auto;
+    min-width: 160px;
+  }
+}
+
+@media (max-width: 480px) {
+  .breadcrumb--variant-default {
+    /* En mobile muy pequeño, comportarse como simple */
+  }
+  
+  .breadcrumb__item,
+  .breadcrumb__item-link {
+    padding: var(--space-xs);
+  }
+  
+  .breadcrumb__item-text {
+    max-width: 80px;
+  }
+  
+  .breadcrumb__separator {
+    padding: 0 var(--space-xs);
+  }
+  
+  /* Ocultar iconos en mobile muy pequeño si es necesario */
+  .breadcrumb--size-sm .breadcrumb__item-icon {
+    display: none;
+  }
+}
+
+/* ========================================
+   Dark mode
+   ======================================== */
+
+[data-theme="dark"] .breadcrumb__item-link:hover {
+  background: var(--color-surface-tertiary);
+}
+
+[data-theme="dark"] .breadcrumb__item--active {
+  background: var(--color-surface-tertiary);
+}
+
+[data-theme="dark"] .breadcrumb__collapsed-menu {
+  background: var(--color-surface-elevated);
+  border-color: var(--color-border-subtle);
+}
+
+[data-theme="dark"] .breadcrumb__collapsed-item:hover {
+  background: var(--color-primary-900);
+  color: var(--color-primary-100);
+}
+
+/* ========================================
+   Accesibilidad
+   ======================================== */
+
+/* Focus visible mejorado */
+.breadcrumb__item-link:focus-visible,
+.breadcrumb__collapsed-item:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Alto contraste */
+@media (prefers-contrast: high) {
+  .breadcrumb__item,
+  .breadcrumb__item-link {
+    border: 1px solid var(--color-border-subtle);
+  }
+  
+  .breadcrumb__collapsed-menu {
+    border-width: 2px;
+  }
+}
+
+/* Reducir animaciones si es necesario */
+@media (prefers-reduced-motion: reduce) {
+  .breadcrumb__loading-icon {
+    animation: none;
+  }
+  
+  .breadcrumb__collapsed-menu {
+    animation: none;
+  }
+  
+  .breadcrumb__item-link,
+  .breadcrumb__collapsed-item {
+    transition: none;
+  }
+}
+
+/* ========================================
+   Utilidades adicionales
+   ======================================== */
+
+/* Para cuando el breadcrumb está en un header */
+.app-header .breadcrumb {
+  margin: 0;
+}
+
+.app-header .breadcrumb__item,
+.app-header .breadcrumb__item-link {
+  color: inherit;
+}
+
+/* Para páginas con mucho contenido, sticky breadcrumb */
+.breadcrumb--sticky {
+  position: sticky;
+  top: 0;
+  background: var(--color-surface-primary);
+  border-bottom: 1px solid var(--color-border-subtle);
+  padding: var(--space-sm) 0;
+  margin-bottom: var(--space-md);
+  z-index: 10;
+}
+
+/* ========================================
+   Animaciones
+   ======================================== */
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Animación de entrada para nuevos items */
+.breadcrumb__item,
+.breadcrumb__item-link {
+  animation: breadcrumbItemFadeIn 0.3s ease-out;
+}
+
+@keyframes breadcrumbItemFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

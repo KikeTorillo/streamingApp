@@ -1,0 +1,493 @@
+/* ========================================
+   Tabs - Estilos del Design System
+   ======================================== */
+
+/* Container principal */
+.tabs {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Orientación vertical */
+.tabs--orientation-vertical {
+  flex-direction: row;
+}
+
+.tabs--orientation-vertical .tabs__header {
+  flex-direction: column;
+  width: auto;
+  min-width: 200px;
+}
+
+.tabs--orientation-vertical .tabs__list {
+  flex-direction: column;
+  width: 100%;
+}
+
+.tabs--orientation-vertical .tabs__content {
+  flex: 1;
+  margin-left: var(--space-md);
+  margin-top: 0;
+}
+
+/* ========================================
+   Header y Lista de Tabs
+   ======================================== */
+
+.tabs__header {
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-bottom: var(--space-md);
+}
+
+.tabs__list {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.tabs__list::-webkit-scrollbar {
+  display: none;
+}
+
+/* Equal width tabs */
+.tabs--equal-width .tabs__list {
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+}
+
+/* ========================================
+   Tabs individuales
+   ======================================== */
+
+.tabs__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  font-family: inherit;
+  line-height: 1.4;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--easing-standard);
+  position: relative;
+  border-radius: 0;
+}
+
+.tabs__tab:hover:not(:disabled):not(.tabs__tab--active) {
+  color: var(--color-text-primary);
+  background: var(--color-surface-secondary);
+}
+
+.tabs__tab:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  z-index: 1;
+}
+
+.tabs__tab--active {
+  color: var(--color-primary-600);
+  font-weight: var(--font-weight-semibold);
+}
+
+.tabs__tab--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Contenido del tab */
+.tabs__tab-icon {
+  flex-shrink: 0;
+}
+
+.tabs__tab-text {
+  flex-shrink: 0;
+}
+
+.tabs__tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 var(--space-xs);
+  background: var(--color-surface-tertiary);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--border-radius-full);
+  line-height: 1;
+}
+
+.tabs__tab--active .tabs__tab-badge {
+  background: var(--color-primary-100);
+  color: var(--color-primary-700);
+}
+
+.tabs__loading-icon {
+  animation: spin 1s linear infinite;
+  margin-left: var(--space-xs);
+}
+
+/* ========================================
+   Variantes de tabs
+   ======================================== */
+
+/* Variante Line (default) */
+.tabs--variant-line .tabs__list {
+  border-bottom: 2px solid var(--color-border-subtle);
+}
+
+.tabs--variant-line .tabs__tab {
+  margin-bottom: -2px;
+  border-bottom: 2px solid transparent;
+  border-radius: var(--border-radius-sm) var(--border-radius-sm) 0 0;
+}
+
+.tabs--variant-line .tabs__tab--active {
+  border-bottom-color: var(--color-primary-500);
+  background: var(--color-surface-primary);
+}
+
+.tabs--variant-line .tabs__tab:hover:not(:disabled):not(.tabs__tab--active) {
+  border-bottom-color: var(--color-border-default);
+}
+
+/* Variante Pills */
+.tabs--variant-pills .tabs__list {
+  gap: var(--space-xs);
+}
+
+.tabs--variant-pills .tabs__tab {
+  border-radius: var(--border-radius-full);
+  background: var(--color-surface-secondary);
+}
+
+.tabs--variant-pills .tabs__tab--active {
+  background: var(--color-primary-500);
+  color: var(--color-white);
+}
+
+.tabs--variant-pills .tabs__tab--active .tabs__tab-badge {
+  background: var(--color-white);
+  color: var(--color-primary-600);
+}
+
+.tabs--variant-pills .tabs__tab:hover:not(:disabled):not(.tabs__tab--active) {
+  background: var(--color-surface-tertiary);
+}
+
+/* Variante Card */
+.tabs--variant-card .tabs__list {
+  gap: var(--space-xs);
+}
+
+.tabs--variant-card .tabs__tab {
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--border-radius-md);
+  background: var(--color-surface-secondary);
+}
+
+.tabs--variant-card .tabs__tab--active {
+  background: var(--color-surface-primary);
+  border-color: var(--color-primary-300);
+  box-shadow: var(--shadow-sm);
+}
+
+.tabs--variant-card .tabs__tab:hover:not(:disabled):not(.tabs__tab--active) {
+  border-color: var(--color-border-default);
+  background: var(--color-surface-tertiary);
+}
+
+/* ========================================
+   Tamaños
+   ======================================== */
+
+.tabs--size-sm .tabs__tab {
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-xs);
+}
+
+.tabs--size-sm .tabs__tab-badge {
+  min-width: 1rem;
+  height: 1rem;
+  font-size: 0.625rem;
+}
+
+.tabs--size-md .tabs__tab {
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-sm);
+}
+
+.tabs--size-lg .tabs__tab {
+  padding: var(--space-md) var(--space-lg);
+  font-size: var(--font-size-md);
+}
+
+.tabs--size-lg .tabs__tab-badge {
+  min-width: 1.5rem;
+  height: 1.5rem;
+  font-size: var(--font-size-sm);
+}
+
+/* ========================================
+   Scroll buttons
+   ======================================== */
+
+.tabs__scroll-button {
+  flex-shrink: 0;
+  min-width: auto;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--border-radius-sm);
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: var(--shadow-xs);
+}
+
+.tabs__scroll-button--left {
+  margin-right: var(--space-xs);
+}
+
+.tabs__scroll-button--right {
+  margin-left: var(--space-xs);
+}
+
+.tabs__scroll-button:disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* ========================================
+   Contenido del tab
+   ======================================== */
+
+.tabs__content {
+  flex: 1;
+  min-height: 0; /* Para que funcione el scroll en contenido */
+}
+
+/* ========================================
+   Estados del componente
+   ======================================== */
+
+.tabs--disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.tabs--loading .tabs__tab:not(.tabs__tab--active) {
+  opacity: 0.7;
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+@media (max-width: 768px) {
+  .tabs__header {
+    margin-bottom: var(--space-sm);
+  }
+  
+  .tabs__tab {
+    padding: var(--space-sm);
+    font-size: var(--font-size-xs);
+  }
+  
+  .tabs--size-lg .tabs__tab {
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--font-size-sm);
+  }
+  
+  /* En mobile, force scrollable */
+  .tabs__list {
+    overflow-x: auto;
+  }
+  
+  /* Ocultar badges en mobile si es necesario para ahorrar espacio */
+  .tabs--size-sm .tabs__tab-badge {
+    display: none;
+  }
+  
+  /* Orientación vertical no recomendada en mobile */
+  .tabs--orientation-vertical {
+    flex-direction: column;
+  }
+  
+  .tabs--orientation-vertical .tabs__header {
+    flex-direction: row;
+    width: 100%;
+    min-width: 0;
+  }
+  
+  .tabs--orientation-vertical .tabs__list {
+    flex-direction: row;
+    width: auto;
+  }
+  
+  .tabs--orientation-vertical .tabs__content {
+    margin-left: 0;
+    margin-top: var(--space-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .tabs__tab {
+    padding: var(--space-xs) var(--space-sm);
+    min-width: 0;
+  }
+  
+  .tabs__tab-text {
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* Ocultar iconos en mobile muy pequeño si es necesario */
+  .tabs--size-sm .tabs__tab-icon {
+    display: none;
+  }
+}
+
+/* ========================================
+   Dark mode
+   ======================================== */
+
+[data-theme="dark"] .tabs--variant-line .tabs__list {
+  border-bottom-color: var(--color-border-subtle);
+}
+
+[data-theme="dark"] .tabs--variant-line .tabs__tab--active {
+  background: var(--color-surface-primary);
+}
+
+[data-theme="dark"] .tabs--variant-pills .tabs__tab {
+  background: var(--color-surface-tertiary);
+}
+
+[data-theme="dark"] .tabs--variant-card .tabs__tab {
+  background: var(--color-surface-tertiary);
+  border-color: var(--color-border-subtle);
+}
+
+[data-theme="dark"] .tabs--variant-card .tabs__tab--active {
+  background: var(--color-surface-primary);
+  border-color: var(--color-primary-700);
+}
+
+[data-theme="dark"] .tabs__scroll-button {
+  background: var(--color-surface-elevated);
+  border-color: var(--color-border-subtle);
+}
+
+[data-theme="dark"] .tabs__tab-badge {
+  background: var(--color-surface-quaternary);
+}
+
+/* ========================================
+   Accesibilidad
+   ======================================== */
+
+/* Focus visible mejorado */
+.tabs__tab:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Alto contraste */
+@media (prefers-contrast: high) {
+  .tabs--variant-line .tabs__tab--active {
+    border-bottom-width: 3px;
+  }
+  
+  .tabs--variant-pills .tabs__tab,
+  .tabs--variant-card .tabs__tab {
+    border-width: 2px;
+  }
+  
+  .tabs__scroll-button {
+    border-width: 2px;
+  }
+}
+
+/* Reducir animaciones si es necesario */
+@media (prefers-reduced-motion: reduce) {
+  .tabs__loading-icon {
+    animation: none;
+  }
+  
+  .tabs__tab,
+  .tabs__list {
+    transition: none;
+  }
+  
+  .tabs__list {
+    scroll-behavior: auto;
+  }
+}
+
+/* ========================================
+   Animaciones
+   ======================================== */
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Animación de entrada para tabs */
+.tabs__tab {
+  animation: tabFadeIn 0.3s ease-out;
+}
+
+@keyframes tabFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   Utilidades específicas
+   ======================================== */
+
+/* Para contenido que necesita scroll interno */
+.tabs__content--scrollable {
+  overflow-y: auto;
+  max-height: 400px; /* O la altura que necesites */
+}
+
+/* Para tabs en modales o espacios reducidos */
+.tabs--compact {
+  margin: 0;
+}
+
+.tabs--compact .tabs__header {
+  margin-bottom: var(--space-sm);
+}
+
+.tabs--compact .tabs__tab {
+  padding: var(--space-xs) var(--space-sm);
+}
