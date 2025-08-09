@@ -1,5 +1,6 @@
 // src/components/atoms/Button/Button.jsx
 import PropTypes from 'prop-types';
+import { createStandardIconRenderer } from '../../../utils/iconHelpers';
 import './Button.css';
 
 /**
@@ -7,7 +8,7 @@ import './Button.css';
  * 
  * ✅ EXPORT CONVENTION: Patrón function + export { Name }
  * ✅ PROPS ESTÁNDAR: 5 tamaños + 4 variantes + props obligatorias
- * ✅ SISTEMA DE DISEÑO: Variables CSS del sistema
+ * ✅ SISTEMA DE DISEÑO: Variables CSS + iconos centralizados con createIconRenderer
  * ✅ ACCESIBILIDAD: ARIA completo, focus management
  * ✅ ATOMIC DESIGN: Átomo independiente y reutilizable
  * 
@@ -20,9 +21,9 @@ import './Button.css';
  * @param {boolean} [props.disabled=false] - Si está deshabilitado
  * @param {boolean} [props.loading=false] - Estado de carga con spinner
  * @param {boolean} [props.fullWidth=false] - Ocupa todo el ancho
- * @param {string|React.ReactNode} [props.icon] - Icono del botón (método original)
- * @param {string|React.ReactNode} [props.leftIcon] - Icono izquierdo (método simplificado)
- * @param {string|React.ReactNode} [props.rightIcon] - Icono derecho (método simplificado)
+ * @param {string|React.ReactNode} [props.icon] - Icono del botón (string: nombre del icono del sistema de diseño | node: componente React custom)
+ * @param {string|React.ReactNode} [props.leftIcon] - Icono izquierdo (string: nombre del icono | node: componente custom)
+ * @param {string|React.ReactNode} [props.rightIcon] - Icono derecho (string: nombre del icono | node: componente custom)
  * @param {'left'|'right'} [props.iconPosition='left'] - Posición del icono (usado con prop icon)
  * @param {boolean} [props.iconOnly=false] - Solo muestra el icono
  * @param {'button'|'submit'|'reset'} [props.type='button'] - Tipo HTML
@@ -89,18 +90,8 @@ function Button({
   // Props de accesibilidad
   const finalAriaLabel = ariaLabel || (iconOnly && typeof buttonContent === 'string' ? buttonContent : undefined);
 
-  // Función para renderizar iconos
-  const renderIcon = (iconProp) => {
-    if (!iconProp) return null;
-    
-    // Si es un string, asumimos que es emoji, clase CSS o texto
-    if (typeof iconProp === 'string') {
-      return iconProp;
-    }
-    
-    // Si es un componente React, lo renderizamos directamente
-    return iconProp;
-  };
+  // Función para renderizar iconos usando el sistema centralizado
+  const renderIcon = createStandardIconRenderer('button', size);
 
   // Handler de click
   const handleClick = (e) => {

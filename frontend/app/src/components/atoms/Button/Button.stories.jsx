@@ -313,7 +313,7 @@ export const Interactive = () => (
     
     <Button 
       variant="success"
-      icon="🚀"
+      icon="zap"
       onClick={() => alert('¡Lanzamiento exitoso!')}
     >
       Lanzar cohete
@@ -321,7 +321,7 @@ export const Interactive = () => (
     
     <Button 
       iconOnly
-      icon="❤️"
+      icon="heart"
       ariaLabel="Me gusta"
       size="lg"
       onClick={() => alert('¡Te gusta!')}
@@ -356,7 +356,7 @@ export const Accessibility = () => (
   }}>
     <Button 
       ariaLabel="Guardar documento actual"
-      icon="💾"
+      icon="save"
       size="lg"
     >
       Guardar
@@ -364,7 +364,7 @@ export const Accessibility = () => (
     
     <Button 
       iconOnly
-      icon="🗑️"
+      icon="trash"
       ariaLabel="Eliminar elemento seleccionado"
       variant="error"
       size="lg"

@@ -76,7 +76,7 @@ function MoviesListPage() {
             alt={`Portada de ${title}`}
             aspectRatio="2/3"
             contentType="movie"
-            placeholder="🎬"
+            placeholder="film"
             rounded="md"
             showFallback={true}
           />
@@ -100,8 +100,9 @@ function MoviesListPage() {
               variant="info"
               size="xs"
               appearance="soft"
+              leftIcon="film"
             >
-              🎬 Película
+              Película
             </Badge>
           </div>
         );
@@ -119,8 +120,9 @@ function MoviesListPage() {
             variant="neutral"
             size="sm"
             appearance="soft"
+            leftIcon="folder"
           >
-            📂 {categoryName || 'Sin categoría'}
+            {categoryName || 'Sin categoría'}
           </Badge>
         );
       }
@@ -225,7 +227,7 @@ function MoviesListPage() {
           <Button
             variant="outline"
             size="sm"
-            leftIcon="🔄"
+            leftIcon="refresh"
             onClick={handleRefresh}
             loading={loading}
             disabled={loading}
@@ -236,7 +238,7 @@ function MoviesListPage() {
             variant="primary"
             size="sm"
             onClick={handleCreateMovie}
-            leftIcon="➕"
+            leftIcon="plus"
           >
             Agregar Contenido
           </Button>
@@ -253,7 +255,7 @@ function MoviesListPage() {
             <Badge
               variant="danger"
               size="lg"
-              icon="❌"
+              leftIcon="x"
               appearance="soft"
             >
               {error}
@@ -271,12 +273,12 @@ function MoviesListPage() {
           deleting={deleting}
           emptyTitle="No hay películas registradas"
           emptyDescription="Comienza agregando tu primera película o serie"
-          emptyIcon="🎬"
+          emptyIcon="film"
           emptyAction={
             <Button
               variant="primary"
               onClick={handleCreateMovie}
-              leftIcon="➕"
+              leftIcon="plus"
             >
               Agregar Primera Película
             </Button>

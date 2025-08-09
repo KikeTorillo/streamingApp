@@ -42,7 +42,7 @@ import { Badge } from './atoms/Badge';
 // Badge con icono (nueva sintaxis)
 <Badge 
   variant="success" 
-  leftIcon="✅" 
+  leftIcon="check" 
   appearance="soft"
 >
   Completado
@@ -328,11 +328,11 @@ export const WithIcons = () => (
         Nuevo Sistema de Iconos (leftIcon/rightIcon)
       </h4>
       <div style={{ display: 'flex', gap: 'var(--space-md)', alignItems: 'center', flexWrap: 'wrap' }}>
-        <Badge variant="success" leftIcon="✅">Completado</Badge>
-        <Badge variant="warning" rightIcon="⏳">En progreso</Badge>
-        <Badge variant="danger" leftIcon="❌" rightIcon="🔄">Error/Reintentar</Badge>
-        <Badge variant="info" leftIcon="ℹ️">Información</Badge>
-        <Badge variant="primary" rightIcon="🚀">Lanzar</Badge>
+        <Badge variant="success" leftIcon="check">Completado</Badge>
+        <Badge variant="warning" rightIcon="clock">En progreso</Badge>
+        <Badge variant="danger" leftIcon="x" rightIcon="refresh">Error/Reintentar</Badge>
+        <Badge variant="info" leftIcon="info">Información</Badge>
+        <Badge variant="primary" rightIcon="zap">Lanzar</Badge>
       </div>
     </div>
 
@@ -378,7 +378,7 @@ export const NotificationsAndCounters = () => {
         <div style={{ display: 'flex', gap: 'var(--space-md)', alignItems: 'center' }}>
           <Badge variant="danger" pulse>Nuevo</Badge>
           <Badge variant="warning" pulse size="sm">!</Badge>
-          <Badge variant="info" pulse leftIcon="🔔">5</Badge>
+          <Badge variant="info" pulse leftIcon="bell">5</Badge>
         </div>
       </div>
       
@@ -481,10 +481,10 @@ export const StatusIndicators = () => (
         Estados de Proceso
       </h4>
       <div style={{ display: 'flex', gap: 'var(--space-sm)', flexDirection: 'column', alignItems: 'flex-start' }}>
-        <Badge variant="info" leftIcon="📋">Pendiente</Badge>
-        <Badge variant="warning" leftIcon="⏳">En progreso</Badge>
-        <Badge variant="success" leftIcon="✅">Completado</Badge>
-        <Badge variant="danger" leftIcon="❌">Cancelado</Badge>
+        <Badge variant="info" leftIcon="file">Pendiente</Badge>
+        <Badge variant="warning" leftIcon="clock">En progreso</Badge>
+        <Badge variant="success" leftIcon="check">Completado</Badge>
+        <Badge variant="danger" leftIcon="x">Cancelado</Badge>
       </div>
     </div>
     
@@ -618,7 +618,7 @@ export const DarkModeExample = () => (
         <div style={{ display: 'flex', gap: 'var(--space-sm)', flexWrap: 'wrap' }}>
           <Badge 
             variant="warning" 
-            leftIcon="⚠️"
+            leftIcon="alert"
             onClick={() => alert('Badge en modo oscuro')}
           >
             Clickeable

@@ -99,7 +99,6 @@ function FilterBar({
                 className="filter-bar__category-button"
                 disabled={disabled}
               >
-                {category.icon && <span className="category-icon">{category.icon}</span>}
                 {category.label}
               </Button>
             ))}
@@ -121,7 +120,6 @@ FilterBar.propTypes = {
   categories: PropTypes.arrayOf(PropTypes.shape({
     value: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
-    icon: PropTypes.string
   })),
   selectedCategory: PropTypes.string,
   onCategoryChange: PropTypes.func,

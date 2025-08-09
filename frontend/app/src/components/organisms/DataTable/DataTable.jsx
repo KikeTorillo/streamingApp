@@ -17,6 +17,7 @@ import { TextInput } from '../../molecules/TextInput/TextInput';
 import { Select } from '../../atoms/Select/Select';
 import { EmptyState } from '../../molecules/EmptyState/EmptyState';
 import { ActionsDropdown } from '../../molecules/ActionsDropdown/ActionsDropdown';
+import { Icon } from '../../atoms/Icon/Icon';
 
 import './DataTable.css';
 
@@ -153,7 +154,7 @@ function DataTable({
         if (onView) {
           actions.push({
             label: 'Ver',
-            icon: '👁️',
+            icon: 'eye',
             onClick: () => onView(rowData),
             variant: 'ghost'
           });
@@ -162,7 +163,7 @@ function DataTable({
         if (onEdit) {
           actions.push({
             label: 'Editar',
-            icon: '✏️',
+            icon: 'edit',
             onClick: () => onEdit(rowData),
             variant: 'outline'
           });
@@ -171,7 +172,7 @@ function DataTable({
         if (onDelete) {
           actions.push({
             label: isDeleting ? 'Eliminando...' : 'Eliminar',
-            icon: isDeleting ? '⏳' : '🗑️',
+            icon: isDeleting ? 'loading' : 'trash',
             onClick: () => onDelete(rowData),
             variant: 'danger',
             disabled: isDeleting,
@@ -272,7 +273,7 @@ function DataTable({
               placeholder={searchPlaceholder}
               value={globalFilter}
               onChange={(e) => setGlobalFilter(e.target.value)}
-              leftIcon="🔍"
+              leftIcon="search"
               size="sm"
               disabled={loading}
             />
@@ -323,9 +324,9 @@ function DataTable({
                           {flexRender(header.column.columnDef.header, header.getContext())}
                           <span className="data-table__sort-icon">
                             {{
-                              asc: ' ▲',
-                              desc: ' ▼',
-                            }[header.column.getIsSorted()] ?? ' ↕️'}
+                              asc: <Icon name="chevron-up" size="xs" />,
+                              desc: <Icon name="chevron-down" size="xs" />,
+                            }[header.column.getIsSorted()] ?? <Icon name="chevron-up" size="xs" style={{ opacity: 0.5 }} />}
                           </span>
                         </Button>
                       ) : (
@@ -356,7 +357,7 @@ function DataTable({
               <tr className="data-table__row data-table__row--error">
                 <td colSpan={memoColumns.length} className="data-table__td">
                   <div className="data-table__error">
-                    <span className="data-table__error-icon">⚠️</span>
+                    <Icon name="alert" size="sm" color="danger" />
                     <span className="data-table__error-message">{error}</span>
                     {onRefresh && (
                       <Button
@@ -376,7 +377,7 @@ function DataTable({
               <tr className="data-table__row data-table__row--empty">
                 <td colSpan={memoColumns.length} className="data-table__td">
                   <div className="data-table__no-results">
-                    <span className="data-table__no-results-icon">🔍</span>
+                    <Icon name="search" size="sm" color="muted" />
                     <span className="data-table__no-results-message">
                       No se encontraron resultados para &ldquo;{debouncedGlobalFilter}&rdquo;
                     </span>
@@ -424,8 +425,9 @@ function DataTable({
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
               className="data-table__pagination-button"
+              leftIcon="skip-back"
             >
-              ⏮️ Primero
+              Primero
             </Button>
 
             <Button
@@ -434,8 +436,9 @@ function DataTable({
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
               className="data-table__pagination-button"
+              leftIcon="chevron-left"
             >
-              ◀️ Anterior
+              Anterior
             </Button>
 
             <span className="data-table__pagination-current">
@@ -449,8 +452,9 @@ function DataTable({
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
               className="data-table__pagination-button"
+              rightIcon="chevron-right"
             >
-              Siguiente ▶️
+              Siguiente
             </Button>
 
             <Button
@@ -459,8 +463,9 @@ function DataTable({
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}
               className="data-table__pagination-button"
+              rightIcon="skip-forward"
             >
-              Último ⏭️
+              Último
             </Button>
           </div>
         </div>

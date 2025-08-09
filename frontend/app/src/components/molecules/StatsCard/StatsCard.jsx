@@ -2,6 +2,7 @@
 // src/components/molecules/StatsCard/StatsCard.jsx
 import PropTypes from 'prop-types';
 import { Card } from '../../atoms/Card/Card';
+import { createStandardIconRenderer } from '../../../utils/iconHelpers';
 import './StatsCard.css';
 
 /**
@@ -9,7 +10,8 @@ import './StatsCard.css';
  * 
  * Características implementadas:
  * - ✅ Usa Card como base (átomo del sistema)
- * - ✅ Iconos, valores, cambios porcentuales
+ * - ✅ Iconos centralizados con createIconRenderer
+ * - ✅ Valores, cambios porcentuales
  * - ✅ Variantes de color para diferentes tipos de datos
  * - ✅ Estados loading, error, skeleton
  * - ✅ Responsive design
@@ -95,6 +97,9 @@ function StatsCard({
 
   const formattedValue = formatValue(value);
 
+  // ===== FUNCIÓN DE RENDERIZADO DE ICONOS =====
+  const renderIcon = createStandardIconRenderer('statsCard', size);
+
   // ===== CLASES CSS =====
   const statsCardClasses = [
     'stats-card',
@@ -137,7 +142,7 @@ function StatsCard({
       <div className="stats-card__header">
         {icon && (
           <div className="stats-card__icon" aria-hidden="true">
-            {typeof icon === 'string' ? <span>{icon}</span> : icon}
+            {renderIcon(icon)}
           </div>
         )}
         <h3 className="stats-card__title">
@@ -161,7 +166,9 @@ function StatsCard({
       {/* Estado de error */}
       {error && (
         <div className="stats-card__error-message" role="alert">
-          <span className="stats-card__error-icon" aria-hidden="true">⚠️</span>
+          <span className="stats-card__error-icon" aria-hidden="true">
+            {renderIcon('alert', 'sm', 'danger')}
+          </span>
           <span className="stats-card__error-text">{error}</span>
         </div>
       )}
@@ -213,7 +220,7 @@ function StatsCard({
 StatsCard.propTypes = {
   title: PropTypes.string,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]), // string: nombre del icono del sistema de diseño | node: componente React custom
   change: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   changeLabel: PropTypes.string,
   changeDirection: PropTypes.oneOf(['up', 'down', 'neutral']),

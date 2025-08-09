@@ -4,6 +4,7 @@ import { useState} from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Button } from '../../atoms/Button/Button';
+import { createIconRenderer } from '../../../utils/iconHelpers';
 import './AdminSidebar.css';
 
 /**
@@ -14,6 +15,7 @@ import './AdminSidebar.css';
  * - ✅ Menús y submenús expandibles
  * - ✅ Estados activos/hover
  * - ✅ Badges con contadores dinámicos
+ * - ✅ Iconos centralizados con createIconRenderer
  * - ✅ Responsive (oculto en móvil)
  * - ✅ Consistente con sistema de diseño
  * - ✅ Accesibilidad completa
@@ -98,11 +100,16 @@ function AdminSidebar({
 
   const [expandedMenus, setExpandedMenus] = useState(new Set(['dashboard']));
 
+  // ===== FUNCIONES DE RENDERIZADO DE ICONOS =====
+  const renderMainIcon = createIconRenderer('sm', { default: 'sm' });
+  const renderSubIcon = createIconRenderer('xs', { default: 'xs' });
+  const renderLogoIcon = createIconRenderer('md', { default: 'md' });
+
   // ===== CONFIGURACIÓN DE MENÚS =====
   const sidebarItems = [
     {
       id: 'dashboard',
-      icon: '📊',
+      icon: 'trending',
       label: 'Dashboard',
       route: '/admin',
       description: 'Panel principal con métricas generales',
@@ -110,7 +117,7 @@ function AdminSidebar({
     },
     {
       id: 'users',
-      icon: '👥',
+      icon: 'users',
       label: 'Usuarios',
       route: '/admin/users',
       description: 'Gestión de usuarios registrados',
@@ -118,25 +125,25 @@ function AdminSidebar({
     },
     {
       id: 'content',
-      icon: '🎬',
+      icon: 'film',
       label: 'Contenido',
       description: 'Gestión de películas, series y episodios',
       badge: movieCount + seriesCount,
       submenu: [
         {
-          icon: '🎭',
+          icon: 'film',
           label: 'Películas',
           route: '/admin/movies',
           badge: movieCount
         },
         {
-          icon: '📺',
+          icon: 'video',
           label: 'Series',
           route: '/admin/series',
           badge: seriesCount
         },
         {
-          icon: '📼',
+          icon: 'play-circle',
           label: 'Episodios',
           route: '/admin/episodes',
           badge: episodeCount
@@ -145,7 +152,7 @@ function AdminSidebar({
     },
     {
       id: 'categories',
-      icon: '🏷️',
+      icon: 'tag',
       label: 'Categorías',
       route: '/admin/categories',
       description: 'Organización por géneros y categorías',
@@ -223,7 +230,9 @@ function AdminSidebar({
         {/* Brand */}
         {!isCollapsed && (
           <div className="admin-sidebar__brand">
-            <span className="admin-sidebar__logo">⚙️</span>
+            <span className="admin-sidebar__logo">
+              {renderLogoIcon('settings')}
+            </span>
             <div className="admin-sidebar__brand-text">
               <h2 className="admin-sidebar__title">Admin Panel</h2>
               <p className="admin-sidebar__subtitle">StreamApp</p>
@@ -238,9 +247,9 @@ function AdminSidebar({
           onClick={handleSidebarToggle}
           className="admin-sidebar__toggle"
           aria-label={isCollapsed ? 'Expandir sidebar' : 'Contraer sidebar'}
-        >
-          {isCollapsed ? '→' : '←'}
-        </Button>
+          icon={isCollapsed ? 'chevron-right' : 'chevron-left'}
+          iconOnly
+        />
       </div>
 
       {/* ===== NAVEGACIÓN PRINCIPAL ===== */}
@@ -278,7 +287,7 @@ function AdminSidebar({
                   title={isCollapsed ? item.label : undefined}
                 >
                   <span className="admin-sidebar__item-icon">
-                    {item.icon}
+                    {renderMainIcon(item.icon)}
                   </span>
 
                   {!isCollapsed && (
@@ -306,7 +315,7 @@ function AdminSidebar({
                           ].filter(Boolean).join(' ')}
                           aria-hidden="true"
                         >
-                          ▼
+                          {renderSubIcon('chevron-down')}
                         </span>
                       )}
                     </>
@@ -346,7 +355,7 @@ function AdminSidebar({
                           aria-current={isRouteActive(subitem.route, true) ? 'page' : undefined}
                         >
                           <span className="admin-sidebar__subitem-icon">
-                            {subitem.icon}
+                            {renderSubIcon(subitem.icon)}
                           </span>
                           <span className="admin-sidebar__subitem-label">
                             {subitem.label}
@@ -376,7 +385,9 @@ function AdminSidebar({
       {!isCollapsed && (
         <div className="admin-sidebar__footer">
           <div className="admin-sidebar__user-info">
-            <div className="admin-sidebar__user-avatar">👤</div>
+            <div className="admin-sidebar__user-avatar">
+              {renderMainIcon('user')}
+            </div>
             <div className="admin-sidebar__user-details">
               <p className="admin-sidebar__user-name">Administrador</p>
               <p className="admin-sidebar__user-role">Panel de Control</p>
@@ -388,8 +399,9 @@ function AdminSidebar({
             size="sm"
             onClick={handleBackToHome}
             className="admin-sidebar__back-button"
+            leftIcon="arrow-left"
           >
-            ← Volver al inicio
+            Volver al inicio
           </Button>
         </div>
       )}

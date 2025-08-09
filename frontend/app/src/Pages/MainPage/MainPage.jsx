@@ -50,45 +50,6 @@ function MainPage() {
         }
     }, [navigate]);
 
-    /**
-     * ✅ AÑADIDO: Función para iconos de categorías
-     */
-    const getCategoryIcon = (categoryName) => {
-        if (!categoryName) return '🎞️';
-
-        const icons = {
-            'Acción': '💥',
-            'Drama': '🎭',
-            'Comedia': '😂',
-            'Terror': '👻',
-            'Horror': '👻',
-            'Fantasía': '🧙‍♂️',
-            'Ciencia Ficción': '🚀',
-            'Sci-Fi': '🚀',
-            'Romance': '💕',
-            'Animación': '🎨',
-            'Documental': '📋',
-            'Thriller': '🔪',
-            'Aventura': '🗺️',
-            'Misterio': '🕵️',
-            'Crimen': '🚔',
-            'Familia': '👨‍👩‍👧‍👦'
-        };
-
-        // Buscar coincidencia exacta o parcial
-        const exactMatch = icons[categoryName];
-        if (exactMatch) return exactMatch;
-
-        // Buscar coincidencia parcial (case insensitive)
-        const lowerName = categoryName.toLowerCase();
-        for (const [key, icon] of Object.entries(icons)) {
-            if (key.toLowerCase().includes(lowerName) || lowerName.includes(key.toLowerCase())) {
-                return icon;
-            }
-        }
-
-        return '🎞️'; // Icono por defecto
-    };
     // ===== FUNCIONES DE MANEJO =====
 
     /**
@@ -202,14 +163,13 @@ function MainPage() {
      * Mapear categorías del contexto al formato que espera FilterBar
      */
     const getMappedCategories = () => {
-        if (!categories || !Array.isArray(categories)) return [{ value: 'all', label: 'Todas', icon: '🎬' }];
+        if (!categories || !Array.isArray(categories)) return [{ value: 'all', label: 'Todas'}];
         
         return [
-            { value: 'all', label: 'Todas', icon: '🎬' },
+            { value: 'all', label: 'Todas'},
             ...categories.map(cat => ({
                 value: cat.id ? cat.id.toString() : 'unknown',
                 label: cat.name || 'Sin nombre',
-                icon: getCategoryIcon(cat.name),
                 id: cat.id
             }))
         ];

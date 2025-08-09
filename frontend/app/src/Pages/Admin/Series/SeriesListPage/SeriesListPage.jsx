@@ -68,7 +68,7 @@ function SeriesListPage() {
             alt={`Portada de ${title}`}
             aspectRatio="2/3"
             contentType="series"
-            placeholder="📺"
+            placeholder="video"
             rounded="md"
             showFallback={true}
           />
@@ -91,8 +91,9 @@ function SeriesListPage() {
               variant="warning"
               size="xs"
               appearance="soft"
+              leftIcon="video"
             >
-              📺 Serie
+              Serie
             </Badge>
           </div>
         );
@@ -110,8 +111,9 @@ function SeriesListPage() {
             variant="neutral"
             size="sm"
             appearance="soft"
+            leftIcon="folder"
           >
-            📂 {categoryName || 'Sin categoría'}
+            {categoryName || 'Sin categoría'}
           </Badge>
         );
       }
@@ -139,8 +141,9 @@ function SeriesListPage() {
             variant={count > 0 ? 'success' : 'neutral'}
             size="sm"
             appearance="soft"
+            leftIcon="film"
           >
-            📹 {count}
+            {count}
           </Badge>
         );
       }
@@ -260,7 +263,7 @@ function SeriesListPage() {
             variant="primary"
             size="sm"
             onClick={handleCreateSeries}
-            leftIcon="➕"
+            leftIcon="plus"
           >
             Agregar Serie
           </Button>
@@ -273,7 +276,7 @@ function SeriesListPage() {
             <Badge 
               variant="danger" 
               size="lg"
-              icon="❌"
+              leftIcon="x"
               appearance="soft"
             >
               {error}
@@ -291,12 +294,12 @@ function SeriesListPage() {
           deleting={deleting}
           emptyTitle="No hay series registradas"
           emptyDescription="Comienza agregando tu primera serie"
-          emptyIcon="📺"
+          emptyIcon="video"
           emptyAction={
             <Button 
               variant="primary" 
               onClick={handleCreateSeries}
-              leftIcon="➕"
+              leftIcon="plus"
             >
               Agregar Primera Serie
             </Button>

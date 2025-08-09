@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../components/templates/AdminLayout/AdminLayout';
 import { StatsCard } from '../../components/molecules/StatsCard/StatsCard';
 import { Button } from '../../components/atoms/Button/Button';
+import { Icon } from '../../components/atoms/Icon/Icon';
 import './AdminDashboard.css';
 
 // Importar servicios para datos reales
@@ -115,7 +116,7 @@ function AdminDashboard() {
     {
       title: 'Usuarios',
       value: stats.users.count,
-      icon: '👥',
+      icon: 'users',
       change: `${stats.users.change > 0 ? '+' : ''}${stats.users.change}%`,
       changeLabel: 'último mes',
       color: 'blue',
@@ -124,7 +125,7 @@ function AdminDashboard() {
     {
       title: 'Películas',
       value: stats.movies.count,
-      icon: '🎬',
+      icon: 'film',
       change: `${stats.movies.change > 0 ? '+' : ''}${stats.movies.change}%`,
       changeLabel: 'esta semana',
       color: 'green',
@@ -133,7 +134,7 @@ function AdminDashboard() {
     {
       title: 'Series',
       value: stats.series.count,
-      icon: '📺',
+      icon: 'video',
       change: `${stats.series.change > 0 ? '+' : ''}${stats.series.change}%`,
       changeLabel: 'último mes',
       color: 'purple',
@@ -142,7 +143,7 @@ function AdminDashboard() {
     {
       title: 'Categorías',
       value: stats.categories.count,
-      icon: '📂',
+      icon: 'folder',
       change: `${stats.categories.change > 0 ? '+' : ''}${stats.categories.change}%`,
       changeLabel: 'este año',
       color: 'yellow',
@@ -160,7 +161,7 @@ function AdminDashboard() {
             padding: 'var(--space-3xl)',
             color: 'var(--text-secondary)'
           }}>
-            <h2>❌ Error al cargar el dashboard</h2>
+            <h2><Icon name="x" size="sm" color="danger" /> Error al cargar el dashboard</h2>
             <p>{error}</p>
             <Button
               variant="primary"
@@ -183,7 +184,7 @@ function AdminDashboard() {
         {/* ===== ESTADÍSTICAS PRINCIPALES ===== */}
         <section className="admin-dashboard__stats">
           <h2 className="admin-dashboard__section-title">
-            📊 Resumen General
+            <Icon name="trending" size="sm" /> Resumen General
           </h2>
           
           {loading ? (
@@ -216,14 +217,14 @@ function AdminDashboard() {
         {/* ===== ACCIONES RÁPIDAS ===== */}
         <section className="admin-dashboard__quick-actions">
           <h2 className="admin-dashboard__section-title">
-            ⚡ Acciones Rápidas
+            <Icon name="zap" size="sm" /> Acciones Rápidas
           </h2>
           
           <div className="admin-dashboard__actions-grid">
             <Button
               variant="outline"
               size="lg"
-              leftIcon="👥"
+              leftIcon="users"
               onClick={() => navigate('/admin/users/create')}
               className="admin-dashboard__action-button"
             >
@@ -233,7 +234,7 @@ function AdminDashboard() {
             <Button
               variant="outline"
               size="lg"
-              leftIcon="🎬"
+              leftIcon="film"
               onClick={() => navigate('/admin/movies/create')}
               className="admin-dashboard__action-button"
             >
@@ -243,7 +244,7 @@ function AdminDashboard() {
             <Button
               variant="outline"
               size="lg"
-              leftIcon="📺"
+              leftIcon="video"
               onClick={() => navigate('/admin/series/create')}
               className="admin-dashboard__action-button"
             >
@@ -253,7 +254,7 @@ function AdminDashboard() {
             <Button
               variant="outline"
               size="lg"
-              leftIcon="📂"
+              leftIcon="folder"
               onClick={() => navigate('/admin/categories/create')}
               className="admin-dashboard__action-button"
             >

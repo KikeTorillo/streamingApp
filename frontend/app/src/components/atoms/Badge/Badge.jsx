@@ -1,6 +1,6 @@
 // atoms/Badge.jsx
-import React from 'react';
 import PropTypes from 'prop-types';
+import { createStandardIconRenderer } from '../../../utils/iconHelpers';
 import './Badge.css';
 
 /**
@@ -17,9 +17,9 @@ import './Badge.css';
  * @param {string} [props.className=''] - Clases CSS adicionales
  * @param {function} [props.onClick] - Función a ejecutar al hacer clic (hace el badge clickeable)
  * @param {function} [props.onRemove] - Función para remover el badge (muestra X)
- * @param {string|React.ReactNode} [props.leftIcon] - Icono izquierdo (preferido)
- * @param {string|React.ReactNode} [props.rightIcon] - Icono derecho (preferido)
- * @param {string|React.ReactNode} [props.icon] - Icono legacy (usar con iconPosition)
+ * @param {string|React.ReactNode} [props.leftIcon] - Icono izquierdo (string: nombre del icono del sistema de diseño | node: componente custom)
+ * @param {string|React.ReactNode} [props.rightIcon] - Icono derecho (string: nombre del icono | node: componente custom)
+ * @param {string|React.ReactNode} [props.icon] - Icono legacy (string: nombre del icono | node: componente custom)
  * @param {'left'|'right'} [props.iconPosition='left'] - Posición del icono legacy
  * @param {boolean} [props.pulse=false] - Animación de pulso (útil para notificaciones)
  * @param {boolean} [props.loading=false] - Estado de carga con spinner
@@ -104,24 +104,8 @@ const Badge = ({
     onRemove?.(e);
   };
 
-  // Función para renderizar iconos
-  const renderIcon = (iconContent) => {
-    if (React.isValidElement(iconContent)) {
-      return iconContent;
-    }
-    
-    if (typeof iconContent === 'string') {
-      // Detectar clases de iconos
-      if (iconContent.includes('fa-') || iconContent.includes('icon-') || 
-          iconContent.includes('bi-') || iconContent.includes('material-icons')) {
-        return <i className={iconContent} aria-hidden="true" />;
-      }
-      // Para emojis y texto
-      return <span aria-hidden="true">{iconContent}</span>;
-    }
-    
-    return iconContent;
-  };
+  // Función para renderizar iconos usando el sistema centralizado
+  const renderIcon = createStandardIconRenderer('badge', size);
 
   // Determinar role y propiedades de accesibilidad
   const badgeRole = onClick ? 'button' : 'status';
