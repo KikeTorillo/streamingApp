@@ -17,7 +17,7 @@ Perfecto para notificaciones, tags, estados de proceso y clasificación de conte
 
 ## 🎯 Características principales
 
-- **7 variantes de color**: Primary, Secondary, Success, Warning, Danger, Info, Neutral
+- **6 variantes de color**: Primary, Secondary, Success, Warning, Danger, Neutral (estandarizadas)
 - **4 estilos visuales**: Solid, Soft, Outline, Dot (ahora usando prop 'appearance')
 - **5 tamaños**: XS, SM, MD, LG, XL (responsive con área táctil)
 - **Border radius personalizable**: SM, MD, LG, XL, Full
@@ -39,7 +39,7 @@ import { Badge } from './atoms/Badge';
 // Badge con contador
 <Badge variant="danger" pulse>{notificationCount}</Badge>
 
-// Badge con icono (nueva sintaxis)
+// Badge con icono (nueva API recomendada)
 <Badge 
   variant="success" 
   leftIcon="check" 
@@ -48,7 +48,7 @@ import { Badge } from './atoms/Badge';
   Completado
 </Badge>
 
-// O usando sintaxis legacy
+// ⚠️ Sintaxis legacy (deprecada)
 <Badge 
   variant="success" 
   icon="✅" 
@@ -60,7 +60,7 @@ import { Badge } from './atoms/Badge';
 
 // Badge removible
 <Badge 
-  variant="info"
+  variant="primary"
   onRemove={handleRemove}
   size="lg"
 >
@@ -119,11 +119,11 @@ Usa automáticamente las variables del sistema:
     },
     variant: {
       name: 'Variante',
-      description: 'Color/tema del badge',
+      description: 'Color/tema del badge (6 variantes estándar del sistema)',
       control: 'select',
-      options: ['primary', 'secondary', 'success', 'warning', 'danger', 'info', 'neutral'],
+      options: ['primary', 'secondary', 'success', 'warning', 'danger', 'neutral'],
       table: {
-        type: { summary: 'string' },
+        type: { summary: "'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'neutral'" },
         defaultValue: { summary: "'primary'" }
       }
     },
@@ -635,3 +635,135 @@ export const DarkModeExample = () => (
     </div>
   </div>
 );
+
+// ========== NUEVA API Y MIGRACIÓN ==========
+export const StandardPropsSystem = () => (
+  <div style={{
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--space-xl)',
+    padding: 'var(--space-md)'
+  }}>
+    <div>
+      <h3 style={{ marginBottom: 'var(--space-md)', color: 'var(--text-primary)' }}>
+        ✅ Nueva API de iconos y variantes estándar (Recomendada)
+      </h3>
+      <div style={{
+        display: 'grid',
+        gap: 'var(--space-md)',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        alignItems: 'center'
+      }}>
+        <Badge leftIcon="star" variant="primary" size="lg">
+          Icono izquierdo
+        </Badge>
+        
+        <Badge rightIcon="arrow-right" variant="secondary" size="lg">
+          Icono derecho
+        </Badge>
+        
+        <Badge leftIcon="check" rightIcon="heart" variant="success" size="lg">
+          Ambos iconos
+        </Badge>
+        
+        <Badge leftIcon="bell" variant="warning" appearance="soft" pulse size="lg">
+          Con pulse
+        </Badge>
+        
+        <Badge leftIcon="user" variant="neutral" rounded="md" size="lg">
+          Redondeado medio
+        </Badge>
+        
+        <Badge rightIcon="x" variant="danger" appearance="outline" onRemove={() => alert('Removido')} size="lg">
+          Removible
+        </Badge>
+      </div>
+    </div>
+
+    <div style={{ 
+      padding: 'var(--space-md)', 
+      backgroundColor: 'var(--bg-warning-soft)', 
+      border: '1px solid var(--border-warning)',
+      borderRadius: 'var(--radius-md)'
+    }}>
+      <h3 style={{ marginBottom: 'var(--space-md)', color: 'var(--text-warning)' }}>
+        ⚠️ API Legacy (Deprecada - Abre consola para ver warnings)
+      </h3>
+      <div style={{
+        display: 'grid',
+        gap: 'var(--space-md)',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        alignItems: 'center'
+      }}>
+        <Badge icon="star" iconPosition="left" variant="primary" size="lg">
+          Legacy izquierdo
+        </Badge>
+        
+        <Badge icon="arrow" iconPosition="right" variant="secondary" size="lg">
+          Legacy derecho
+        </Badge>
+        
+        <Badge icon="info" variant="info" size="lg">
+          Variante "info" deprecada
+        </Badge>
+        
+        <Badge icon="settings" size="lg">
+          Sin iconPosition (default left)
+        </Badge>
+      </div>
+      
+      <div style={{ 
+        marginTop: 'var(--space-md)', 
+        fontSize: 'var(--text-sm)', 
+        color: 'var(--text-muted)' 
+      }}>
+        <p style={{ margin: '0 0 var(--space-sm) 0' }}>
+          <strong>Migración requerida:</strong>
+        </p>
+        <code style={{ 
+          display: 'block', 
+          padding: 'var(--space-sm)', 
+          backgroundColor: 'var(--bg-code)',
+          borderRadius: 'var(--radius-sm)',
+          fontFamily: 'monospace',
+          fontSize: 'var(--text-xs)'
+        }}>
+          {`// ❌ Props deprecadas
+<Badge icon="star" iconPosition="left" variant="info" />
+
+// ✅ Nueva API estándar  
+<Badge leftIcon="star" variant="primary" />
+
+// ❌ Variante deprecada
+variant="info" → variant="primary" o "neutral"
+
+// ✅ Variantes estándar
+variant="primary|secondary|success|warning|danger|neutral"`}
+        </code>
+      </div>
+    </div>
+  </div>
+);
+
+StandardPropsSystem.parameters = {
+  docs: {
+    description: {
+      story: `
+Sistema de props estándar integrado con validación automática y migración.
+
+**🎯 Nuevas funcionalidades:**
+- Sistema de props estándar (size, variant, rounded, disabled, loading)
+- API de iconos unificada con \`leftIcon\`/\`rightIcon\`
+- 6 variantes estándar consistentes con Button
+- Validación automática con warnings de deprecación
+- Backward compatibility completa
+
+**⚡ Migración automática:** Las props legacy siguen funcionando pero muestran warnings detallados en consola.
+
+**📏 Variantes estandarizadas:**
+- ✅ Mantenidas: primary, secondary, success, warning, danger, neutral  
+- ⚠️ Deprecadas: info (usar primary o neutral)
+      `
+    }
+  }
+};

@@ -19,7 +19,7 @@ El átomo **Input** es el componente base para campos de entrada de texto en nue
 ## 🎯 Características principales
 
 - **5 tamaños**: XS, SM, MD, LG, XL (responsive con área táctil mínima)
-- **4 variantes semánticas**: Default, Error, Success, Warning
+- **6 variantes semánticas**: Primary, Secondary, Success, Warning, Danger, Neutral (estandarizadas)
 - **Estados completos**: Normal, Focus, Hover, Disabled, Read-only
 - **Tipos soportados**: Text, Email, Password, Number, Tel, URL, Search, Date, Time
 - **Accesibilidad**: ARIA completo, validación HTML5, navegación por teclado
@@ -37,9 +37,10 @@ import { Input } from './atoms/Input';
   onChange={handleChange}
 />
 
-// Con variante semántica
+// Con variante semántica y iconos
 <Input 
-  variant="error"
+  variant="danger"
+  leftIcon="alert"
   placeholder="Campo requerido"
   ariaErrorMessage="error-msg"
 />
@@ -98,12 +99,37 @@ Como **átomo**, Input es:
     },
     variant: {
       name: 'Variante',
-      description: 'Variante semántica del input',
+      description: 'Variante semántica del input (6 variantes estándar del sistema)',
       control: 'select',
-      options: ['default', 'error', 'success', 'warning'],
+      options: ['primary', 'secondary', 'success', 'warning', 'danger', 'neutral'],
       table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: "'default'" }
+        type: { summary: "'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'neutral'" },
+        defaultValue: { summary: "'primary'" }
+      }
+    },
+    leftIcon: {
+      name: 'Icono Izquierdo',
+      description: 'Icono a mostrar a la izquierda del input',
+      control: 'text',
+      table: {
+        type: { summary: 'string | ReactNode' }
+      }
+    },
+    rightIcon: {
+      name: 'Icono Derecho',
+      description: 'Icono a mostrar a la derecha del input',
+      control: 'text',
+      table: {
+        type: { summary: 'string | ReactNode' }
+      }
+    },
+    loading: {
+      name: 'Cargando',
+      description: 'Muestra spinner de carga',
+      control: 'boolean',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' }
       }
     },
     rounded: {
@@ -572,6 +598,160 @@ Accessibility.parameters = {
   docs: {
     description: {
       story: 'Configuración completa de accesibilidad: ARIA labels, aria-describedby para ayuda, aria-errormessage para errores, y navegación por teclado.'
+    }
+  }
+};
+
+// ========== NUEVA API Y MIGRACIÓN ==========
+export const StandardPropsSystem = () => (
+  <div style={{
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--space-xl)',
+    padding: 'var(--space-md)'
+  }}>
+    <div>
+      <h3 style={{ marginBottom: 'var(--space-md)', color: 'var(--text-primary)' }}>
+        ✅ Nueva API con iconos y variantes estándar (Recomendada)
+      </h3>
+      <div style={{
+        display: 'grid',
+        gap: 'var(--space-md)',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+        alignItems: 'center'
+      }}>
+        <Input 
+          leftIcon="user" 
+          placeholder="Icono izquierdo"
+          variant="primary" 
+          size="lg"
+        />
+        
+        <Input 
+          rightIcon="search" 
+          placeholder="Icono derecho"
+          variant="secondary" 
+          size="lg"
+        />
+        
+        <Input 
+          leftIcon="mail" 
+          rightIcon="check" 
+          placeholder="Ambos iconos"
+          variant="success" 
+          size="lg"
+        />
+        
+        <Input 
+          leftIcon="lock" 
+          type="password"
+          placeholder="Con loading"
+          variant="warning" 
+          loading
+          size="lg"
+        />
+        
+        <Input 
+          leftIcon="alert" 
+          placeholder="Estado de error"
+          variant="danger" 
+          size="lg"
+        />
+        
+        <Input 
+          rightIcon="info" 
+          placeholder="Redondeado completo"
+          variant="neutral"
+          rounded="full"
+          size="lg"
+        />
+      </div>
+    </div>
+
+    <div style={{ 
+      padding: 'var(--space-md)', 
+      backgroundColor: 'var(--bg-warning-soft)', 
+      border: '1px solid var(--border-warning)',
+      borderRadius: 'var(--radius-md)'
+    }}>
+      <h3 style={{ marginBottom: 'var(--space-md)', color: 'var(--text-warning)' }}>
+        ⚠️ API Legacy (Deprecada - Abre consola para ver warnings)
+      </h3>
+      <div style={{
+        display: 'grid',
+        gap: 'var(--space-md)',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+        alignItems: 'center'
+      }}>
+        <Input 
+          variant="default" 
+          placeholder="Variante 'default' deprecada"
+          size="lg"
+        />
+        
+        <Input 
+          variant="error" 
+          placeholder="Variante 'error' deprecada"
+          size="lg"
+        />
+      </div>
+      
+      <div style={{ 
+        marginTop: 'var(--space-md)', 
+        fontSize: 'var(--text-sm)', 
+        color: 'var(--text-muted)' 
+      }}>
+        <p style={{ margin: '0 0 var(--space-sm) 0' }}>
+          <strong>Migración requerida:</strong>
+        </p>
+        <code style={{ 
+          display: 'block', 
+          padding: 'var(--space-sm)', 
+          backgroundColor: 'var(--bg-code)',
+          borderRadius: 'var(--radius-sm)',
+          fontFamily: 'monospace',
+          fontSize: 'var(--text-xs)'
+        }}>
+          {`// ❌ Props deprecadas
+<Input variant="default" />
+<Input variant="error" />
+
+// ✅ Nueva API estándar  
+<Input variant="primary" />
+<Input variant="danger" />
+
+// ✅ Nuevas funcionalidades
+<Input leftIcon="user" rightIcon="check" loading />
+
+// ✅ Variantes estándar
+variant="primary|secondary|success|warning|danger|neutral"`}
+        </code>
+      </div>
+    </div>
+  </div>
+);
+
+StandardPropsSystem.parameters = {
+  docs: {
+    description: {
+      story: `
+Sistema de props estándar integrado con soporte para iconos y validación automática.
+
+**🎯 Nuevas funcionalidades:**
+- Sistema de props estándar (size, variant, rounded, disabled, loading)
+- Soporte para iconos izquierdo y derecho simultáneos (\`leftIcon\`, \`rightIcon\`)
+- 6 variantes estándar consistentes con Button y Badge
+- Estado de loading integrado con spinner
+- Validación automática con warnings de deprecación
+- Wrapper inteligente (solo aparece cuando necesita iconos)
+
+**⚡ Migración automática:** Las variantes legacy siguen funcionando pero muestran warnings detallados.
+
+**📏 Variantes estandarizadas:**
+- ✅ Mantenidas: success, warning (mapped to danger)
+- ✅ Nuevas: primary (default), secondary, neutral  
+- ⚠️ Deprecadas: default → primary, error → danger
+      `
     }
   }
 };

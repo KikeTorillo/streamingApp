@@ -85,12 +85,30 @@ import { Button } from './atoms/Button';
         defaultValue: { summary: 'false' }
       }
     },
-    icon: {
-      name: 'Icono',
-      description: 'Icono del botón (emoji, clase CSS o componente)',
+    leftIcon: {
+      name: 'Icono Izquierdo',
+      description: 'Icono a la izquierda del texto (reemplaza icon)',
       control: 'text',
       table: {
         type: { summary: 'string | React.ReactNode' }
+      }
+    },
+    rightIcon: {
+      name: 'Icono Derecho', 
+      description: 'Icono a la derecha del texto',
+      control: 'text',
+      table: {
+        type: { summary: 'string | React.ReactNode' }
+      }
+    },
+    rounded: {
+      name: 'Bordes Redondeados',
+      description: 'Radio de bordes del botón',
+      control: 'select',
+      options: ['sm', 'md', 'lg', 'xl', 'full'],
+      table: {
+        type: { summary: "'sm' | 'md' | 'lg' | 'xl' | 'full'" },
+        defaultValue: { summary: 'md' }
       }
     },
     iconOnly: {
@@ -313,7 +331,7 @@ export const Interactive = () => (
     
     <Button 
       variant="success"
-      icon="zap"
+      leftIcon="zap"
       onClick={() => alert('¡Lanzamiento exitoso!')}
     >
       Lanzar cohete
@@ -321,7 +339,7 @@ export const Interactive = () => (
     
     <Button 
       iconOnly
-      icon="heart"
+      leftIcon="heart"
       ariaLabel="Me gusta"
       size="lg"
       onClick={() => alert('¡Te gusta!')}
@@ -356,7 +374,7 @@ export const Accessibility = () => (
   }}>
     <Button 
       ariaLabel="Guardar documento actual"
-      icon="save"
+      leftIcon="save"
       size="lg"
     >
       Guardar
@@ -364,9 +382,9 @@ export const Accessibility = () => (
     
     <Button 
       iconOnly
-      icon="trash"
+      leftIcon="trash"
       ariaLabel="Eliminar elemento seleccionado"
-      variant="error"
+      variant="danger"
       size="lg"
     />
     
@@ -417,6 +435,121 @@ Accessibility.parameters = {
   docs: {
     description: {
       story: 'Configuración de accesibilidad completa. Todos los botones son navegables por teclado y compatibles con screen readers.'
+    }
+  }
+};
+
+// ========== 7. NUEVA API DE ICONOS ==========
+export const IconSystem = () => (
+  <div style={{
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--space-xl)',
+    padding: 'var(--space-md)'
+  }}>
+    <div>
+      <h3 style={{ marginBottom: 'var(--space-md)', color: 'var(--text-primary)' }}>
+        ✅ Nueva API de iconos (Recomendada)
+      </h3>
+      <div style={{
+        display: 'grid',
+        gap: 'var(--space-md)',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        alignItems: 'center'
+      }}>
+        <Button leftIcon="user" size="lg">
+          Icono izquierdo
+        </Button>
+        
+        <Button rightIcon="arrow-right" size="lg">
+          Icono derecho
+        </Button>
+        
+        <Button leftIcon="save" rightIcon="check" size="lg">
+          Ambos iconos
+        </Button>
+        
+        <Button leftIcon="heart" iconOnly ariaLabel="Me gusta" size="lg" />
+        
+        <Button leftIcon="download" variant="success" rounded="full" size="lg">
+          Descargar
+        </Button>
+        
+        <Button rightIcon="external-link" variant="outline" size="lg">
+          Abrir enlace
+        </Button>
+      </div>
+    </div>
+
+    <div style={{ 
+      padding: 'var(--space-md)', 
+      backgroundColor: 'var(--bg-warning-soft)', 
+      border: '1px solid var(--border-warning)',
+      borderRadius: 'var(--radius-md)'
+    }}>
+      <h3 style={{ marginBottom: 'var(--space-md)', color: 'var(--text-warning)' }}>
+        ⚠️ API Legacy (Deprecada - Abre consola para ver warnings)
+      </h3>
+      <div style={{
+        display: 'grid',
+        gap: 'var(--space-md)',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        alignItems: 'center'
+      }}>
+        <Button icon="user" iconPosition="left" size="lg">
+          Legacy izquierdo
+        </Button>
+        
+        <Button icon="arrow" iconPosition="right" size="lg">
+          Legacy derecho
+        </Button>
+        
+        <Button icon="settings" size="lg">
+          Legacy (sin position)
+        </Button>
+      </div>
+      
+      <div style={{ 
+        marginTop: 'var(--space-md)', 
+        fontSize: 'var(--text-sm)', 
+        color: 'var(--text-muted)' 
+      }}>
+        <p style={{ margin: '0 0 var(--space-sm) 0' }}>
+          <strong>Migración:</strong>
+        </p>
+        <code style={{ 
+          display: 'block', 
+          padding: 'var(--space-sm)', 
+          backgroundColor: 'var(--bg-code)',
+          borderRadius: 'var(--radius-sm)',
+          fontFamily: 'monospace',
+          fontSize: 'var(--text-xs)'
+        }}>
+          {`// ❌ Deprecado
+<Button icon="user" iconPosition="left">Texto</Button>
+
+// ✅ Nueva API  
+<Button leftIcon="user">Texto</Button>`}
+        </code>
+      </div>
+    </div>
+  </div>
+);
+
+IconSystem.parameters = {
+  docs: {
+    description: {
+      story: `
+Nueva API unificada de iconos con soporte para iconos izquierda/derecha simultáneos.
+
+**Ventajas de la nueva API:**
+- \`leftIcon\` y \`rightIcon\` explícitos y claros
+- Soporte para ambos iconos al mismo tiempo
+- Mejor integración con sistema de iconos
+- Props más predictibles y fáciles de usar
+
+**Migración automática:** Las props legacy (\`icon\`, \`iconPosition\`) siguen funcionando pero muestran warnings de deprecación.
+      `
     }
   }
 };

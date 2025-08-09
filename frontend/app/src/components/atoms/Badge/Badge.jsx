@@ -1,6 +1,7 @@
 // atoms/Badge.jsx
 import PropTypes from 'prop-types';
 import { createStandardIconRenderer } from '../../../utils/iconHelpers';
+import { validateStandardProps, STANDARD_PROP_TYPES } from '../../../tokens';
 import './Badge.css';
 
 /**
@@ -10,7 +11,7 @@ import './Badge.css';
  * @param {Object} props - Propiedades del componente
  * @param {string|React.ReactNode} [props.children] - Contenido del badge (texto o elementos)
  * @param {string} [props.text] - Texto del badge (alternativa a children)
- * @param {'primary'|'secondary'|'success'|'warning'|'danger'|'info'|'neutral'} [props.variant='primary'] - Variante visual
+ * @param {'primary'|'secondary'|'success'|'warning'|'danger'|'neutral'} [props.variant='primary'] - Variante visual (6 variantes estándar)
  * @param {'xs'|'sm'|'md'|'lg'|'xl'} [props.size='md'] - Tamaño del badge
  * @param {'soft'|'solid'|'outline'|'dot'} [props.appearance='solid'] - Estilo visual
  * @param {'sm'|'md'|'lg'|'xl'|'full'} [props.rounded='full'] - Radio de bordes
@@ -29,28 +30,64 @@ import './Badge.css';
  * @param {string} [props.ariaLabel] - Label para accesibilidad
  * @param {string} [props.title] - Tooltip text
  */
-const Badge = ({
-  children,
-  text,
-  variant = 'primary',
-  size = 'md',
-  appearance = 'solid',
-  rounded = 'full',
-  className = '',
-  onClick,
-  onRemove,
-  leftIcon,
-  rightIcon,
-  icon, // Legacy support
-  iconPosition = 'left', // Legacy support
-  pulse = false,
-  loading = false,
-  disabled = false,
-  uppercase = false,
-  maxCount = 99,
-  ariaLabel,
-  title
-}) => {
+const Badge = (props) => {
+  // ✅ VALIDAR PROPS ESTÁNDAR - Muestra deprecation warnings automáticamente
+  const validatedProps = validateStandardProps(props, 'Badge');
+  
+  const {
+    children,
+    text,
+    variant = 'primary',
+    size = 'md', 
+    rounded = 'full',
+    disabled = false,
+    loading = false,
+    className = '',
+    leftIcon,
+    rightIcon,
+    // Props específicas de Badge
+    appearance = 'solid',
+    onClick,
+    onRemove,
+    pulse = false,
+    uppercase = false,
+    maxCount = 99,
+    ariaLabel,
+    title,
+    // Props legacy (para backward compatibility temporal)
+    icon,
+    iconPosition = 'left',
+    ...restProps
+  } = validatedProps;
+
+  // ❌ DEPRECATION WARNINGS para props legacy
+  if (icon || iconPosition !== 'left') {
+    console.warn(
+      `Badge: Las props "icon" e "iconPosition" están deprecadas y serán eliminadas en la próxima versión mayor.
+      En su lugar usar:
+      - Para iconos izquierda: leftIcon="${icon || 'nombre-icono'}"
+      - Para iconos derecha: rightIcon="${icon || 'nombre-icono'}"
+      
+      Ejemplo de migración:
+      ❌ <Badge icon="star" iconPosition="left" />
+      ✅ <Badge leftIcon="star" />
+      
+      ❌ <Badge icon="check" iconPosition="right" />  
+      ✅ <Badge rightIcon="check" />`
+    );
+  }
+
+  // ⚠️ DEPRECATED VARIANTS WARNING
+  if (props.variant === 'info' || props.variant === 'neutral') {
+    console.warn(
+      `Badge: Las variantes "info" y "neutral" están deprecadas.
+      Migración sugerida:
+      - variant="info" → variant="primary" o variant="neutral"
+      - variant="neutral" → variant="neutral" (mantenida temporalmente)
+      
+      Variantes estándar disponibles: primary, secondary, success, warning, danger, neutral`
+    );
+  }
   // Determinar el contenido final del badge
   const badgeContent = children || text || '';
   
@@ -192,26 +229,24 @@ const Badge = ({
 };
 
 Badge.propTypes = {
+  // ✅ PROPS ESTÁNDAR DEL SISTEMA
+  ...STANDARD_PROP_TYPES,
+  
+  // ✅ PROPS ESPECÍFICAS DE BADGE  
   children: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   text: PropTypes.string,
-  variant: PropTypes.oneOf(['primary', 'secondary', 'success', 'warning', 'danger', 'info', 'neutral']),
-  size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
   appearance: PropTypes.oneOf(['soft', 'solid', 'outline', 'dot']),
-  rounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'full']),
-  className: PropTypes.string,
   onClick: PropTypes.func,
   onRemove: PropTypes.func,
-  leftIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
-  rightIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
-  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]), // Legacy support
-  iconPosition: PropTypes.oneOf(['left', 'right']), // Legacy support
   pulse: PropTypes.bool,
-  loading: PropTypes.bool,
-  disabled: PropTypes.bool,
   uppercase: PropTypes.bool,
   maxCount: PropTypes.number,
   ariaLabel: PropTypes.string,
-  title: PropTypes.string
+  title: PropTypes.string,
+  
+  // ❌ PROPS LEGACY (temporales para backward compatibility)
+  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  iconPosition: PropTypes.oneOf(['left', 'right'])
 };
 
 export { Badge };

@@ -1,6 +1,7 @@
 // src/components/atoms/Button/Button.jsx
 import PropTypes from 'prop-types';
 import { createStandardIconRenderer } from '../../../utils/iconHelpers';
+import { validateStandardProps, STANDARD_PROP_TYPES } from '../../../tokens';
 import './Button.css';
 
 /**
@@ -31,47 +32,62 @@ import './Button.css';
  * @param {string} [props.ariaLabel] - Label para accesibilidad
  * @param {string} [props.className=''] - Clases CSS adicionales
  */
-function Button({
-  children,
-  text,
-  size = 'md',
-  variant = 'primary',
-  rounded = 'md',
-  disabled = false,
-  loading = false,
-  fullWidth = false,
-  icon,
-  leftIcon, // ← PROP NUEVA para compatibilidad
-  rightIcon, // ← PROP NUEVA para compatibilidad
-  iconPosition = 'left',
-  iconOnly = false,
-  type = 'button',
-  onClick,
-  ariaLabel,
-  className = '',
-  ...restProps
-}) {
-  // ✅ EXTRAER PROPS PERSONALIZADAS para evitar pasarlas al DOM
-  const { leftIcon: leftIconFromRest, rightIcon: rightIconFromRest, ...domProps } = restProps;
-  // Variables no usadas pero necesarias para filtrar del DOM
-  void leftIconFromRest; void rightIconFromRest;
+function Button(props) {
+  // ✅ VALIDAR PROPS ESTÁNDAR - Muestra deprecation warnings automáticamente
+  const validatedProps = validateStandardProps(props, 'Button');
+  
+  const {
+    children,
+    text,
+    size = 'md',
+    variant = 'primary',
+    rounded = 'md',
+    disabled = false,
+    loading = false,
+    fullWidth = false,
+    leftIcon,
+    rightIcon,
+    iconOnly = false,
+    type = 'button',
+    onClick,
+    ariaLabel,
+    className = '',
+    // Props legacy (para backward compatibility temporal)
+    icon,
+    iconPosition = 'left',
+    ...domProps
+  } = validatedProps;
+
+  // ❌ DEPRECATION WARNINGS para props legacy
+  if (icon || iconPosition !== 'left') {
+    console.warn(
+      `Button: Las props "icon" e "iconPosition" están deprecadas y serán eliminadas en la próxima versión mayor. 
+      En su lugar usar:
+      - Para iconos izquierda: leftIcon="${icon || 'nombre-icono'}"
+      - Para iconos derecha: rightIcon="${icon || 'nombre-icono'}"
+      
+      Ejemplo de migración:
+      ❌ <Button icon="user" iconPosition="left" />
+      ✅ <Button leftIcon="user" />
+      
+      ❌ <Button icon="arrow" iconPosition="right" />  
+      ✅ <Button rightIcon="arrow" />`
+    );
+  }
   // Determinar el contenido del botón
   const buttonContent = children || text;
 
-  // ✅ LÓGICA DE COMPATIBILIDAD - Determinar icono y posición
-  let finalIcon = icon;
-  let finalIconPosition = iconPosition;
+  // ✅ LÓGICA DE COMPATIBILIDAD - Nueva API tiene prioridad sobre legacy
+  let finalLeftIcon = leftIcon;
+  let finalRightIcon = rightIcon;
   
-  // Si se proporciona leftIcon, usar como icono izquierdo
-  if (leftIcon) {
-    finalIcon = leftIcon;
-    finalIconPosition = 'left';
-  }
-  
-  // Si se proporciona rightIcon, usar como icono derecho
-  if (rightIcon) {
-    finalIcon = rightIcon;
-    finalIconPosition = 'right';
+  // ⚠️ BACKWARD COMPATIBILITY: Mapear props legacy a nueva API
+  if (icon && !leftIcon && !rightIcon) {
+    if (iconPosition === 'right') {
+      finalRightIcon = icon;
+    } else {
+      finalLeftIcon = icon; // left es default
+    }
   }
 
   // Generar clases CSS
@@ -114,9 +130,9 @@ function Button({
       {...domProps}
     >
       {/* Icono izquierdo */}
-      {finalIcon && finalIconPosition === 'left' && !iconOnly && (
+      {finalLeftIcon && !iconOnly && (
         <span className="btn__icon btn__icon--left">
-          {renderIcon(finalIcon)}
+          {renderIcon(finalLeftIcon)}
         </span>
       )}
       
@@ -128,16 +144,16 @@ function Button({
       )}
       
       {/* Solo icono (para botones icon-only) */}
-      {iconOnly && finalIcon && (
+      {iconOnly && (finalLeftIcon || finalRightIcon) && (
         <span className="btn__icon">
-          {renderIcon(finalIcon)}
+          {renderIcon(finalLeftIcon || finalRightIcon)}
         </span>
       )}
       
       {/* Icono derecho */}
-      {finalIcon && finalIconPosition === 'right' && !iconOnly && (
+      {finalRightIcon && !iconOnly && (
         <span className="btn__icon btn__icon--right">
-          {renderIcon(finalIcon)}
+          {renderIcon(finalRightIcon)}
         </span>
       )}
       
@@ -160,23 +176,21 @@ function Button({
 }
 
 Button.propTypes = {
+  // ✅ PROPS ESTÁNDAR DEL SISTEMA
+  ...STANDARD_PROP_TYPES,
+  
+  // ✅ PROPS ESPECÍFICAS DE BUTTON
   children: PropTypes.node,
   text: PropTypes.string,
-  size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
-  variant: PropTypes.oneOf(['primary', 'secondary', 'outline', 'ghost', 'danger', 'success', 'warning']),
-  rounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'full']),
-  disabled: PropTypes.bool,
-  loading: PropTypes.bool,
   fullWidth: PropTypes.bool,
-  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
-  leftIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]), // ✅ NUEVA PROP
-  rightIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]), // ✅ NUEVA PROP
-  iconPosition: PropTypes.oneOf(['left', 'right']),
   iconOnly: PropTypes.bool,
   type: PropTypes.oneOf(['button', 'submit', 'reset']),
   onClick: PropTypes.func,
   ariaLabel: PropTypes.string,
-  className: PropTypes.string
+  
+  // ❌ PROPS LEGACY (temporales para backward compatibility)
+  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  iconPosition: PropTypes.oneOf(['left', 'right'])
 };
 
 export { Button };
