@@ -26,7 +26,55 @@ export {
   DEFAULT_PROPS
 } from './standardProps.js';
 
-// TODO: Agregar en próximas tareas
-// export { DESIGN_TOKENS } from './designTokens';
-// export { COLOR_TOKENS } from './colors';
-// export { SPACING_TOKENS } from './spacing';
+// Design Tokens System - Completo y listo para uso
+export {
+  // Token principal
+  DESIGN_TOKENS,
+  
+  // Tokens específicos por categoría
+  COMPONENT_SIZES,
+  COLOR_VARIANTS, 
+  BORDER_RADIUS,
+  SPACING,
+  SHADOWS,
+  TRANSITIONS,
+  Z_INDEX,
+  TYPOGRAPHY,
+  SEMANTIC_COLORS,
+  BREAKPOINTS,
+  ASPECT_RATIOS,
+  
+  // Funciones helper para uso programático
+  getSizeTokens,
+  getVariantTokens,
+  getRoundedToken,
+  getCombinedTokens,
+  tokensToStyles
+} from './designTokens.js';
+
+// Higher-Order Components para aplicar props estándar
+export {
+  withStandardProps,
+  withButtonProps,
+  withBadgeProps,
+  withInputProps,
+  withCardProps,
+  withModalProps,
+  createStandardHOC,
+  getOriginalComponent,
+  isStandardPropsComponent
+} from '../hocs/index.js';
+
+// Hooks para usar props estándar en componentes funcionales
+export {
+  useStandardProps,
+  useButtonProps,
+  useBadgeProps,
+  useInputProps,
+  useCardProps,
+  useModalProps,
+  useLoadingButtonProps,
+  useValidatedInputProps,
+  createStandardHook,
+  useStandardPropsDebug
+} from '../hooks/useStandardProps.jsx';

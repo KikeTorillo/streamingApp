@@ -57,7 +57,7 @@ const Badge = (props) => {
     // Props legacy (para backward compatibility temporal)
     icon,
     iconPosition = 'left',
-    ...restProps
+    ...domProps
   } = validatedProps;
 
   // ❌ DEPRECATION WARNINGS para props legacy
@@ -163,6 +163,7 @@ const Badge = (props) => {
       aria-label={finalAriaLabel}
       aria-disabled={disabled}
       title={title}
+      {...domProps}
     >
       {/* Contenido principal del badge */}
       <span className="badge__content">

@@ -1,68 +1,74 @@
 // FilterBar.jsx
 import PropTypes from 'prop-types';
 import { Button } from '../../atoms/Button/Button';
+import { useStandardProps, extractDOMProps } from '../../../tokens/index.js';
 import './FilterBar.css';
 
 /**
  * Componente FilterBar - Molecule
  * 
- * Barra de filtros con categorías y acciones adicionales.
- * Para filtrar contenido en MainPage.
+ * Barra de filtros con categorías y acciones adicionales integrada
+ * completamente con el sistema de diseño.
+ * 
+ * ✅ SISTEMA DE DISEÑO:
+ * - Props estándar: size, variant, rounded, disabled, loading, className
+ * - Tokens dinámicos: Acceso programático a variables CSS
+ * - Validación automática: Warnings para props incorrectas en desarrollo
+ * - Consistencia: Misma API que otros componentes del sistema
  */
-function FilterBar({
-  // Categorías
-  categories = [],
-  selectedCategory = 'all',
-  onCategoryChange = () => {},
-  
-  // Acciones adicionales (botones a la derecha)
-  actions = null,
-  
-  // Estilos
-  variant = 'default',
-  size = 'md',
-  
-  // Props adicionales
-  className = '',
-  
-  // ✅ SEPARAR PROPS PERSONALIZADAS QUE NO VAN AL DOM
-  loading, // ← PROP PERSONALIZADA
-  error, // ← PROP PERSONALIZADA
-  disabled, // ← Esta sí puede ir al DOM
-  
-  ...restProps
-}) {
-  
-  // ✅ FILTRAR PROPS QUE NO DEBEN IR AL DOM
+function FilterBar(props) {
+  // ✅ USAR SISTEMA DE DISEÑO: useStandardProps con configuración específica
   const {
-    loading: _loading,
-    error: _error,
-    variant: _variant,
-    size: _size,
-    categories: _categories,
-    selectedCategory: _selectedCategory,
-    onCategoryChange: _onCategoryChange,
-    actions: _actions,
-    ...domProps // ✅ Solo props válidas para el DOM
-  } = restProps;
-
-  // Usar variables para evitar warning de no-unused-vars
-  void _loading;
-  void _error;
-  void _variant;
-  void _size;
-  void _categories;
-  void _selectedCategory;
-  void _onCategoryChange;
-  void _actions;
+    // Props estándar del sistema
+    size,
+    variant,
+    rounded,
+    disabled,
+    loading,
+    className,
+    tokens,
+    // renderIcon, // No se usa directamente en FilterBar, los botones internos manejan sus iconos
+    
+    // Props específicas de FilterBar
+    categories = [],
+    selectedCategory = 'all',
+    onCategoryChange = () => {},
+    actions = null,
+    error,
+    
+    // Props restantes para DOM
+    ...restProps
+  } = useStandardProps(props, {
+    componentType: 'filterBar',
+    defaultSize: 'md',
+    defaultVariant: 'primary', // Variante estándar del sistema
+    defaultRounded: 'lg'
+  });
   
-  // Clases CSS dinámicas
+  // ✅ EXTRAER PROPS DOM-SAFE: Filtrar automáticamente props del sistema
+  const domProps = extractDOMProps({ 
+    ...restProps, 
+    className, 
+    disabled,
+    style: tokens ? {
+      // ✅ APLICAR TOKENS DINÁMICOS: Variables CSS accesibles desde JavaScript
+      padding: tokens.size?.padding,
+      fontSize: tokens.size?.fontSize,
+      borderRadius: tokens.rounded,
+      // CSS classes manejan colores, aquí solo overrides específicos si es necesario
+      ...restProps.style
+    } : restProps.style
+  });
+  
+  // ✅ CLASES CSS DEL SISTEMA: Usar variantes estándar + estados
   const filterBarClasses = [
     'filter-bar',
-    `filter-bar--variant-${variant}`,
-    `filter-bar--size-${size}`,
+    `filter-bar--variant-${variant}`, // primary, secondary, success, warning, danger, neutral
+    `filter-bar--size-${size}`,       // xs, sm, md, lg, xl
+    `filter-bar--rounded-${rounded}`, // sm, md, lg, xl, full
     loading && 'filter-bar--loading',
     error && 'filter-bar--error',
+    disabled && 'filter-bar--disabled',
     className
   ].filter(Boolean).join(' ');
 
@@ -93,11 +99,15 @@ function FilterBar({
             {categories.map(category => (
               <Button
                 key={category.value}
-                variant={selectedCategory === category.value ? 'primary' : 'outline'}
-                size={size === 'lg' ? 'md' : 'sm'}
+                // ✅ VARIANTES ESTÁNDAR: Usar solo variantes del sistema de diseño
+                variant={selectedCategory === category.value ? 'primary' : 'secondary'}
+                size={size} // ✅ Heredar tamaño del FilterBar
+                rounded={rounded} // ✅ Heredar rounded del FilterBar
                 onClick={() => onCategoryChange(category.value)}
                 className="filter-bar__category-button"
-                disabled={disabled}
+                disabled={disabled || loading} // ✅ Deshabilitar durante loading
+                // ✅ ICONOS DEL SISTEMA: Si la categoría tiene icono, usar leftIcon
+                leftIcon={category.icon}
               >
                 {category.label}
               </Button>
@@ -117,19 +127,23 @@ function FilterBar({
 }
 
 FilterBar.propTypes = {
+  // ✅ PROPS ESTÁNDAR DEL SISTEMA: Importar desde standardProps
+  // Todas estas props son validadas automáticamente por useStandardProps
+  
+  // Props específicas de FilterBar
   categories: PropTypes.arrayOf(PropTypes.shape({
     value: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
+    icon: PropTypes.string // ✅ NUEVO: Soporte para iconos en categorías
   })),
   selectedCategory: PropTypes.string,
   onCategoryChange: PropTypes.func,
   actions: PropTypes.node,
-  variant: PropTypes.oneOf(['default', 'primary', 'secondary']),
-  size: PropTypes.oneOf(['sm', 'md', 'lg']),
-  className: PropTypes.string,
-  loading: PropTypes.bool,
-  error: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-  disabled: PropTypes.bool
+  error: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
+  
+  // Nota: size, variant, rounded, disabled, loading, className
+  // son manejadas automáticamente por useStandardProps
+  // y validadas con STANDARD_PROP_TYPES
 };
 
 export { FilterBar };

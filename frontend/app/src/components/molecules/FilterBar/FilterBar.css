@@ -1,5 +1,6 @@
-/* ===== FILTER BAR COMPONENT - CON ESTADOS ===== */
-/* FilterBar.css */
+/* ===== FILTER BAR COMPONENT - SISTEMA DE DISEÑO INTEGRADO ===== */
+/* FilterBar.css - Totalmente compatible con el sistema de diseño */
+/* ✅ CONSISTENCIA: Usa mismas variantes, tamaños y tokens que otros componentes */
 
 /* ===== BASE ===== */
 .filter-bar {
@@ -9,41 +10,78 @@
   gap: var(--space-md);
   padding: var(--space-md);
   background-color: var(--bg-primary);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-lg); /* Default, será override por --rounded-* */
   font-family: var(--font-family-base);
   width: 100%;
   box-sizing: border-box;
+  transition: var(--transition-normal);
+  /* ✅ CONSISTENCIA: Usar variables del sistema para transiciones */
 }
 
-/* ===== VARIANTES ===== */
-.filter-bar--variant-default {
-  border: 0.1rem solid var(--border-secondary);
+/* ===== VARIANTES ESTÁNDAR DEL SISTEMA ===== */
+/* ✅ CONSISTENCIA: Usar mismas 6 variantes que Button, Badge, Input */
+
+.filter-bar--variant-primary {
+  border: 0.1rem solid var(--color-primary);
+  background-color: var(--bg-primary);
 }
 
-.filter-bar--variant-elevated {
-  box-shadow: var(--shadow-md);
-  border: none;
+.filter-bar--variant-secondary {
+  border: 0.1rem solid var(--color-secondary);
+  background-color: var(--bg-secondary);
 }
 
-.filter-bar--variant-transparent {
-  background-color: transparent;
-  border: none;
+.filter-bar--variant-success {
+  border: 0.1rem solid var(--color-success);
+  background-color: var(--color-success-light, var(--bg-primary));
 }
 
-/* ===== TAMAÑOS ===== */
+.filter-bar--variant-warning {
+  border: 0.1rem solid var(--color-warning);
+  background-color: var(--color-warning-light, var(--bg-primary));
+}
+
+.filter-bar--variant-danger {
+  border: 0.1rem solid var(--color-danger);
+  background-color: var(--color-danger-light, var(--bg-primary));
+}
+
+.filter-bar--variant-neutral {
+  border: 0.1rem solid var(--border-default);
+  background-color: var(--gray-50);
+}
+
+/* ===== TAMAÑOS ESTÁNDAR DEL SISTEMA ===== */
+/* ✅ CONSISTENCIA: 5 tamaños estándar (xs, sm, md, lg, xl) */
+
+.filter-bar--size-xs {
+  padding: var(--space-xs);
+  gap: var(--space-xs);
+  font-size: var(--font-size-xs);
+}
+
 .filter-bar--size-sm {
   padding: var(--space-sm);
   gap: var(--space-sm);
+  font-size: var(--font-size-sm);
 }
 
 .filter-bar--size-md {
   padding: var(--space-md);
   gap: var(--space-md);
+  font-size: var(--font-size-md);
 }
 
 .filter-bar--size-lg {
   padding: var(--space-lg);
   gap: var(--space-lg);
+  font-size: var(--font-size-lg);
+}
+
+.filter-bar--size-xl {
+  padding: var(--space-xl);
+  gap: var(--space-lg); /* Gap menor para xl para no exagerar */
+  font-size: var(--font-size-xl);
 }
 
 /* ===== CATEGORÍAS ===== */
@@ -57,6 +95,8 @@
 
 .filter-bar__category-button {
   flex-shrink: 0;
+  /* ✅ SISTEMA DE DISEÑO: Sin overrides - Button usa sus propios tokens automáticamente */
+  /* Los tamaños, variantes, y rounded se heredan del FilterBar padre */
 }
 
 .category-icon {
@@ -71,12 +111,21 @@
   flex-shrink: 0;
 }
 
+/* ===== ROUNDED VARIANTS ESTÁNDAR ===== */
+/* ✅ CONSISTENCIA: 5 rounded variants (sm, md, lg, xl, full) */
+.filter-bar--rounded-sm { border-radius: var(--radius-sm); }
+.filter-bar--rounded-md { border-radius: var(--radius-md); }
+.filter-bar--rounded-lg { border-radius: var(--radius-lg); }
+.filter-bar--rounded-xl { border-radius: var(--radius-xl); }
+.filter-bar--rounded-full { border-radius: var(--radius-full); }
+
 /* ===== ESTADOS ESPECIALES ===== */
 
 /* Estado de loading */
 .filter-bar--loading {
   opacity: 0.7;
   pointer-events: none;
+  cursor: wait;
 }
 
 .filter-bar__loading {
@@ -92,7 +141,7 @@
 /* Estado de error */
 .filter-bar--error {
   border-color: var(--color-danger);
-  background-color: var(--color-danger-light);
+  background-color: var(--color-danger-light, rgba(239, 68, 68, 0.1));
 }
 
 .filter-bar__error {
@@ -101,8 +150,15 @@
   justify-content: center;
   width: 100%;
   padding: var(--space-md);
-  color: var(--color-danger-dark);
+  color: var(--color-danger-dark, var(--color-danger));
   font-size: var(--font-size-sm);
+}
+
+/* Estado disabled */
+.filter-bar--disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
@@ -132,8 +188,8 @@
   }
 
   .filter-bar__category-button {
-    font-size: var(--font-size-xs);
-    padding: var(--space-xs) var(--space-sm);
+    /* ✅ RESPONSIVE: Button se adapta automáticamente usando el sistema */
+    /* Sin necesidad de overrides manuales */
   }
 }
 
@@ -147,11 +203,11 @@
 
 /* High contrast mode */
 @media (prefers-contrast: high) {
-  .filter-bar--variant-default {
+  .filter-bar {
     border-width: 0.2rem;
   }
   
   .filter-bar__category-button {
-    border-width: 0.2rem;
+    /* ✅ Button maneja su propio high contrast automáticamente */
   }
 }

@@ -52,7 +52,7 @@ function ThemeSelector({
           className="theme-selector__toggle"
           onClick={toggleMode}
           ariaLabel="Alternar modo claro/oscuro"
-          variant="ghost"
+          variant="primary"
           size={size}
           iconOnly={true}
           icon={palette === 'default' && (theme === 'dark' ? '🌙' : '☀️') || 

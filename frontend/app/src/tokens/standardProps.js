@@ -200,8 +200,8 @@ export const DEPRECATED_PROPS = {
  * @param {Object} allowedProps - Props específicas adicionales del componente
  * @returns {Object} Props validadas con warnings
  */
-export const validateStandardProps = (props, componentName = 'Component', allowedProps = {}) => {
-  if (process.env.NODE_ENV !== 'development') {
+export const validateStandardProps = (props, componentName = 'Component') => {
+  if (typeof process === 'undefined' || process.env?.NODE_ENV !== 'development') {
     return props; // Solo validar en desarrollo
   }
 
@@ -225,7 +225,7 @@ export const validateStandardProps = (props, componentName = 'Component', allowe
 
   // Detectar props deprecadas
   Object.keys(DEPRECATED_PROPS).forEach(deprecatedProp => {
-    if (props.hasOwnProperty(deprecatedProp)) {
+    if (Object.prototype.hasOwnProperty.call(props, deprecatedProp)) {
       const { replacement, reason } = DEPRECATED_PROPS[deprecatedProp];
       warnings.push(`${componentName}: prop "${deprecatedProp}" está deprecada. ${reason}. Usar: ${replacement}`);
     }
@@ -282,7 +282,7 @@ export const extractStandardProps = (props) => {
 
 /**
  * Función helper para extraer props DOM-safe
- * Filtra props del sistema de diseño que no deben ir al DOM
+ * Filtra props del sistema de diseño y del hook useStandardProps que no deben ir al DOM
  * 
  * @param {Object} props - Props completas del componente
  * @returns {Object} Props seguras para elementos DOM
@@ -291,10 +291,20 @@ export const extractDOMProps = (props) => {
   const {
     // Props del sistema de diseño (NO van al DOM)
     size, variant, rounded, loading, leftIcon, rightIcon, iconOnly,
+    
+    // Props adicionales del hook useStandardProps (NO van al DOM)  
+    tokens, renderIcon, hasLeftIcon, hasRightIcon, hasAnyIcon,
+    isDisabled, isLoading, isEmpty,
+    
     // Props que SÍ van al DOM
     className, style, disabled, 'aria-label': ariaLabel, 'data-testid': testId,
     ...domProps
   } = props;
+
+  // Marcar variables como utilizadas para evitar warnings de linting
+  void size; void variant; void rounded; void loading; void leftIcon; void rightIcon; void iconOnly;
+  void tokens; void renderIcon; void hasLeftIcon; void hasRightIcon; void hasAnyIcon;
+  void isDisabled; void isLoading; void isEmpty;
 
   // Solo incluir props que son válidas en DOM
   const safeDOMProps = {

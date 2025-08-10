@@ -90,6 +90,15 @@ export const COMPONENT_SIZE_MAPS = {
     collapsed: 'sm',
     expanded: 'sm',
     submenu: 'xs'
+  },
+
+  // FilterBar: iconos pequeños para no dominar los botones
+  filterBar: {
+    xs: 'xs',
+    sm: 'xs', 
+    md: 'sm',
+    lg: 'sm',
+    xl: 'md'
   }
 };
 
