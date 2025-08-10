@@ -6,7 +6,7 @@ import './ThemeSelector.css';
 
 function ThemeSelector({
   size = 'md',
-  variant = 'default',
+  variant = 'primary',
   showLabels = false,
   className = '',
   ...restProps
@@ -55,7 +55,7 @@ function ThemeSelector({
           variant="primary"
           size={size}
           iconOnly={true}
-          icon={palette === 'default' && (theme === 'dark' ? '🌙' : '☀️') || 
+          rightIcon={palette === 'default' && (theme === 'dark' ? '🌙' : '☀️') || 
                 palette !== 'default' && (theme.endsWith('dark') ? '🌙' : '☀️')}
         />
       </div>

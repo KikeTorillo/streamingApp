@@ -219,7 +219,7 @@ function SeriesDetailPage() {
                         userName={user?.userName || user?.username || user?.name || user?.email || 'Usuario'}
                         showSearch={false}
                         onLogout={handleLogout}
-                        variant="default"
+                        variant="primary"
                         size="lg"
                     />
                 }
@@ -264,7 +264,7 @@ function SeriesDetailPage() {
                     showBackButton
                     onBackClick={handleBackToSeries}
                     onLogout={handleLogout}
-                    variant="default"
+                    variant="primary"
                     size="lg"
                 />
             }

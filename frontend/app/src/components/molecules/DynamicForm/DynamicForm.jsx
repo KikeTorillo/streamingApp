@@ -354,7 +354,7 @@ const DynamicForm = ({
             rounded={fieldRounded}
             compact={compact}
             fullWidth
-            variant={hasError ? 'error' : 'default'}
+            variant={hasError ? 'error' : 'primary'}
             autoComplete={fieldType === 'email' ? 'email' : fieldType === 'tel' ? 'tel' : undefined}
           />
         </div>
@@ -377,7 +377,7 @@ const DynamicForm = ({
             disabled={fieldDisabled}
             size={fieldSize}
             rounded={fieldRounded}
-            variant={hasError ? 'danger' : (field.variant || 'default')}
+            variant={hasError ? 'danger' : (field.variant || 'primary')}
             fullWidth={true}
             compact={compact}
             onChange={(e) => {
@@ -407,7 +407,7 @@ const DynamicForm = ({
             disabled={fieldDisabled}
             size={fieldSize}
             rounded={fieldRounded}
-            variant={hasError ? 'danger' : (field.variant || 'default')}
+            variant={hasError ? 'danger' : (field.variant || 'primary')}
             fullWidth={true}
             compact={compact}
             // Props específicas de ImageCropField
@@ -448,7 +448,7 @@ const DynamicForm = ({
             rounded={fieldRounded}
             compact={compact}
             fullWidth
-            variant={hasError ? 'error' : 'default'}
+            variant={hasError ? 'error' : 'primary'}
           />
         </div>
       );

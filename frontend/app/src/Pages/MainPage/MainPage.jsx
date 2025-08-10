@@ -233,7 +233,7 @@ function MainPage() {
                     onSearchChange={handleSearchChange}
                     searchPlaceholder="Buscar películas y series..."
                     onLogout={handleLogout}
-                    variant="default"
+                    variant="primary"
                     size="lg"
                 />
             }
@@ -267,7 +267,7 @@ function MainPage() {
                     }
                 />
             }
-            variant="default"
+            variant="primary"
         >
             {/* ===== SECCIÓN DE PELÍCULAS ===== */}
             <ContentSection
@@ -303,7 +303,7 @@ function MainPage() {
                         </Button>
                     ) : null
                 }
-                variant="default"
+                variant="primary"
                 size="md"
                 gridColumns="repeat(auto-fit, minmax(200px, 1fr))"
                 gridGap="var(--space-md)"

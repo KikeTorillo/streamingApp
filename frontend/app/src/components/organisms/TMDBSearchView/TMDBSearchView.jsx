@@ -271,7 +271,7 @@ function TMDBSearchView({
           </Button>
         </div>
       )}
-      variant="error"
+      variant="danger"
     />
   );
 

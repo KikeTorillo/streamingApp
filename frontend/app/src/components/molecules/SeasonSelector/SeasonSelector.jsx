@@ -118,7 +118,7 @@ const SeasonSelector = ({
           placeholder="Seleccionar temporada"
           disabled={disabled || loading}
           size={size}
-          variant="default"
+          variant="primary"
           className="season-selector__select"
         />
         

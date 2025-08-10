@@ -58,7 +58,7 @@ const TextInput = forwardRef(({
     id,
     className = '',
     size = 'md',
-    variant = 'default',
+    variant = 'primary',
     rounded = 'md',
     disabled = false,
     readOnly = false,

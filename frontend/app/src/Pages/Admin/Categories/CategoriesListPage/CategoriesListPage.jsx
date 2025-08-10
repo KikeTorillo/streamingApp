@@ -202,7 +202,7 @@ function CategoriesListContent() {
       headerActions={
         <div className="categories-list__header-actions">
           <Button
-            variant="outline"
+            variant="warning"
             size="sm"
             leftIcon="🔄"
             onClick={handleRefresh}
@@ -233,7 +233,7 @@ function CategoriesListContent() {
             searchPlaceholder="Buscar categorías por nombre..."
             pageSizeOptions={[10, 25, 50, 100]}
             pageSize={10}
-            variant="default"
+            variant="primary"
             emptyTitle="No hay categorías registradas"
             emptyDescription="Crea tu primera categoría para organizar el contenido multimedia"
             emptyIcon="🎭"

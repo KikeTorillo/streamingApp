@@ -122,7 +122,7 @@ function MoviesDetailPage() {
                         userName={user?.userName || user?.username || user?.name || user?.email || 'Usuario'}
                         showSearch={false}
                         onLogout={handleLogout}
-                        variant="default"
+                        variant="primary"
                         size="lg"
                     />
                 }
@@ -167,7 +167,7 @@ function MoviesDetailPage() {
                         userName={user?.userName || user?.username || user?.name || user?.email || 'Usuario'}
                         showSearch={false}
                         onLogout={handleLogout}
-                        variant="default"
+                        variant="primary"
                         size="lg"
                     />
                 }
@@ -198,7 +198,7 @@ function MoviesDetailPage() {
                     showBackButton
                     onBackClick={handleBackToMain}
                     onLogout={handleLogout}
-                    variant="default"
+                    variant="primary"
                     size="lg"
                 />
             }

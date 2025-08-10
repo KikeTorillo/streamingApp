@@ -247,7 +247,7 @@ function AdminSidebar({
           onClick={handleSidebarToggle}
           className="admin-sidebar__toggle"
           aria-label={isCollapsed ? 'Expandir sidebar' : 'Contraer sidebar'}
-          icon={isCollapsed ? 'chevron-right' : 'chevron-left'}
+          leftIcon={isCollapsed ? 'chevron-right' : 'chevron-left'}
           iconOnly
         />
       </div>

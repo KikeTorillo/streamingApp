@@ -27,7 +27,7 @@ function AppHeader({
   showSearch = true,
   
   // Estilos
-  variant = 'default',
+  variant = 'primary',
   size = 'md',
   
   // Props adicionales

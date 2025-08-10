@@ -12,8 +12,7 @@ export const VideoPlayerBackButton = ({ onGoBack }) => {
       ariaLabel="Regresar"
       variant="secondary"
       size="md"
-      icon="←"
-      iconPosition="left"
+      leftIcon="←"
     >
       Regresar
     </Button>
