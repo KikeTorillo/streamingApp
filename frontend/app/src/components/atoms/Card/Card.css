@@ -25,7 +25,38 @@
   overflow: hidden;
 }
 
-/* VARIANTES DE CARD */
+/* ===== VARIANTES ESTÁNDAR DEL SISTEMA ===== */
+.card--primary {
+  border: none;
+  background-color: var(--bg-primary);
+}
+
+.card--secondary {
+  border: none;
+  background-color: var(--bg-secondary);
+}
+
+.card--success {
+  border: none;
+  background-color: var(--bg-success-light);
+}
+
+.card--warning {
+  border: none;
+  background-color: var(--bg-warning-light);
+}
+
+.card--danger {
+  border: none;
+  background-color: var(--bg-danger-light);
+}
+
+.card--neutral {
+  border: none;
+  background-color: var(--bg-primary);
+}
+
+/* ===== VARIANTES LEGACY (APPEARANCE) - Backward compatibility ===== */
 .card--default {
   border: none;
 }
@@ -172,6 +203,21 @@
 /* ANCHO COMPLETO */
 .card--full-width {
   width: 100%;
+}
+
+/* ===== ESTADOS ESTÁNDAR DEL SISTEMA ===== */
+.card--disabled {
+  opacity: 0.6;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.card--disabled.card--clickable {
+  cursor: not-allowed;
+}
+
+.card--loading.card--disabled {
+  pointer-events: none;
 }
 
 /* ELEMENTOS INTERNOS DE LA CARD */

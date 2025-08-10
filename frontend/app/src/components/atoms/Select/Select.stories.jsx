@@ -108,12 +108,12 @@ Como **átomo**, Select es:
     },
     variant: {
       name: 'Variante',
-      description: 'Estilo visual semántico del select - afecta colores de borde y fondo',
+      description: 'Estilo visual semántico del select - 6 variantes estándar del sistema',
       control: 'select',
-      options: ['default', 'success', 'warning', 'error'],
+      options: ['primary', 'secondary', 'success', 'warning', 'danger', 'neutral'],
       table: {
         type: { summary: 'string' },
-        defaultValue: { summary: "'default'" }
+        defaultValue: { summary: "'primary'" }
       }
     },
     rounded: {
@@ -229,7 +229,7 @@ export const Default = {
     options: basicOptions,
     placeholder: 'Selecciona una estación',
     size: 'md',
-    variant: 'default'
+    variant: 'primary'
   }
 };
 
@@ -239,7 +239,7 @@ export const Basic = {
     options: basicOptions,
     placeholder: 'Ejemplo básico',
     size: 'md',
-    variant: 'default'
+    variant: 'primary'
   }
 };
 
@@ -284,7 +284,7 @@ export const Variants = () => (
     alignItems: 'center',
     padding: 'var(--space-md)'
   }}>
-    {['default', 'success', 'warning', 'error'].map(variant => (
+    {['primary', 'secondary', 'success', 'warning', 'danger', 'neutral'].map(variant => (
       <div key={variant} style={{ textAlign: 'center' }}>
         <h4 style={{ marginBottom: 'var(--space-sm)' }}>
           {variant.charAt(0).toUpperCase() + variant.slice(1)}
@@ -303,7 +303,7 @@ export const Variants = () => (
 Variants.parameters = {
   docs: {
     description: {
-      story: 'Variantes semánticas del sistema: Default neutral, Success para confirmaciones, Warning para advertencias, Error para errores.'
+      story: 'Las 6 variantes estándar del sistema: Primary (neutral), Secondary (alternativo), Success (confirmaciones), Warning (advertencias), Danger (errores), Neutral (gris).'
     }
   }
 };
@@ -419,6 +419,67 @@ Interactive.parameters = {
   docs: {
     description: {
       story: 'Ejemplo interactivo que demuestra onChange y navegación por teclado. Accesible vía Tab + Flechas + Enter.'
+    }
+  }
+};
+
+// ===== NUEVA STORY: ICONOS Y LOADING =====
+export const IconsAndLoading = () => (
+  <div style={{
+    display: 'grid',
+    gap: 'var(--space-lg)',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+    alignItems: 'center',
+    padding: 'var(--space-md)'
+  }}>
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Con leftIcon</h4>
+      <Select 
+        options={countryOptions}
+        placeholder="Selecciona país"
+        leftIcon="globe"
+        size="lg"
+      />
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Con rightIcon personalizado</h4>
+      <Select 
+        options={categoryOptions}
+        placeholder="Selecciona categoría"
+        rightIcon="tag"
+        size="lg"
+      />
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Ambos iconos</h4>
+      <Select 
+        options={countryOptions}
+        placeholder="Selecciona"
+        leftIcon="search"
+        rightIcon="filter"
+        size="lg"
+      />
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Loading</h4>
+      <Select 
+        options={countryOptions}
+        placeholder="Cargando..."
+        loading={true}
+        size="lg"
+        disabled
+      />
+    </div>
+  </div>
+);
+
+IconsAndLoading.parameters = {
+  docs: {
+    description: {
+      story: 'Nuevas funcionalidades: leftIcon, rightIcon personalizado (reemplaza flecha), y estado loading con spinner. 100% consistente con Input.'
     }
   }
 };

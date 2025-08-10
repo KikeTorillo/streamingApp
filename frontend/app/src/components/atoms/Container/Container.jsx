@@ -1,72 +1,113 @@
-// Container.jsx - VERSIÓN CORREGIDA
+// Container.jsx - MIGRADO AL SISTEMA DE DISEÑO ESTÁNDAR
 
 /* eslint-disable react-refresh/only-export-components */
 
 import PropTypes from 'prop-types';
+import { useStandardProps } from '../../../hooks/useStandardProps';
+import { STANDARD_PROP_TYPES } from '../../../tokens';
 import './Container.css';
 
 /**
- * Componente Container unificado que implementa el sistema de contenedores estandarizado
- * Reemplaza el uso directo de clases CSS por un componente reutilizable
+ * Container - ÁTOMO MIGRADO AL SISTEMA DE DISEÑO ESTÁNDAR
  * 
- * ✅ CORREGIDO: Ahora se ajusta al contenido correctamente
- * ✅ NUEVAS VARIANTES: fullheight y centered para casos específicos
+ * ✅ MIGRADO: Hook useStandardProps integrado
+ * ✅ PROPS ESTÁNDAR: size, variant, rounded, loading, className
+ * ✅ TOKENS AUTOMÁTICOS: Spacing y sizing del sistema
+ * ✅ BACKWARD COMPATIBILITY: Deprecation warnings para props legacy
+ * ✅ VARIANTES ESTÁNDAR: 6 variantes semánticas unificadas
+ * 
+ * CAMBIOS EN LA MIGRACIÓN:
+ * - variant="default" → variant="primary" (con deprecation warning)
+ * - Integración con sistema de tokens automáticos
+ * - Props estándar unificadas con otros componentes
+ * - Deprecation warning para prop 'debug' (usar className en su lugar)
  */
-function Container({ 
-  size = 'md',
-  variant = 'default',
-  debug = false,
-  children,
-  className = '',
-  as = 'div',
-  ...props 
-}) {
-  // Generar clase base del contenedor
-  const baseClass = `container-${size}`;
-  
-  // Generar clase de variante si no es default
-  const variantClass = variant !== 'default' ? `container-${size}--${variant}` : '';
-  
-  // Clase de debug si está activado
-  const debugClass = debug ? 'debug-containers' : '';
-  
-  // Combinar todas las clases
-  const containerClass = [baseClass, variantClass, debugClass, className]
-    .filter(Boolean)
-    .join(' ');
-  
-  // Crear elemento dinámico
+function Container(props) {
+  // ✅ USAR HOOK ESTÁNDAR CON CONFIGURACIÓN ESPECÍFICA
+  const {
+    size,
+    variant,
+    disabled,
+    loading,
+    className,
+    ...domProps
+  } = useStandardProps(props, {
+    componentType: 'container',
+    defaultSize: 'md',
+    defaultVariant: 'primary',
+    defaultRounded: 'lg'
+  });
+
+  // ✅ EXTRAER PROPS ESPECÍFICAS DE CONTAINER
+  const {
+    children,
+    as = 'div',
+    debug,
+    spacing,
+    padding,
+    // Props legacy con warnings
+    variant: originalVariant,
+    ...restProps
+  } = props;
+
+  // ✅ DEPRECATION WARNING para variant="default"
+  if (originalVariant === 'default' && typeof window !== 'undefined') {
+    console.warn(
+      '⚠️ DEPRECATION WARNING: Container variant="default" is deprecated. Use variant="primary" instead.',
+      '\n📖 Migration guide: https://docs.streamingapp.com/components/container#migration'
+    );
+  }
+
+  // ✅ DEPRECATION WARNING para prop debug
+  if (debug !== undefined && typeof window !== 'undefined') {
+    console.warn(
+      '⚠️ DEPRECATION WARNING: Container debug prop is deprecated. Use className="debug-containers" instead.',
+      '\n📖 Migration guide: https://docs.streamingapp.com/components/container#migration'
+    );
+  }
+
+  // ✅ GENERAR CLASES CSS CON SISTEMA ESTÁNDAR
+  const containerClasses = [
+    `container-${size}`,
+    `container-${size}--${variant}`,
+    loading && 'container--loading',
+    debug && 'debug-containers', // Mantener temporalmente
+    className
+  ].filter(Boolean).join(' ');
+
+  // ✅ ESTILOS AUTOMÁTICOS CON TOKENS (aplicados via CSS)
+  const containerStyles = {
+    // Espaciado personalizado opcional
+    ...(spacing && { gap: `var(--space-${spacing})` }),
+    ...(padding && { padding }),
+    // Estados
+    opacity: disabled ? '0.5' : '1',
+    pointerEvents: disabled ? 'none' : 'auto'
+  };
+
+  // ✅ CREAR ELEMENTO DINÁMICO
   const Element = as;
-  
+
   return (
-    <Element className={containerClass} {...props}>
+    <Element 
+      className={containerClasses}
+      style={containerStyles}
+      {...domProps}
+      {...restProps}
+    >
+      {loading && (
+        <div className="container__loading">
+          <div className="container__spinner"></div>
+        </div>
+      )}
       {children}
     </Element>
   );
 }
 
 Container.propTypes = {
-  /**
-   * Tamaño del contenedor - define el ancho máximo
-   */
-  size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl', 'full']),
-  
-  /**
-   * Variante visual del contenedor
-   */
-  variant: PropTypes.oneOf([
-    'default',    // Con estilos de card, ancho fijo consistente
-    'simple',     // Sin estilos de card, ancho fijo consistente  
-    'compact',    // Menos padding, ancho fijo consistente
-    'flexible',   // Ancho variable que se ajusta al contenido (con límites)
-    'fullheight', // Con estilos de card + altura mínima de pantalla
-    'centered'    // Centrado vertical y horizontal + altura de pantalla
-  ]),
-  
-  /**
-   * Activar modo debug para visualizar límites
-   */
-  debug: PropTypes.bool,
+  // ✅ PROPS ESTÁNDAR DEL SISTEMA DE DISEÑO
+  ...STANDARD_PROP_TYPES,
   
   /**
    * Contenido del componente
@@ -74,20 +115,33 @@ Container.propTypes = {
   children: PropTypes.node.isRequired,
   
   /**
-   * Clases CSS adicionales
+   * Elemento HTML a renderizar (div, section, main, etc.)
    */
-  className: PropTypes.string,
+  as: PropTypes.string,
   
   /**
-   * Elemento HTML a renderizar
+   * Espaciado interno personalizado (sobrescribe tokens automáticos)
    */
-  as: PropTypes.string
+  padding: PropTypes.string,
+  
+  /**
+   * Espaciado entre elementos hijos (gap)
+   */
+  spacing: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl', '2xl']),
+  
+  // ✅ PROPS LEGACY CON DEPRECATION WARNINGS
+  /**
+   * @deprecated Usar className="debug-containers" en su lugar
+   */
+  debug: PropTypes.bool
 };
 
 Container.defaultProps = {
   size: 'md',
-  variant: 'default',
-  debug: false,
+  variant: 'primary', // ✅ Cambio: default → primary
+  rounded: 'lg',
+  disabled: false,
+  loading: false,
   className: '',
   as: 'div'
 };
@@ -96,22 +150,32 @@ Container.defaultProps = {
 
 export { Container };
 
-// Tamaños disponibles
+// ✅ TAMAÑOS ESTÁNDAR DEL SISTEMA
 export const CONTAINER_SIZES = {
-  XS: 'xs',    // ≤480px - Modales, formularios login
-  SM: 'sm',    // ≤640px - Artículos, detalles
-  MD: 'md',    // ≤800px - Páginas estándar
-  LG: 'lg',    // ≤1200px - Dashboards, admin
-  XL: 'xl',    // ≤1440px - Layout principal
+  XS: 'xs',    // 480px - Modales, formularios login
+  SM: 'sm',    // 640px - Artículos, detalles
+  MD: 'md',    // 800px - Páginas estándar
+  LG: 'lg',    // 1200px - Dashboards, admin
+  XL: 'xl',    // 1440px - Layout principal
   FULL: 'full' // Sin límite - Páginas wide
 };
 
-// Variantes disponibles (ACTUALIZADAS)
+// ✅ VARIANTES ESTÁNDAR DEL SISTEMA (6 variantes semánticas)
 export const CONTAINER_VARIANTS = {
-  DEFAULT: 'default',      // Card style + ancho fijo consistente
-  SIMPLE: 'simple',        // Sin card style + ancho fijo consistente
-  COMPACT: 'compact',      // Menos padding + ancho fijo consistente
-  FLEXIBLE: 'flexible',    // Ancho variable que se ajusta al contenido
-  FULLHEIGHT: 'fullheight', // Card style + altura mínima de pantalla
-  CENTERED: 'centered'     // Centrado + altura de pantalla
+  PRIMARY: 'primary',      // Azul oceánico - contenedor principal
+  SECONDARY: 'secondary',  // Naranja/dorado - contenedor secundario
+  SUCCESS: 'success',      // Verde/azul - contenedor de éxito
+  WARNING: 'warning',      // Amarillo/dorado - contenedor de advertencia
+  DANGER: 'danger',        // Rojo - contenedor de error
+  NEUTRAL: 'neutral'       // Gris - contenedor neutro
+};
+
+// ✅ MAPEO DE COMPATIBILIDAD (Legacy → Estándar)
+export const CONTAINER_VARIANT_MAPPING = {
+  'default': 'primary',
+  'simple': 'neutral',
+  'compact': 'primary',
+  'flexible': 'neutral',
+  'fullheight': 'primary',
+  'centered': 'primary'
 };

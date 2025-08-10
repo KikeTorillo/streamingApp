@@ -9,6 +9,66 @@
     font-family: var(--font-family-base);
 }
 
+/* ===== WRAPPER CON ICONOS - IGUAL QUE INPUT ===== */
+.select-wrapper--xs {
+    font-size: var(--component-font-xs);
+    min-height: var(--component-height-xs);
+}
+
+.select-wrapper--sm {
+    font-size: var(--component-font-sm);
+    min-height: var(--component-height-sm);
+}
+
+.select-wrapper--md {
+    font-size: var(--component-font-md);
+    min-height: var(--component-height-md);
+}
+
+.select-wrapper--lg {
+    font-size: var(--component-font-lg);
+    min-height: var(--component-height-lg);
+}
+
+.select-wrapper--xl {
+    font-size: var(--component-font-xl);
+    min-height: var(--component-height-xl);
+}
+
+/* Wrapper variants */
+.select-wrapper--primary {
+    color: var(--text-primary);
+}
+
+.select-wrapper--secondary {
+    color: var(--color-secondary-dark);
+}
+
+.select-wrapper--success {
+    color: var(--color-success-dark);
+}
+
+.select-wrapper--warning {
+    color: var(--color-warning-dark);
+}
+
+.select-wrapper--danger {
+    color: var(--color-danger-dark);
+}
+
+.select-wrapper--neutral {
+    color: var(--color-neutral-dark);
+}
+
+.select-wrapper--disabled {
+    color: var(--text-disabled);
+    pointer-events: none;
+}
+
+.select-wrapper--loading {
+    pointer-events: none;
+}
+
 /* ===== SELECT BASE - IDÉNTICO A INPUT-BASE ===== */
 .select-base {
     display: block;
@@ -118,29 +178,30 @@
     opacity: 0.6;
 }
 
-/* ===== VARIANTES SEMÁNTICAS - IDÉNTICAS A INPUT ===== */
+/* ===== VARIANTES SEMÁNTICAS - SISTEMA ESTÁNDAR 6 VARIANTES ===== */
 
-/* Default */
-.select-base--default {
+/* Primary (default) */
+.select-base--primary {
     background-color: var(--bg-primary);
     color: var(--text-primary);
     border-color: var(--border-default);
 }
 
-/* Error */
-.select-base--error {
-    border-color: var(--color-danger);
-    background-color: var(--color-danger-light);
+/* Secondary */
+.select-base--secondary {
+    background-color: var(--color-secondary-light);
+    color: var(--color-secondary-dark);
+    border-color: var(--color-secondary);
 }
 
-.select-base--error:focus {
-    border-color: var(--color-danger);
-    box-shadow: 0 0 0 0.3rem var(--color-danger-light);
-    outline-color: var(--color-danger);
+.select-base--secondary:focus {
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 0 0.3rem var(--color-secondary-light);
+    outline-color: var(--color-secondary);
 }
 
-.select-base--error:hover:not(:disabled):not(:focus) {
-    border-color: var(--color-danger-hover);
+.select-base--secondary:hover:not(:disabled):not(:focus) {
+    border-color: var(--color-secondary-hover);
     box-shadow: var(--shadow-sm);
 }
 
@@ -175,6 +236,41 @@
 
 .select-base--warning:hover:not(:disabled):not(:focus) {
     border-color: var(--color-warning-hover);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Danger (antes "error") */
+.select-base--danger {
+    border-color: var(--color-danger);
+    background-color: var(--color-danger-light);
+}
+
+.select-base--danger:focus {
+    border-color: var(--color-danger);
+    box-shadow: 0 0 0 0.3rem var(--color-danger-light);
+    outline-color: var(--color-danger);
+}
+
+.select-base--danger:hover:not(:disabled):not(:focus) {
+    border-color: var(--color-danger-hover);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Neutral */
+.select-base--neutral {
+    background-color: var(--color-neutral-light);
+    color: var(--color-neutral-dark);
+    border-color: var(--color-neutral);
+}
+
+.select-base--neutral:focus {
+    border-color: var(--color-neutral);
+    box-shadow: 0 0 0 0.3rem var(--color-neutral-light);
+    outline-color: var(--color-neutral);
+}
+
+.select-base--neutral:hover:not(:disabled):not(:focus) {
+    border-color: var(--color-neutral-hover);
     box-shadow: var(--shadow-sm);
 }
 
@@ -393,6 +489,104 @@
     font-family: monospace;
 }
 
+/* ===== ICONOS DEL WRAPPER - IGUAL QUE INPUT ===== */
+.select-wrapper__icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    pointer-events: none;
+    z-index: 2;
+    transition: color var(--transition-normal);
+}
+
+.select-wrapper__icon--left {
+    left: var(--space-md);
+}
+
+.select-wrapper__icon--right {
+    right: var(--space-md);
+}
+
+/* Padding para select con iconos */
+.select-base--with-left-icon {
+    padding-left: calc(var(--space-md) * 2.5);
+}
+
+.select-base--with-right-icon {
+    padding-right: calc(var(--space-md) * 2.5);
+    background-image: none; /* Quitar flecha automática */
+}
+
+/* Estados de iconos */
+.select-wrapper:hover .select-wrapper__icon {
+    color: var(--text-primary);
+}
+
+.select-base:focus + .select-wrapper__icon,
+.select-base:focus ~ .select-wrapper__icon {
+    color: var(--border-focus);
+}
+
+.select-wrapper--disabled .select-wrapper__icon {
+    color: var(--text-disabled);
+}
+
+/* ===== SPINNER DE LOADING - IGUAL QUE INPUT ===== */
+.select-wrapper__spinner {
+    position: absolute;
+    right: var(--space-md);
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 3;
+}
+
+.select-wrapper__spinner-svg {
+    width: 1.2rem;
+    height: 1.2rem;
+    animation: spin 1s linear infinite;
+    color: var(--text-secondary);
+}
+
+.select-wrapper__spinner-circle {
+    fill: none;
+    stroke: currentColor;
+    stroke-dasharray: 31.416;
+    stroke-dashoffset: 31.416;
+    animation: loading 1.5s ease-in-out infinite;
+}
+
+/* Animaciones */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes loading {
+    0% {
+        stroke-dasharray: 0 31.416;
+    }
+    50% {
+        stroke-dasharray: 15.708 15.708;
+    }
+    100% {
+        stroke-dasharray: 31.416 0;
+    }
+}
+
+/* Estados de loading */
+.select-base--loading {
+    padding-right: calc(var(--space-md) * 2.5);
+    background-image: none; /* Quitar flecha automática */
+}
+
 /* ===== PRINT STYLES ===== */
 @media print {
     .select-base {
@@ -401,7 +595,9 @@
         background-image: none;
     }
 
-    .select-base__arrow {
+    .select-base__arrow,
+    .select-wrapper__icon,
+    .select-wrapper__spinner {
         display: none;
     }
 }

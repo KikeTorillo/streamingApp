@@ -1,60 +1,125 @@
 // atoms/Card.jsx
 import PropTypes from 'prop-types';
+import { useCardProps } from '../../../hooks/useStandardProps.jsx';
+import { STANDARD_PROP_TYPES } from '../../../tokens/standardProps.js';
 import './Card.css';
 
 /**
  * Componente Card - Átomo base para contenedores
- * Siguiendo el sistema de diseño establecido y principios de Atomic Design
+ * 🎯 MIGRADO AL SISTEMA DE DISEÑO ESTÁNDAR
+ * 
+ * ✅ NUEVAS CARACTERÍSTICAS:
+ * - Hook useCardProps() integrado para consistencia
+ * - Props estándar (size, variant, rounded) con tokens automáticos
+ * - Backward compatibility con padding (DEPRECADO)
+ * - STANDARD_PROP_TYPES para validación consistente
  * 
  * @param {Object} props - Propiedades del componente
  * @param {React.ReactNode} props.children - Contenido de la card
+ * @param {'xs'|'sm'|'md'|'lg'|'xl'} [props.size='md'] - Tamaño estándar (reemplaza padding)
+ * @param {'primary'|'secondary'|'success'|'warning'|'danger'|'neutral'} [props.variant='neutral'] - Variante semántica estándar
+ * @param {'sm'|'md'|'lg'|'xl'|'full'} [props.rounded='lg'] - Radio de bordes estándar
+ * @param {boolean} [props.disabled=false] - Estado deshabilitado (bloquea interacción)
+ * @param {boolean} [props.loading=false] - Estado de carga con shimmer effect
  * @param {string} [props.className=''] - Clases CSS adicionales
- * @param {'xs'|'sm'|'md'|'lg'|'xl'|'2xl'} [props.padding='lg'] - Padding interno
- * @param {'sm'|'md'|'lg'|'xl'|'none'} [props.shadow='md'] - Sombra de la card
- * @param {'sm'|'md'|'lg'|'xl'|'full'} [props.rounded='lg'] - Radio de bordes
- * @param {'default'|'elevated'|'outlined'} [props.variant='default'] - Variante visual
+ * @param {string} [props.ariaLabel] - Label para accesibilidad
+ * 
  * @param {boolean} [props.hoverable=false] - Si tiene efecto hover
  * @param {boolean} [props.clickable=false] - Si es clickeable (alternativa a onClick)
  * @param {function} [props.onClick] - Función a ejecutar al hacer clic
  * @param {string} [props.maxWidth] - Ancho máximo de la card
  * @param {boolean} [props.fullWidth=false] - Si ocupa todo el ancho disponible
- * @param {boolean} [props.loading=false] - Estado de carga con shimmer effect
- * @param {string} [props.ariaLabel] - Label para accesibilidad
+ * @param {'sm'|'md'|'lg'|'xl'|'none'} [props.shadow='md'] - Sombra de la card
  * @param {string} [props.role] - Rol ARIA (se define automáticamente si es clickeable)
  * @param {number} [props.tabIndex] - Tab index (se define automáticamente si es clickeable)
+ * 
+ * 🗂️ PROPS DEPRECADAS (con backward compatibility):
+ * @param {'xs'|'sm'|'md'|'lg'|'xl'|'2xl'} [props.padding] - DEPRECADO: Usar size en su lugar
+ * @param {'default'|'elevated'|'outlined'} [props.variant] - DEPRECADO: default → neutral
  */
-const Card = ({
-  children,
-  className = '',
-  padding = 'lg',
-  shadow = 'md',
-  rounded = 'lg',
-  variant = 'default',
-  hoverable = false,
-  clickable = false,
-  onClick,
-  maxWidth,
-  fullWidth = false,
-  loading = false,
-  ariaLabel,
-  role,
-  tabIndex,
-  ...restProps
-}) => {
+const Card = (props) => {
+  // MIGRACIÓN: Destructuring temporal para backward compatibility
+  const {
+    children,
+    // Props específicas de Card (no estándar)
+    hoverable = false,
+    clickable = false,
+    onClick,
+    maxWidth,
+    fullWidth = false,
+    shadow = 'md',
+    role,
+    tabIndex,
+    // Props legacy para backward compatibility
+    padding,
+    variant: originalVariant,
+    ...rawProps
+  } = props;
+
+  // MIGRACIÓN: Backward compatibility para props deprecadas
+  let processedProps = { ...rawProps };
+  
+  // 1. PADDING → SIZE mapping con deprecation warning
+  if (padding && !rawProps.size) {
+    const paddingToSizeMap = {
+      'xs': 'xs',    // padding xs → size xs
+      'sm': 'sm',    // padding sm → size sm  
+      'md': 'md',    // padding md → size md
+      'lg': 'lg',    // padding lg → size lg
+      'xl': 'xl',    // padding xl → size xl
+      '2xl': 'xl'    // padding 2xl → size xl (máximo del sistema)
+    };
+    
+    processedProps.size = paddingToSizeMap[padding] || 'md';
+    
+    if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
+      console.warn(`Card: prop "padding" está deprecada. Usar size="${processedProps.size}" en su lugar.`);
+    }
+  }
+  
+  // 2. VARIANT mapping con backward compatibility  
+  if (originalVariant === 'default') {
+    processedProps.variant = 'neutral';
+    
+    if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
+      console.warn(`Card: variant="default" está deprecado. Usar variant="neutral" en su lugar.`);
+    }
+  } else if (originalVariant === 'elevated' || originalVariant === 'outlined') {
+    // Estas variantes se manejan como appearance, no variant semántica
+    processedProps.variant = 'neutral'; 
+    processedProps.appearance = originalVariant; // Mantener para lógica CSS
+  } else if (originalVariant) {
+    processedProps.variant = originalVariant;
+  }
+  
+  // ✅ MIGRACIÓN: Usar hook estándar del sistema
+  const standardProps = useCardProps(processedProps);
+  const { 
+    size, variant, rounded, disabled, loading, className, tokens 
+  } = standardProps;
+
   // Determinar si la card es interactiva
   const isInteractive = !!(onClick || clickable);
   
-  // Construir clases CSS dinámicamente
+  // ✅ MIGRACIÓN: Construir clases CSS con sistema estándar
   const cardClasses = [
     'card',
-    `card--${variant}`,
-    `card--padding-${padding}`,
+    // Variante: usar appearance si está disponible, sino variant estándar
+    processedProps.appearance ? `card--${processedProps.appearance}` : `card--${variant}`,
+    // SIZE → PADDING mapping: usar size del sistema estándar
+    `card--padding-${size}`,
+    // Shadow y rounded mantienen lógica actual
     shadow !== 'none' && `card--shadow-${shadow}`,
     `card--rounded-${rounded}`,
+    // Estados interactivos
     (hoverable || isInteractive) && 'card--hoverable',
     isInteractive && 'card--clickable',
-    fullWidth && 'card--full-width',
+    // Estados estándar del sistema
+    disabled && 'card--disabled',
     loading && 'card--loading',
+    // Layout
+    fullWidth && 'card--full-width',
+    // Clases personalizadas
     className
   ].filter(Boolean).join(' ');
 
@@ -64,26 +129,26 @@ const Card = ({
     width: fullWidth ? '100%' : undefined
   };
 
-  // Props de accesibilidad
+  // ✅ MIGRACIÓN: Props de accesibilidad con sistema estándar
   const accessibilityProps = {
     role: role || (isInteractive ? 'button' : undefined),
     tabIndex: tabIndex !== undefined ? tabIndex : (isInteractive ? 0 : undefined),
-    'aria-label': ariaLabel,
-    'aria-disabled': loading ? 'true' : undefined
+    'aria-label': standardProps.ariaLabel,
+    'aria-disabled': (disabled || loading) ? 'true' : undefined
   };
 
-  // Handler de click
+  // ✅ MIGRACIÓN: Handler de click con estado disabled
   const handleClick = (e) => {
-    if (loading) {
+    if (disabled || loading) {
       e.preventDefault();
       return;
     }
     onClick?.(e);
   };
 
-  // Handler de teclado para accesibilidad
+  // ✅ MIGRACIÓN: Handler de teclado con estado disabled
   const handleKeyDown = (e) => {
-    if (!isInteractive || loading) return;
+    if (!isInteractive || disabled || loading) return;
     
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -98,7 +163,14 @@ const Card = ({
       onClick={isInteractive ? handleClick : undefined}
       onKeyDown={isInteractive ? handleKeyDown : undefined}
       {...accessibilityProps}
-      {...restProps}
+      // ✅ MIGRACIÓN: Pasar props que no fueron procesados por el hook
+      {...Object.fromEntries(
+        Object.entries(props).filter(([key]) => 
+          !['size', 'variant', 'rounded', 'disabled', 'loading', 'className', 'ariaLabel',
+            'children', 'hoverable', 'clickable', 'onClick', 'maxWidth', 'fullWidth', 
+            'shadow', 'role', 'tabIndex', 'padding'].includes(key)
+        )
+      )}
     >
       {children}
     </div>
@@ -144,23 +216,31 @@ const CardDescription = ({ children, className = '', as: Component = 'p', ...pro
 
 // ===== VALIDACIÓN DE PROPTYPES =====
 
-// PropTypes para Card principal
+// ✅ MIGRACIÓN: PropTypes con sistema estándar + Card específicos
 Card.propTypes = {
   children: PropTypes.node,
-  className: PropTypes.string,
-  padding: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl', '2xl']),
-  shadow: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'none']),
-  rounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'full']),
-  variant: PropTypes.oneOf(['default', 'elevated', 'outlined']),
+  
+  // ✅ Props estándar del sistema de diseño
+  ...STANDARD_PROP_TYPES,
+  
+  // ✅ Props específicas de Card
   hoverable: PropTypes.bool,
   clickable: PropTypes.bool,
   onClick: PropTypes.func,
   maxWidth: PropTypes.string,
   fullWidth: PropTypes.bool,
-  loading: PropTypes.bool,
-  ariaLabel: PropTypes.string,
+  shadow: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'none']),
   role: PropTypes.string,
-  tabIndex: PropTypes.number
+  tabIndex: PropTypes.number,
+  
+  // 🗂️ Props deprecadas (mantener para backward compatibility)
+  padding: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl', '2xl']),
+  variant: PropTypes.oneOf([
+    // Nuevas variantes estándar
+    'primary', 'secondary', 'success', 'warning', 'danger', 'neutral',
+    // Legacy variants (deprecadas)
+    'default', 'elevated', 'outlined'
+  ])
 };
 
 // PropTypes para componentes auxiliares

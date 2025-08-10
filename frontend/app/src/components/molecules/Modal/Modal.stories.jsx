@@ -72,8 +72,26 @@ function MyComponent() {
     },
     size: {
       control: 'select',
-      options: ['sm', 'md', 'lg', 'xl'],
+      options: ['xs', 'sm', 'md', 'lg', 'xl'],
       description: 'Tamaño del modal'
+    },
+    variant: {
+      control: 'select',
+      options: ['primary', 'secondary', 'success', 'warning', 'danger', 'neutral'],
+      description: 'Variante semántica del modal'
+    },
+    rounded: {
+      control: 'select',
+      options: ['sm', 'md', 'lg', 'xl', 'full'],
+      description: 'Radio de bordes del modal'
+    },
+    loading: {
+      control: 'boolean',
+      description: 'Estado de loading con spinner'
+    },
+    disabled: {
+      control: 'boolean',
+      description: 'Modal deshabilitado'
     },
     title: {
       control: 'text',
@@ -300,6 +318,147 @@ InteractiveDemo.parameters = {
   docs: {
     description: {
       story: 'Demo interactivo donde puedes cambiar el tamaño y título del modal dinámicamente.'
+    }
+  }
+};
+
+// ===== NUEVAS STORIES: SISTEMA ESTÁNDAR =====
+
+export const Variants = () => {
+  const [openModal, setOpenModal] = useState(null);
+  const variants = ['primary', 'secondary', 'success', 'warning', 'danger', 'neutral'];
+  
+  return (
+    <div style={{ display: 'flex', gap: 'var(--space-md)', flexWrap: 'wrap' }}>
+      {variants.map(variant => (
+        <Button 
+          key={variant} 
+          variant={variant} 
+          onClick={() => setOpenModal(variant)}
+        >
+          Modal {variant}
+        </Button>
+      ))}
+      
+      {variants.map(variant => (
+        <Modal
+          key={variant}
+          isOpen={openModal === variant}
+          onClose={() => setOpenModal(null)}
+          variant={variant}
+          title={`Modal ${variant.charAt(0).toUpperCase() + variant.slice(1)}`}
+          size="md"
+        >
+          <p>Este es un modal con variante <strong>{variant}</strong>.</p>
+          <p>Los colores de fondo, borde y título cambian automáticamente según la variante seleccionada.</p>
+          <Button variant={variant}>Botón {variant}</Button>
+        </Modal>
+      ))}
+    </div>
+  );
+};
+
+Variants.parameters = {
+  docs: {
+    description: {
+      story: 'Las 6 variantes semánticas estándar del sistema: Primary (neutral), Secondary (alternativo), Success (confirmaciones), Warning (advertencias), Danger (errores), Neutral (gris).'
+    }
+  }
+};
+
+export const LoadingState = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  
+  const handleAction = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setIsOpen(false);
+    }, 3000);
+  };
+  
+  return (
+    <div>
+      <Button onClick={() => setIsOpen(true)}>
+        Modal con Loading
+      </Button>
+      
+      <Modal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        title="Procesando..."
+        size="md"
+        loading={loading}
+        variant="primary"
+      >
+        <div style={{ textAlign: 'center' }}>
+          <p>Este modal puede entrar en estado de loading.</p>
+          <p>Cuando está en loading, aparece un spinner y se bloquean las interacciones.</p>
+          <Button 
+            variant="primary" 
+            onClick={handleAction}
+            loading={loading}
+          >
+            {loading ? 'Procesando...' : 'Iniciar Proceso'}
+          </Button>
+        </div>
+      </Modal>
+    </div>
+  );
+};
+
+LoadingState.parameters = {
+  docs: {
+    description: {
+      story: 'Estado de loading con spinner que bloquea todas las interacciones del modal mientras está activo.'
+    }
+  }
+};
+
+export const AllSizes = () => {
+  const [openModal, setOpenModal] = useState(null);
+  const sizes = ['xs', 'sm', 'md', 'lg', 'xl'];
+  
+  return (
+    <div style={{ display: 'flex', gap: 'var(--space-md)', flexWrap: 'wrap' }}>
+      {sizes.map(size => (
+        <Button 
+          key={size} 
+          size={size === 'xs' ? 'sm' : size} 
+          onClick={() => setOpenModal(size)}
+        >
+          Modal {size.toUpperCase()}
+        </Button>
+      ))}
+      
+      {sizes.map(size => (
+        <Modal
+          key={size}
+          isOpen={openModal === size}
+          onClose={() => setOpenModal(null)}
+          size={size}
+          title={`Modal tamaño ${size.toUpperCase()}`}
+        >
+          <p>Este modal tiene tamaño <strong>{size}</strong>.</p>
+          <p>Los tamaños controlan el ancho máximo del modal:</p>
+          <ul style={{ paddingLeft: 'var(--space-lg)' }}>
+            <li><strong>xs:</strong> 320px - Para alertas simples</li>
+            <li><strong>sm:</strong> 384px - Para confirmaciones</li>
+            <li><strong>md:</strong> 512px - Uso general</li>
+            <li><strong>lg:</strong> 768px - Formularios amplios</li>
+            <li><strong>xl:</strong> 1024px - Contenido complejo</li>
+          </ul>
+        </Modal>
+      ))}
+    </div>
+  );
+};
+
+AllSizes.parameters = {
+  docs: {
+    description: {
+      story: 'Los 5 tamaños estándar del sistema de diseño aplicados a modales, desde alertas simples hasta contenido complejo.'
     }
   }
 };

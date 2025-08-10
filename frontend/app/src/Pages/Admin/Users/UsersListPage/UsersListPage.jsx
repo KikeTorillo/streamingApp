@@ -128,16 +128,16 @@ function UsersListPage() {
         const role = getValue();
         const roleId = row.original.roleId;
         const badgeVariant =
-          roleId === 1 ? 'info' :     // Administrador
+          roleId === 1 ? 'primary' :   // Administrador
             roleId === 2 ? 'warning' :  // Editor
-              'success';                  // Usuario
+              'success';                // Usuario
 
         return (
           <Badge 
             variant={badgeVariant}
             size="sm"
             text={role}
-            style='soft'
+            appearance="soft"
           />
         );
       }

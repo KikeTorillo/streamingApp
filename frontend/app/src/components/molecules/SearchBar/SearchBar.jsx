@@ -1,65 +1,113 @@
-// SearchBar.jsx - Componente avanzado de búsqueda
+// SearchBar.jsx - Componente avanzado de búsqueda migrado al sistema estándar
 import { useState, useEffect, useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { TextInput } from '../TextInput/TextInput';
 import { Icon } from '../../atoms/Icon/Icon';
+import { validateStandardProps, STANDARD_PROP_TYPES } from '../../../tokens';
 import './SearchBar.css';
 
 /**
+ * SearchBar - Componente avanzado de búsqueda del sistema de diseño
  * 
- * DISEÑO:
- * ✅ Delega TODA la funcionalidad de input al TextInput
- * ✅ Solo maneja funcionalidad específica de búsqueda
- * ✅ Elimina duplicación de código
- * ✅ Mantiene retrocompatibilidad completa
+ * ✅ MIGRADO AL SISTEMA ESTÁNDAR - Enero 2025
  * 
- * Variantes:
- * - simple: Solo input de búsqueda (retrocompatibilidad)
+ * ARQUITECTURA:
+ * ✅ Usa TextInput (molécula migrada) del sistema estándar como base
+ * ✅ Props estándar: size, variant, rounded, disabled, loading
+ * ✅ Validación automática con validateStandardProps
+ * ✅ STANDARD_PROP_TYPES integrado
+ * ✅ Backward compatibility con deprecation warnings
+ * 
+ * VARIANTES DE BÚSQUEDA:
+ * - simple: Solo input de búsqueda (retrocompatibilidad 100%)
  * - advanced: Con sugerencias, historial y shortcuts
  * 
- * Features específicas de búsqueda:
+ * FUNCIONALIDADES DE BÚSQUEDA:
  * ✅ Búsqueda con debounce optimizado
- * ✅ Sugerencias inteligentes
- * ✅ Historial persistente
- * ✅ Navegación con teclado
- * ✅ Shortcuts globales
+ * ✅ Sugerencias inteligentes con categorías
+ * ✅ Historial persistente (localStorage)
+ * ✅ Navegación por teclado (arrows, enter, escape)
+ * ✅ Shortcuts globales (Ctrl+K)
+ * ✅ Estados elegantes (loading, error, empty)
+ * 
+ * @param {Object} props - Props del componente
+ * @param {'xs'|'sm'|'md'|'lg'|'xl'} [props.size='md'] - Tamaño estándar del sistema
+ * @param {'primary'|'secondary'|'success'|'warning'|'danger'|'neutral'} [props.variant='primary'] - Variante estándar
+ * @param {'sm'|'md'|'lg'|'xl'|'full'} [props.rounded='md'] - Radio de bordes estándar
+ * @param {boolean} [props.disabled=false] - Estado deshabilitado estándar
+ * @param {boolean} [props.loading=false] - Estado loading estándar
+ * @param {'simple'|'advanced'} [props.searchVariant='simple'] - Variante de funcionalidad de búsqueda
  */
-function SearchBar({
-  // Props específicas de búsqueda
-  variant = 'simple',
-  onSearch = () => {},
-  onClear = () => {},
-  debounceMs = 300,
+function SearchBar(props) {
+  // ✅ VALIDAR PROPS ESTÁNDAR - Sistema unificado con deprecation warnings
+  const validatedProps = validateStandardProps(props, 'SearchBar');
   
-  // Sugerencias
-  suggestions = [],
-  onSuggestionSelect = () => {},
-  maxSuggestions = 5,
-  loadingSuggestions = false,
+  const {
+    // ✅ PROPS ESTÁNDAR DEL SISTEMA
+    size = 'md',
+    variant = 'primary',
+    rounded = 'md',
+    disabled = false,
+    loading: loadingProp = false,
+    className = '',
+    
+    // ✅ PROPS ESPECÍFICAS DE BÚSQUEDA
+    searchVariant = 'simple', // Renamed para evitar conflicto con variant estándar
+    onSearch = () => {},
+    onClear = () => {},
+    debounceMs = 300,
+    
+    // Sugerencias
+    suggestions = [],
+    onSuggestionSelect = () => {},
+    maxSuggestions = 5,
+    loadingSuggestions = false,
+    
+    // Historial
+    enableHistory = false,
+    historyKey = 'searchbar-history',
+    maxHistoryItems = 10,
+    
+    // Shortcuts
+    enableShortcuts = false,
+    shortcutKey = 'k',
+    shortcutModifier = 'ctrl',
+    
+    // Estado específico de búsqueda
+    error = null,
+    
+    // Props básicas del input
+    value = '',
+    onChange = () => {},
+    placeholder = 'Buscar contenido...',
+    onFocus = () => {},
+    onBlur = () => {},
+    onKeyDown = () => {},
+    
+    // Resto de props para TextInput
+    ...textInputProps
+  } = validatedProps;
+
+  // ⚠️ BACKWARD COMPATIBILITY WARNING
+  if (props.variant && !['primary', 'secondary', 'success', 'warning', 'danger', 'neutral'].includes(props.variant)) {
+    console.warn(
+      `SearchBar: La prop 'variant="${props.variant}"' ya no se usa para variantes de búsqueda.
+      Migración requerida:
+      - variant="${props.variant}" → searchVariant="${props.variant}" (funcionalidad de búsqueda)
+      - variant="primary" (nuevo prop estándar para colores)
+      
+      Ejemplo:
+      // ANTES
+      <SearchBar variant="advanced" />
+      
+      // DESPUÉS  
+      <SearchBar searchVariant="advanced" variant="primary" size="md" />
+      `
+    );
+  }
   
-  // Historial
-  enableHistory = false,
-  historyKey = 'searchbar-history',
-  maxHistoryItems = 10,
-  
-  // Shortcuts
-  enableShortcuts = false,
-  shortcutKey = 'k',
-  shortcutModifier = 'ctrl',
-  
-  // Estado específico de búsqueda
-  loading = false,
-  error = null,
-  
-  // TODAS las demás props se delegan al TextInput
-  value = '',
-  onChange = () => {},
-  placeholder = 'Buscar contenido...',
-  onFocus = () => {},
-  onBlur = () => {},
-  onKeyDown = () => {},
-  ...textInputProps // Todo lo demás va al TextInput
-}) {
+  // Determinar loading state combinado
+  const loading = loadingProp || loadingSuggestions;
   // Estados internos - Solo para funcionalidad de búsqueda
   const [internalValue, setInternalValue] = useState(value);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -117,7 +165,7 @@ function SearchBar({
     onChange(e); // Delegamos al prop original
     
     // Funcionalidad específica de búsqueda
-    if (variant === 'advanced') {
+    if (searchVariant === 'advanced') {
       if (newValue.trim()) {
         debouncedSearch(newValue);
         setShowDropdown(true);
@@ -237,7 +285,7 @@ function SearchBar({
   
   // Handle focus - Solo lógica de búsqueda
   const handleFocus = (e) => {
-    if (variant === 'advanced' && (suggestions.length > 0 || (enableHistory && searchHistory.length > 0))) {
+    if (searchVariant === 'advanced' && (suggestions.length > 0 || (enableHistory && searchHistory.length > 0))) {
       setShowDropdown(true);
     }
     
@@ -289,18 +337,23 @@ function SearchBar({
     return () => document.removeEventListener('keydown', handleGlobalKeyDown);
   }, [enableShortcuts, shortcutKey, shortcutModifier]);
   
-  // Construir clases CSS - Solo para funcionalidad de búsqueda
+  // ✅ CONSTRUIR CLASES CSS - Sistema estándar + funcionalidad de búsqueda
   const searchBarClasses = [
     'search-bar',
-    `search-bar--variant-${variant}`,
+    `search-bar--search-variant-${searchVariant}`,
+    `search-bar--size-${size}`, // Clase estándar
+    variant !== 'primary' && `search-bar--variant-${variant}`, // Clase estándar 
+    rounded !== 'md' && `search-bar--rounded-${rounded}`, // Clase estándar
     showDropdown && 'search-bar--dropdown-open',
     loading && 'search-bar--loading',
-    error && 'search-bar--error'
+    error && 'search-bar--error',
+    disabled && 'search-bar--disabled',
+    className
   ].filter(Boolean).join(' ');
   
-  // Lógica de iconos - Delegamos la mayor parte al TextInput
+  // ✅ LÓGICA DE ICONOS - Delegados al TextInput migrado
   const currentLeftIcon = loading ? 'loader' : 'search';
-  const shouldShowClearIcon = (variant === 'advanced' || variant === 'simple') && internalValue && !loading;
+  const shouldShowClearIcon = (searchVariant === 'advanced' || searchVariant === 'simple') && internalValue && !loading;
   const currentRightIcon = shouldShowClearIcon ? 'x' : undefined;
   
   // Renderizar sugerencias y historial
@@ -393,6 +446,7 @@ function SearchBar({
   
   return (
     <div className={searchBarClasses} ref={dropdownRef}>
+      {/* ✅ TEXTINPUT DEL SISTEMA ESTÁNDAR */}
       <TextInput
         ref={searchRef}
         type="text"
@@ -405,13 +459,24 @@ function SearchBar({
         leftIcon={currentLeftIcon}
         rightIcon={currentRightIcon}
         onRightIconClick={shouldShowClearIcon ? handleClear : undefined}
-        className="search-bar__input"
-        // DELEGAR TODO lo demás al TextInput
+        
+        // ✅ PROPS ESTÁNDAR DELEGADAS AL TEXTINPUT MIGRADO
+        size={size}
+        variant={error ? 'danger' : variant}
+        rounded={rounded}
+        disabled={disabled}
+        loading={loading}
+        
+        // Props específicas de TextInput
+        errorText={error}
+        // className="search-bar__input" // Temporalmente removido para debug
+        
+        // Resto de props para TextInput
         {...textInputProps}
       />
       
       {/* Dropdown para variantes avanzadas */}
-      {variant === 'advanced' && showDropdown && (
+      {searchVariant === 'advanced' && showDropdown && (
         <div className="search-bar__dropdown">
           {renderDropdownContent()}
           
@@ -426,20 +491,19 @@ function SearchBar({
         </div>
       )}
       
-      {/* Error message */}
-      {error && (
-        <div className="search-bar__error">
-          <Icon name="alert" size="sm" />
-          <span>{error}</span>
-        </div>
-      )}
+      {/* ✅ ERROR MESSAGE - Ahora manejado por TextInput con errorText */}
+      {/* No necesitamos renderizar error aquí, TextInput ya lo maneja */}
     </div>
   );
 }
 
+// ✅ PROPTYPES CON SISTEMA ESTÁNDAR
 SearchBar.propTypes = {
-  // Props específicas de SearchBar
-  variant: PropTypes.oneOf(['simple', 'advanced']),
+  // ✅ PROPS ESTÁNDAR DEL SISTEMA
+  ...STANDARD_PROP_TYPES,
+  
+  // ✅ PROPS ESPECÍFICAS DE SEARCHBAR
+  searchVariant: PropTypes.oneOf(['simple', 'advanced']),
   onSearch: PropTypes.func,
   onClear: PropTypes.func,
   debounceMs: PropTypes.number,
@@ -469,10 +533,9 @@ SearchBar.propTypes = {
   shortcutModifier: PropTypes.oneOf(['ctrl', 'alt', 'shift']),
   
   // Estados específicos de búsqueda
-  loading: PropTypes.bool,
   error: PropTypes.string,
   
-  // Props básicas (el resto se delegan al TextInput)
+  // Props básicas (el resto se delegan al TextInput migrado)
   value: PropTypes.string,
   onChange: PropTypes.func,
   placeholder: PropTypes.string,

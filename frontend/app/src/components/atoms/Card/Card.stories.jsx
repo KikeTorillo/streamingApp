@@ -10,15 +10,32 @@ export default {
     docs: {
       description: {
         component: `
-# Card Atom
+# Card Atom ✅ MIGRADO AL SISTEMA ESTÁNDAR
 
 El átomo **Card** es el contenedor base fundamental para agrupar y presentar contenido relacionado en nuestro sistema de diseño. 
-Proporciona una superficie consistente, flexible y accesible que puede adaptarse a múltiples contextos y casos de uso.
+**🎯 COMPLETAMENTE MIGRADO** al sistema estándar con props consistentes, tokens automáticos y backward compatibility.
+
+## 🚀 NUEVAS CARACTERÍSTICAS POST-MIGRACIÓN
+
+### ✅ **Sistema Estándar Integrado**
+- **Hook useCardProps()**: Gestión automática de props y tokens
+- **Props estándar**: size, variant, rounded, disabled, loading
+- **6 variantes semánticas**: primary, secondary, success, warning, danger, neutral
+- **5 tamaños estándar**: xs, sm, md, lg, xl (reemplaza padding)
+- **STANDARD_PROP_TYPES**: Validación consistente con todo el sistema
+- **Tokens automáticos**: Spacing, colores y tipografía del design system
+
+### 🗂️ **Backward Compatibility**
+- **padding prop**: DEPRECADO pero funcional → mapea a size
+- **variant="default"**: DEPRECADO → mapea a variant="neutral"  
+- **Deprecation warnings**: En desarrollo para guiar migración
+- **Legacy variants**: elevated, outlined como "appearance"
 
 ## 🎯 Características principales
 
-- **3 variantes visuales**: Default, Elevated, Outlined
-- **6 tamaños de padding**: XS, SM, MD, LG, XL, 2XL
+- **6 variantes semánticas**: Primary, Secondary, Success, Warning, Danger, Neutral
+- **5 tamaños estándar**: XS, SM, MD, LG, XL con tokens automáticos
+- **Estados del sistema**: disabled, loading con comportamiento estándar
 - **5 niveles de sombra**: SM, MD, LG, XL, None
 - **5 opciones de border radius**: SM, MD, LG, XL, Full
 - **Estados interactivos**: Hoverable, Clickable con micro-animaciones
@@ -118,24 +135,46 @@ Como **átomo**, Card es:
     }
   },
   argTypes: {
-    variant: {
-      name: 'Variante',
-      description: 'Estilo visual de la card',
+    // ✅ MIGRACIÓN: Props estándar del sistema
+    size: {
+      name: 'Tamaño (reemplaza padding)',
+      description: 'Tamaño estándar del sistema - controla padding interno',
       control: 'select',
-      options: ['default', 'elevated', 'outlined'],
+      options: ['xs', 'sm', 'md', 'lg', 'xl'],
       table: {
         type: { summary: 'string' },
-        defaultValue: { summary: 'default' }
+        defaultValue: { summary: 'md' }
       }
     },
+    variant: {
+      name: 'Variante Semántica',
+      description: 'Variante semántica estándar - determina colores y significado',
+      control: 'select',
+      options: ['primary', 'secondary', 'success', 'warning', 'danger', 'neutral'],
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'neutral' }
+      }
+    },
+    disabled: {
+      name: 'Deshabilitado',
+      description: 'Estado deshabilitado - bloquea interacción',
+      control: 'boolean',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' }
+      }
+    },
+    // 🗂️ Props legacy para backward compatibility
     padding: {
-      name: 'Padding',
-      description: 'Espaciado interno de la card',
+      name: '⚠️ Padding (DEPRECADO)',
+      description: 'DEPRECADO: Usar "size" en su lugar. Espaciado interno legacy',
       control: 'select',
       options: ['xs', 'sm', 'md', 'lg', 'xl', '2xl'],
       table: {
         type: { summary: 'string' },
-        defaultValue: { summary: 'lg' }
+        defaultValue: { summary: 'lg' },
+        category: 'DEPRECADO'
       }
     },
     shadow: {
@@ -228,9 +267,9 @@ const Template = (args) => <Card {...args} />;
 
 export const Playground = Template.bind({});
 Playground.args = {
-  children: 'Personaliza la card usando los controles de abajo',
-  variant: 'default',
-  padding: 'lg',
+  children: 'Personaliza la card usando los controles de abajo. ✅ Ahora con sistema estándar!',
+  variant: 'neutral',  // ✅ Migración: default → neutral
+  size: 'md',          // ✅ Migración: padding → size
   shadow: 'md',
   rounded: 'lg'
 };
@@ -244,6 +283,54 @@ Playground.parameters = {
 
 // ========== VARIANTES VISUALES ==========
 
+// ✅ MIGRACIÓN: Nuevas variantes del sistema estándar
+export const StandardVariants = () => (
+  <div style={{
+    display: 'grid',
+    gap: 'var(--space-lg)',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+    padding: 'var(--space-md)'
+  }}>
+    <Card variant="primary">
+      <CardTitle>Primary</CardTitle>
+      <CardDescription>Variante principal del sistema. Usar para contenido más importante.</CardDescription>
+    </Card>
+    
+    <Card variant="secondary">
+      <CardTitle>Secondary</CardTitle>
+      <CardDescription>Variante secundaria. Fondo alternativo para diferenciación visual.</CardDescription>
+    </Card>
+    
+    <Card variant="success">
+      <CardTitle>Success</CardTitle>
+      <CardDescription>Para mostrar estados exitosos, confirmaciones o resultados positivos.</CardDescription>
+    </Card>
+    
+    <Card variant="warning">
+      <CardTitle>Warning</CardTitle>
+      <CardDescription>Para advertencias, notas importantes o estados que requieren atención.</CardDescription>
+    </Card>
+    
+    <Card variant="danger">
+      <CardTitle>Danger</CardTitle>
+      <CardDescription>Para errores, acciones destructivas o estados críticos.</CardDescription>
+    </Card>
+    
+    <Card variant="neutral">
+      <CardTitle>Neutral</CardTitle>
+      <CardDescription>Variante neutra por defecto. Reemplaza la antigua "default".</CardDescription>
+    </Card>
+  </div>
+);
+StandardVariants.parameters = {
+  docs: {
+    description: {
+      story: '✅ NUEVAS variantes del sistema estándar. Semánticamente consistentes, colores automáticos basados en tokens del design system.'
+    }
+  }
+};
+
+// 🗂️ Legacy variants para comparación y backward compatibility
 export const AllVariants = () => (
   <div style={{
     display: 'grid',
@@ -252,18 +339,18 @@ export const AllVariants = () => (
     padding: 'var(--space-md)'
   }}>
     <Card variant="default">
-      <CardTitle>Default</CardTitle>
-      <CardDescription>Card con estilo por defecto, sombra sutil y fondo limpio.</CardDescription>
+      <CardTitle>Default (Legacy)</CardTitle>
+      <CardDescription>⚠️ DEPRECADO: Variante legacy que mapea a "neutral".</CardDescription>
     </Card>
     
     <Card variant="elevated">
-      <CardTitle>Elevated</CardTitle>
-      <CardDescription>Card elevada con sombra más pronunciada para destacar contenido importante.</CardDescription>
+      <CardTitle>Elevated (Legacy)</CardTitle>
+      <CardDescription>Variante legacy mantenida como "appearance", no semántica.</CardDescription>
     </Card>
     
     <Card variant="outlined">
-      <CardTitle>Outlined</CardTitle>
-      <CardDescription>Card con borde visible, sin sombra. Ideal para layouts minimalistas.</CardDescription>
+      <CardTitle>Outlined (Legacy)</CardTitle>
+      <CardDescription>Variante legacy con borde, mantenida como "appearance".</CardDescription>
     </Card>
   </div>
 );
@@ -275,8 +362,51 @@ AllVariants.parameters = {
   }
 };
 
-// ========== TAMAÑOS DE PADDING ==========
+// ========== TAMAÑOS ESTÁNDAR ==========
 
+// ✅ MIGRACIÓN: Tamaños del sistema estándar
+export const StandardSizes = () => (
+  <div style={{
+    display: 'grid',
+    gap: 'var(--space-lg)',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+    padding: 'var(--space-md)'
+  }}>
+    <Card size="xs" shadow="sm">
+      <CardTitle as="h4">XS</CardTitle>
+      <CardDescription>✅ size="xs" - Tamaño extra pequeño del sistema</CardDescription>
+    </Card>
+    
+    <Card size="sm" shadow="sm">
+      <CardTitle as="h4">SM</CardTitle>
+      <CardDescription>✅ size="sm" - Tamaño pequeño del sistema</CardDescription>
+    </Card>
+    
+    <Card size="md" shadow="sm">
+      <CardTitle as="h4">MD</CardTitle>
+      <CardDescription>✅ size="md" - Tamaño mediano (por defecto)</CardDescription>
+    </Card>
+    
+    <Card size="lg" shadow="sm">
+      <CardTitle as="h4">LG</CardTitle>
+      <CardDescription>✅ size="lg" - Tamaño grande del sistema</CardDescription>
+    </Card>
+    
+    <Card size="xl" shadow="sm">
+      <CardTitle as="h4">XL</CardTitle>
+      <CardDescription>✅ size="xl" - Tamaño extra grande del sistema</CardDescription>
+    </Card>
+  </div>
+);
+StandardSizes.parameters = {
+  docs: {
+    description: {
+      story: '✅ NUEVOS tamaños estándar del sistema. La prop "size" reemplaza "padding" con tokens automáticos.'
+    }
+  }
+};
+
+// 🗂️ Legacy padding sizes para backward compatibility
 export const PaddingSizes = () => (
   <div style={{
     display: 'grid',
@@ -285,40 +415,40 @@ export const PaddingSizes = () => (
     padding: 'var(--space-md)'
   }}>
     <Card padding="xs" shadow="sm">
-      <CardTitle as="h4">XS</CardTitle>
-      <CardDescription>Padding extra pequeño (8px)</CardDescription>
+      <CardTitle as="h4">XS (Legacy)</CardTitle>
+      <CardDescription>⚠️ padding="xs" - DEPRECADO, usar size="xs"</CardDescription>
     </Card>
     
     <Card padding="sm" shadow="sm">
-      <CardTitle as="h4">SM</CardTitle>
-      <CardDescription>Padding pequeño (16px)</CardDescription>
+      <CardTitle as="h4">SM (Legacy)</CardTitle>
+      <CardDescription>⚠️ padding="sm" - DEPRECADO, usar size="sm"</CardDescription>
     </Card>
     
     <Card padding="md" shadow="sm">
-      <CardTitle as="h4">MD</CardTitle>
-      <CardDescription>Padding mediano (24px)</CardDescription>
+      <CardTitle as="h4">MD (Legacy)</CardTitle>
+      <CardDescription>⚠️ padding="md" - DEPRECADO, usar size="md"</CardDescription>
     </Card>
     
     <Card padding="lg" shadow="sm">
-      <CardTitle as="h4">LG</CardTitle>
-      <CardDescription>Padding grande (32px)</CardDescription>
+      <CardTitle as="h4">LG (Legacy)</CardTitle>
+      <CardDescription>⚠️ padding="lg" - DEPRECADO, usar size="lg"</CardDescription>
     </Card>
     
     <Card padding="xl" shadow="sm">
-      <CardTitle as="h4">XL</CardTitle>
-      <CardDescription>Padding extra grande (48px)</CardDescription>
+      <CardTitle as="h4">XL (Legacy)</CardTitle>
+      <CardDescription>⚠️ padding="xl" - DEPRECADO, usar size="xl"</CardDescription>
     </Card>
     
     <Card padding="2xl" shadow="sm">
-      <CardTitle as="h4">2XL</CardTitle>
-      <CardDescription>Padding máximo (64px)</CardDescription>
+      <CardTitle as="h4">2XL (Legacy)</CardTitle>
+      <CardDescription>⚠️ padding="2xl" - DEPRECADO, mapea a size="xl"</CardDescription>
     </Card>
   </div>
 );
 PaddingSizes.parameters = {
   docs: {
     description: {
-      story: 'Diferentes tamaños de padding interno usando las variables de espaciado del sistema de diseño.'
+      story: '🗂️ Legacy: Diferentes tamaños de padding interno. DEPRECADO - usar StandardSizes con prop "size".'
     }
   }
 };
@@ -411,6 +541,43 @@ BorderRadius.parameters = {
 };
 
 // ========== ESTADOS INTERACTIVOS ==========
+
+// ✅ MIGRACIÓN: Estados del sistema estándar
+export const StandardStates = () => (
+  <div style={{
+    display: 'grid',
+    gap: 'var(--space-lg)',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+    padding: 'var(--space-md)'
+  }}>
+    <Card size="md" variant="neutral">
+      <CardTitle>Normal</CardTitle>
+      <CardDescription>Estado normal con tamaño y variante del sistema estándar.</CardDescription>
+    </Card>
+    
+    <Card size="md" variant="neutral" disabled>
+      <CardTitle>Disabled</CardTitle>
+      <CardDescription>✅ NUEVO: Estado deshabilitado del sistema. Bloquea interacción.</CardDescription>
+    </Card>
+    
+    <Card size="md" variant="neutral" loading>
+      <CardTitle>Loading</CardTitle>
+      <CardDescription>Estado de carga con efecto shimmer automático.</CardDescription>
+    </Card>
+    
+    <Card size="md" variant="neutral" clickable onClick={() => alert('¡Card estándar!')}>
+      <CardTitle>Interactive</CardTitle>
+      <CardDescription>Card interactiva con sistema estándar de accesibilidad.</CardDescription>
+    </Card>
+  </div>
+);
+StandardStates.parameters = {
+  docs: {
+    description: {
+      story: '✅ Estados del sistema estándar: normal, disabled, loading e interactive con props estándar (size, variant).'
+    }
+  }
+};
 
 export const InteractiveStates = () => (
   <div style={{

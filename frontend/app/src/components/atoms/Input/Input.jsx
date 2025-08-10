@@ -51,6 +51,8 @@ const Input = forwardRef((props, ref) => {
     className = '',
     leftIcon,
     rightIcon,
+    onLeftIconClick,
+    onRightIconClick,
     // Props específicas de Input
     type = 'text',
     value,
@@ -166,7 +168,19 @@ const Input = forwardRef((props, ref) => {
     <div className={wrapperClasses}>
       {/* Icono izquierdo */}
       {hasLeftIcon && (
-        <span className="input-wrapper__icon input-wrapper__icon--left">
+        <span 
+          className={`input-wrapper__icon input-wrapper__icon--left ${onLeftIconClick ? 'input-wrapper__icon--clickable' : ''}`}
+          onClick={onLeftIconClick}
+          onKeyDown={onLeftIconClick ? (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              onLeftIconClick(e);
+            }
+          } : undefined}
+          tabIndex={onLeftIconClick ? 0 : -1}
+          role={onLeftIconClick ? 'button' : undefined}
+          aria-label={onLeftIconClick ? 'Acción del icono izquierdo' : undefined}
+        >
           {renderIcon(leftIcon)}
         </span>
       )}
@@ -176,7 +190,19 @@ const Input = forwardRef((props, ref) => {
       
       {/* Icono derecho */}
       {hasRightIcon && (
-        <span className="input-wrapper__icon input-wrapper__icon--right">
+        <span 
+          className={`input-wrapper__icon input-wrapper__icon--right ${onRightIconClick ? 'input-wrapper__icon--clickable' : ''}`}
+          onClick={onRightIconClick}
+          onKeyDown={onRightIconClick ? (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              onRightIconClick(e);
+            }
+          } : undefined}
+          tabIndex={onRightIconClick ? 0 : -1}
+          role={onRightIconClick ? 'button' : undefined}
+          aria-label={onRightIconClick ? 'Limpiar búsqueda' : undefined}
+        >
           {renderIcon(rightIcon)}
         </span>
       )}
@@ -223,7 +249,9 @@ Input.propTypes = {
   autoComplete: PropTypes.string,
   maxLength: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   minLength: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  pattern: PropTypes.string
+  pattern: PropTypes.string,
+  onLeftIconClick: PropTypes.func,
+  onRightIconClick: PropTypes.func
 };
 
 export { Input };

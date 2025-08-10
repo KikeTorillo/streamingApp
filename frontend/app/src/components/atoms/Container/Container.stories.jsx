@@ -1,4 +1,4 @@
-// Container.stories.jsx
+// Container.stories.jsx - MIGRADO AL SISTEMA DE DISEÑO ESTÁNDAR
 import PropTypes from 'prop-types';
 import { Container, CONTAINER_SIZES, CONTAINER_VARIANTS } from './Container';
 
@@ -52,23 +52,48 @@ Activa \`debug={true}\` para visualizar los límites del contenedor.
     }
   },
   argTypes: {
+    // ✅ Props estándar del sistema
     size: {
       control: 'select',
       options: Object.values(CONTAINER_SIZES),
-      description: 'Tamaño del contenedor'
+      description: 'Tamaño del contenedor (tokens automáticos)'
     },
     variant: {
       control: 'select',
       options: Object.values(CONTAINER_VARIANTS),
-      description: 'Variante visual'
+      description: '6 variantes semánticas del sistema'
     },
-    debug: {
+    rounded: {
+      control: 'select',
+      options: ['sm', 'md', 'lg', 'xl', 'full'],
+      description: 'Radio de bordes (tokens automáticos)'
+    },
+    disabled: {
       control: 'boolean',
-      description: 'Mostrar límites del contenedor'
+      description: 'Estado deshabilitado'
     },
+    loading: {
+      control: 'boolean',
+      description: 'Estado de carga con spinner'
+    },
+    className: {
+      control: 'text',
+      description: 'Clases CSS adicionales'
+    },
+    // Props específicas de Container
     as: {
       control: 'text',
-      description: 'Elemento HTML a renderizar'
+      description: 'Elemento HTML (div, section, main, etc.)'
+    },
+    spacing: {
+      control: 'select',
+      options: ['xs', 'sm', 'md', 'lg', 'xl', '2xl'],
+      description: 'Espaciado entre elementos hijos (gap)'
+    },
+    // Props legacy
+    debug: {
+      control: 'boolean',
+      description: '⚠️ DEPRECATED: Usar className="debug-containers"'
     }
   }
 };
@@ -107,7 +132,7 @@ ExampleContent.propTypes = {
 export const Default = {
   args: {
     size: 'md',
-    variant: 'default',
+    variant: 'primary', // ✅ CORREGIDO: default → primary
     debug: false
   },
   render: (args) => (
@@ -189,31 +214,31 @@ export const Variants = () => (
     padding: 'var(--space-lg)'
   }}>
     <div>
-      <h4 style={{ marginBottom: 'var(--space-md)', textAlign: 'center' }}>Default</h4>
-      <Container size="md" variant="default">
+      <h4 style={{ marginBottom: 'var(--space-md)', textAlign: 'center' }}>Primary</h4>
+      <Container size="md" variant="primary">
         <ExampleContent 
-          title="Variante Default" 
+          title="Variante Primary" 
           description="Con estilos de card: fondo, borde y sombra"
         />
       </Container>
     </div>
     
     <div>
-      <h4 style={{ marginBottom: 'var(--space-md)', textAlign: 'center' }}>Simple</h4>
-      <Container size="md" variant="simple">
+      <h4 style={{ marginBottom: 'var(--space-md)', textAlign: 'center' }}>Neutral</h4>
+      <Container size="md" variant="neutral">
         <ExampleContent 
-          title="Variante Simple" 
+          title="Variante Neutral" 
           description="Sin estilos de card: fondo transparente"
         />
       </Container>
     </div>
     
     <div>
-      <h4 style={{ marginBottom: 'var(--space-md)', textAlign: 'center' }}>Compact</h4>
-      <Container size="md" variant="compact">
+      <h4 style={{ marginBottom: 'var(--space-md)', textAlign: 'center' }}>Secondary</h4>
+      <Container size="md" variant="secondary">
         <ExampleContent 
-          title="Variante Compact" 
-          description="Con menos padding interno para aprovechar mejor el espacio"
+          title="Variante Secondary" 
+          description="Variante naranja/dorado del sistema"
         />
       </Container>
     </div>
@@ -316,7 +341,7 @@ export const RealWorldExamples = () => (
       <h4 style={{ marginBottom: 'var(--space-md)', textAlign: 'center' }}>
         📊 Dashboard Admin (LG)
       </h4>
-      <Container size="lg" variant="simple">
+      <Container size="lg" variant="neutral">
         <div style={{ 
           display: 'grid', 
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',

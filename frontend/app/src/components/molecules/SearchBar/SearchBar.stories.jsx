@@ -107,8 +107,8 @@ El SearchBar es una molécula del design system que ofrece múltiples variantes 
 
 export default meta;
 
-// Story base
-const Template = (args) => <SearchBar {...args} />;
+// Story base - Template para reutilización si es necesario
+// const Template = (args) => <SearchBar {...args} />;
 
 // ========================================
 // 🔄 MIGRACIÓN GRADUAL - Retrocompatibilidad

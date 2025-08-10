@@ -1,52 +1,67 @@
-// molecules/TextInput.jsx
-import React, { useState, forwardRef } from 'react';
+// molecules/TextInput.jsx - MIGRADO AL SISTEMA ESTÁNDAR
+import { useState, forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import './TextInput.css';
 import { Input } from '../../atoms/Input/Input';
-import { Icon } from '../../atoms/Icon/Icon';
+import { validateStandardProps, STANDARD_PROP_TYPES } from '../../../tokens';
 
 /**
- * Componente TextInput mejorado - Molécula que extiende el átomo Input
- * Siguiendo principios de Atomic Design y usando el sistema de diseño actualizado
+ * TextInput - Molécula del sistema de diseño que extiende el átomo Input
  * 
- * @param {Object} props - Propiedades del componente
- * @param {string} [props.placeholder=''] - Texto de ayuda del input
- * @param {string} [props.value] - Valor controlado del input
- * @param {string} [props.defaultValue] - Valor por defecto (no controlado)
- * @param {function} [props.onChange] - Handler para cambios de valor
- * @param {function} [props.onBlur] - Handler para pérdida de foco
- * @param {function} [props.onFocus] - Handler para obtención de foco
- * @param {'text'|'password'|'email'|'number'|'tel'|'url'|'search'|'date'|'time'|'datetime-local'} [props.type='text'] - Tipo de input HTML
- * @param {string} [props.name] - Nombre del campo (necesario para formularios)
- * @param {string} [props.id] - ID único del input
+ * ✅ MIGRADO AL SISTEMA ESTÁNDAR - Enero 2025
+ * 
+ * ARQUITECTURA:
+ * ✅ Usa Input (átomo) del sistema estándar como base
+ * ✅ Props estándar: size, variant, rounded, disabled, loading
+ * ✅ Validación automática con validateStandardProps
+ * ✅ STANDARD_PROP_TYPES integrado
+ * ✅ Backward compatibility con deprecation warnings
+ * 
+ * FUNCIONALIDADES EXTENDIDAS:
+ * ✅ Label integrado con requiredness visual
+ * ✅ Helper text y error messages con ARIA
+ * ✅ Character counter con límites visuales
+ * ✅ Footer organizado con mensajes
+ * ✅ Wrapper completo para formularios
+ * ✅ Estados focus avanzados
+ * 
+ * @param {Object} props - Props del componente
+ * @param {'xs'|'sm'|'md'|'lg'|'xl'} [props.size='md'] - Tamaño estándar del sistema
+ * @param {'primary'|'secondary'|'success'|'warning'|'danger'|'neutral'} [props.variant='primary'] - Variante estándar
+ * @param {'sm'|'md'|'lg'|'xl'|'full'} [props.rounded='md'] - Radio de bordes estándar
+ * @param {boolean} [props.disabled=false] - Estado deshabilitado estándar
+ * @param {boolean} [props.loading=false] - Estado loading estándar
  * @param {string} [props.className=''] - Clases CSS adicionales
- * @param {'xs'|'sm'|'md'|'lg'|'xl'} [props.size='md'] - Tamaño del input (heredado del átomo)
- * @param {'default'|'success'|'warning'|'error'} [props.variant='default'] - Variante visual
- * @param {'sm'|'md'|'lg'|'xl'|'full'} [props.rounded='md'] - Radio de bordes (heredado del átomo)
- * @param {boolean} [props.disabled=false] - Si el input está deshabilitado
- * @param {boolean} [props.readOnly=false] - Si el input es de solo lectura
- * @param {boolean} [props.required=false] - Si el campo es obligatorio
- * @param {boolean} [props.autoFocus=false] - Si obtiene foco automáticamente
- * @param {boolean} [props.fullWidth=false] - Si ocupa todo el ancho disponible
- * @param {boolean} [props.compact=false] - Versión compacta con spacing reducido
+ * @param {string|React.ReactNode} [props.leftIcon] - Icono izquierdo (sistema estándar)
+ * @param {string|React.ReactNode} [props.rightIcon] - Icono derecho (sistema estándar)
  * @param {string} [props.label] - Etiqueta del campo
  * @param {string} [props.helperText] - Texto de ayuda debajo del input
- * @param {string} [props.errorText] - Mensaje de error (sobrescribe helperText y variant)
- * @param {string|React.ReactNode} [props.leftIcon] - Icono izquierdo (SOLO nombres de Feather Icons del sistema de diseño o componente React)
- * @param {string|React.ReactNode} [props.rightIcon] - Icono derecho (SOLO nombres de Feather Icons del sistema de diseño o componente React)
- * @param {function} [props.onRightIconClick] - Handler para click en icono derecho
- * @param {function} [props.onLeftIconClick] - Handler para click en icono izquierdo
- * @param {number} [props.maxLength] - Longitud máxima del texto
- * @param {number} [props.minLength] - Longitud mínima del texto
+ * @param {string} [props.errorText] - Mensaje de error (prioridad sobre helperText)
  * @param {boolean} [props.showCharCount=false] - Mostrar contador de caracteres
- * @param {string} [props.pattern] - Patrón regex para validación
- * @param {string} [props.autoComplete] - Atributo autocomplete HTML
- * @param {string} [props.ariaLabel] - Label para accesibilidad
- * @param {string} [props.ariaDescribedBy] - ID del elemento que describe el input
- * @param {string} [props.ariaErrorMessage] - ID del mensaje de error
  * @param {React.Ref} ref - Referencia al elemento input
  */
-const TextInput = forwardRef(({
+const TextInput = forwardRef((props, ref) => {
+  // ✅ VALIDAR PROPS ESTÁNDAR - Sistema unificado con deprecation warnings
+  const validatedProps = validateStandardProps(props, 'TextInput');
+  
+  const {
+    // ✅ PROPS ESTÁNDAR DEL SISTEMA
+    size = 'md',
+    variant = 'primary',
+    rounded = 'md',
+    disabled = false,
+    loading = false,
+    className = '',
+    leftIcon,
+    rightIcon,
+    
+    // ✅ PROPS ESPECÍFICAS DE TEXTINPUT
+    label,
+    helperText,
+    errorText,
+    showCharCount = false,
+    
+    // Props básicas del input
     placeholder = '',
     value,
     defaultValue,
@@ -56,280 +71,232 @@ const TextInput = forwardRef(({
     type = 'text',
     name,
     id,
-    className = '',
-    size = 'md',
-    variant = 'primary',
-    rounded = 'md',
-    disabled = false,
     readOnly = false,
     required = false,
     autoFocus = false,
     fullWidth = false,
     compact = false,
-    label,
-    helperText,
-    errorText,
-    leftIcon,
-    rightIcon,
     onRightIconClick,
     onLeftIconClick,
     maxLength,
     minLength,
-    showCharCount = false,
     pattern,
     autoComplete,
     ariaLabel,
     ariaDescribedBy,
     ariaErrorMessage,
     ...restProps
-}, ref) => {
-    // Estado interno para manejar focus
-    const [isFocused, setIsFocused] = useState(false);
-    
-    // Determinar variante basada en error (error tiene prioridad)
-    const currentVariant = errorText ? 'error' : variant;
-    
-    // Construir clases CSS dinámicamente para el wrapper
-    const wrapperClasses = [
-        'text-input-wrapper',
-        `text-input-wrapper--${size}`,
-        `text-input-wrapper--${currentVariant}`,
-        isFocused && 'text-input-wrapper--focused',
-        fullWidth && 'text-input-wrapper--full-width',
-        disabled && 'text-input-wrapper--disabled',
-        compact && 'text-input-wrapper--compact',
-        className
-    ].filter(Boolean).join(' ');
+  } = validatedProps;
 
-    // Clases adicionales para el Input del átomo
-    const inputAdditionalClasses = [
-        `text-input--${currentVariant}`,
-        leftIcon && 'text-input--with-left-icon',
-        rightIcon && 'text-input--with-right-icon'
-    ].filter(Boolean).join(' ');
-
-    // Handlers de eventos
-    const handleFocus = (e) => {
-        setIsFocused(true);
-        onFocus?.(e);
-    };
-
-    const handleBlur = (e) => {
-        setIsFocused(false);
-        onBlur?.(e);
-    };
-
-    // Función para renderizar iconos - SOLO sistema de diseño uniforme
-    const renderIcon = (icon) => {
-        // Si es un componente React, usarlo tal como viene
-        if (React.isValidElement(icon)) {
-            return icon;
-        }
-        
-        // Si es string, usar SOLO el componente Icon del sistema
-        if (typeof icon === 'string' && icon) {
-            return (
-                <Icon 
-                    name={icon} 
-                    size="sm"
-                    color="current"
-                    aria-hidden="true"
-                />
-            );
-        }
-        
-        return null;
-    };
-
-    // IDs únicos para accesibilidad
-    const inputId = id || name || `text-input-${Math.random().toString(36).substr(2, 9)}`;
-    const helperTextId = helperText ? `${inputId}-helper` : undefined;
-    const errorTextId = errorText ? `${inputId}-error` : undefined;
-    
-    // Construir aria-describedby
-    const describedByIds = [
-        ariaDescribedBy,
-        helperTextId,
-        errorTextId
-    ].filter(Boolean);
-
-    // Calcular datos del contador de caracteres
-    const currentLength = value?.length || 0;
-    const isNearLimit = maxLength && currentLength > maxLength * 0.8;
-    const isAtLimit = maxLength && currentLength >= maxLength;
-
-    // Props para el Input del átomo (heredando todas las nuevas características)
-    const inputProps = {
-        ref,
-        id: inputId,
-        type,
-        name,
-        value,
-        defaultValue,
-        onChange,
-        onFocus: handleFocus,
-        onBlur: handleBlur,
-        placeholder,
-        disabled,
-        readOnly,
-        required,
-        autoFocus,
-        maxLength,
-        minLength,
-        pattern,
-        autoComplete,
-        size,
-        variant: currentVariant, // Usar la variante del átomo también
-        rounded,
-        compact: compact,
-        className: inputAdditionalClasses,
-        ariaLabel,
-        ariaDescribedBy: describedByIds.length > 0 ? describedByIds.join(' ') : undefined,
-        ariaErrorMessage: errorText ? errorTextId : ariaErrorMessage,
-        ...restProps
-    };
-
-    return (
-        <div className={wrapperClasses}>
-            {/* Label */}
-            {label && (
-                <label 
-                    htmlFor={inputId} 
-                    className={`text-input__label ${required ? 'text-input__label--required' : ''}`}
-                >
-                    {label}
-                </label>
-            )}
-
-            {/* Input container */}
-            <div className="text-input__container">
-                {/* Left icon */}
-                {leftIcon && (
-                    <span 
-                        className={`text-input__icon text-input__icon--left ${onLeftIconClick ? 'text-input__icon--clickable' : ''}`}
-                        onClick={onLeftIconClick}
-                        role={onLeftIconClick ? 'button' : undefined}
-                        tabIndex={onLeftIconClick ? 0 : undefined}
-                        aria-label={onLeftIconClick ? 'Acción del icono izquierdo' : undefined}
-                        onKeyDown={onLeftIconClick ? (e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                                e.preventDefault();
-                                onLeftIconClick(e);
-                            }
-                        } : undefined}
-                    >
-                        {renderIcon(leftIcon)}
-                    </span>
-                )}
-
-                {/* Input field - Usando el átomo Input mejorado */}
-                <Input {...inputProps} />
-
-                {/* Right icon */}
-                {rightIcon && (
-                    <span 
-                        className={`text-input__icon text-input__icon--right ${onRightIconClick ? 'text-input__icon--clickable' : ''}`}
-                        onClick={onRightIconClick}
-                        role={onRightIconClick ? 'button' : undefined}
-                        tabIndex={onRightIconClick ? 0 : undefined}
-                        aria-label={onRightIconClick ? 'Acción del icono derecho' : undefined}
-                        onKeyDown={onRightIconClick ? (e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                                e.preventDefault();
-                                onRightIconClick(e);
-                            }
-                        } : undefined}
-                    >
-                        {renderIcon(rightIcon)}
-                    </span>
-                )}
-            </div>
-
-            {/* Footer con mensajes y contador */}
-            {(helperText || errorText || (showCharCount && maxLength)) && (
-                <div className="text-input__footer">
-                    <div className="text-input__messages">
-                        {/* Error text (prioridad sobre helper text) */}
-                        {errorText && (
-                            <span 
-                                id={errorTextId}
-                                className="text-input__error-text"
-                                role="alert"
-                                aria-live="polite"
-                            >
-                                {errorText}
-                            </span>
-                        )}
-
-                        {/* Helper text (solo si no hay error) */}
-                        {helperText && !errorText && (
-                            <span 
-                                id={helperTextId}
-                                className="text-input__helper-text"
-                            >
-                                {helperText}
-                            </span>
-                        )}
-                    </div>
-
-                    {/* Character count */}
-                    {showCharCount && maxLength && (
-                        <span 
-                            className="text-input__char-count"
-                            data-warning={isNearLimit && !isAtLimit}
-                            data-danger={isAtLimit}
-                            aria-label={`${currentLength} de ${maxLength} caracteres`}
-                        >
-                            {currentLength}/{maxLength}
-                        </span>
-                    )}
-                </div>
-            )}
-        </div>
+  // ⚠️ BACKWARD COMPATIBILITY WARNING
+  if (props.variant === 'default' || props.variant === 'error') {
+    console.warn(
+      `TextInput: Las variantes "default" y "error" están deprecadas.
+      Migración sugerida:
+      - variant="default" → variant="primary"  
+      - variant="error" → variant="danger"
+      
+      Variantes estándar disponibles: primary, secondary, success, warning, danger, neutral`
     );
+  }
+
+  // Estado interno para manejar focus
+  const [isFocused, setIsFocused] = useState(false);
+  
+  // Determinar variante basada en error (error tiene prioridad sobre variant estándar)
+  const currentVariant = errorText ? 'danger' : variant;
+  
+  // ✅ CONSTRUIR CLASES CSS DINÁMICAS - Sistema estándar
+  const wrapperClasses = [
+    'text-input-wrapper',
+    `text-input-wrapper--${size}`,
+    currentVariant !== 'primary' && `text-input-wrapper--${currentVariant}`,
+    rounded !== 'md' && `text-input-wrapper--rounded-${rounded}`,
+    isFocused && 'text-input-wrapper--focused',
+    fullWidth && 'text-input-wrapper--full-width',
+    disabled && 'text-input-wrapper--disabled',
+    loading && 'text-input-wrapper--loading',
+    compact && 'text-input-wrapper--compact',
+    className
+  ].filter(Boolean).join(' ');
+
+  // Clases adicionales para el Input del átomo (será manejado internamente por Input)
+  const inputAdditionalClasses = [
+    'text-input__input', // Clase específica para styling molecular
+    leftIcon && 'text-input--with-left-icon',
+    rightIcon && 'text-input--with-right-icon'
+  ].filter(Boolean).join(' ');
+
+  // Handlers de eventos
+  const handleFocus = (e) => {
+    setIsFocused(true);
+    onFocus?.(e);
+  };
+
+  const handleBlur = (e) => {
+    setIsFocused(false);
+    onBlur?.(e);
+  };
+
+  // ✅ Los iconos serán manejados internamente por el Input del sistema estándar
+  // No necesitamos renderIcon aquí, Input ya lo maneja con iconHelpers.js
+
+  // IDs únicos para accesibilidad
+  const inputId = id || name || `text-input-${crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substr(2, 9)}`;
+  const helperTextId = helperText ? `${inputId}-helper` : undefined;
+  const errorTextId = errorText ? `${inputId}-error` : undefined;
+  
+  // Construir aria-describedby
+  const describedByIds = [
+    ariaDescribedBy,
+    helperTextId,
+    errorTextId
+  ].filter(Boolean);
+
+  // Calcular datos del contador de caracteres
+  const currentLength = value?.length || 0;
+  const isNearLimit = maxLength && currentLength > maxLength * 0.8;
+  const isAtLimit = maxLength && currentLength >= maxLength;
+
+  // ✅ PROPS PARA INPUT DEL SISTEMA ESTÁNDAR
+  const inputProps = {
+    ref,
+    id: inputId,
+    type,
+    name,
+    value,
+    defaultValue,
+    onChange,
+    onFocus: handleFocus,
+    onBlur: handleBlur,
+    placeholder,
+    disabled,
+    readOnly,
+    required,
+    autoFocus,
+    maxLength,
+    minLength,
+    pattern,
+    autoComplete,
+    
+    // ✅ PROPS ESTÁNDAR DELEGADAS
+    size,
+    variant: currentVariant,
+    rounded,
+    loading, // Delegamos loading al Input
+    compact,
+    leftIcon, // Input manejará los iconos con iconHelpers.js
+    rightIcon,
+    onLeftIconClick,
+    onRightIconClick,
+    
+    // Accesibilidad y clases
+    className: inputAdditionalClasses,
+    ariaLabel,
+    ariaDescribedBy: describedByIds.length > 0 ? describedByIds.join(' ') : undefined,
+    ariaErrorMessage: errorText ? errorTextId : ariaErrorMessage,
+    
+    // Resto de props
+    ...restProps
+  };
+
+  return (
+    <div className={wrapperClasses}>
+      {/* Label */}
+      {label && (
+        <label 
+          htmlFor={inputId} 
+          className={`text-input__label ${required ? 'text-input__label--required' : ''}`}
+        >
+          {label}
+        </label>
+      )}
+
+      {/* ✅ INPUT DEL SISTEMA ESTÁNDAR - Maneja iconos internamente */}
+      <Input {...inputProps} />
+
+      {/* Footer con mensajes y contador */}
+      {(helperText || errorText || (showCharCount && maxLength)) && (
+        <div className="text-input__footer">
+          <div className="text-input__messages">
+            {/* Error text (prioridad sobre helper text) */}
+            {errorText && (
+              <span 
+                id={errorTextId}
+                className="text-input__error-text"
+                role="alert"
+                aria-live="polite"
+              >
+                {errorText}
+              </span>
+            )}
+
+            {/* Helper text (solo si no hay error) */}
+            {helperText && !errorText && (
+              <span 
+                id={helperTextId}
+                className="text-input__helper-text"
+              >
+                {helperText}
+              </span>
+            )}
+          </div>
+
+          {/* Character count */}
+          {showCharCount && maxLength && (
+            <span 
+              className="text-input__char-count"
+              data-warning={isNearLimit && !isAtLimit}
+              data-danger={isAtLimit}
+              aria-label={`${currentLength} de ${maxLength} caracteres`}
+            >
+              {currentLength}/{maxLength}
+            </span>
+          )}
+        </div>
+      )}
+    </div>
+  );
 });
 
 // Display name para debugging
 TextInput.displayName = 'TextInput';
 
-// PropTypes para validación
+// ✅ PROPTYPES CON SISTEMA ESTÁNDAR
 TextInput.propTypes = {
-    placeholder: PropTypes.string,
-    value: PropTypes.string,
-    defaultValue: PropTypes.string,
-    onChange: PropTypes.func,
-    onBlur: PropTypes.func,
-    onFocus: PropTypes.func,
-    type: PropTypes.oneOf(['text', 'password', 'email', 'number', 'tel', 'url', 'search', 'date', 'time', 'datetime-local']),
-    name: PropTypes.string,
-    id: PropTypes.string,
-    className: PropTypes.string,
-    size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
-    variant: PropTypes.oneOf(['default', 'success', 'warning', 'error']),
-    rounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'full']),
-    disabled: PropTypes.bool,
-    readOnly: PropTypes.bool,
-    required: PropTypes.bool,
-    autoFocus: PropTypes.bool,
-    fullWidth: PropTypes.bool,
-    compact: PropTypes.bool,
-    label: PropTypes.string,
-    helperText: PropTypes.string,
-    errorText: PropTypes.string,
-    // SOLO acepta nombres de Feather Icons (string) del sistema de diseño o componentes React
-    // No compatible con emojis o clases CSS legacy
-    leftIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
-    rightIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
-    onRightIconClick: PropTypes.func,
-    onLeftIconClick: PropTypes.func,
-    maxLength: PropTypes.number,
-    minLength: PropTypes.number,
-    showCharCount: PropTypes.bool,
-    pattern: PropTypes.string,
-    autoComplete: PropTypes.string,
-    ariaLabel: PropTypes.string,
-    ariaDescribedBy: PropTypes.string,
-    ariaErrorMessage: PropTypes.string
+  // ✅ PROPS ESTÁNDAR DEL SISTEMA
+  ...STANDARD_PROP_TYPES,
+  
+  // ✅ PROPS ESPECÍFICAS DE TEXTINPUT
+  label: PropTypes.string,
+  helperText: PropTypes.string,
+  errorText: PropTypes.string,
+  showCharCount: PropTypes.bool,
+  
+  // Props básicas del input
+  placeholder: PropTypes.string,
+  value: PropTypes.string,
+  defaultValue: PropTypes.string,
+  onChange: PropTypes.func,
+  onBlur: PropTypes.func,
+  onFocus: PropTypes.func,
+  type: PropTypes.oneOf(['text', 'password', 'email', 'number', 'tel', 'url', 'search', 'date', 'time', 'datetime-local']),
+  name: PropTypes.string,
+  id: PropTypes.string,
+  readOnly: PropTypes.bool,
+  required: PropTypes.bool,
+  autoFocus: PropTypes.bool,
+  fullWidth: PropTypes.bool,
+  compact: PropTypes.bool,
+  onRightIconClick: PropTypes.func,
+  onLeftIconClick: PropTypes.func,
+  maxLength: PropTypes.number,
+  minLength: PropTypes.number,
+  pattern: PropTypes.string,
+  autoComplete: PropTypes.string,
+  ariaLabel: PropTypes.string,
+  ariaDescribedBy: PropTypes.string,
+  ariaErrorMessage: PropTypes.string
 };
 
 export { TextInput };

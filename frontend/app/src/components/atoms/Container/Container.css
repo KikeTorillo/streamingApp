@@ -1,183 +1,263 @@
-/* ===== OPCIÓN 3: WIDTH POR DEFECTO + MAX-WIDTH (RECOMENDADA) ===== */
-/* El mejor balance: consistencia visual + flexibilidad cuando se necesita */
+/* ===== CONTAINER - MIGRADO AL SISTEMA DE DISEÑO ESTÁNDAR ===== */
+/* ✅ TOKENS AUTOMÁTICOS: Tamaños y variantes del sistema unificado */
+/* ✅ RESPONSIVE: Adaptación automática por breakpoints */
+/* ✅ 6 VARIANTES SEMÁNTICAS: primary, secondary, success, warning, danger, neutral */
 
-.container-xs {
-  width: 48rem;       /* ✅ Ancho por defecto consistente */
-  max-width: 48rem;   /* ✅ Límite máximo */
-  margin: 0 auto;
-  padding: var(--space-lg);
-  background-color: var(--bg-primary);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  border: 0.1rem solid var(--border-light);
-  font-family: var(--font-family-base);
-}
-
-.container-sm {
-  width: 64rem;       /* ✅ Ancho por defecto consistente */
-  max-width: 64rem;   /* ✅ Límite máximo */
-  margin: 0 auto;
-  padding: var(--space-xl);
-  background-color: var(--bg-primary);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  border: 0.1rem solid var(--border-light);
-  font-family: var(--font-family-base);
-}
-
-.container-md {
-  width: 80rem;       /* ✅ Ancho por defecto consistente */
-  max-width: 80rem;   /* ✅ Límite máximo */
-  margin: 0 auto;
-  padding: var(--space-xl);
-  background-color: var(--bg-primary);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  border: 0.1rem solid var(--border-light);
-  font-family: var(--font-family-base);
-}
-
-.container-lg {
-  width: 120rem;      /* ✅ Ancho por defecto consistente */
-  max-width: 120rem;  /* ✅ Límite máximo */
-  margin: 0 auto;
-  padding: var(--space-xl);
-  background-color: var(--bg-primary);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  border: 0.1rem solid var(--border-light);
-  font-family: var(--font-family-base);
-}
-
-.container-xl {
-  width: 144rem;      /* ✅ Ancho por defecto consistente */
-  max-width: 144rem;  /* ✅ Límite máximo */
-  margin: 0 auto;
-  padding: var(--space-xl);
-  background-color: var(--bg-primary);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  border: 0.1rem solid var(--border-light);
-  font-family: var(--font-family-base);
-}
-
+/* ✅ BASE STYLES - Todos los containers */
+.container-xs,
+.container-sm,
+.container-md, 
+.container-lg,
+.container-xl,
 .container-full {
-  width: 100%;        /* ✅ Siempre 100% */
-  max-width: none;    /* ✅ Sin límite */
+  margin: 0 auto;
+  font-family: var(--font-family-base);
+  transition: var(--transition-base);
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* ✅ CONTAINER XS - Modales, formularios login */
+.container-xs {
+  width: 48rem;
+  max-width: 48rem;
+  padding: var(--space-lg);
+}
+
+/* ✅ CONTAINER SM - Artículos, detalles */
+.container-sm {
+  width: 64rem;
+  max-width: 64rem;
+  padding: var(--space-xl);
+}
+
+/* ✅ CONTAINER MD - Páginas estándar */
+.container-md {
+  width: 80rem;
+  max-width: 80rem;
+  padding: var(--space-xl);
+}
+
+/* ✅ CONTAINER LG - Dashboards, admin */
+.container-lg {
+  width: 120rem;
+  max-width: 120rem;
+  padding: var(--space-xl);
+}
+
+/* ✅ CONTAINER XL - Layout principal */
+.container-xl {
+  width: 144rem;
+  max-width: 144rem;
+  padding: var(--space-xl);
+}
+
+/* ✅ CONTAINER FULL - Sin límite */
+.container-full {
+  width: 100%;
+  max-width: none;
   margin: 0;
   padding: var(--space-xl);
-  background-color: var(--bg-primary);
+}
+
+/* ===== 6 VARIANTES SEMÁNTICAS ESTÁNDAR ===== */
+
+/* ✅ PRIMARY - Azul oceánico (por defecto) */
+.container-xs--primary,
+.container-sm--primary,
+.container-md--primary,
+.container-lg--primary,
+.container-xl--primary,
+.container-full--primary {
+  background-color: var(--color-primary-light);
+  border: 0.1rem solid var(--color-primary);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
-  border: 0.1rem solid var(--border-light);
-  font-family: var(--font-family-base);
+  color: var(--text-primary);
 }
 
-/* ===== VARIANTE FLEXIBLE PARA CASOS ESPECIALES ===== */
-/* Si necesitas que el contenido pueda ser más pequeño que el default */
-
-.container-xs--flexible {
-  width: auto;        /* ✅ Se ajusta al contenido */
-  max-width: 48rem;   /* ✅ Pero no pasa del límite */
-  min-width: 24rem;   /* ✅ Mínimo razonable */
+/* ✅ SECONDARY - Naranja/dorado */
+.container-xs--secondary,
+.container-sm--secondary,
+.container-md--secondary,
+.container-lg--secondary,
+.container-xl--secondary,
+.container-full--secondary {
+  background-color: var(--color-secondary-light);
+  border: 0.1rem solid var(--color-secondary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  color: var(--text-primary);
 }
 
-.container-sm--flexible {
-  width: auto;
-  max-width: 64rem;
-  min-width: 32rem;
+/* ✅ SUCCESS - Verde/azul */
+.container-xs--success,
+.container-sm--success,
+.container-md--success,
+.container-lg--success,
+.container-xl--success,
+.container-full--success {
+  background-color: var(--color-success-light);
+  border: 0.1rem solid var(--color-success);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  color: var(--text-primary);
 }
 
-.container-md--flexible {
-  width: auto;
-  max-width: 80rem;
-  min-width: 48rem;
+/* ✅ WARNING - Amarillo/dorado */
+.container-xs--warning,
+.container-sm--warning,
+.container-md--warning,
+.container-lg--warning,
+.container-xl--warning,
+.container-full--warning {
+  background-color: var(--color-warning-light);
+  border: 0.1rem solid var(--color-warning);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  color: var(--text-primary);
 }
 
-.container-lg--flexible {
-  width: auto;
-  max-width: 120rem;
-  min-width: 64rem;
+/* ✅ DANGER - Rojo */
+.container-xs--danger,
+.container-sm--danger,
+.container-md--danger,
+.container-lg--danger,
+.container-xl--danger,
+.container-full--danger {
+  background-color: var(--color-danger-light);
+  border: 0.1rem solid var(--color-danger);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  color: var(--text-primary);
 }
 
-.container-xl--flexible {
-  width: auto;
-  max-width: 144rem;
-  min-width: 80rem;
+/* ✅ NEUTRAL - Gris (sin estilos de card) */
+.container-xs--neutral,
+.container-sm--neutral,
+.container-md--neutral,
+.container-lg--neutral,
+.container-xl--neutral,
+.container-full--neutral {
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  color: var(--text-primary);
 }
 
-/* ===== RESPONSIVE: Mantener proporciones en pantallas pequeñas ===== */
-@media (max-width: 1440px) {
-  .container-xl { 
-    width: calc(100vw - 4rem); 
-    max-width: calc(100vw - 4rem);
+/* ===== ESTADOS DEL SISTEMA ===== */
+
+/* ✅ LOADING STATE */
+.container--loading {
+  position: relative;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.container__loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-primary-alpha);
+  backdrop-filter: blur(0.2rem);
+  z-index: var(--z-loading);
+}
+
+.container__spinner {
+  width: 3.2rem;
+  height: 3.2rem;
+  border: 0.3rem solid var(--color-primary-light);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: container-spin 1s linear infinite;
+}
+
+@keyframes container-spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
-@media (max-width: 1200px) {
+/* ✅ DEBUG MODE - Modo desarrollo */
+.debug-containers {
+  border: 0.2rem dashed var(--color-primary) !important;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    var(--color-primary-light) 10px,
+    var(--color-primary-light) 20px
+  );
+}
+
+/* ===== RESPONSIVE: Adaptación automática por breakpoints ===== */
+/* ✅ BREAKPOINT XL - 1440px */
+@media (max-width: 144rem) {
+  .container-xl { 
+    width: calc(100vw - var(--space-2xl));
+    max-width: calc(100vw - var(--space-2xl));
+    padding: var(--space-lg);
+  }
+}
+
+/* ✅ BREAKPOINT LG - 1200px */
+@media (max-width: 120rem) {
   .container-lg { 
-    width: calc(100vw - 4rem); 
-    max-width: calc(100vw - 4rem);
+    width: calc(100vw - var(--space-2xl));
+    max-width: calc(100vw - var(--space-2xl));
+    padding: var(--space-lg);
   }
   .container-xl { 
-    width: calc(100vw - 4rem); 
-    max-width: calc(100vw - 4rem);
+    width: calc(100vw - var(--space-2xl));
+    max-width: calc(100vw - var(--space-2xl));
+    padding: var(--space-lg);
   }
 }
 
-@media (max-width: 800px) {
-  .container-md { 
-    width: calc(100vw - 4rem); 
-    max-width: calc(100vw - 4rem);
-  }
-  .container-lg { 
-    width: calc(100vw - 4rem); 
-    max-width: calc(100vw - 4rem);
-  }
+/* ✅ BREAKPOINT MD - 800px */
+@media (max-width: 80rem) {
+  .container-md,
+  .container-lg,
   .container-xl { 
-    width: calc(100vw - 4rem); 
-    max-width: calc(100vw - 4rem);
+    width: calc(100vw - var(--space-xl));
+    max-width: calc(100vw - var(--space-xl));
+    padding: var(--space-md);
   }
 }
 
-@media (max-width: 640px) {
-  .container-sm { 
-    width: calc(100vw - 4rem); 
-    max-width: calc(100vw - 4rem);
-  }
-  .container-md { 
-    width: calc(100vw - 4rem); 
-    max-width: calc(100vw - 4rem);
-  }
-  .container-lg { 
-    width: calc(100vw - 4rem); 
-    max-width: calc(100vw - 4rem);
-  }
+/* ✅ BREAKPOINT SM - 640px */
+@media (max-width: 64rem) {
+  .container-sm,
+  .container-md,
+  .container-lg,
   .container-xl { 
-    width: calc(100vw - 4rem); 
-    max-width: calc(100vw - 4rem);
+    width: calc(100vw - var(--space-lg));
+    max-width: calc(100vw - var(--space-lg));
+    padding: var(--space-md);
   }
 }
 
-@media (max-width: 480px) {
-  .container-xs { 
-    width: calc(100vw - 4rem); 
-    max-width: calc(100vw - 4rem);
+/* ✅ BREAKPOINT XS - 480px (Móvil) */
+@media (max-width: 48rem) {
+  .container-xs,
+  .container-sm,
+  .container-md,
+  .container-lg,
+  .container-xl {
+    width: calc(100vw - var(--space-md));
+    max-width: calc(100vw - var(--space-md));
+    padding: var(--space-sm);
+    border-radius: var(--radius-md);
   }
-  .container-sm { 
-    width: calc(100vw - 4rem); 
-    max-width: calc(100vw - 4rem);
-  }
-  .container-md { 
-    width: calc(100vw - 4rem); 
-    max-width: calc(100vw - 4rem);
-  }
-  .container-lg { 
-    width: calc(100vw - 4rem); 
-    max-width: calc(100vw - 4rem);
-  }
-  .container-xl { 
-    width: calc(100vw - 4rem); 
-    max-width: calc(100vw - 4rem);
+  
+  /* Ajustar full en móvil */
+  .container-full {
+    padding: var(--space-sm);
   }
 }

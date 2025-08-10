@@ -71,6 +71,10 @@
 }
 
 /* ===== TAMAÑOS ===== */
+.modal--xs {
+  --modal-max-width: 20rem; /* 320px */
+}
+
 .modal--sm {
   --modal-max-width: 24rem; /* 384px */
 }
@@ -85,6 +89,167 @@
 
 .modal--xl {
   --modal-max-width: 64rem; /* 1024px */
+}
+
+/* ===== VARIANTES SEMÁNTICAS - SISTEMA ESTÁNDAR 6 VARIANTES ===== */
+
+/* Primary (default) */
+.modal--primary .modal__content {
+  background: var(--bg-primary);
+  border-color: var(--border-default);
+}
+
+.modal--primary .modal__header {
+  border-bottom-color: var(--border-light);
+}
+
+.modal--primary .modal__title {
+  color: var(--text-primary);
+}
+
+/* Secondary */
+.modal--secondary .modal__content {
+  background: var(--color-secondary-light);
+  border-color: var(--color-secondary);
+}
+
+.modal--secondary .modal__header {
+  border-bottom-color: var(--color-secondary);
+}
+
+.modal--secondary .modal__title {
+  color: var(--color-secondary-dark);
+}
+
+/* Success */
+.modal--success .modal__content {
+  background: var(--color-success-light);
+  border-color: var(--color-success);
+}
+
+.modal--success .modal__header {
+  border-bottom-color: var(--color-success);
+}
+
+.modal--success .modal__title {
+  color: var(--color-success-dark);
+}
+
+/* Warning */
+.modal--warning .modal__content {
+  background: var(--color-warning-light);
+  border-color: var(--color-warning);
+}
+
+.modal--warning .modal__header {
+  border-bottom-color: var(--color-warning);
+}
+
+.modal--warning .modal__title {
+  color: var(--color-warning-dark);
+}
+
+/* Danger */
+.modal--danger .modal__content {
+  background: var(--color-danger-light);
+  border-color: var(--color-danger);
+}
+
+.modal--danger .modal__header {
+  border-bottom-color: var(--color-danger);
+}
+
+.modal--danger .modal__title {
+  color: var(--color-danger-dark);
+}
+
+/* Neutral */
+.modal--neutral .modal__content {
+  background: var(--color-neutral-light);
+  border-color: var(--color-neutral);
+}
+
+.modal--neutral .modal__header {
+  border-bottom-color: var(--color-neutral);
+}
+
+.modal--neutral .modal__title {
+  color: var(--color-neutral-dark);
+}
+
+/* ===== RADIO DE BORDES ===== */
+.modal--rounded-sm .modal__content {
+  border-radius: var(--radius-sm);
+}
+
+.modal--rounded-md .modal__content {
+  border-radius: var(--radius-md);
+}
+
+.modal--rounded-lg .modal__content {
+  border-radius: var(--radius-lg);
+}
+
+.modal--rounded-xl .modal__content {
+  border-radius: var(--radius-xl);
+}
+
+.modal--rounded-full .modal__content {
+  border-radius: var(--radius-full);
+}
+
+/* ===== ESTADOS ===== */
+
+/* Disabled */
+.modal--disabled .modal__content {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.modal--disabled .modal__title {
+  color: var(--text-disabled);
+}
+
+/* Loading */
+.modal--loading .modal__content {
+  position: relative;
+}
+
+.modal__loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: inherit;
+}
+
+.modal__loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-primary);
+  opacity: 0.8;
+  border-radius: inherit;
+}
+
+.modal__loading-spinner {
+  position: relative;
+  z-index: 11;
+  color: var(--text-secondary);
+  font-size: 2rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* ===== HEADER ===== */
@@ -117,42 +282,9 @@
   white-space: nowrap;
 }
 
+/* Botón de cierre usa componente Button del sistema - no necesita CSS específico */
 .modal__close {
-  /* Layout */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  /* Size */
-  width: 2rem;
-  height: 2rem;
-  
-  /* Styling */
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-sm);
-  color: var(--text-secondary);
-  cursor: pointer;
-  
-  /* Typography */
-  font-size: var(--font-size-lg);
-  line-height: 1;
-  
-  /* Transition */
-  transition: all 0.2s ease;
-  
-  /* Flex shrink */
   flex-shrink: 0;
-}
-
-.modal__close:hover {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-}
-
-.modal__close:focus {
-  outline: 0.2rem solid var(--border-focus);
-  outline-offset: 0.2rem;
 }
 
 /* ===== BODY ===== */

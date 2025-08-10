@@ -3,47 +3,92 @@
 
 import { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
+import { Button } from '../../atoms/Button/Button';
+import { validateStandardProps, STANDARD_PROP_TYPES } from '../../../tokens';
+import { createStandardIconRenderer } from '../../../utils/iconHelpers';
 import './Modal.css';
 
 /**
  * Modal - Componente base para modales usando <dialog>
  * 
- * ✅ SISTEMA DE DISEÑO: Molécula base reutilizable
+ * ✅ SISTEMA DE DISEÑO: Molécula base reutilizable con sistema estándar
  * ✅ MODERN HTML: Usa <dialog> nativo para mejor accesibilidad
  * ✅ ACCESIBILIDAD: Focus trap, ESC key, aria automático
  * ✅ RESPONSIVE: Adaptable a diferentes tamaños
  * ✅ REUTILIZABLE: Base para ProgressModal, EditModal, etc.
+ * ✅ CONSISTENTE: Props estándar (size, variant, rounded, loading)
+ * 
+ * @param {Object} props - Propiedades del componente
+ * @param {boolean} [props.isOpen=false] - Si el modal está abierto
+ * @param {function} [props.onClose] - Callback para cerrar el modal
+ * @param {React.ReactNode} [props.children] - Contenido del modal
+ * @param {string} [props.title] - Título del modal (opcional)
+ * @param {'xs'|'sm'|'md'|'lg'|'xl'} [props.size='md'] - Tamaño del modal
+ * @param {'primary'|'secondary'|'success'|'warning'|'danger'|'neutral'} [props.variant='primary'] - Variante semántica
+ * @param {'sm'|'md'|'lg'|'xl'|'full'} [props.rounded='xl'] - Radio de bordes
+ * @param {boolean} [props.disabled=false] - Si está deshabilitado
+ * @param {boolean} [props.loading=false] - Estado de loading
+ * @param {string} [props.className=''] - Clases CSS adicionales
+ * @param {boolean} [props.closeOnBackdrop=true] - Cerrar al hacer clic en backdrop
+ * @param {boolean} [props.closeOnEscape=true] - Cerrar con tecla ESC
+ * @param {Object} [props.closeButton] - Configuración del botón de cierre
+ * @param {string} [props.ariaLabel] - Label para accesibilidad
+ * @param {string} [props.ariaLabelledBy] - ID del elemento que hace de label
+ * @param {string} [props.ariaDescribedBy] - ID del elemento que describe el modal
+ * @param {function} [props.onOpen] - Callback al abrir el modal
+ * @param {function} [props.onClosed] - Callback al cerrar completamente el modal
  */
-function Modal({
-  // Control básico
-  isOpen = false,
-  onClose = null,
+function Modal(props) {
+  // ✅ VALIDAR PROPS ESTÁNDAR - Muestra deprecation warnings automáticamente  
+  const validatedProps = validateStandardProps(props, 'Modal');
+
+  const {
+    // Props estándar del sistema
+    size = 'md',
+    variant = 'primary', 
+    rounded = 'xl',
+    disabled = false,
+    loading = false,
+    className = '',
+    
+    // Control básico
+    isOpen = false,
+    onClose = null,
+    
+    // Contenido
+    children,
+    title = null,
+    
+    // Configuración específica de Modal
+    closeOnBackdrop = true,
+    closeOnEscape = true,
+    closeButton = {},
+    
+    // Accesibilidad
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledBy,
+    'aria-describedby': ariaDescribedBy,
+    
+    // Callbacks
+    onOpen = null,
+    onClosed = null,
+    
+    ...restProps
+  } = validatedProps;
   
-  // Contenido
-  children,
-  title = null,
-  
-  // Configuración
-  size = 'md', // 'sm', 'md', 'lg', 'xl'
-  // backdrop = true, // Mostrar backdrop
-  closeOnBackdrop = true, // Cerrar al hacer clic en backdrop
-  closeOnEscape = true, // Cerrar con tecla ESC
-  
-  // Estilos
-  className = '',
-  
-  // Accesibilidad
-  'aria-label': ariaLabel,
-  'aria-labelledby': ariaLabelledBy,
-  'aria-describedby': ariaDescribedBy,
-  
-  // Callbacks
-  onOpen = null,
-  onClosed = null,
-  
-  ...restProps
-}) {
   const dialogRef = useRef(null);
+  
+  // Función para renderizar iconos usando el sistema centralizado
+  const renderIcon = createStandardIconRenderer('modal', size);
+  
+  // Configuración del botón de cierre con valores por defecto
+  const closeButtonConfig = {
+    size: size === 'xs' ? 'xs' : size === 'sm' ? 'sm' : 'sm', // Botón más pequeño que el modal
+    variant: 'ghost',
+    rounded: 'full',
+    iconOnly: true,
+    ...closeButton
+  };
   
   // Efecto para abrir/cerrar modal
   useEffect(() => {
@@ -102,10 +147,14 @@ function Modal({
     }
   };
   
-  // Clases CSS
+  // Clases CSS con sistema estándar
   const modalClasses = [
     'modal',
     `modal--${size}`,
+    variant !== 'primary' && `modal--${variant}`,
+    rounded !== 'xl' && `modal--rounded-${rounded}`,
+    disabled && 'modal--disabled',
+    loading && 'modal--loading',
     onClose ? 'modal--closable' : 'modal--non-closable',
     className
   ].filter(Boolean).join(' ');
@@ -137,15 +186,26 @@ function Modal({
               {title}
             </h2>
             {onClose && (
-              <button
-                type="button"
-                className="modal__close"
+              <Button
+                {...closeButtonConfig}
                 onClick={handleClose}
                 aria-label="Cerrar modal"
+                className="modal__close"
+                disabled={disabled || loading}
               >
-                ✕
-              </button>
+                {renderIcon('x')}
+              </Button>
             )}
+          </div>
+        )}
+        
+        {/* Spinner de loading si está en estado loading */}
+        {loading && (
+          <div className="modal__loading" aria-hidden="true">
+            <div className="modal__loading-spinner">
+              {renderIcon('loader')}
+            </div>
+            <div className="modal__loading-overlay" />
           </div>
         )}
         
@@ -159,15 +219,17 @@ function Modal({
 }
 
 Modal.propTypes = {
+  // ✅ PROPS ESTÁNDAR DEL SISTEMA
+  ...STANDARD_PROP_TYPES,
+  
+  // ✅ PROPS ESPECÍFICAS DE MODAL
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
   children: PropTypes.node,
   title: PropTypes.string,
-  size: PropTypes.oneOf(['sm', 'md', 'lg', 'xl']),
-  backdrop: PropTypes.bool,
   closeOnBackdrop: PropTypes.bool,
   closeOnEscape: PropTypes.bool,
-  className: PropTypes.string,
+  closeButton: PropTypes.object,
   'aria-label': PropTypes.string,
   'aria-labelledby': PropTypes.string,
   'aria-describedby': PropTypes.string,
