@@ -224,6 +224,17 @@ export const useTabsProps = (props) => useStandardProps(props, {
   defaultRounded: 'md'
 });
 
+/**
+ * Hook especializado para componentes tipo DataTable
+ * Configuración optimizada para tablas complejas con filtros y acciones
+ */
+export const useDataTableProps = (props) => useStandardProps(props, {
+  componentType: 'datatable',
+  defaultSize: 'md',
+  defaultVariant: 'neutral',
+  defaultRounded: 'lg'
+});
+
 // ===== HOOKS COMPUESTOS PARA CASOS ESPECÍFICOS =====
 
 /**

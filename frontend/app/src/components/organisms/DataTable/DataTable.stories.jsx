@@ -14,15 +14,21 @@ export default {
     docs: {
       description: {
         component: `
-# DataTable Organism
+# DataTable Organism ✅ MIGRADO
 
-Organismo completo para mostrar datos tabulares con funcionalidades avanzadas. **Refactorizado desde el componente Table original** para ser un organismo correcto que usa el sistema de diseño.
+Organismo completo para mostrar datos tabulares con funcionalidades avanzadas. **Migrado al sistema estándar** con props, tokens y hooks unificados.
 
-## 🎯 Características implementadas
+## ✅ Sistema Estándar Implementado
 
-- **✅ Organismo correcto**: Movido de atoms/ a organisms/ donde pertenece
-- **✅ Sistema de diseño**: Usa Button, TextInput, Select y variables CSS
-- **✅ Sin dependencias externas**: Eliminada dependencia de @headlessui/react
+- **✅ Props estándar**: size, variant, rounded, loading, disabled
+- **✅ Hook especializado**: useDataTableProps() integrado  
+- **✅ Tokens automáticos**: Spacing, colores, tipografía del sistema
+- **✅ Iconos unificados**: renderIcon() con sistema Feather
+- **✅ Componentes migrados**: Button, TextInput, Select, EmptyState
+- **✅ Backward compatibility**: variant legacy → tableVariant con warnings
+
+## 🎯 Características heredadas
+
 - **✅ TanStack React Table**: Funcionalidades avanzadas de tabla
 - **✅ Estados completos**: Loading, empty, error con componentes del sistema
 - **✅ Responsive design**: Mobile, tablet, desktop
@@ -123,20 +129,38 @@ const users = [
     }
   },
   argTypes: {
-    data: {
-      name: 'Datos',
-      description: 'Array de objetos con los datos a mostrar',
-      control: 'object',
+    // ===== PROPS ESTÁNDAR =====
+    size: {
+      name: 'Tamaño',
+      description: 'Tamaño del DataTable (afecta fuente, espaciado, controles)',
+      control: 'select',
+      options: ['xs', 'sm', 'md', 'lg', 'xl'],
       table: {
-        type: { summary: 'Array<Object>' }
+        type: { summary: 'string' },
+        defaultValue: { summary: 'md' },
+        category: 'Sistema Estándar'
       }
     },
-    columns: {
-      name: 'Columnas',
-      description: 'Configuración de columnas compatible con TanStack React Table',
-      control: 'object',
+    variant: {
+      name: 'Variante Semántica',
+      description: 'Variante semántica del DataTable (afecta colores de borde)',
+      control: 'select',
+      options: ['primary', 'secondary', 'success', 'danger', 'warning', 'neutral'],
       table: {
-        type: { summary: 'Array<ColumnDef>' }
+        type: { summary: 'string' },
+        defaultValue: { summary: 'neutral' },
+        category: 'Sistema Estándar'
+      }
+    },
+    rounded: {
+      name: 'Redondeado',
+      description: 'Radio de esquinas del DataTable',
+      control: 'select',
+      options: ['sm', 'md', 'lg', 'xl', 'full'],
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'lg' },
+        category: 'Sistema Estándar'
       }
     },
     loading: {
@@ -145,7 +169,38 @@ const users = [
       control: 'boolean',
       table: {
         type: { summary: 'boolean' },
-        defaultValue: { summary: 'false' }
+        defaultValue: { summary: 'false' },
+        category: 'Sistema Estándar'
+      }
+    },
+    disabled: {
+      name: 'Deshabilitado',
+      description: 'Deshabilita toda la interacción con el DataTable',
+      control: 'boolean',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+        category: 'Sistema Estándar'
+      }
+    },
+    
+    // ===== PROPS ESPECÍFICAS =====
+    data: {
+      name: 'Datos',
+      description: 'Array de objetos con los datos a mostrar',
+      control: 'object',
+      table: {
+        type: { summary: 'Array<Object>' },
+        category: 'Datos'
+      }
+    },
+    columns: {
+      name: 'Columnas',
+      description: 'Configuración de columnas compatible con TanStack React Table',
+      control: 'object',
+      table: {
+        type: { summary: 'Array<ColumnDef>' },
+        category: 'Datos'
       }
     },
     error: {
@@ -153,17 +208,19 @@ const users = [
       description: 'Mensaje de error a mostrar',
       control: 'text',
       table: {
-        type: { summary: 'string' }
+        type: { summary: 'string' },
+        category: 'Estados'
       }
     },
-    variant: {
-      name: 'Variante',
-      description: 'Estilo visual de la tabla',
+    tableVariant: {
+      name: 'Variante de Tabla',
+      description: 'Estilo visual específico de la tabla',
       control: 'select',
       options: ['default', 'striped', 'bordered', 'compact'],
       table: {
         type: { summary: 'string' },
-        defaultValue: { summary: 'default' }
+        defaultValue: { summary: 'default' },
+        category: 'Tabla'
       }
     },
     searchPlaceholder: {
@@ -455,8 +512,12 @@ export const Playground = Template.bind({});
 Playground.args = {
   data: MOCK_USERS,
   columns: userColumns,
-  variant: 'default',
+  size: 'md',
+  variant: 'neutral',
+  rounded: 'lg',
+  tableVariant: 'default',
   loading: false,
+  disabled: false,
   searchPlaceholder: 'Buscar usuarios...',
   pageSizeOptions: [10, 25, 50],
   pageSize: 10
@@ -464,7 +525,7 @@ Playground.args = {
 Playground.parameters = {
   docs: {
     description: {
-      story: 'Usa los controles para experimentar con todas las opciones del DataTable. Este organismo combina múltiples componentes del sistema de diseño.'
+      story: 'Usa los controles para experimentar con todas las opciones del DataTable migrado al sistema estándar. Incluye props estándar (size, variant, rounded) y específicas (tableVariant).'
     }
   }
 };
@@ -699,6 +760,239 @@ ResponsiveDemo.parameters = {
   docs: {
     description: {
       story: 'Demostración del comportamiento responsive del DataTable en diferentes tamaños de pantalla.'
+    }
+  }
+};
+
+// ========== SISTEMA ESTÁNDAR ==========
+
+// Tamaños estándar
+export const SystemStandardSizes = () => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xl)' }}>
+    <div>
+      <h3 style={{ marginBottom: 'var(--space-md)', fontSize: 'var(--font-size-lg)' }}>
+        Tamaño XS (Extra Small)
+      </h3>
+      <DataTable
+        data={MOCK_USERS.slice(0, 2)}
+        columns={userColumns.slice(0, 3)}
+        size="xs"
+        pageSize={5}
+        showActions={false}
+      />
+    </div>
+    
+    <div>
+      <h3 style={{ marginBottom: 'var(--space-md)', fontSize: 'var(--font-size-lg)' }}>
+        Tamaño SM (Small)
+      </h3>
+      <DataTable
+        data={MOCK_USERS.slice(0, 2)}
+        columns={userColumns.slice(0, 3)}
+        size="sm"
+        pageSize={5}
+        showActions={false}
+      />
+    </div>
+    
+    <div>
+      <h3 style={{ marginBottom: 'var(--space-md)', fontSize: 'var(--font-size-lg)' }}>
+        Tamaño MD (Medium) - Por defecto
+      </h3>
+      <DataTable
+        data={MOCK_USERS.slice(0, 2)}
+        columns={userColumns.slice(0, 3)}
+        size="md"
+        pageSize={5}
+        showActions={false}
+      />
+    </div>
+    
+    <div>
+      <h3 style={{ marginBottom: 'var(--space-md)', fontSize: 'var(--font-size-lg)' }}>
+        Tamaño LG (Large)
+      </h3>
+      <DataTable
+        data={MOCK_USERS.slice(0, 2)}
+        columns={userColumns.slice(0, 3)}
+        size="lg"
+        pageSize={5}
+        showActions={false}
+      />
+    </div>
+  </div>
+);
+
+SystemStandardSizes.parameters = {
+  docs: {
+    description: {
+      story: 'Demostración de todos los tamaños estándar del DataTable. El tamaño afecta la tipografía, espaciado y controles.'
+    }
+  }
+};
+
+// Variantes semánticas estándar
+export const SystemStandardVariants = () => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xl)' }}>
+    <div>
+      <h3 style={{ marginBottom: 'var(--space-md)', color: 'var(--color-primary-500)' }}>
+        Primary - Tablas principales
+      </h3>
+      <DataTable
+        data={MOCK_USERS.slice(0, 2)}
+        columns={userColumns.slice(0, 3)}
+        variant="primary"
+        pageSize={5}
+        showActions={false}
+      />
+    </div>
+    
+    <div>
+      <h3 style={{ marginBottom: 'var(--space-md)', color: 'var(--color-success-500)' }}>
+        Success - Datos confirmados
+      </h3>
+      <DataTable
+        data={MOCK_USERS.slice(0, 2)}
+        columns={userColumns.slice(0, 3)}
+        variant="success"
+        pageSize={5}
+        showActions={false}
+      />
+    </div>
+    
+    <div>
+      <h3 style={{ marginBottom: 'var(--space-md)', color: 'var(--color-danger-500)' }}>
+        Danger - Datos críticos
+      </h3>
+      <DataTable
+        data={MOCK_USERS.slice(0, 2)}
+        columns={userColumns.slice(0, 3)}
+        variant="danger"
+        pageSize={5}
+        showActions={false}
+      />
+    </div>
+    
+    <div>
+      <h3 style={{ marginBottom: 'var(--space-md)', color: 'var(--color-warning-500)' }}>
+        Warning - Datos de atención
+      </h3>
+      <DataTable
+        data={MOCK_USERS.slice(0, 2)}
+        columns={userColumns.slice(0, 3)}
+        variant="warning"
+        pageSize={5}
+        showActions={false}
+      />
+    </div>
+    
+    <div>
+      <h3 style={{ marginBottom: 'var(--space-md)', color: 'var(--text-secondary)' }}>
+        Neutral - Por defecto
+      </h3>
+      <DataTable
+        data={MOCK_USERS.slice(0, 2)}
+        columns={userColumns.slice(0, 3)}
+        variant="neutral"
+        pageSize={5}
+        showActions={false}
+      />
+    </div>
+  </div>
+);
+
+SystemStandardVariants.parameters = {
+  docs: {
+    description: {
+      story: 'Variantes semánticas estándar del DataTable. La variante afecta el color del borde y tema visual general.'
+    }
+  }
+};
+
+// Estados estándar
+export const SystemStandardStates = () => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xl)' }}>
+    <div>
+      <h3 style={{ marginBottom: 'var(--space-md)' }}>
+        Estado Normal
+      </h3>
+      <DataTable
+        data={MOCK_USERS.slice(0, 2)}
+        columns={userColumns.slice(0, 3)}
+        pageSize={5}
+        showActions={false}
+      />
+    </div>
+    
+    <div>
+      <h3 style={{ marginBottom: 'var(--space-md)' }}>
+        Estado Loading
+      </h3>
+      <DataTable
+        data={MOCK_USERS.slice(0, 2)}
+        columns={userColumns.slice(0, 3)}
+        loading={true}
+        pageSize={5}
+        showActions={false}
+      />
+    </div>
+    
+    <div>
+      <h3 style={{ marginBottom: 'var(--space-md)' }}>
+        Estado Disabled
+      </h3>
+      <DataTable
+        data={MOCK_USERS.slice(0, 2)}
+        columns={userColumns.slice(0, 3)}
+        disabled={true}
+        pageSize={5}
+        showActions={false}
+      />
+    </div>
+  </div>
+);
+
+SystemStandardStates.parameters = {
+  docs: {
+    description: {
+      story: 'Estados estándar del DataTable: normal, loading (con skeletons) y disabled (sin interacción).'
+    }
+  }
+};
+
+// Backward Compatibility Demo
+export const BackwardCompatibilityDemo = () => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
+    <div style={{
+      padding: 'var(--space-md)',
+      backgroundColor: 'var(--color-warning-50)',
+      borderRadius: 'var(--radius-md)',
+      border: '1px solid var(--color-warning-300)'
+    }}>
+      <h3 style={{ margin: '0 0 var(--space-sm) 0', color: 'var(--color-warning-700)' }}>
+        ⚠️ Demostración Backward Compatibility
+      </h3>
+      <p style={{ margin: 0, fontSize: 'var(--font-size-sm)', color: 'var(--color-warning-600)' }}>
+        Este DataTable usa la prop legacy <code>variant=&quot;striped&quot;</code> que ahora debería ser <code>tableVariant=&quot;striped&quot;</code>. 
+        Revisa la consola para ver el deprecation warning.
+      </p>
+    </div>
+    
+    <DataTable
+      data={MOCK_USERS.slice(0, 3)}
+      columns={userColumns}
+      variant="striped"  // ← Legacy prop, debería ser tableVariant
+      size="md"          // ← Nueva prop estándar
+      searchPlaceholder="Buscar con legacy variant..."
+      pageSize={5}
+    />
+  </div>
+);
+
+BackwardCompatibilityDemo.parameters = {
+  docs: {
+    description: {
+      story: 'Demostración de backward compatibility. El DataTable mantiene compatibilidad con la prop legacy `variant` mapeándola automáticamente a `tableVariant`, pero muestra un deprecation warning en consola.'
     }
   }
 };

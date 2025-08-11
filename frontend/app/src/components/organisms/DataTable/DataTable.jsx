@@ -1,4 +1,4 @@
-// ===== DATA TABLE ORGANISM - CON COMPONENTES BUTTON =====
+// ===== DATA TABLE ORGANISM - SISTEMA ESTÁNDAR =====
 
 import React, { useState, useMemo, memo } from 'react';
 import PropTypes from 'prop-types';
@@ -11,13 +11,16 @@ import {
   flexRender,
 } from '@tanstack/react-table';
 
-// Componentes del sistema de diseño
+// Componentes del sistema de diseño migrados
 import { Button } from '../../atoms/Button/Button';
 import { TextInput } from '../../molecules/TextInput/TextInput';
 import { Select } from '../../atoms/Select/Select';
 import { EmptyState } from '../../molecules/EmptyState/EmptyState';
 import { ActionsDropdown } from '../../molecules/ActionsDropdown/ActionsDropdown';
-import { Icon } from '../../atoms/Icon/Icon';
+
+// Sistema estándar de props y tokens
+import { useDataTableProps } from '../../../hooks/useStandardProps';
+import { extractDOMProps, STANDARD_PROP_TYPES } from '../../../tokens/standardProps';
 
 import './DataTable.css';
 
@@ -41,91 +44,86 @@ function useDebounce(value, delay) {
 /**
  * DataTable - Organismo completo para mostrar datos tabulares
  * 
- * ✅ SISTEMA DE DISEÑO: Usa componente Button para todos los botones
- * ✅ CONSISTENCIA: Headers, paginación y acciones con mismo estilo
- * ✅ STORYBOOK: Solo componentes con stories
+ * ✅ SISTEMA ESTÁNDAR: Props estándar (size, variant, rounded, loading, disabled)
+ * ✅ TOKENS AUTOMÁTICOS: Spacing, colores, tipografía del sistema
+ * ✅ COMPONENTES MIGRADOS: Button, TextInput, Select, EmptyState integrados
+ * ✅ BACKWARD COMPATIBILITY: Mapping automático variant legacy
  */
-function DataTable({
-  // Props de datos
-  data = [],
-  columns = [],
-
-  // Props de estado
-  loading = false,
-  error = null,
-  deleting = null, // ID del elemento siendo eliminado
-
-  // Props de acciones
-  showActions = true,
-  onEdit,
-  onDelete,
-  onView,
-  actionsColumnHeader = 'Acciones',
-
-  // Props de búsqueda y paginación
-  searchable = true,
-  searchPlaceholder = 'Buscar...',
-  pageSize = 25,
-  pageSizeOptions = [10, 25, 50, 100],
-
-  // Props de estados vacíos
-  emptyTitle = 'No hay datos',
-  emptyDescription = 'No se encontraron resultados',
-  emptyIcon = "📋",
-  emptyAction = null,
-
-  // ✅ AGREGAR emptyMessage COMO PROP VÁLIDA
-  emptyMessage, // ← PROP PERSONALIZADA (causa el error)
-
-  // Props de customización
-  className = '',
-  variant = 'default', // 'default' | 'striped' | 'bordered' | 'compact'
-
-  // Props adicionales
-  onRefresh,
-  ...restProps
-}) {
-
-  // ===== FILTRAR PROPS PERSONALIZADAS PARA DOM =====
+function DataTable(props) {
+  // ===== SISTEMA ESTÁNDAR DE PROPS =====
+  const standardProps = useDataTableProps(props);
   const {
-    data: tableData,
-    columns: tableColumns,
-    loading: tableLoading,
-    error: tableError,
-    deleting: tableDeleting,
-    showActions: tableShowActions,
-    onEdit: tableOnEdit,
-    onDelete: tableOnDelete,
-    onView: tableOnView,
-    actionsColumnHeader: tableActionsColumnHeader,
-    searchable: tableSearchable,
-    searchPlaceholder: tableSearchPlaceholder,
-    pageSize: tablePageSize,
-    pageSizeOptions: tablePageSizeOptions,
-    emptyTitle: tableEmptyTitle,
-    emptyDescription: tableEmptyDescription,
-    emptyIcon: tableEmptyIcon,
-    emptyAction: tableEmptyAction,
-    emptyMessage: tableEmptyMessage,
-    variant: tableVariant,
-    onRefresh: tableOnRefresh,
-    ...domProps
-  } = { 
-    data, columns, loading, error, deleting, showActions, onEdit, onDelete, onView,
-    actionsColumnHeader, searchable, searchPlaceholder, pageSize, pageSizeOptions,
-    emptyTitle, emptyDescription, emptyIcon, emptyAction, emptyMessage, variant, onRefresh,
-    ...restProps 
-  };
+    size,
+    variant,
+    loading,
+    disabled,
+    className,
+    tokens,
+    renderIcon,
+    ...componentProps
+  } = standardProps;
 
-  // Evitar warnings de variables no usadas (necesarias para filtrar del DOM)
-  void tableData; void tableColumns; void tableLoading; void tableError; void tableDeleting;
-  void tableShowActions; void tableOnEdit; void tableOnDelete; void tableOnView; void tableActionsColumnHeader;
-  void tableSearchable; void tableSearchPlaceholder; void tablePageSize; void tablePageSizeOptions;
-  void tableEmptyTitle; void tableEmptyDescription; void tableEmptyIcon; void tableEmptyAction;
-  void tableEmptyMessage; void tableVariant; void tableOnRefresh;
+  // ===== EXTRAER PROPS ESPECÍFICAS DE DATATABLE =====
+  const {
+    // Props de datos
+    data = [],
+    columns = [],
+
+    // Props de estado específicos
+    error = null,
+    deleting = null, // ID del elemento siendo eliminado
+
+    // Props de acciones
+    showActions = true,
+    onEdit,
+    onDelete,
+    onView,
+    actionsColumnHeader = 'Acciones',
+
+    // Props de búsqueda y paginación
+    searchable = true,
+    searchPlaceholder = 'Buscar...',
+    pageSize = 25,
+    pageSizeOptions = [10, 25, 50, 100],
+
+    // Props de estados vacíos
+    emptyTitle = 'No hay datos',
+    emptyDescription = 'No se encontraron resultados',
+    emptyIcon = "📋",
+    emptyAction = null,
+    emptyMessage, // Backward compatibility
+
+    // Props de customización específica
+    tableVariant = 'default', // 'default' | 'striped' | 'bordered' | 'compact'
+
+    // Props adicionales
+    onRefresh,
+    ...restProps
+  } = componentProps;
+
+  // ===== FILTRAR PROPS PARA DOM =====
+  const domProps = extractDOMProps(restProps);
+
+  // ===== BACKWARD COMPATIBILITY =====
+  // Mapping de variante legacy a tableVariant
+  const finalTableVariant = useMemo(() => {
+    const legacyVariantMap = {
+      'default': 'default',
+      'striped': 'striped', 
+      'bordered': 'bordered',
+      'compact': 'compact'
+    };
+
+    if (props.variant && legacyVariantMap[props.variant]) {
+      console.warn(`[DataTable] DEPRECATION: prop "variant" debería ser "tableVariant". Usar tableVariant="${props.variant}" en lugar de variant="${props.variant}"`);
+      return legacyVariantMap[props.variant];
+    }
+
+    return tableVariant;
+  }, [props.variant, tableVariant]);
 
   // ===== LÓGICA PARA MANEJAR emptyMessage =====
-  // Si se pasa emptyMessage, usarlo como emptyDescription
+  // Si se pasa emptyMessage, usarlo como emptyDescription (backward compatibility)
   const finalEmptyDescription = emptyMessage || emptyDescription;
 
   // ===== ESTADOS =====
@@ -185,14 +183,15 @@ function DataTable({
             <ActionsDropdown
               actions={actions}
               variant="outline"
-              size="sm"
-              disabled={loading}
+              size={size}
+              disabled={loading || disabled}
+              data={rowData}
             />
           </div>
         );
       }
     };
-  }, [showActions, onEdit, onDelete, onView, actionsColumnHeader, deleting, loading]);
+  }, [showActions, onEdit, onDelete, onView, actionsColumnHeader, deleting, loading, disabled, size]);
 
   // ===== MEMOIZED COLUMNS =====
   const memoColumns = useMemo(() => {
@@ -243,15 +242,22 @@ function DataTable({
   if (!loading && (!data || data.length === 0) && !debouncedGlobalFilter) {
     return (
       <div
-        className={`data-table data-table--empty data-table--${variant} ${className}`}
+        className={`data-table data-table--empty data-table--${finalTableVariant} data-table--${size} data-table--${variant} ${disabled ? 'data-table--disabled' : ''} ${className}`}
+        style={{
+          '--table-border-radius': tokens.rounded,
+          '--table-size': tokens.size.height,
+          '--table-padding': tokens.size.padding
+        }}
         {...domProps}
       >
         <div className="data-table__empty">
           <EmptyState
             icon={emptyIcon}
             title={emptyTitle}
-            description={finalEmptyDescription} // ✅ Usar emptyMessage si está disponible
+            description={finalEmptyDescription}
             action={emptyAction}
+            size={size}
+            variant={variant}
           />
         </div>
       </div>
@@ -261,7 +267,13 @@ function DataTable({
   // ===== RENDER PRINCIPAL =====
   return (
     <div
-      className={`data-table data-table--${variant} ${className}`}
+      className={`data-table data-table--${finalTableVariant} data-table--${size} data-table--${variant} ${loading ? 'data-table--loading' : ''} ${disabled ? 'data-table--disabled' : ''} ${className}`}
+      style={{
+        '--table-border-radius': tokens.rounded,
+        '--table-size': tokens.size.height,
+        '--table-padding': tokens.size.padding,
+        '--table-font-size': tokens.size.fontSize
+      }}
       {...domProps}
     >
       {/* ===== CONTROLES SUPERIORES ===== */}
@@ -274,8 +286,9 @@ function DataTable({
               value={globalFilter}
               onChange={(e) => setGlobalFilter(e.target.value)}
               leftIcon="search"
-              size="sm"
-              disabled={loading}
+              size={size}
+              variant={variant}
+              disabled={loading || disabled}
             />
           </div>
 
@@ -287,8 +300,9 @@ function DataTable({
                 setCurrentPageSize(Number(e.target.value));
                 setCurrentPageIndex(0); // Resetear a primera página
               }}
-              size="sm"
-              disabled={loading}
+              size={size}
+              variant={variant}
+              disabled={loading || disabled}
               options={pageSizeOptions.map(size => ({
                 value: size,
                 label: `${size} filas`
@@ -316,17 +330,20 @@ function DataTable({
                       header.column.getCanSort() ? (
                         <Button
                           variant="ghost"
-                          size="sm"
+                          size={size}
                           onClick={header.column.getToggleSortingHandler()}
                           className="data-table__sort-button"
-                          disabled={loading}
+                          disabled={loading || disabled}
                         >
                           {flexRender(header.column.columnDef.header, header.getContext())}
                           <span className="data-table__sort-icon">
-                            {{
-                              asc: <Icon name="chevron-up" size="xs" />,
-                              desc: <Icon name="chevron-down" size="xs" />,
-                            }[header.column.getIsSorted()] ?? <Icon name="chevron-up" size="xs" style={{ opacity: 0.5 }} />}
+                            {renderIcon(
+                              {
+                                asc: 'chevron-up',
+                                desc: 'chevron-down',
+                              }[header.column.getIsSorted()] ?? 'chevron-up',
+                              { style: header.column.getIsSorted() ? {} : { opacity: 0.5 } }
+                            )}
                           </span>
                         </Button>
                       ) : (
@@ -357,14 +374,15 @@ function DataTable({
               <tr className="data-table__row data-table__row--error">
                 <td colSpan={memoColumns.length} className="data-table__td">
                   <div className="data-table__error">
-                    <Icon name="alert" size="sm" color="danger" />
+                    {renderIcon('alert-circle', { variant: 'danger' })}
                     <span className="data-table__error-message">{error}</span>
                     {onRefresh && (
                       <Button
                         variant="outline"
-                        size="sm"
+                        size={size}
                         onClick={onRefresh}
                         className="data-table__retry-button"
+                        disabled={loading || disabled}
                       >
                         Reintentar
                       </Button>
@@ -377,7 +395,7 @@ function DataTable({
               <tr className="data-table__row data-table__row--empty">
                 <td colSpan={memoColumns.length} className="data-table__td">
                   <div className="data-table__no-results">
-                    <Icon name="search" size="sm" color="muted" />
+                    {renderIcon('search', { variant: 'neutral' })}
                     <span className="data-table__no-results-message">
                       No se encontraron resultados para &ldquo;{debouncedGlobalFilter}&rdquo;
                     </span>
@@ -421,9 +439,9 @@ function DataTable({
           <div className="data-table__pagination-controls">
             <Button
               variant="outline"
-              size="sm"
+              size={size}
               onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage()}
+              disabled={!table.getCanPreviousPage() || loading || disabled}
               className="data-table__pagination-button"
               leftIcon="skip-back"
             >
@@ -432,9 +450,9 @@ function DataTable({
 
             <Button
               variant="outline"
-              size="sm"
+              size={size}
               onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
+              disabled={!table.getCanPreviousPage() || loading || disabled}
               className="data-table__pagination-button"
               leftIcon="chevron-left"
             >
@@ -448,9 +466,9 @@ function DataTable({
 
             <Button
               variant="outline"
-              size="sm"
+              size={size}
               onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
+              disabled={!table.getCanNextPage() || loading || disabled}
               className="data-table__pagination-button"
               rightIcon="chevron-right"
             >
@@ -459,9 +477,9 @@ function DataTable({
 
             <Button
               variant="outline"
-              size="sm"
+              size={size}
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-              disabled={!table.getCanNextPage()}
+              disabled={!table.getCanNextPage() || loading || disabled}
               className="data-table__pagination-button"
               rightIcon="skip-forward"
             >
@@ -475,12 +493,14 @@ function DataTable({
 }
 
 DataTable.propTypes = {
+  // ===== PROPS ESTÁNDAR =====
+  ...STANDARD_PROP_TYPES,
+  
   // Props de datos
   data: PropTypes.array,
   columns: PropTypes.array,
   
   // Props de estado
-  loading: PropTypes.bool,
   error: PropTypes.string,
   deleting: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   
@@ -502,14 +522,21 @@ DataTable.propTypes = {
   emptyDescription: PropTypes.string,
   emptyIcon: PropTypes.string,
   emptyAction: PropTypes.node,
-  emptyMessage: PropTypes.string,
+  emptyMessage: PropTypes.string, // Backward compatibility
   
-  // Props de customización
-  className: PropTypes.string,
-  variant: PropTypes.oneOf(['default', 'striped', 'bordered', 'compact']),
+  // Props de customización específica
+  tableVariant: PropTypes.oneOf(['default', 'striped', 'bordered', 'compact']),
   
   // Props adicionales
-  onRefresh: PropTypes.func
+  onRefresh: PropTypes.func,
+  
+  // ===== DEPRECATED PROPS (Backward compatibility) =====
+  variant: function(props, propName, componentName) {
+    if (props[propName] && ['default', 'striped', 'bordered', 'compact'].includes(props[propName])) {
+      console.warn(`[${componentName}] DEPRECATION: prop "${propName}" ha sido renombrada a "tableVariant". La funcionalidad se mantendrá pero será removida en futuras versiones.`);
+    }
+    return PropTypes.oneOf(['default', 'striped', 'bordered', 'compact'])(props, propName, componentName);
+  }
 };
 
 // Memoizar DataTable para evitar re-renders innecesarios con props complejas
