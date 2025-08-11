@@ -1,6 +1,4 @@
-// ===== TOAST CONTAINER MOLECULE STORIES =====
-// src/components/molecules/ToastContainer/ToastContainer.stories.jsx
-
+// molecules/ToastContainer/ToastContainer.stories.jsx
 import { useState } from 'react';
 import { ToastContainer } from './ToastContainer';
 import { Button } from '../../atoms/Button/Button';
@@ -16,15 +14,20 @@ export default {
         component: `
 # ToastContainer Molecule
 
-Contenedor para gestionar múltiples toasts en diferentes posiciones de la pantalla.
+Contenedor para gestionar múltiples toasts **migrado al sistema estándar**.
 
-## 🎯 Características
+## 🎯 Características del Sistema Estándar
 
+- **✅ Props Estándar**: size, variant, rounded, loading, disabled
+- **✅ Toast Migrado**: Usa Toast del sistema estándar como base
+- **✅ Tokens Automáticos**: Spacing, colores, y tamaños del design system
+- **✅ Backward Compatibility**: Mapeo gap→spacing con deprecation warnings
+- **✅ Estados Avanzados**: Loading/disabled con overlays visuales
 - **✅ Stacking**: Apila múltiples toasts correctamente
 - **✅ Posicionamiento**: Esquinas de pantalla configurables
 - **✅ Límites**: Control de máximo número de toasts
-- **✅ Animaciones**: Entrada y salida coordinadas
-- **✅ Responsive**: Adaptable a móviles
+- **✅ Animaciones**: Entrada y salida coordinadas con sistema de tokens
+- **✅ Responsive**: Adaptable a móviles con breakpoints estándar
 
 ## 🚀 Uso con useToast
 
@@ -55,6 +58,55 @@ function App() {
     }
   },
   argTypes: {
+    // Props estándar del sistema
+    size: {
+      name: 'Tamaño',
+      description: 'Tamaño estándar aplicado a todos los toasts',
+      control: 'select',
+      options: ['xs', 'sm', 'md', 'lg', 'xl'],
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: "'md'" }
+      }
+    },
+    variant: {
+      name: 'Variante',
+      description: 'Variante semántica estándar por defecto',
+      control: 'select',
+      options: ['primary', 'secondary', 'success', 'warning', 'danger', 'neutral'],
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: "'neutral'" }
+      }
+    },
+    loading: {
+      name: 'Cargando',
+      description: 'Estado de carga con overlay',
+      control: 'boolean',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' }
+      }
+    },
+    disabled: {
+      name: 'Deshabilitado',
+      description: 'Deshabilita interacciones con toasts',
+      control: 'boolean',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' }
+      }
+    },
+    spacing: {
+      name: 'Espaciado',
+      description: 'Espaciado entre toasts (sistema estándar)',
+      control: 'select',
+      options: ['xs', 'sm', 'md', 'lg', 'xl'],
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: "'md'" }
+      }
+    },
     position: {
       control: 'select',
       options: ['top-right', 'top-left', 'bottom-right', 'bottom-left'],
@@ -269,6 +321,131 @@ export const Positions = {
         <ToastContainer
           toasts={toasts}
           position={currentPosition}
+          onRemoveToast={removeToast}
+        />
+      </div>
+    );
+  }
+};
+
+// ========== SISTEMA ESTÁNDAR - NUEVAS STORIES ==========
+
+// Sistema estándar - Tamaños
+export const SystemStandardSizes = {
+  render: () => {
+    const { toasts, addToast, removeToast } = useSimulatedToasts();
+    
+    const addSizeToast = (size) => {
+      addToast('success', `Toast tamaño ${size}`, { size });
+    };
+    
+    return (
+      <div style={{ 
+        padding: '20px', 
+        minHeight: '100vh',
+        background: 'var(--color-background-secondary)'
+      }}>
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+          {['xs', 'sm', 'md', 'lg', 'xl'].map(size => (
+            <Button 
+              key={size}
+              size={size}
+              onClick={() => addSizeToast(size)}
+            >
+              {size.toUpperCase()}
+            </Button>
+          ))}
+        </div>
+        
+        <ToastContainer
+          toasts={toasts}
+          position="top-right"
+          onRemoveToast={removeToast}
+        />
+      </div>
+    );
+  }
+};
+
+// Sistema estándar - Estados
+export const SystemStandardStates = {
+  render: () => {
+    const { toasts, addToast, removeToast } = useSimulatedToasts();
+    
+    return (
+      <div style={{ 
+        padding: '20px', 
+        minHeight: '100vh',
+        background: 'var(--color-background-secondary)'
+      }}>
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+          <Button onClick={() => addToast('success', 'Estado Normal')}>
+            Normal
+          </Button>
+          <Button onClick={() => addToast('success', 'Estado Loading', { loading: true })}>
+            Con Loading
+          </Button>
+          <Button onClick={() => addToast('warning', 'Estado Disabled', { disabled: true })}>
+            Disabled
+          </Button>
+        </div>
+        
+        <div style={{ display: 'grid', gap: '2rem', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+          {/* Container normal */}
+          <ToastContainer
+            toasts={toasts}
+            position="top-right"
+            onRemoveToast={removeToast}
+          />
+          
+          {/* Container loading */}
+          <ToastContainer
+            toasts={toasts.filter(t => t.loading)}
+            position="top-left"
+            loading={true}
+            onRemoveToast={removeToast}
+          />
+          
+          {/* Container disabled */}
+          <ToastContainer
+            toasts={toasts.filter(t => t.disabled)}
+            position="bottom-right"
+            disabled={true}
+            onRemoveToast={removeToast}
+          />
+        </div>
+      </div>
+    );
+  }
+};
+
+// Backward Compatibility
+export const BackwardCompatibility = {
+  render: () => {
+    const { toasts, addToast, removeToast } = useSimulatedToasts();
+    
+    return (
+      <div style={{ 
+        padding: '20px', 
+        minHeight: '100vh',
+        background: 'var(--color-background-secondary)'
+      }}>
+        <div style={{ marginBottom: '2rem' }}>
+          <h3>Propiedades Legacy con Deprecation Warnings</h3>
+          <p>Abre la consola para ver los warnings</p>
+        </div>
+        
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+          <Button onClick={() => addToast('success', 'Toast con type legacy')}>
+            Type Legacy
+          </Button>
+        </div>
+        
+        {/* Usando prop gap legacy (deprecado) */}
+        <ToastContainer
+          toasts={toasts}
+          position="top-right"
+          gap="lg" // ⚠️ Deprecado - debe usar spacing
           onRemoveToast={removeToast}
         />
       </div>

@@ -185,12 +185,21 @@ TextSelect hereda automáticamente todas las mejoras del átomo Select:
     },
     variant: {
       name: 'Variante',
-      description: 'Estilo visual del select (usando las variantes del átomo Select mejorado)',
+      description: 'Variante semántica estándar del sistema de diseño',
       control: 'select',
-      options: ['default', 'success', 'warning', 'error'],
+      options: ['primary', 'secondary', 'success', 'warning', 'danger', 'neutral', 'default', 'error'],
       table: {
         type: { summary: 'string' },
-        defaultValue: { summary: "'default'" }
+        defaultValue: { summary: "'neutral'" }
+      }
+    },
+    loading: {
+      name: 'Cargando',
+      description: 'Estado de carga con spinner automático',
+      control: 'boolean',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' }
       }
     },
     rounded: {
@@ -347,15 +356,22 @@ export const Sizes = () => (
   </div>
 );
 
-// ========== VARIANTES ==========
-export const Variants = () => (
+// ========== VARIANTES SISTEMA ESTÁNDAR ==========
+export const SystemStandardVariants = () => (
   <div style={{ display: 'grid', gap: 'var(--space-lg)', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
     <TextSelect 
       options={countries} 
-      variant="default" 
-      label="Default" 
-      placeholder="Estado normal"
-      helperText="Campo en estado normal"
+      variant="primary" 
+      label="Primary" 
+      placeholder="Variante principal"
+      helperText="Acción principal del sistema"
+    />
+    <TextSelect 
+      options={countries} 
+      variant="secondary" 
+      label="Secondary" 
+      placeholder="Variante secundaria"
+      helperText="Acción secundaria"
     />
     <TextSelect 
       options={countries} 
@@ -373,10 +389,37 @@ export const Variants = () => (
     />
     <TextSelect 
       options={countries} 
-      variant="error" 
-      label="Error" 
+      variant="danger" 
+      label="Danger" 
       placeholder="Estado de error"
       errorText="Debes seleccionar una opción válida"
+    />
+    <TextSelect 
+      options={countries} 
+      variant="neutral" 
+      label="Neutral" 
+      placeholder="Estado neutro"
+      helperText="Variante neutral del sistema"
+    />
+  </div>
+);
+
+// ========== VARIANTES LEGACY (BACKWARD COMPATIBILITY) ==========
+export const BackwardCompatibilityVariants = () => (
+  <div style={{ display: 'grid', gap: 'var(--space-lg)', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
+    <TextSelect 
+      options={countries} 
+      variant="default" 
+      label="Default (Legacy)" 
+      placeholder="Se convierte a neutral"
+      helperText="⚠️ Deprecado - usar neutral"
+    />
+    <TextSelect 
+      options={countries} 
+      variant="error" 
+      label="Error (Legacy)" 
+      placeholder="Se convierte a danger"
+      errorText="⚠️ Deprecado - usar danger"
     />
   </div>
 );
@@ -784,6 +827,39 @@ export const CompleteFormExample = () => {
 };
 
 // ========== INTEGRACIÓN CON OTROS COMPONENTES ==========
+// ========== ESTADOS DEL SISTEMA ESTÁNDAR ==========
+export const SystemStandardStates = () => (
+  <div style={{ display: 'grid', gap: 'var(--space-lg)', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+    <TextSelect 
+      options={countries}
+      label="Estado Loading"
+      placeholder="Cargando opciones..."
+      loading={true}
+      helperText="Componente en estado de carga"
+    />
+    <TextSelect 
+      options={countries}
+      label="Con Icono Automático - Success"
+      placeholder="Selecciona país"
+      variant="success"
+      helperText="Icono de éxito automático"
+    />
+    <TextSelect 
+      options={countries}
+      label="Con Icono Automático - Warning"
+      placeholder="Selecciona país"
+      variant="warning"
+      helperText="Icono de advertencia automático"
+    />
+    <TextSelect 
+      options={countries}
+      label="Con Icono Automático - Error"
+      placeholder="Selecciona país"
+      errorText="Error con icono automático"
+    />
+  </div>
+);
+
 export const IntegrationExample = () => {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState('');

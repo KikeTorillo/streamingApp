@@ -7,6 +7,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  position: relative; /* Para overlays de loading/disabled */
 }
 
 /* Orientación vertical */
@@ -144,73 +145,202 @@
 }
 
 /* ========================================
-   Variantes de tabs
+   Variantes funcionales de tabs
    ======================================== */
 
 /* Variante Line (default) */
-.tabs--variant-line .tabs__list {
+.tabs--tabs-variant-line .tabs__list {
   border-bottom: 2px solid var(--color-border-subtle);
 }
 
-.tabs--variant-line .tabs__tab {
+.tabs--tabs-variant-line .tabs__tab {
   margin-bottom: -2px;
   border-bottom: 2px solid transparent;
   border-radius: var(--border-radius-sm) var(--border-radius-sm) 0 0;
 }
 
-.tabs--variant-line .tabs__tab--active {
+.tabs--tabs-variant-line .tabs__tab--active {
   border-bottom-color: var(--color-primary-500);
   background: var(--color-surface-primary);
 }
 
-.tabs--variant-line .tabs__tab:hover:not(:disabled):not(.tabs__tab--active) {
+.tabs--tabs-variant-line .tabs__tab:hover:not(:disabled):not(.tabs__tab--active) {
   border-bottom-color: var(--color-border-default);
 }
 
 /* Variante Pills */
-.tabs--variant-pills .tabs__list {
+.tabs--tabs-variant-pills .tabs__list {
   gap: var(--space-xs);
 }
 
-.tabs--variant-pills .tabs__tab {
+.tabs--tabs-variant-pills .tabs__tab {
   border-radius: var(--border-radius-full);
   background: var(--color-surface-secondary);
 }
 
-.tabs--variant-pills .tabs__tab--active {
+.tabs--tabs-variant-pills .tabs__tab--active {
   background: var(--color-primary-500);
   color: var(--color-white);
 }
 
-.tabs--variant-pills .tabs__tab--active .tabs__tab-badge {
+.tabs--tabs-variant-pills .tabs__tab--active .tabs__tab-badge {
   background: var(--color-white);
   color: var(--color-primary-600);
 }
 
-.tabs--variant-pills .tabs__tab:hover:not(:disabled):not(.tabs__tab--active) {
+.tabs--tabs-variant-pills .tabs__tab:hover:not(:disabled):not(.tabs__tab--active) {
   background: var(--color-surface-tertiary);
 }
 
 /* Variante Card */
-.tabs--variant-card .tabs__list {
+.tabs--tabs-variant-card .tabs__list {
   gap: var(--space-xs);
 }
 
-.tabs--variant-card .tabs__tab {
+.tabs--tabs-variant-card .tabs__tab {
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--border-radius-md);
   background: var(--color-surface-secondary);
 }
 
-.tabs--variant-card .tabs__tab--active {
+.tabs--tabs-variant-card .tabs__tab--active {
   background: var(--color-surface-primary);
   border-color: var(--color-primary-300);
   box-shadow: var(--shadow-sm);
 }
 
-.tabs--variant-card .tabs__tab:hover:not(:disabled):not(.tabs__tab--active) {
+.tabs--tabs-variant-card .tabs__tab:hover:not(:disabled):not(.tabs__tab--active) {
   border-color: var(--color-border-default);
   background: var(--color-surface-tertiary);
+}
+
+/* ========================================
+   Variantes semánticas estándar
+   ======================================== */
+
+/* Aplicar color de variante semántica a elementos activos */
+.tabs--variant-primary .tabs__tab--active {
+  border-color: var(--color-primary-500);
+  color: var(--color-primary-600);
+}
+
+.tabs--variant-secondary .tabs__tab--active {
+  border-color: var(--color-secondary-500);
+  color: var(--color-secondary-600);
+}
+
+.tabs--variant-success .tabs__tab--active {
+  border-color: var(--color-success-500);
+  color: var(--color-success-600);
+}
+
+.tabs--variant-warning .tabs__tab--active {
+  border-color: var(--color-warning-500);
+  color: var(--color-warning-600);
+}
+
+.tabs--variant-danger .tabs__tab--active {
+  border-color: var(--color-danger-500);
+  color: var(--color-danger-600);
+}
+
+.tabs--variant-neutral .tabs__tab--active {
+  border-color: var(--color-neutral-500);
+  color: var(--color-neutral-600);
+}
+
+/* Variantes semánticas para pills */
+.tabs--tabs-variant-pills.tabs--variant-primary .tabs__tab--active {
+  background: var(--color-primary-500);
+  color: var(--color-white);
+}
+
+.tabs--tabs-variant-pills.tabs--variant-secondary .tabs__tab--active {
+  background: var(--color-secondary-500);
+  color: var(--color-white);
+}
+
+.tabs--tabs-variant-pills.tabs--variant-success .tabs__tab--active {
+  background: var(--color-success-500);
+  color: var(--color-white);
+}
+
+.tabs--tabs-variant-pills.tabs--variant-warning .tabs__tab--active {
+  background: var(--color-warning-500);
+  color: var(--color-white);
+}
+
+.tabs--tabs-variant-pills.tabs--variant-danger .tabs__tab--active {
+  background: var(--color-danger-500);
+  color: var(--color-white);
+}
+
+.tabs--tabs-variant-pills.tabs--variant-neutral .tabs__tab--active {
+  background: var(--color-neutral-500);
+  color: var(--color-white);
+}
+
+/* ========================================
+   Rounded (radio de bordes)
+   ======================================== */
+
+.tabs--rounded-sm .tabs__tab {
+  border-radius: var(--border-radius-sm);
+}
+
+.tabs--rounded-md .tabs__tab {
+  border-radius: var(--border-radius-md);
+}
+
+.tabs--rounded-lg .tabs__tab {
+  border-radius: var(--border-radius-lg);
+}
+
+.tabs--rounded-xl .tabs__tab {
+  border-radius: var(--border-radius-xl);
+}
+
+.tabs--rounded-full .tabs__tab {
+  border-radius: var(--border-radius-full);
+}
+
+/* Ajuste especial para tabs line con rounded */
+.tabs--tabs-variant-line.tabs--rounded-sm .tabs__tab {
+  border-radius: var(--border-radius-sm) var(--border-radius-sm) 0 0;
+}
+
+.tabs--tabs-variant-line.tabs--rounded-md .tabs__tab {
+  border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+}
+
+.tabs--tabs-variant-line.tabs--rounded-lg .tabs__tab {
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+}
+
+.tabs--tabs-variant-line.tabs--rounded-xl .tabs__tab {
+  border-radius: var(--border-radius-xl) var(--border-radius-xl) 0 0;
+}
+
+/* ========================================
+   Estados de overlay para loading/disabled
+   ======================================== */
+
+.tabs--loading::before,
+.tabs--disabled::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-overlay-subtle);
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.tabs--disabled::before {
+  background: var(--color-overlay-disabled);
 }
 
 /* ========================================
@@ -367,24 +497,24 @@
    Dark mode
    ======================================== */
 
-[data-theme="dark"] .tabs--variant-line .tabs__list {
+[data-theme="dark"] .tabs--tabs-variant-line .tabs__list {
   border-bottom-color: var(--color-border-subtle);
 }
 
-[data-theme="dark"] .tabs--variant-line .tabs__tab--active {
+[data-theme="dark"] .tabs--tabs-variant-line .tabs__tab--active {
   background: var(--color-surface-primary);
 }
 
-[data-theme="dark"] .tabs--variant-pills .tabs__tab {
+[data-theme="dark"] .tabs--tabs-variant-pills .tabs__tab {
   background: var(--color-surface-tertiary);
 }
 
-[data-theme="dark"] .tabs--variant-card .tabs__tab {
+[data-theme="dark"] .tabs--tabs-variant-card .tabs__tab {
   background: var(--color-surface-tertiary);
   border-color: var(--color-border-subtle);
 }
 
-[data-theme="dark"] .tabs--variant-card .tabs__tab--active {
+[data-theme="dark"] .tabs--tabs-variant-card .tabs__tab--active {
   background: var(--color-surface-primary);
   border-color: var(--color-primary-700);
 }
@@ -410,12 +540,12 @@
 
 /* Alto contraste */
 @media (prefers-contrast: high) {
-  .tabs--variant-line .tabs__tab--active {
+  .tabs--tabs-variant-line .tabs__tab--active {
     border-bottom-width: 3px;
   }
   
-  .tabs--variant-pills .tabs__tab,
-  .tabs--variant-card .tabs__tab {
+  .tabs--tabs-variant-pills .tabs__tab,
+  .tabs--tabs-variant-card .tabs__tab {
     border-width: 2px;
   }
   
@@ -467,6 +597,76 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* ========================================
+   Backward Compatibility - DEPRECADO
+   ======================================== */
+
+/* Soporte temporal para variant legacy */
+.tabs--variant-line .tabs__list {
+  border-bottom: 2px solid var(--color-border-subtle);
+}
+
+.tabs--variant-line .tabs__tab {
+  margin-bottom: -2px;
+  border-bottom: 2px solid transparent;
+  border-radius: var(--border-radius-sm) var(--border-radius-sm) 0 0;
+}
+
+.tabs--variant-line .tabs__tab--active {
+  border-bottom-color: var(--color-primary-500);
+  background: var(--color-surface-primary);
+}
+
+.tabs--variant-line .tabs__tab:hover:not(:disabled):not(.tabs__tab--active) {
+  border-bottom-color: var(--color-border-default);
+}
+
+/* Variante Pills legacy */
+.tabs--variant-pills .tabs__list {
+  gap: var(--space-xs);
+}
+
+.tabs--variant-pills .tabs__tab {
+  border-radius: var(--border-radius-full);
+  background: var(--color-surface-secondary);
+}
+
+.tabs--variant-pills .tabs__tab--active {
+  background: var(--color-primary-500);
+  color: var(--color-white);
+}
+
+.tabs--variant-pills .tabs__tab--active .tabs__tab-badge {
+  background: var(--color-white);
+  color: var(--color-primary-600);
+}
+
+.tabs--variant-pills .tabs__tab:hover:not(:disabled):not(.tabs__tab--active) {
+  background: var(--color-surface-tertiary);
+}
+
+/* Variante Card legacy */
+.tabs--variant-card .tabs__list {
+  gap: var(--space-xs);
+}
+
+.tabs--variant-card .tabs__tab {
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--border-radius-md);
+  background: var(--color-surface-secondary);
+}
+
+.tabs--variant-card .tabs__tab--active {
+  background: var(--color-surface-primary);
+  border-color: var(--color-primary-300);
+  box-shadow: var(--shadow-sm);
+}
+
+.tabs--variant-card .tabs__tab:hover:not(:disabled):not(.tabs__tab--active) {
+  border-color: var(--color-border-default);
+  background: var(--color-surface-tertiary);
 }
 
 /* ========================================

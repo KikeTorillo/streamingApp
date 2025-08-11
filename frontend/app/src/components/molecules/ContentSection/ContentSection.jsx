@@ -2,6 +2,8 @@
 import PropTypes from 'prop-types';
 import { Card } from '../../atoms/Card/Card';
 import { EmptyState } from '../EmptyState/EmptyState';
+import { useStandardProps } from '../../../hooks/useStandardProps';
+import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens/standardProps';
 import './ContentSection.css';
 
 /**
@@ -9,47 +11,104 @@ import './ContentSection.css';
  * 
  * Contenedor para secciones de contenido con título, ícono y área de contenido.
  * Maneja automáticamente estados de carga, vacío y error.
- * Usa componentes del sistema de diseño.
+ * Usa componentes del sistema de diseño migrado al sistema estándar.
+ * 
+ * @param {Object} props - Props del componente
+ * @param {string} props.title - Título de la sección
+ * @param {string|React.ReactNode} props.icon - Icono de la sección (emoji o componente)
+ * @param {React.ReactNode} props.children - Contenido de la sección
+ * @param {boolean} props.error - Mensaje de error si falla la carga
+ * @param {boolean} props.empty - Si la sección no tiene contenido
+ * @param {string} props.emptyIcon - Icono para estado vacío
+ * @param {string} props.emptyTitle - Título para estado vacío
+ * @param {string} props.emptyDescription - Descripción para estado vacío
+ * @param {React.ReactNode} props.emptyAction - Acción para estado vacío
+ * @param {boolean} props.showDivider - Si mostrar línea divisoria
+ * @param {string} props.gridColumns - CSS grid-template-columns
+ * @param {string} props.gridGap - CSS gap del grid
  */
-function ContentSection({
-  // Contenido de la sección
-  title = 'Sección de contenido',
-  icon = '📺',
-  children,
+function ContentSection(props) {
+  // Extraer props específicas del componente
+  const {
+    // Contenido de la sección
+    title = 'Sección de contenido',
+    icon = '📺',
+    children,
+    
+    // Estados específicos (error se maneja por el sistema estándar)
+    error = null,
+    empty = false,
+    
+    // Configuración del estado vacío
+    emptyIcon = '📭',
+    emptyTitle = 'No hay contenido',
+    emptyDescription = 'No se encontraron elementos en esta sección.',
+    emptyAction = null,
+    
+    // Configuración específica
+    showDivider = true,
+    
+    // Configuración del grid
+    gridColumns = 'repeat(auto-fit, minmax(200px, 1fr))',
+    gridGap = 'var(--space-md)',
+    
+    // Props adicionales
+    id,
+    ...restProps
+  } = props;
+
+  // Hook estándar - ContentSection es tipo container/section
+  const {
+    size,
+    variant,
+    rounded,
+    disabled,
+    loading,
+    className,
+    tokens,
+    renderIcon,
+    ...standardProps
+  } = useStandardProps(restProps, {
+    componentType: 'section',
+    defaultSize: 'md',
+    defaultVariant: 'neutral',
+    defaultRounded: 'lg'
+  });
+
+  // Props seguros para DOM
+  const domProps = extractDOMProps({
+    ...standardProps,
+    id,
+    disabled,
+    className
+  });
   
-  // Estados
-  loading = false,
-  error = null,
-  empty = false,
-  
-  // Configuración del estado vacío
-  emptyIcon = '📭',
-  emptyTitle = 'No hay contenido',
-  emptyDescription = 'No se encontraron elementos en esta sección.',
-  emptyAction = null,
-  
-  // Estilos y variantes
-  variant = 'default',
-  size = 'md',
-  showDivider = true,
-  
-  // Configuración del grid
-  gridColumns = 'repeat(auto-fit, minmax(200px, 1fr))',
-  gridGap = 'var(--space-md)',
-  
-  // Props adicionales
-  className = '',
-  id,
-  ...restProps
-}) {
-  
-  // Clases CSS dinámicas
+  // Manejo de backward compatibility para variants legacy
+  const normalizedVariant = (() => {
+    switch (variant) {
+      case 'default':
+        if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
+           
+          console.warn('⚠️ ContentSection: variant="default" está deprecada. Usar variant="neutral"');
+        }
+        return 'neutral';
+      case 'featured':
+        return 'primary';
+      case 'compact':
+        return 'secondary';
+      default:
+        return variant;
+    }
+  })();
+
+  // Clases CSS dinámicas usando sistema estándar
   const sectionClasses = [
     'content-section',
-    `content-section--variant-${variant}`,
     `content-section--size-${size}`,
+    `content-section--variant-${normalizedVariant}`,
     loading && 'content-section--loading',
     error && 'content-section--error',
+    disabled && 'content-section--disabled',
     className
   ].filter(Boolean).join(' ');
 
@@ -59,14 +118,17 @@ function ContentSection({
   return (
     <section 
       className={sectionClasses}
-      id={id}
-      {...restProps}
+      style={{
+        borderRadius: tokens.rounded,
+        ...domProps.style
+      }}
+      {...domProps}
     >
       {/* Header de la sección */}
       <div className="content-section__header">
         <div className="content-section__title-container">
           <div className="content-section__icon">
-            {icon}
+            {typeof icon === 'string' ? icon : renderIcon ? renderIcon(icon) : icon}
           </div>
           <h2 className="content-section__title">
             {title}
@@ -84,7 +146,7 @@ function ContentSection({
         {/* Estado de error */}
         {error && (
           <div className="content-section__error">
-            <Card variant="outlined" padding="lg">
+            <Card variant="danger" size={size} rounded={rounded}>
               <div className="error-content">
                 <span className="error-icon">⚠️</span>
                 <div className="error-text">
@@ -108,7 +170,7 @@ function ContentSection({
             {/* Skeletons de carga */}
             {Array.from({ length: 6 }, (_, i) => (
               <div key={i} className="content-skeleton">
-                <Card variant="outlined" padding="md">
+                <Card variant="neutral" size={size} rounded={rounded}>
                   <div className="skeleton-content">
                     <div className="skeleton-image" />
                     <div className="skeleton-text skeleton-text--title" />
@@ -124,11 +186,13 @@ function ContentSection({
         {shouldShowEmpty && !loading && !error && (
           <div className="content-section__empty">
             <EmptyState
-              icon={emptyIcon}
+              leftIcon={emptyIcon}
               title={emptyTitle}
               description={emptyDescription}
               action={emptyAction}
-              size={size === 'lg' ? 'lg' : 'md'}
+              size={size}
+              variant={variant}
+              disabled={disabled}
             />
           </div>
         )}
@@ -151,22 +215,22 @@ function ContentSection({
 }
 
 ContentSection.propTypes = {
+  // Props estándar del sistema de diseño
+  ...STANDARD_PROP_TYPES,
+  
+  // Props específicas del componente
   title: PropTypes.string,
-  icon: PropTypes.string,
+  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   children: PropTypes.node,
-  loading: PropTypes.bool,
   error: PropTypes.string,
   empty: PropTypes.bool,
   emptyIcon: PropTypes.string,
   emptyTitle: PropTypes.string,
   emptyDescription: PropTypes.string,
-  emptyAction: PropTypes.object,
-  variant: PropTypes.string,
-  size: PropTypes.oneOf(['sm', 'md', 'lg']),
+  emptyAction: PropTypes.node,
   showDivider: PropTypes.bool,
   gridColumns: PropTypes.string,
   gridGap: PropTypes.string,
-  className: PropTypes.string,
   id: PropTypes.string
 };
 

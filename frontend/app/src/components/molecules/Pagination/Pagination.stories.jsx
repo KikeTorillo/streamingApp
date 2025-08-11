@@ -80,15 +80,29 @@ Componente de paginación **independiente de TanStack Table**, diseñado para ca
     }
   },
   argTypes: {
+    // Props estándar del sistema
     variant: {
       control: 'select',
-      options: ['full', 'simple', 'compact'],
-      description: 'Variante de funcionalidad del componente'
+      options: ['primary', 'secondary', 'success', 'warning', 'danger', 'neutral'],
+      description: 'Variante semántica estándar para colores'
     },
+    
+    paginationVariant: {
+      control: 'select',
+      options: ['full', 'simple', 'compact'],
+      description: 'Variante de funcionalidad específica de paginación'
+    },
+    
     size: {
       control: 'select',
       options: ['sm', 'md', 'lg'],
       description: 'Tamaño general del componente'
+    },
+    
+    rounded: {
+      control: 'select',
+      options: ['sm', 'md', 'lg', 'xl', 'full'],
+      description: 'Radio de bordes estándar'
     },
     currentPage: {
       control: 'number',
@@ -178,7 +192,8 @@ export const MainPageUseCase = {
         </div>
         
         <Pagination
-          variant="full"
+          paginationVariant="full"
+          variant="primary"
           currentPage={page}
           totalPages={totalPages}
           totalItems={totalMovies}
@@ -440,6 +455,147 @@ export const VariantsCompact = {
 - Espacios muy reducidos
 - Modales pequeños
 - Sidebars
+        `
+      }
+    }
+  }
+};
+
+// ========================================
+// 🎨 VARIANTES ESTÁNDAR DEL SISTEMA
+// ========================================
+
+export const SystemStandardVariants = {
+  name: '🎨 Variantes Semánticas Estándar',
+  render: () => {
+    const [page] = useState(3);
+    const handlePageChange = () => {};
+    
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+        <div style={{ 
+          padding: 'var(--space-md)', 
+          backgroundColor: 'var(--color-primary-light)', 
+          borderRadius: 'var(--radius-md)',
+          marginBottom: 'var(--space-lg)'
+        }}>
+          <h3 style={{ margin: '0 0 var(--space-sm) 0', color: 'var(--color-primary)' }}>
+            🎨 Variantes Semánticas del Sistema
+          </h3>
+          <p style={{ margin: 0, fontSize: 'var(--font-size-sm)', color: 'var(--text-muted)' }}>
+            Las 6 variantes semánticas estándar aplican colores específicos al indicador de página actual.
+          </p>
+        </div>
+        
+        <div>
+          <h4>Primary - Acción Principal</h4>
+          <Pagination
+            paginationVariant="simple"
+            variant="primary"
+            currentPage={page}
+            totalPages={8}
+            totalItems={160}
+            itemsPerPage={20}
+            onPageChange={handlePageChange}
+            size="md"
+          />
+        </div>
+        
+        <div>
+          <h4>Secondary - Acción Secundaria</h4>
+          <Pagination
+            paginationVariant="simple"
+            variant="secondary"
+            currentPage={page}
+            totalPages={8}
+            totalItems={160}
+            itemsPerPage={20}
+            onPageChange={handlePageChange}
+            size="md"
+          />
+        </div>
+        
+        <div>
+          <h4>Success - Éxito/Confirmación</h4>
+          <Pagination
+            paginationVariant="simple"
+            variant="success"
+            currentPage={page}
+            totalPages={8}
+            totalItems={160}
+            itemsPerPage={20}
+            onPageChange={handlePageChange}
+            size="md"
+          />
+        </div>
+        
+        <div>
+          <h4>Warning - Advertencia</h4>
+          <Pagination
+            paginationVariant="simple"
+            variant="warning"
+            currentPage={page}
+            totalPages={8}
+            totalItems={160}
+            itemsPerPage={20}
+            onPageChange={handlePageChange}
+            size="md"
+          />
+        </div>
+        
+        <div>
+          <h4>Danger - Error/Crítico</h4>
+          <Pagination
+            paginationVariant="simple"
+            variant="danger"
+            currentPage={page}
+            totalPages={8}
+            totalItems={160}
+            itemsPerPage={20}
+            onPageChange={handlePageChange}
+            size="md"
+          />
+        </div>
+        
+        <div>
+          <h4>Neutral - Default</h4>
+          <Pagination
+            paginationVariant="simple"
+            variant="neutral"
+            currentPage={page}
+            totalPages={8}
+            totalItems={160}
+            itemsPerPage={20}
+            onPageChange={handlePageChange}
+            size="md"
+          />
+        </div>
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+### 🎨 **Variantes Semánticas del Sistema de Diseño**
+
+**Nueva funcionalidad:** El componente ahora soporta las 6 variantes semánticas estándar:
+
+- **\`primary\`**: Acción principal (azul oceánico)
+- **\`secondary\`**: Acción secundaria (naranja/dorado) 
+- **\`success\`**: Éxito o confirmación (verde)
+- **\`warning\`**: Advertencias (amarillo/dorado)
+- **\`danger\`**: Errores o acciones críticas (rojo)
+- **\`neutral\`**: Neutro, uso general (gris)
+
+**Uso recomendado:**
+\`\`\`jsx
+<Pagination 
+  variant="success"          // Color semántico
+  paginationVariant="full"   // Funcionalidad (full/simple/compact)
+  // ... resto de props
+/>
+\`\`\`
         `
       }
     }
@@ -717,13 +873,15 @@ export const Playground = {
     );
   },
   args: {
-    variant: 'full',
+    paginationVariant: 'full',
+    variant: 'neutral',
     currentPage: 3,
     totalPages: 12,
     totalItems: 287,
     itemsPerPage: 25,
     itemsPerPageOptions: [10, 25, 50, 100],
     size: 'md',
+    rounded: 'md',
     showInfo: true,
     showSizeSelector: true,
     showFirstLast: true,
@@ -743,6 +901,100 @@ export const Playground = {
 4. **Experimenta** con diferentes variantes y estados
 
 **Todas las propiedades son interactivas** - los cambios se ven en tiempo real.
+        `
+      }
+    }
+  }
+};
+
+// ========================================
+// ⚠️ BACKWARD COMPATIBILITY
+// ========================================
+
+export const BackwardCompatibilityVariants = {
+  name: '⚠️ Backward Compatibility',
+  render: () => {
+    const [page] = useState(2);
+    const handlePageChange = () => {};
+    
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+        <div style={{ 
+          padding: 'var(--space-md)', 
+          backgroundColor: 'var(--color-warning-light)', 
+          borderRadius: 'var(--radius-md)',
+          marginBottom: 'var(--space-lg)'
+        }}>
+          <h3 style={{ margin: '0 0 var(--space-sm) 0', color: 'var(--color-warning)' }}>
+            ⚠️ Props Legacy - Deprecated
+          </h3>
+          <p style={{ margin: 0, fontSize: 'var(--font-size-sm)', color: 'var(--text-muted)' }}>
+            Estas props funcionan pero están deprecadas. Revisar console para warnings.
+          </p>
+        </div>
+        
+        <div>
+          <h4>✅ Nueva API Recomendada</h4>
+          <Pagination
+            paginationVariant="full"      // ← Nueva prop específica
+            variant="primary"             // ← Variante semántica estándar
+            currentPage={page}
+            totalPages={8}
+            totalItems={160}
+            itemsPerPage={20}
+            onPageChange={handlePageChange}
+            size="md"
+          />
+        </div>
+        
+        <div>
+          <h4>⚠️ Legacy API (con warnings)</h4>
+          <Pagination
+            variant="full"                // ← Deprecated: conflicto con variant semántica
+            currentPage={page}
+            totalPages={8}
+            totalItems={160}
+            itemsPerPage={20}
+            onPageChange={handlePageChange}
+            size="md"
+          />
+          <p style={{ color: 'var(--color-warning)', fontSize: 'var(--font-size-sm)', fontStyle: 'italic', marginTop: '0.5rem' }}>
+            ↑ Genera warning en console: usar 'paginationVariant' en lugar de 'variant' para layout
+          </p>
+        </div>
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+### ⚠️ **Migración de Props Legacy**
+
+**Cambios en la API:**
+
+**ANTES (Legacy):**
+\`\`\`jsx
+<Pagination 
+  variant="full"    // ← Confuso: ¿layout o color?
+  // ...props
+/>
+\`\`\`
+
+**DESPUÉS (Recomendado):**
+\`\`\`jsx
+<Pagination 
+  paginationVariant="full"   // ← Layout/funcionalidad
+  variant="primary"          // ← Color semántico estándar
+  // ...props
+/>
+\`\`\`
+
+**Backward Compatibility:**
+- La prop legacy \`variant="full|simple|compact"\` sigue funcionando
+- Se muestra deprecation warning en desarrollo
+- Se mapea automáticamente a \`paginationVariant\`
+- **Recomendación**: Migrar gradualmente a la nueva API
         `
       }
     }

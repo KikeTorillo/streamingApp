@@ -1,6 +1,7 @@
 // Accordion.stories.jsx - Documentación y ejemplos del componente Accordion
+// 🎯 MIGRADO AL SISTEMA ESTÁNDAR - V2.0 ✅
 import { Accordion, AccordionItem } from './Accordion';
-import { Icon } from '../../atoms/Icon/Icon';
+// import { Icon } from '../../atoms/Icon/Icon'; // Removido - no usado
 
 export default {
   title: 'Components/Molecules/Accordion',
@@ -9,9 +10,17 @@ export default {
     docs: {
       description: {
         component: `
-## Accordion - Componente de Acordeón
+## Accordion - Componente de Acordeón 🎯 MIGRADO V2.0
 
-Sistema de acordeón completo para organizar contenido colapsable de manera elegante y accesible.
+Sistema de acordeón completo integrado al sistema de diseño estándar.
+
+### 🚀 Nuevas Características V2.0
+- ✅ **Sistema estándar integrado**: size, variant, rounded, loading, disabled
+- ✅ **Tokens automáticos**: espaciado, colores y tipografía dinámicos
+- ✅ **6 variantes semánticas**: primary, secondary, success, warning, danger, neutral
+- ✅ **5 tamaños estándar**: xs, sm, md, lg, xl
+- ✅ **Estados loading**: spinner y overlay automáticos
+- ✅ **Backward compatibility**: soporte legacy con warnings
 
 ### Casos de Uso
 - **FAQ sections** en páginas de ayuda
@@ -19,12 +28,11 @@ Sistema de acordeón completo para organizar contenido colapsable de manera eleg
 - **Admin Panel** con secciones de configuración avanzada
 - **Settings Page** para agrupar opciones relacionadas
 
-### Características
+### Características Conservadas
 - ✅ Single/multiple items abiertos
 - ✅ Animaciones smooth con CSS transitions  
 - ✅ Iconos personalizables
-- ✅ Estados disabled
-- ✅ Contenido anidado
+- ✅ Contenido anidado dinámico
 - ✅ Keyboard navigation completa
 - ✅ Accesibilidad WCAG 2.1 AA
         `
@@ -32,16 +40,31 @@ Sistema de acordeón completo para organizar contenido colapsable de manera eleg
     }
   },
   argTypes: {
-    variant: {
-      control: 'select',
-      options: ['default', 'bordered', 'separated', 'minimal'],
-      description: 'Variante visual del acordeón'
-    },
+    // Props del sistema estándar
     size: {
       control: 'select', 
-      options: ['sm', 'md', 'lg'],
-      description: 'Tamaño del acordeón'
+      options: ['xs', 'sm', 'md', 'lg', 'xl'],
+      description: 'Tamaño del acordeón (sistema estándar)'
     },
+    variant: {
+      control: 'select',
+      options: ['primary', 'secondary', 'success', 'warning', 'danger', 'neutral'],
+      description: 'Variante semántica del acordeón (sistema estándar)'
+    },
+    rounded: {
+      control: 'select',
+      options: ['sm', 'md', 'lg', 'xl', 'full'],
+      description: 'Radio de bordes (sistema estándar)'
+    },
+    disabled: {
+      control: 'boolean',
+      description: 'Deshabilita todo el acordeón'
+    },
+    loading: {
+      control: 'boolean',
+      description: 'Muestra estado de carga con spinner'
+    },
+    // Props específicas de Accordion
     allowMultiple: {
       control: 'boolean',
       description: 'Permite múltiples items abiertos simultáneamente'
@@ -49,10 +72,6 @@ Sistema de acordeón completo para organizar contenido colapsable de manera eleg
     animated: {
       control: 'boolean',
       description: 'Habilita animaciones de expand/collapse'
-    },
-    disabled: {
-      control: 'boolean',
-      description: 'Deshabilita todo el acordeón'
     },
     expandIcon: {
       control: 'text',
@@ -76,7 +95,7 @@ const sampleFAQItems = [
         <p>Para cambiar tu contraseña:</p>
         <ol>
           <li>Ve a Configuración → Seguridad</li>
-          <li>Haz clic en "Cambiar contraseña"</li>
+          <li>Haz clic en &ldquo;Cambiar contraseña&rdquo;</li>
           <li>Ingresa tu contraseña actual</li>
           <li>Ingresa tu nueva contraseña</li>
           <li>Confirma los cambios</li>
@@ -96,8 +115,8 @@ const sampleFAQItems = [
         <p>Para cancelar tu suscripción:</p>
         <ul>
           <li>Accede a tu perfil de usuario</li>
-          <li>Ve a "Gestionar suscripción"</li>
-          <li>Selecciona "Cancelar suscripción"</li>
+          <li>Ve a &ldquo;Gestionar suscripción&rdquo;</li>
+          <li>Selecciona &ldquo;Cancelar suscripción&rdquo;</li>
           <li>Confirma la cancelación</li>
         </ul>
         <p><em>Nota: Mantendrás acceso hasta el final del período de facturación.</em></p>
@@ -202,8 +221,9 @@ const Template = (args) => <Accordion {...args} />;
 export const Default = Template.bind({});
 Default.args = {
   items: sampleFAQItems.slice(0, 2),
-  variant: 'default',
+  variant: 'neutral', // Nuevo sistema estándar
   size: 'md',
+  rounded: 'md',
   allowMultiple: false,
   animated: true
 };
@@ -212,8 +232,9 @@ Default.args = {
 export const FAQExample = Template.bind({});
 FAQExample.args = {
   items: sampleFAQItems,
-  variant: 'separated',
+  variant: 'primary', // Mapeado de separated -> primary
   size: 'md',
+  rounded: 'md',
   allowMultiple: true,
   defaultOpenItems: ['password'],
   animated: true
@@ -226,57 +247,92 @@ FAQExample.parameters = {
   }
 };
 
-// Story: Múltiples variantes
-export const Variants = () => (
+// Story: Sistema de variantes estándar
+export const SystemStandardVariants = () => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
     <div>
-      <h3>Default</h3>
-      <Accordion items={sampleFAQItems.slice(0, 2)} variant="default" />
+      <h3>Primary - Acordeón principal/importante</h3>
+      <Accordion items={sampleFAQItems.slice(0, 2)} variant="primary" size="md" />
     </div>
     
     <div>
-      <h3>Bordered</h3>
-      <Accordion items={sampleFAQItems.slice(0, 2)} variant="bordered" />
+      <h3>Secondary - Acordeón secundario</h3>
+      <Accordion items={sampleFAQItems.slice(0, 2)} variant="secondary" size="md" />
     </div>
     
     <div>
-      <h3>Separated</h3>
-      <Accordion items={sampleFAQItems.slice(0, 2)} variant="separated" />
+      <h3>Success - Estado positivo/completado</h3>
+      <Accordion items={sampleFAQItems.slice(0, 2)} variant="success" size="md" />
     </div>
     
     <div>
-      <h3>Minimal</h3>
-      <Accordion items={sampleFAQItems.slice(0, 2)} variant="minimal" />
+      <h3>Warning - Advertencias/precaución</h3>
+      <Accordion items={sampleFAQItems.slice(0, 2)} variant="warning" size="md" />
+    </div>
+    
+    <div>
+      <h3>Danger - Errores/crítico</h3>
+      <Accordion items={sampleFAQItems.slice(0, 2)} variant="danger" size="md" />
+    </div>
+    
+    <div>
+      <h3>Neutral - Por defecto/minimalista</h3>
+      <Accordion items={sampleFAQItems.slice(0, 2)} variant="neutral" size="md" />
     </div>
   </div>
 );
+SystemStandardVariants.parameters = {
+  docs: {
+    description: {
+      story: 'Las 6 variantes semánticas del sistema estándar con significado especifico para cada caso de uso.'
+    }
+  }
+};
 
-// Story: Tamaños diferentes
-export const Sizes = () => (
+// Story: Tamaños estándar del sistema
+export const SystemStandardSizes = () => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
     <div>
-      <h3>Small</h3>
-      <Accordion items={sampleFAQItems.slice(0, 2)} size="sm" />
+      <h3>Extra Small (xs)</h3>
+      <Accordion items={sampleFAQItems.slice(0, 1)} size="xs" variant="neutral" />
     </div>
     
     <div>
-      <h3>Medium (Default)</h3>
-      <Accordion items={sampleFAQItems.slice(0, 2)} size="md" />
+      <h3>Small (sm)</h3>
+      <Accordion items={sampleFAQItems.slice(0, 1)} size="sm" variant="neutral" />
     </div>
     
     <div>
-      <h3>Large</h3>
-      <Accordion items={sampleFAQItems.slice(0, 2)} size="lg" />
+      <h3>Medium (md) - Por defecto</h3>
+      <Accordion items={sampleFAQItems.slice(0, 1)} size="md" variant="neutral" />
+    </div>
+    
+    <div>
+      <h3>Large (lg)</h3>
+      <Accordion items={sampleFAQItems.slice(0, 1)} size="lg" variant="neutral" />
+    </div>
+    
+    <div>
+      <h3>Extra Large (xl)</h3>
+      <Accordion items={sampleFAQItems.slice(0, 1)} size="xl" variant="neutral" />
     </div>
   </div>
 );
+SystemStandardSizes.parameters = {
+  docs: {
+    description: {
+      story: 'Los 5 tamaños estándar del sistema de diseño con espaciado y tipografía automáticos.'
+    }
+  }
+};
 
 // Story: Configuración de Admin Panel
 export const AdminConfiguration = Template.bind({});
 AdminConfiguration.args = {
   items: configurationItems,
-  variant: 'bordered',
+  variant: 'primary', // Mapeado de bordered -> primary
   size: 'md',
+  rounded: 'md',
   allowMultiple: true,
   defaultOpenItems: ['general'],
   animated: true
@@ -285,6 +341,60 @@ AdminConfiguration.parameters = {
   docs: {
     description: {
       story: 'Ejemplo de uso en panel de administración con secciones de configuración.'
+    }
+  }
+};
+
+// Story: Estados del sistema estándar
+export const SystemStandardStates = () => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+    <div>
+      <h3>Estado Normal - Interactivo</h3>
+      <Accordion 
+        items={sampleFAQItems.slice(0, 2)} 
+        variant="primary" 
+        size="md" 
+        defaultOpenItems={['password']}
+      />
+    </div>
+    
+    <div>
+      <h3>Estado Disabled - No interactivo</h3>
+      <Accordion 
+        items={sampleFAQItems.slice(0, 2)} 
+        variant="primary" 
+        size="md" 
+        disabled={true}
+        defaultOpenItems={['password']}
+      />
+    </div>
+    
+    <div>
+      <h3>Estado Loading - Con spinner</h3>
+      <Accordion 
+        items={sampleFAQItems.slice(0, 2)} 
+        variant="primary" 
+        size="md" 
+        loading={true}
+      />
+    </div>
+    
+    <div>
+      <h3>Sin animaciones - Para accesibilidad</h3>
+      <Accordion 
+        items={sampleFAQItems.slice(0, 2)} 
+        variant="primary" 
+        size="md" 
+        animated={false}
+        defaultOpenItems={['password']}
+      />
+    </div>
+  </div>
+);
+SystemStandardStates.parameters = {
+  docs: {
+    description: {
+      story: 'Estados estándar del sistema: normal, disabled, loading y sin animaciones.'
     }
   }
 };
@@ -322,7 +432,9 @@ SingleItem.parameters = {
 export const NoAnimation = Template.bind({});
 NoAnimation.args = {
   items: sampleFAQItems.slice(0, 2),
-  variant: 'default', 
+  variant: 'neutral', // Actualizado al sistema estándar
+  size: 'md',
+  rounded: 'md',
   animated: false,
   defaultOpenItems: ['password']
 };
@@ -338,6 +450,9 @@ NoAnimation.parameters = {
 export const DisabledState = Template.bind({});
 DisabledState.args = {
   items: sampleFAQItems.slice(0, 2),
+  variant: 'primary',
+  size: 'md',
+  rounded: 'md',
   disabled: true,
   defaultOpenItems: ['password']
 };
@@ -355,7 +470,9 @@ CustomIcons.args = {
   items: sampleFAQItems.slice(0, 2),
   expandIcon: 'plus',
   collapseIcon: 'minus',
-  variant: 'separated'
+  variant: 'secondary', // Mapeado de separated -> secondary
+  size: 'md',
+  rounded: 'md'
 };
 CustomIcons.parameters = {
   docs: {
@@ -394,12 +511,46 @@ DynamicContent.args = {
       )
     }
   ],
+  variant: 'secondary',
+  size: 'md',
   defaultOpenItems: ['stats']
 };
 DynamicContent.parameters = {
   docs: {
     description: {
       story: 'Acordeón con contenido dinámico que recibe props del item y estado de apertura.'
+    }
+  }
+};
+
+// Story: Backward Compatibility
+export const BackwardCompatibility = () => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+    <div>
+      <h3>Legacy: variant=&ldquo;default&rdquo; (funciona, con warning)</h3>
+      <Accordion items={sampleFAQItems.slice(0, 1)} variant="default" size="md" />
+    </div>
+    
+    <div>
+      <h3>Legacy: variant=&ldquo;bordered&rdquo; (funciona, con warning)</h3>
+      <Accordion items={sampleFAQItems.slice(0, 1)} variant="bordered" size="md" />
+    </div>
+    
+    <div>
+      <h3>Legacy: variant=&ldquo;separated&rdquo; (funciona, con warning)</h3>
+      <Accordion items={sampleFAQItems.slice(0, 1)} variant="separated" size="md" />
+    </div>
+    
+    <div>
+      <h3>Legacy: variant=&ldquo;minimal&rdquo; (funciona, con warning)</h3>
+      <Accordion items={sampleFAQItems.slice(0, 1)} variant="minimal" size="md" />
+    </div>
+  </div>
+);
+BackwardCompatibility.parameters = {
+  docs: {
+    description: {
+      story: 'Demostración de backward compatibility con props legacy. Verifica la consola para warnings de deprecación.'
     }
   }
 };

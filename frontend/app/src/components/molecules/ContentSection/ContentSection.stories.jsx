@@ -117,9 +117,23 @@ import { ContentCard } from './molecules/ContentCard';
     },
     variant: {
       name: 'Variante',
-      description: 'Variante visual',
+      description: 'Variante semántica estándar',
       control: 'select',
-      options: ['default', 'featured', 'compact']
+      options: ['primary', 'secondary', 'success', 'warning', 'danger', 'neutral']
+    },
+    
+    // Props estándar adicionales
+    rounded: {
+      name: 'Radio de bordes',
+      description: 'Radio de bordes estándar',
+      control: 'select',
+      options: ['sm', 'md', 'lg', 'xl', 'full']
+    },
+    
+    disabled: {
+      name: 'Deshabilitado',
+      description: 'Si la sección está deshabilitada',
+      control: 'boolean'
     },
     showDivider: {
       name: 'Mostrar divisor',
@@ -192,7 +206,9 @@ export const Default = {
     error: null,
     empty: false,
     size: 'md',
-    variant: 'default',
+    variant: 'neutral',
+    rounded: 'lg',
+    disabled: false,
     showDivider: true,
     gridColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
     gridGap: 'var(--space-md)'
@@ -237,41 +253,71 @@ Sizes.parameters = {
   }
 };
 
-// ========== VARIANTES ==========
-export const Variants = () => (
+// ========== VARIANTES ESTÁNDAR ==========
+export const SystemStandardVariants = () => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3xl)' }}>
-    <ContentSection title="Sección Normal" icon="📄" variant="default">
+    <ContentSection title="Variante Primary (Destacada)" icon="⭐" variant="primary">
       {SAMPLE_MOVIES.slice(0, 3).map(movie => (
         <ContentCard key={movie.id} content={movie} />
       ))}
     </ContentSection>
     
-    <ContentSection title="Sección Destacada" icon="⭐" variant="featured">
-      {SAMPLE_MOVIES.slice(0, 3).map(movie => (
-        <ContentCard key={movie.id} content={movie} />
-      ))}
-    </ContentSection>
-    
-    <ContentSection title="Sección Compacta" icon="📋" variant="compact" showDivider={false}>
+    <ContentSection title="Variante Secondary (Compacta)" icon="📋" variant="secondary" showDivider={false}>
       {SAMPLE_MOVIES.slice(0, 3).map(movie => (
         <ContentCard key={movie.id} content={movie} size="sm" />
+      ))}
+    </ContentSection>
+    
+    <ContentSection title="Variante Success" icon="✅" variant="success">
+      {SAMPLE_MOVIES.slice(0, 2).map(movie => (
+        <ContentCard key={movie.id} content={movie} />
+      ))}
+    </ContentSection>
+    
+    <ContentSection title="Variante Warning" icon="⚠️" variant="warning">
+      {SAMPLE_MOVIES.slice(0, 2).map(movie => (
+        <ContentCard key={movie.id} content={movie} />
+      ))}
+    </ContentSection>
+    
+    <ContentSection title="Variante Danger" icon="🚫" variant="danger">
+      {SAMPLE_MOVIES.slice(0, 2).map(movie => (
+        <ContentCard key={movie.id} content={movie} />
+      ))}
+    </ContentSection>
+    
+    <ContentSection title="Variante Neutral (Default)" icon="📄" variant="neutral">
+      {SAMPLE_MOVIES.slice(0, 3).map(movie => (
+        <ContentCard key={movie.id} content={movie} />
       ))}
     </ContentSection>
   </div>
 );
 
-Variants.parameters = {
+SystemStandardVariants.parameters = {
   docs: {
     description: {
-      story: 'Variantes visuales: default, featured (destacada con fondo), compact (espaciado reducido).'
+      story: 'Las 6 variantes semánticas estándar del sistema de diseño: primary, secondary, success, warning, danger, neutral. Cada variante aplica colores específicos a título, ícono y divisor.'
     }
   }
 };
 
-// ========== ESTADOS ==========
-export const States = () => (
+// ========== ESTADOS ESTÁNDAR ==========
+export const SystemStandardStates = () => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3xl)' }}>
+    <ContentSection title="Estado Normal" icon="✅" variant="success">
+      {SAMPLE_MOVIES.slice(0, 2).map(movie => (
+        <ContentCard key={movie.id} content={movie} />
+      ))}
+    </ContentSection>
+    
     <ContentSection title="Estado de Carga" icon="⏳" loading={true} />
+    
+    <ContentSection title="Estado Deshabilitado" icon="🚫" disabled={true}>
+      {SAMPLE_MOVIES.slice(0, 2).map(movie => (
+        <ContentCard key={movie.id} content={movie} />
+      ))}
+    </ContentSection>
     
     <ContentSection 
       title="Estado Vacío" 
@@ -286,14 +332,60 @@ export const States = () => (
       title="Estado de Error" 
       icon="⚠️" 
       error="No se pudo conectar con el servidor. Verifica tu conexión a internet."
+      variant="danger"
     />
   </div>
 );
 
-States.parameters = {
+SystemStandardStates.parameters = {
   docs: {
     description: {
-      story: 'Estados automáticos: loading (skeletons), empty (EmptyState), error (mensaje de error).'
+      story: 'Estados estándar del sistema: normal, loading, disabled, empty y error. Cada estado tiene comportamientos visuales específicos.'
+    }
+  }
+};
+
+// ========== BACKWARD COMPATIBILITY ==========
+export const BackwardCompatibilityVariants = () => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3xl)' }}>
+    <div style={{ 
+      padding: 'var(--space-md)', 
+      backgroundColor: 'var(--color-warning-light)', 
+      borderRadius: 'var(--radius-md)',
+      marginBottom: 'var(--space-lg)'
+    }}>
+      <h3 style={{ margin: '0 0 var(--space-sm) 0', color: 'var(--color-warning)' }}>
+        ⚠️ Props Legacy - Deprecated
+      </h3>
+      <p style={{ margin: 0, fontSize: 'var(--font-size-sm)', color: 'var(--text-muted)' }}>
+        Estas variantes aún funcionan pero están deprecadas. Revisar console para warnings.
+      </p>
+    </div>
+    
+    <ContentSection title="variant='default' → 'neutral'" icon="📄" variant="default">
+      {SAMPLE_MOVIES.slice(0, 2).map(movie => (
+        <ContentCard key={movie.id} content={movie} />
+      ))}
+    </ContentSection>
+    
+    <ContentSection title="variant='featured' → 'primary'" icon="⭐" variant="featured">
+      {SAMPLE_MOVIES.slice(0, 2).map(movie => (
+        <ContentCard key={movie.id} content={movie} />
+      ))}
+    </ContentSection>
+    
+    <ContentSection title="variant='compact' → 'secondary'" icon="📋" variant="compact" showDivider={false}>
+      {SAMPLE_MOVIES.slice(0, 2).map(movie => (
+        <ContentCard key={movie.id} content={movie} size="sm" />
+      ))}
+    </ContentSection>
+  </div>
+);
+
+BackwardCompatibilityVariants.parameters = {
+  docs: {
+    description: {
+      story: 'Prueba de backward compatibility. Las variantes legacy (default, featured, compact) funcionan pero muestran warnings en console. Migrar a variantes estándar (neutral, primary, secondary).'
     }
   }
 };

@@ -11,18 +11,91 @@
   width: 100%;
 }
 
-/* Variantes de layout */
-.pagination--variant-full {
+/* ========================================
+   Variantes de Paginación (Layout/Funcionalidad)
+   ======================================== */
+
+.pagination--pagination-variant-full {
   /* Layout completo con toda la información */
 }
 
-.pagination--variant-simple {
+.pagination--pagination-variant-simple {
   /* Sin selector de tamaño, solo navegación + info */
 }
 
-.pagination--variant-compact {
+.pagination--pagination-variant-compact {
   /* Mínimo espacio, solo navegación esencial */
   gap: var(--space-sm);
+}
+
+/* ========================================
+   Variantes Semánticas del Sistema (Colores)
+   ======================================== */
+
+/* Variante primary */
+.pagination--variant-primary .pagination__current {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+}
+
+.pagination--variant-primary .pagination__current strong {
+  color: var(--color-primary);
+}
+
+/* Variante secondary */
+.pagination--variant-secondary .pagination__current {
+  background: var(--color-secondary-light);
+  color: var(--color-secondary);
+  border: 1px solid var(--color-secondary);
+}
+
+.pagination--variant-secondary .pagination__current strong {
+  color: var(--color-secondary);
+}
+
+/* Variante success */
+.pagination--variant-success .pagination__current {
+  background: var(--color-success-light);
+  color: var(--color-success);
+  border: 1px solid var(--color-success);
+}
+
+.pagination--variant-success .pagination__current strong {
+  color: var(--color-success);
+}
+
+/* Variante warning */
+.pagination--variant-warning .pagination__current {
+  background: var(--color-warning-light);
+  color: var(--color-warning);
+  border: 1px solid var(--color-warning);
+}
+
+.pagination--variant-warning .pagination__current strong {
+  color: var(--color-warning);
+}
+
+/* Variante danger */
+.pagination--variant-danger .pagination__current {
+  background: var(--color-danger-light);
+  color: var(--color-danger);
+  border: 1px solid var(--color-danger);
+}
+
+.pagination--variant-danger .pagination__current strong {
+  color: var(--color-danger);
+}
+
+/* Variante neutral (default) */
+.pagination--variant-neutral .pagination__current {
+  background: var(--color-surface-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+}
+
+.pagination--variant-neutral .pagination__current strong {
+  color: var(--color-primary);
 }
 
 /* Tamaños */
@@ -207,29 +280,50 @@
    Variantes específicas
    ======================================== */
 
+/* ========================================
+   Variantes de Paginación Específicas
+   ======================================== */
+
 /* Variante Compact - Solo lo esencial */
-.pagination--variant-compact .pagination__info {
+.pagination--pagination-variant-compact .pagination__info {
   display: none; /* Sin información detallada */
 }
 
-.pagination--variant-compact .pagination__controls {
+.pagination--pagination-variant-compact .pagination__controls {
   gap: var(--space-xs);
 }
 
-.pagination--variant-compact .pagination__button {
+.pagination--pagination-variant-compact .pagination__button {
   min-width: 36px;
   padding: var(--space-xs);
 }
 
-.pagination--variant-compact .pagination__current {
+.pagination--pagination-variant-compact .pagination__current {
   padding: var(--space-xs) var(--space-sm);
   background: transparent;
   font-weight: var(--font-weight-semibold);
 }
 
 /* Variante Simple - Sin selector de tamaño */
-.pagination--variant-simple .pagination__size-selector {
+.pagination--pagination-variant-simple .pagination__size-selector {
   display: none;
+}
+
+/* ========================================
+   Backward Compatibility - Deprecated
+   ======================================== */
+
+/* Legacy class names mapping */
+.pagination--variant-full {
+  @extend .pagination--pagination-variant-full;
+}
+
+.pagination--variant-simple {
+  @extend .pagination--pagination-variant-simple;
+}
+
+.pagination--variant-compact {
+  @extend .pagination--pagination-variant-compact;
 }
 
 /* ========================================

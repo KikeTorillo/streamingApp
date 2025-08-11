@@ -1,8 +1,10 @@
 // Accordion.jsx - Componente de acordeón avanzado para secciones colapsables
 import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '../../atoms/Button/Button';
+// import { Button } from '../../atoms/Button/Button'; // Removido - no usado actualmente
 import { Icon } from '../../atoms/Icon/Icon';
+import { useStandardProps } from '../../../hooks/useStandardProps';
+import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens/standardProps';
 import './Accordion.css';
 
 /**
@@ -19,43 +21,82 @@ import './Accordion.css';
  * ✅ Single/multiple items abiertos
  * ✅ Animaciones smooth con CSS transitions
  * ✅ Iconos personalizables
- * ✅ Estados disabled
+ * ✅ Estados disabled/loading con sistema estándar
  * ✅ Contenido anidado
  * ✅ Keyboard navigation completa
  * ✅ Accesibilidad WCAG 2.1 AA
+ * ✅ Sistema de diseño estándar integrado (size, variant, rounded)
+ * ✅ Tokens automáticos y backward compatibility
  */
-function Accordion({
-  // Configuración básica
-  items = [],
-  allowMultiple = false,
-  defaultOpenItems = [],
-  
-  // Personalización visual
-  variant = 'default',
-  size = 'md',
-  
-  // Iconos personalizables
-  expandIcon = 'chevron-down',
-  collapseIcon = 'chevron-up',
-  
-  // Comportamiento
-  animated = true,
-  
-  // Estados
-  disabled = false,
-  
-  // Callbacks
-  onItemToggle = () => {},
-  onItemOpen = () => {},
-  onItemClose = () => {},
-  
-  // Props adicionales
-  className = '',
-  itemClassName = '',
-  headerClassName = '',
-  contentClassName = '',
-  ...restProps
-}) {
+function Accordion(props) {
+  // Extraer props específicas de Accordion antes del hook estándar
+  const {
+    // Configuración básica
+    items = [],
+    allowMultiple = false,
+    defaultOpenItems = [],
+    
+    // Iconos personalizables
+    expandIcon = 'chevron-down',
+    collapseIcon = 'chevron-up',
+    
+    // Comportamiento
+    animated = true,
+    
+    // Callbacks
+    onItemToggle = () => {},
+    onItemOpen = () => {},
+    onItemClose = () => {},
+    
+    // Props adicionales específicas
+    itemClassName = '',
+    headerClassName = '',
+    contentClassName = '',
+    
+    // Props legacy para backward compatibility
+    variant: legacyVariant,
+    
+    ...remainingProps
+  } = props;
+
+  // Hook estándar para props del sistema de diseño
+  const {
+    size,
+    variant,
+    rounded,
+    disabled,
+    loading,
+    className,
+    tokens,
+    // renderIcon, // No usado actualmente
+    ...standardProps
+  } = useStandardProps(remainingProps, {
+    componentType: 'accordion',
+    defaultSize: 'md',
+    defaultVariant: 'neutral', // Neutral es más apropiado para acordeones
+    defaultRounded: 'md'
+  });
+
+  // Mapeo de backward compatibility para variant
+  const mappedVariant = React.useMemo(() => {
+    if (legacyVariant) {
+      const variantMapping = {
+        'default': 'neutral',
+        'bordered': 'primary',
+        'separated': 'secondary',
+        'minimal': 'neutral'
+      };
+      
+      if (variantMapping[legacyVariant]) {
+        console.warn(`[Accordion] Prop 'variant="${legacyVariant}"' está deprecado. Usa 'variant="${variantMapping[legacyVariant]}"' en su lugar.`);
+        return variantMapping[legacyVariant];
+      }
+    }
+    return variant;
+  }, [legacyVariant, variant]);
+
+  // Props DOM para el elemento raíz
+  const domProps = extractDOMProps(standardProps);
   
   // Estado para items abiertos
   const [openItems, setOpenItems] = useState(() => {
@@ -67,14 +108,9 @@ function Accordion({
   const contentRefs = useRef({});
   const animationTimeouts = useRef({});
   
-  // Validar que hay items
-  if (!items || items.length === 0) {
-    return null;
-  }
-  
   // Toggle individual item
   const toggleItem = (itemId, itemData) => {
-    if (disabled || itemData.disabled) return;
+    if (disabled || loading || itemData.disabled) return;
     
     const isOpen = openItems.includes(itemId);
     let newOpenItems;
@@ -109,6 +145,8 @@ function Accordion({
   
   // Keyboard navigation para headers
   const handleKeyDown = (event, itemId, itemData, itemIndex) => {
+    if (disabled || loading) return;
+    
     switch (event.key) {
       case 'ArrowDown':
         event.preventDefault();
@@ -161,8 +199,8 @@ function Accordion({
     }
   };
   
-  // Función para animar altura
-  const animateHeight = (element, targetHeight, callback) => {
+  // Función para animar altura (memoizada para evitar warnings de dependencias)
+  const animateHeight = React.useCallback((element, targetHeight, callback) => {
     if (!animated) {
       element.style.height = targetHeight;
       if (callback) callback();
@@ -179,8 +217,8 @@ function Accordion({
     };
     
     element.addEventListener('transitionend', handleTransitionEnd);
-  };
-  
+  }, [animated]);
+
   // Efecto para animaciones de altura
   useEffect(() => {
     Object.entries(contentRefs.current).forEach(([itemId, contentRef]) => {
@@ -244,19 +282,21 @@ function Accordion({
         }
       });
     };
-  }, [openItems, animated]);
+  }, [openItems, animated, animateHeight]);
   
   // Renderizar item individual del acordeón
   const renderAccordionItem = (item, index) => {
     const isOpen = openItems.includes(item.id);
-    const isDisabled = disabled || item.disabled;
+    const isDisabled = disabled || loading || item.disabled;
     
     const itemClasses = [
       'accordion__item',
-      `accordion__item--${variant}`,
-      `accordion__item--${size}`,
+      `accordion__item--variant-${mappedVariant}`,
+      `accordion__item--size-${size}`,
+      rounded && `accordion__item--rounded-${rounded}`,
       isOpen && 'accordion__item--open',
       isDisabled && 'accordion__item--disabled',
+      loading && 'accordion__item--loading',
       itemClassName
     ].filter(Boolean).join(' ');
     
@@ -352,24 +392,41 @@ function Accordion({
     );
   };
   
-  // Construir clases CSS principales
+  // Construir clases CSS principales con sistema estándar
   const accordionClasses = [
     'accordion',
-    `accordion--variant-${variant}`,
+    `accordion--variant-${mappedVariant}`,
     `accordion--size-${size}`,
+    rounded && `accordion--rounded-${rounded}`,
     disabled && 'accordion--disabled',
+    loading && 'accordion--loading',
     !animated && 'accordion--no-animation',
     className
   ].filter(Boolean).join(' ');
   
+  // Overlay para estado loading
+  const loadingOverlay = loading && (
+    <div className="accordion__loading-overlay">
+      <div className="accordion__spinner" />
+    </div>
+  );
+
   return (
     <div 
       className={accordionClasses}
       role="group"
       aria-label="Accordion"
-      {...restProps}
+      aria-busy={loading}
+      style={{
+        position: 'relative',
+        ...tokens.size,
+        ...tokens.variant,
+        borderRadius: tokens.rounded
+      }}
+      {...domProps}
     >
       {items.map(renderAccordionItem)}
+      {loadingOverlay}
     </div>
   );
 }
@@ -419,7 +476,10 @@ function AccordionItem({
 }
 
 Accordion.propTypes = {
-  // Configuración básica
+  // Props del sistema de diseño estándar
+  ...STANDARD_PROP_TYPES,
+  
+  // Configuración básica de Accordion
   items: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
@@ -434,27 +494,22 @@ Accordion.propTypes = {
   allowMultiple: PropTypes.bool,
   defaultOpenItems: PropTypes.arrayOf(PropTypes.string),
   
-  // Personalización visual
-  variant: PropTypes.oneOf(['default', 'bordered', 'separated', 'minimal']),
-  size: PropTypes.oneOf(['sm', 'md', 'lg']),
-  
-  // Iconos
+  // Iconos personalizables
   expandIcon: PropTypes.string,
   collapseIcon: PropTypes.string,
   
   // Comportamiento
   animated: PropTypes.bool,
   
-  // Estados
-  disabled: PropTypes.bool,
+  // Props legacy para backward compatibility (con deprecation warnings)
+  variant: PropTypes.oneOf(['default', 'bordered', 'separated', 'minimal', 'primary', 'secondary', 'success', 'warning', 'danger', 'neutral']),
   
   // Callbacks
   onItemToggle: PropTypes.func,
   onItemOpen: PropTypes.func,
   onItemClose: PropTypes.func,
   
-  // Props adicionales
-  className: PropTypes.string,
+  // Props adicionales específicas de Accordion
   itemClassName: PropTypes.string,
   headerClassName: PropTypes.string,
   contentClassName: PropTypes.string

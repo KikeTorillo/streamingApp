@@ -1,6 +1,6 @@
-/* ===== TEXTSELECT COMPONENT - OPTIMIZADO SIN REDUNDANCIAS ===== */
-/* TextSelect.css - Solo estilos específicos de la molécula */
-/* Aprovecha COMPLETAMENTE el átomo Select actualizado con variables centralizadas */
+/* ===== TEXTSELECT COMPONENT - MIGRADO AL SISTEMA ESTÁNDAR ===== */
+/* TextSelect.css - Molécula que extiende Select + Label migrados */
+/* ✅ Integrado con sistema de tokens y props estándar */
 
 /* ===== WRAPPER BASE ===== */
 .text-select-wrapper {
@@ -16,8 +16,37 @@
 }
 
 .text-select-wrapper--disabled {
-    opacity: 0.6;
+    opacity: var(--opacity-disabled, 0.6);
     pointer-events: none;
+}
+
+/* ===== ESTADOS DE LOADING ===== */
+.text-select-wrapper--loading {
+    position: relative;
+}
+
+.text-select__loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-overlay, rgba(255, 255, 255, 0.8));
+    z-index: 10;
+    border-radius: inherit;
+}
+
+.text-select__loading-spinner {
+    color: var(--color-primary);
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 /* ===== LABEL (IDÉNTICO A TEXTINPUT) ===== */

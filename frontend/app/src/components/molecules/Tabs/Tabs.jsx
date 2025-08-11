@@ -1,8 +1,9 @@
 // Tabs.jsx - Sistema de pestañas avanzado
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '../../atoms/Button/Button';
-import { Icon } from '../../atoms/Icon/Icon';
+import { useTabsProps } from '../../../hooks/useStandardProps';
+import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens/standardProps';
 import './Tabs.css';
 
 /**
@@ -24,32 +25,57 @@ import './Tabs.css';
  * ✅ Keyboard navigation completa
  * ✅ Accesibilidad WCAG 2.1 AA
  */
-function Tabs({
-  // Configuración básica
-  tabs = [],
-  activeTab = null,
-  onTabChange = () => {},
+function Tabs(props) {
+  // Usar hook especializado para props estándar
+  const standardProps = useTabsProps(props);
   
-  // Personalización visual
-  variant = 'line',
-  size = 'md',
-  orientation = 'horizontal',
+  // Backward compatibility: manejar variant legacy
+  let actualTabsVariant = props.tabsVariant || 'line';
+  let actualVariant = standardProps.variant;
   
-  // Comportamiento
-  scrollable = true,
-  equalWidth = false,
-  lazy = false,
+  // Si variant es legacy (line, pills, card), usarlo como tabsVariant y advertir
+  if (props.variant && ['line', 'pills', 'card'].includes(props.variant)) {
+    if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
+      console.warn(
+        `Tabs: prop "variant='${props.variant}'" está deprecado. ` +
+        `Usar "tabsVariant='${props.variant}'" para funcionalidad de tabs. ` +
+        `La prop "variant" ahora es para variantes semánticas.`
+      );
+    }
+    actualTabsVariant = props.variant;
+    actualVariant = 'primary'; // Default para variante semántica
+  }
   
-  // Estados
-  disabled = false,
-  loading = false,
+  const {
+    // Props estándar del sistema de diseño
+    size,
+    rounded,
+    disabled,
+    loading,
+    className,
+    renderIcon,
+    
+    // Props específicas de Tabs
+    tabs = [],
+    activeTab = null,
+    onTabChange = () => {},
+    orientation = 'horizontal',
+    scrollable = true,
+    equalWidth = false,
+    lazy = false,
+    tabsClassName = '',
+    contentClassName = '',
+    
+    // Props restantes para DOM
+    ...restProps
+  } = standardProps;
   
-  // Props adicionales
-  className = '',
-  tabsClassName = '',
-  contentClassName = '',
-  ...restProps
-}) {
+  // Usar las variantes procesadas
+  const variant = actualVariant;
+  const tabsVariant = actualTabsVariant;
+
+  // Extraer props DOM-safe
+  const domProps = extractDOMProps(restProps);
   
   // Referencias
   const tabsListRef = useRef(null);
@@ -68,11 +94,6 @@ function Tabs({
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   
-  // Validar que hay tabs
-  if (!tabs || tabs.length === 0) {
-    return null;
-  }
-  
   // Encontrar tab activo
   const activeTabData = tabs.find(tab => tab.id === currentActiveTab);
   
@@ -87,7 +108,7 @@ function Tabs({
   };
   
   // Keyboard navigation
-  const handleKeyDown = (event, tabId, tabIndex) => {
+  const handleKeyDown = (event, tabId) => {
     const enabledTabs = tabs.filter(tab => !tab.disabled);
     const currentIndex = enabledTabs.findIndex(tab => tab.id === tabId);
     
@@ -139,13 +160,13 @@ function Tabs({
   };
   
   // Scroll handling
-  const updateScrollButtons = () => {
+  const updateScrollButtons = useCallback(() => {
     if (!scrollable || !tabsListRef.current) return;
     
     const { scrollLeft, scrollWidth, clientWidth } = tabsListRef.current;
     setCanScrollLeft(scrollLeft > 0);
     setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
-  };
+  }, [scrollable]);
   
   useEffect(() => {
     if (scrollable) {
@@ -157,7 +178,7 @@ function Tabs({
         return () => tabsList.removeEventListener('scroll', updateScrollButtons);
       }
     }
-  }, [scrollable, tabs]);
+  }, [scrollable, tabs, updateScrollButtons]);
   
   // Scroll to active tab
   useEffect(() => {
@@ -193,7 +214,7 @@ function Tabs({
     
     const tabClasses = [
       'tabs__tab',
-      `tabs__tab--${variant}`,
+      `tabs__tab--${tabsVariant}`,
       `tabs__tab--${size}`,
       isActive && 'tabs__tab--active',
       isDisabled && 'tabs__tab--disabled',
@@ -204,7 +225,7 @@ function Tabs({
       ref: isActive ? activeTabRef : null,
       className: tabClasses,
       onClick: () => handleTabChange(tab.id, tab),
-      onKeyDown: (e) => handleKeyDown(e, tab.id, index),
+      onKeyDown: (e) => handleKeyDown(e, tab.id),
       disabled: isDisabled,
       'data-tab-id': tab.id,
       'aria-selected': isActive,
@@ -217,26 +238,20 @@ function Tabs({
     
     const tabContent = (
       <>
-        {tab.icon && (
-          <Icon 
-            name={tab.icon} 
-            size={size === 'lg' ? 'sm' : 'xs'} 
-            className="tabs__tab-icon"
-          />
-        )}
+        {tab.icon && renderIcon(tab.icon, {
+          className: 'tabs__tab-icon',
+          size: size === 'lg' ? 'sm' : 'xs'
+        })}
         <span className="tabs__tab-text">{tab.label}</span>
         {tab.badge && (
           <span className="tabs__tab-badge" aria-label={`${tab.badge} items`}>
             {tab.badge}
           </span>
         )}
-        {loading && isActive && (
-          <Icon 
-            name="loader" 
-            size="xs" 
-            className="tabs__loading-icon"
-          />
-        )}
+        {loading && isActive && renderIcon('loader', {
+          className: 'tabs__loading-icon', 
+          size: 'xs'
+        })}
       </>
     );
     
@@ -276,8 +291,10 @@ function Tabs({
   // Construir clases CSS
   const tabsClasses = [
     'tabs',
-    `tabs--variant-${variant}`,
+    `tabs--tabs-variant-${tabsVariant}`, // Variante específica de tabs (line, pills, card)
+    `tabs--variant-${variant}`, // Variante semántica estándar (primary, secondary, etc.)
     `tabs--size-${size}`,
+    `tabs--rounded-${rounded}`,
     `tabs--orientation-${orientation}`,
     scrollable && 'tabs--scrollable',
     equalWidth && 'tabs--equal-width',
@@ -291,8 +308,13 @@ function Tabs({
     tabsClassName
   ].filter(Boolean).join(' ');
   
+  // Validar que hay tabs
+  if (!tabs || tabs.length === 0) {
+    return null;
+  }
+  
   return (
-    <div className={tabsClasses} {...restProps}>
+    <div className={tabsClasses} {...domProps}>
       <div className="tabs__header">
         {/* Scroll button left */}
         {scrollable && orientation === 'horizontal' && (
@@ -302,10 +324,10 @@ function Tabs({
             onClick={() => scrollTabs('left')}
             disabled={!canScrollLeft}
             className="tabs__scroll-button tabs__scroll-button--left"
+            leftIcon="chevron-left"
+            iconOnly
             aria-label="Scroll tabs left"
-          >
-            <Icon name="chevron-left" size="xs" />
-          </Button>
+          />
         )}
         
         {/* Tabs list */}
@@ -326,10 +348,10 @@ function Tabs({
             onClick={() => scrollTabs('right')}
             disabled={!canScrollRight}
             className="tabs__scroll-button tabs__scroll-button--right"
+            leftIcon="chevron-right"
+            iconOnly
             aria-label="Scroll tabs right"
-          >
-            <Icon name="chevron-right" size="xs" />
-          </Button>
+          />
         )}
       </div>
       
@@ -340,6 +362,9 @@ function Tabs({
 }
 
 Tabs.propTypes = {
+  // Props estándar del sistema de diseño
+  ...STANDARD_PROP_TYPES,
+  
   // Configuración básica
   tabs: PropTypes.arrayOf(
     PropTypes.shape({
@@ -355,9 +380,8 @@ Tabs.propTypes = {
   activeTab: PropTypes.string,
   onTabChange: PropTypes.func,
   
-  // Personalización visual
-  variant: PropTypes.oneOf(['line', 'pills', 'card']),
-  size: PropTypes.oneOf(['sm', 'md', 'lg']),
+  // Personalización visual específica de Tabs
+  tabsVariant: PropTypes.oneOf(['line', 'pills', 'card']),
   orientation: PropTypes.oneOf(['horizontal', 'vertical']),
   
   // Comportamiento
@@ -365,14 +389,20 @@ Tabs.propTypes = {
   equalWidth: PropTypes.bool,
   lazy: PropTypes.bool,
   
-  // Estados
-  disabled: PropTypes.bool,
-  loading: PropTypes.bool,
-  
   // Props adicionales
-  className: PropTypes.string,
   tabsClassName: PropTypes.string,
-  contentClassName: PropTypes.string
+  contentClassName: PropTypes.string,
+  
+  // Props deprecadas (con backward compatibility)
+  variant: function(props, propName, componentName) {
+    if (props[propName] && ['line', 'pills', 'card'].includes(props[propName])) {
+      return new Error(
+        `Warning: ${componentName}: prop "variant" con valores 'line', 'pills', 'card' está deprecado. ` +
+        `Usar "tabsVariant" en su lugar para la funcionalidad de tabs. ` +
+        `La prop "variant" ahora se usa para variantes semánticas (primary, secondary, success, warning, danger, neutral).`
+      );
+    }
+  }
 };
 
 export { Tabs };

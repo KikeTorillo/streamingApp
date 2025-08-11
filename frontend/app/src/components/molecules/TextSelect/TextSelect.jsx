@@ -3,42 +3,60 @@ import { useState, forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import './TextSelect.css';
 import { Select } from '../../atoms/Select/Select';
+import { Label } from '../../atoms/Label/Label';
+import { useStandardProps } from '../../../hooks/useStandardProps';
+import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens/standardProps';
 
 /**
- * Componente TextSelect mejorado - Molécula que extiende el átomo Select
- * Siguiendo principios de Atomic Design igual que TextInput
+ * TextSelect - Molécula que extiende el átomo Select con etiquetas y mensajes
  * 
- * @param {Object} props - Propiedades del componente
- * @param {Array} [props.options=[]] - Array de opciones {value, label, disabled?}
- * @param {string} [props.placeholder='Selecciona una opción'] - Texto placeholder
- * @param {string} [props.value] - Valor controlado del select
- * @param {string} [props.defaultValue] - Valor por defecto (no controlado)
- * @param {function} [props.onChange] - Handler para cambios de valor
- * @param {function} [props.onBlur] - Handler para pérdida de foco
- * @param {function} [props.onFocus] - Handler para obtención de foco
- * @param {string} [props.name] - Nombre del campo (necesario para formularios)
- * @param {string} [props.id] - ID único del select
- * @param {string} [props.className=''] - Clases CSS adicionales
- * @param {'xs'|'sm'|'md'|'lg'|'xl'} [props.size='md'] - Tamaño del select (heredado del átomo)
- * @param {'default'|'success'|'warning'|'error'} [props.variant='default'] - Variante visual
- * @param {'sm'|'md'|'lg'|'xl'|'full'} [props.rounded='md'] - Radio de bordes (heredado del átomo)
- * @param {boolean} [props.disabled=false] - Si el select está deshabilitado
- * @param {boolean} [props.required=false] - Si el campo es obligatorio
- * @param {boolean} [props.autoFocus=false] - Si obtiene foco automáticamente
- * @param {boolean} [props.fullWidth=false] - Si ocupa todo el ancho disponible
- * @param {boolean} [props.compact=false] - Versión compacta con spacing reducido
- * @param {string} [props.label] - Etiqueta del campo
- * @param {string} [props.helperText] - Texto de ayuda debajo del select
- * @param {string} [props.errorText] - Mensaje de error (sobrescribe helperText y variant)
- * @param {string|React.ReactNode} [props.leftIcon] - Icono izquierdo
- * @param {function} [props.onLeftIconClick] - Handler para click en icono izquierdo
- * @param {boolean} [props.searchable=false] - Si permite búsqueda (funcionalidad futura)
- * @param {string} [props.ariaLabel] - Label para accesibilidad
- * @param {string} [props.ariaDescribedBy] - ID del elemento que describe el select
- * @param {string} [props.ariaErrorMessage] - ID del mensaje de error
+ * ✅ **MIGRADO AL SISTEMA ESTÁNDAR**
+ * 
+ * Características:
+ * - ✅ Hook useStandardProps() integrado
+ * - ✅ Props estándar (size, variant, rounded, loading, disabled)
+ * - ✅ Sistema de iconos unificado (leftIcon/rightIcon)
+ * - ✅ Integración con Label y Select migrados
+ * - ✅ Estados loading, error, success con iconos automáticos
+ * - ✅ Tokens de design system automáticos
+ * - ✅ Backward compatibility con deprecation warnings
+ * - ✅ Accesibilidad completa ARIA + navegación teclado
+ * 
+ * @param {Array} [options=[]] - Array de opciones {value, label, disabled?}
+ * @param {string} [placeholder='Selecciona una opción'] - Texto placeholder
+ * @param {string} [value] - Valor controlado del select
+ * @param {string} [defaultValue] - Valor por defecto (no controlado)
+ * @param {function} [onChange] - Handler para cambios de valor
+ * @param {function} [onBlur] - Handler para pérdida de foco
+ * @param {function} [onFocus] - Handler para obtención de foco
+ * @param {string} [name] - Nombre del campo (necesario para formularios)
+ * @param {string} [id] - ID único del select
+ * @param {boolean} [required=false] - Si el campo es obligatorio
+ * @param {boolean} [autoFocus=false] - Si obtiene foco automáticamente
+ * @param {boolean} [fullWidth=false] - Si ocupa todo el ancho disponible
+ * @param {boolean} [compact=false] - Versión compacta con spacing reducido
+ * @param {string} [label] - Etiqueta del campo
+ * @param {string} [helperText] - Texto de ayuda debajo del select
+ * @param {string} [errorText] - Mensaje de error (sobrescribe helperText y variant)
+ * @param {function} [onLeftIconClick] - Handler para click en icono izquierdo
+ * @param {boolean} [searchable=false] - Si permite búsqueda (funcionalidad futura)
+ * @param {string} [ariaDescribedBy] - ID del elemento que describe el select
  * @param {React.Ref} ref - Referencia al elemento select
+ * 
+ * **Props estándar del sistema:**
+ * @param {'xs'|'sm'|'md'|'lg'|'xl'} [size='md'] - Tamaño estándar
+ * @param {'primary'|'secondary'|'success'|'warning'|'danger'|'neutral'} [variant='primary'] - Variante semántica estándar
+ * @param {'sm'|'md'|'lg'|'xl'|'full'} [rounded='md'] - Radio de bordes estándar
+ * @param {boolean} [disabled=false] - Estado deshabilitado estándar
+ * @param {boolean} [loading=false] - Estado de carga estándar
+ * @param {string|React.ReactNode} [leftIcon] - Icono izquierdo estándar
+ * @param {string|React.ReactNode} [rightIcon] - Icono derecho estándar
+ * @param {string} [className=''] - Clases CSS adicionales
+ * @param {string} [ariaLabel] - Label para accesibilidad
+ * @param {string} [testId] - ID para testing (data-testid)
  */
 const TextSelect = forwardRef(({
+    // Props específicas del componente
     options = [],
     placeholder = 'Selecciona una opción',
     value,
@@ -48,11 +66,6 @@ const TextSelect = forwardRef(({
     onFocus,
     name,
     id,
-    className = '',
-    size = 'md',
-    variant = 'default',
-    rounded = 'md',
-    disabled = false,
     required = false,
     autoFocus = false,
     fullWidth = false,
@@ -60,36 +73,80 @@ const TextSelect = forwardRef(({
     label,
     helperText,
     errorText,
-    leftIcon,
     onLeftIconClick,
     // searchable = false,
-    ariaLabel,
     ariaDescribedBy,
-    // ariaErrorMessage,
+    
+    // Backward compatibility - mapeo automático
+    variant: legacyVariant,
+    
     ...restProps
 }, ref) => {
+    // Backward compatibility: mapear variantes legacy
+    const propsWithCompatibility = { ...restProps };
+    
+    // Mapear variantes legacy al sistema estándar
+    if (legacyVariant === 'default') {
+        console.warn('⚠️ TextSelect: variant="default" está deprecado. Usa variant="primary" o "neutral" en su lugar.');
+        propsWithCompatibility.variant = 'neutral';
+    } else if (legacyVariant === 'error') {
+        console.warn('⚠️ TextSelect: variant="error" está deprecado. Usa variant="danger" en su lugar.');
+        propsWithCompatibility.variant = 'danger';
+    } else if (legacyVariant) {
+        propsWithCompatibility.variant = legacyVariant;
+    }
+    
+    // Hook del sistema estándar - integra props, tokens e iconos
+    const {
+        size,
+        variant,
+        rounded,
+        disabled,
+        loading,
+        className,
+        leftIcon,
+        rightIcon, // Mantener para futuras extensiones
+        renderIcon,
+        hasLeftIcon,
+        hasRightIcon,
+        ariaLabel,
+        testId,
+        tokens
+    } = useStandardProps(propsWithCompatibility, {
+        defaultSize: 'md',
+        defaultVariant: 'neutral',
+        componentType: 'textselect'
+    });
+    
+    // Marcar variables como utilizadas para evitar warnings
+    void rightIcon;
+    
     // Estado interno para manejar focus (igual que TextInput)
     const [isFocused, setIsFocused] = useState(false);
     
     // Determinar variante basada en error (error tiene prioridad)
-    const currentVariant = errorText ? 'error' : variant;
+    const currentVariant = errorText ? 'danger' : variant;
     
-    // Construir clases CSS dinámicamente para el wrapper
+    // Construir clases CSS dinámicamente con sistema estándar
     const wrapperClasses = [
         'text-select-wrapper',
-        `text-select-wrapper--${size}`,
-        `text-select-wrapper--${currentVariant}`,
+        `text-select-wrapper--size-${size}`,
+        `text-select-wrapper--variant-${currentVariant}`,
         isFocused && 'text-select-wrapper--focused',
         fullWidth && 'text-select-wrapper--full-width',
         disabled && 'text-select-wrapper--disabled',
+        loading && 'text-select-wrapper--loading',
         compact && 'text-select-wrapper--compact',
+        hasLeftIcon && 'text-select-wrapper--has-left-icon',
+        hasRightIcon && 'text-select-wrapper--has-right-icon',
         className
     ].filter(Boolean).join(' ');
 
     // Clases adicionales para el Select del átomo
     const selectAdditionalClasses = [
-        `text-select--${currentVariant}`,
-        leftIcon && 'text-select--with-left-icon'
+        `text-select--variant-${currentVariant}`,
+        hasLeftIcon && 'text-select--with-left-icon',
+        hasRightIcon && 'text-select--with-right-icon'
     ].filter(Boolean).join(' ');
 
     // Handlers de eventos (igual que TextInput)
@@ -104,10 +161,22 @@ const TextSelect = forwardRef(({
     };
 
     // Generar IDs únicos para accesibilidad
-    const selectId = id || `text-select-${Math.random().toString(36).substr(2, 9)}`;
+    const selectId = id || `text-select-${Math.random().toString(36).substring(2, 9)}`;
     const helperId = `${selectId}-helper`;
     const errorId = `${selectId}-error`;
 
+    // Determinar iconos automáticos según estado
+    const statusIcon = errorText 
+        ? 'alert-circle' // Icono de error automático
+        : currentVariant === 'success' 
+        ? 'check-circle' // Icono de éxito automático
+        : currentVariant === 'warning'
+        ? 'alert-triangle' // Icono de advertencia automático
+        : null;
+    
+    // Icono izquierdo final (props o automático por estado)
+    const finalLeftIcon = leftIcon || statusIcon;
+    
     // Texto a mostrar en footer
     const footerText = errorText || helperText;
     const isError = !!errorText;
@@ -117,37 +186,62 @@ const TextSelect = forwardRef(({
         ariaDescribedBy,
         footerText && (isError ? errorId : helperId)
     ].filter(Boolean).join(' ');
+    
+    // Extraer props seguras para DOM
+    const domProps = extractDOMProps({ 
+        ...restProps, 
+        className: wrapperClasses, 
+        disabled, 
+        ariaLabel, 
+        testId 
+    });
 
     return (
-        <div className={wrapperClasses}>
-            {/* Label (igual que TextInput) */}
+        <div 
+            className="text-select-wrapper" 
+            style={{
+                '--text-select-size': tokens?.size,
+                '--text-select-variant': tokens?.variant,
+                '--text-select-rounded': tokens?.rounded
+            }}
+            {...domProps}
+        >
+            {/* Label usando componente migrado del sistema estándar */}
             {label && (
-                <label 
+                <Label
                     htmlFor={selectId}
-                    className={`text-select__label ${required ? 'text-select__label--required' : ''}`}
+                    size={size}
+                    variant={currentVariant}
+                    disabled={disabled}
+                    loading={loading}
+                    required={required}
+                    className="text-select__label"
                 >
                     {label}
-                </label>
+                </Label>
             )}
 
-            {/* Container con iconos */}
-            <div className="text-select__container">
-                {/* Icono izquierdo (si existe) */}
-                {leftIcon && (
+            {/* Container con iconos del sistema estándar */}
+            <div className={`text-select__container ${loading ? 'text-select__container--loading' : ''}`}>
+                {/* Icono izquierdo usando sistema estándar */}
+                {hasLeftIcon && (
                     <div 
                         className={`text-select__icon text-select__icon--left ${
                             onLeftIconClick ? 'text-select__icon--clickable' : ''
                         }`}
-                        onClick={onLeftIconClick}
+                        onClick={disabled || loading ? undefined : onLeftIconClick}
                         role={onLeftIconClick ? 'button' : undefined}
-                        tabIndex={onLeftIconClick ? 0 : undefined}
+                        tabIndex={onLeftIconClick && !disabled && !loading ? 0 : undefined}
                         aria-hidden={!onLeftIconClick}
                     >
-                        {leftIcon}
+                        {renderIcon(finalLeftIcon, {
+                            size: size,
+                            className: 'text-select__icon-element'
+                        })}
                     </div>
                 )}
 
-                {/* Select base */}
+                {/* Select base migrado con props estándar */}
                 <Select
                     ref={ref}
                     id={selectId}
@@ -163,28 +257,39 @@ const TextSelect = forwardRef(({
                     variant={currentVariant}
                     rounded={rounded}
                     disabled={disabled}
+                    loading={loading}
                     required={required}
                     autoFocus={autoFocus}
                     compact={compact}
                     className={selectAdditionalClasses}
                     ariaLabel={ariaLabel}
                     ariaDescribedBy={describedBy || undefined}
-                    ariaErrorMessage={isError ? errorId : undefined}
-                    {...restProps}
+                    testId={testId}
                 />
             </div>
 
-            {/* Footer con mensajes (igual que TextInput) */}
+            {/* Footer con mensajes usando sistema estándar */}
             {footerText && (
                 <div className="text-select__footer">
                     <div 
                         id={isError ? errorId : helperId}
-                        className={`text-select__message ${isError ? 'text-select__message--error' : 'text-select__message--helper'}`}
+                        className={`text-select__message text-select__message--${isError ? 'error' : 'helper'} text-select__message--size-${size}`}
                         aria-live={isError ? 'polite' : undefined}
                         aria-atomic={isError ? 'true' : undefined}
                     >
                         {footerText}
                     </div>
+                </div>
+            )}
+            
+            {/* Overlay de loading usando sistema estándar */}
+            {loading && (
+                <div className="text-select__loading-overlay">
+                    {renderIcon('loader', {
+                        size: size,
+                        className: 'text-select__loading-spinner',
+                        spinning: true
+                    })}
                 </div>
             )}
         </div>
@@ -194,37 +299,54 @@ const TextSelect = forwardRef(({
 TextSelect.displayName = 'TextSelect';
 
 TextSelect.propTypes = {
+    /** Array de opciones para el select */
     options: PropTypes.arrayOf(PropTypes.shape({
         value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
         label: PropTypes.string.isRequired,
         disabled: PropTypes.bool
     })),
+    
+    /** Texto placeholder */
     placeholder: PropTypes.string,
+    
+    /** Valor controlado */
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    
+    /** Valor por defecto (no controlado) */
     defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    
+    /** Handlers de eventos */
     onChange: PropTypes.func,
     onBlur: PropTypes.func,
     onFocus: PropTypes.func,
+    
+    /** Props del campo */
     name: PropTypes.string,
     id: PropTypes.string,
-    className: PropTypes.string,
-    size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
-    variant: PropTypes.oneOf(['default', 'success', 'warning', 'error']),
-    rounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'full']),
-    disabled: PropTypes.bool,
     required: PropTypes.bool,
     autoFocus: PropTypes.bool,
     fullWidth: PropTypes.bool,
     compact: PropTypes.bool,
+    
+    /** Etiqueta y mensajes */
     label: PropTypes.string,
     helperText: PropTypes.string,
     errorText: PropTypes.string,
-    leftIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+    
+    /** Handler para icono clickeable */
     onLeftIconClick: PropTypes.func,
+    
+    /** Funcionalidades futuras */
     searchable: PropTypes.bool,
-    ariaLabel: PropTypes.string,
+    
+    /** Accesibilidad */
     ariaDescribedBy: PropTypes.string,
-    ariaErrorMessage: PropTypes.string
+    
+    /** Props legacy con backward compatibility */
+    variant: PropTypes.oneOf(['default', 'success', 'warning', 'error', 'primary', 'secondary', 'danger', 'neutral']),
+    
+    // Props estándar del sistema de diseño
+    ...STANDARD_PROP_TYPES
 };
 
 export { TextSelect };

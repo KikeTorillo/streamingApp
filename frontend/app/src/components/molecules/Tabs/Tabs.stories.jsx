@@ -134,15 +134,26 @@ const tabs = [
     }
   },
   argTypes: {
-    variant: {
-      control: 'select',
-      options: ['line', 'pills', 'card'],
-      description: 'Variante visual de las pestañas'
-    },
+    // Props estándar del sistema de diseño
     size: {
       control: 'select',
-      options: ['sm', 'md', 'lg'],
-      description: 'Tamaño general del componente'
+      options: ['xs', 'sm', 'md', 'lg', 'xl'],
+      description: 'Tamaño estándar del componente'
+    },
+    variant: {
+      control: 'select',
+      options: ['primary', 'secondary', 'success', 'warning', 'danger', 'neutral'],
+      description: 'Variante semántica estándar para colores'
+    },
+    rounded: {
+      control: 'select', 
+      options: ['sm', 'md', 'lg', 'xl', 'full'],
+      description: 'Radio de bordes estándar'
+    },
+    tabsVariant: {
+      control: 'select',
+      options: ['line', 'pills', 'card'],
+      description: 'Variante funcional específica de tabs'
     },
     orientation: {
       control: 'select',
@@ -296,7 +307,7 @@ export const SeriesDetailUseCase = {
           tabs={seriesTabs}
           activeTab={activeTab}
           onTabChange={setActiveTab}
-          variant="line"
+          tabsVariant="line"
           size="md"
         />
       </div>
@@ -469,7 +480,7 @@ export const UserProfileUseCase = {
           tabs={profileTabs}
           activeTab={activeTab}
           onTabChange={setActiveTab}
-          variant="pills"
+          tabsVariant="pills"
           size="md"
         />
       </div>
@@ -601,7 +612,7 @@ export const AdminPanelUseCase = {
           tabs={adminTabs}
           activeTab={activeTab}
           onTabChange={setActiveTab}
-          variant="card"
+          tabsVariant="card"
           size="md"
         />
       </div>
@@ -652,7 +663,7 @@ export const VariantLine = {
           tabs={tabs}
           activeTab={activeTab}
           onTabChange={setActiveTab}
-          variant="line"
+          tabsVariant="line"
           size="md"
         />
       </div>
@@ -695,7 +706,7 @@ export const VariantPills = {
           tabs={tabs}
           activeTab={activeTab}
           onTabChange={setActiveTab}
-          variant="pills"
+          tabsVariant="pills"
           size="md"
         />
       </div>
@@ -738,7 +749,7 @@ export const VariantCard = {
           tabs={tabs}
           activeTab={activeTab}
           onTabChange={setActiveTab}
-          variant="card"
+          tabsVariant="card"
           size="md"
         />
       </div>
@@ -843,7 +854,7 @@ export const VerticalOrientation = {
           tabs={tabs}
           activeTab={activeTab}
           onTabChange={setActiveTab}
-          variant="line"
+          tabsVariant="line"
           orientation="vertical"
           size="md"
         />
@@ -903,7 +914,7 @@ export const ScrollableTabs = {
           tabs={manyTabs}
           activeTab={activeTab}
           onTabChange={setActiveTab}
-          variant="pills"
+          tabsVariant="pills"
           size="md"
           scrollable={true}
         />
@@ -984,7 +995,7 @@ export const DisabledTabs = {
           tabs={tabs}
           activeTab={activeTab}
           onTabChange={setActiveTab}
-          variant="card"
+          tabsVariant="card"
           size="md"
         />
       </div>
@@ -1032,7 +1043,7 @@ export const LoadingState = {
           tabs={tabs}
           activeTab={activeTab}
           onTabChange={setActiveTab}
-          variant="line"
+          tabsVariant="line"
           size="md"
           loading={true}
         />
@@ -1059,21 +1070,21 @@ export const AllSizes = {
           <h4 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>
             Size: Small
           </h4>
-          <Tabs tabs={createTabs('sm')} variant="line" size="sm" />
+          <Tabs tabs={createTabs('sm')} tabsVariant="line" size="sm" />
         </div>
         
         <div>
           <h4 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>
             Size: Medium (Default)
           </h4>
-          <Tabs tabs={createTabs('md')} variant="line" size="md" />
+          <Tabs tabs={createTabs('md')} tabsVariant="line" size="md" />
         </div>
         
         <div>
           <h4 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>
             Size: Large
           </h4>
-          <Tabs tabs={createTabs('lg')} variant="line" size="lg" />
+          <Tabs tabs={createTabs('lg')} tabsVariant="line" size="lg" />
         </div>
       </div>
     );
@@ -1083,6 +1094,348 @@ export const AllSizes = {
 // ========================================
 // 🧪 PLAYGROUND
 // ========================================
+
+// ========================================
+// 🎯 NUEVAS STORIES SISTEMA ESTÁNDAR
+// ========================================
+
+export const SystemStandardVariants = {
+  name: '🎨 Sistema: Variantes Semánticas',
+  render: () => {
+    const createTabs = (variant) => [
+      { id: `${variant}-1`, label: 'Configuración', icon: 'settings', content: <div style={{ padding: '2rem' }}>Contenido {variant}</div> },
+      { id: `${variant}-2`, label: 'Notificaciones', icon: 'bell', badge: '3', content: <div style={{ padding: '2rem' }}>Notificaciones {variant}</div> }
+    ];
+    
+    return (
+      <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+        <div>
+          <h4 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>Primary (Default)</h4>
+          <Tabs tabs={createTabs('primary')} variant="primary" tabsVariant="line" />
+        </div>
+        
+        <div>
+          <h4 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>Secondary</h4>
+          <Tabs tabs={createTabs('secondary')} variant="secondary" tabsVariant="pills" />
+        </div>
+        
+        <div>
+          <h4 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>Success</h4>
+          <Tabs tabs={createTabs('success')} variant="success" tabsVariant="line" />
+        </div>
+        
+        <div>
+          <h4 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>Warning</h4>
+          <Tabs tabs={createTabs('warning')} variant="warning" tabsVariant="pills" />
+        </div>
+        
+        <div>
+          <h4 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>Danger</h4>
+          <Tabs tabs={createTabs('danger')} variant="danger" tabsVariant="line" />
+        </div>
+        
+        <div>
+          <h4 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>Neutral</h4>
+          <Tabs tabs={createTabs('neutral')} variant="neutral" tabsVariant="card" />
+        </div>
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+### 🎨 **Variantes Semánticas del Sistema Estándar**
+
+**Nueva funcionalidad:** Cada tab puede tener una variante semántica que cambia los colores del tab activo.
+
+**Casos de uso:**
+- **Primary**: Navegación principal, acciones importantes
+- **Secondary**: Navegación secundaria, información adicional  
+- **Success**: Confirmaciones, estados exitosos
+- **Warning**: Advertencias, acciones que requieren atención
+- **Danger**: Eliminaciones, acciones destructivas
+- **Neutral**: Información general, estados neutros
+
+**Combinaciones recomendadas:**
+- Primary + line: Dashboard principal
+- Secondary + pills: User settings
+- Success/Warning/Danger + line: Status indicators
+- Neutral + card: Documentation tabs
+      `
+      }
+    }
+  }
+};
+
+export const SystemStandardSizes = {
+  name: '📏 Sistema: Tamaños Estándar',
+  render: () => {
+    const createTabs = (size) => [
+      { id: `${size}-1`, label: 'Configuración', icon: 'settings', content: <div style={{ padding: '1rem' }}>Contenido {size}</div> },
+      { id: `${size}-2`, label: 'Historial', icon: 'clock', badge: '5', content: <div style={{ padding: '1rem' }}>Historial {size}</div> }
+    ];
+    
+    return (
+      <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+        <div>
+          <h4 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>Extra Small (xs)</h4>
+          <Tabs tabs={createTabs('xs')} size="xs" tabsVariant="pills" />
+        </div>
+        
+        <div>
+          <h4 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>Small (sm)</h4>
+          <Tabs tabs={createTabs('sm')} size="sm" tabsVariant="line" />
+        </div>
+        
+        <div>
+          <h4 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>Medium (md) - Default</h4>
+          <Tabs tabs={createTabs('md')} size="md" tabsVariant="card" />
+        </div>
+        
+        <div>
+          <h4 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>Large (lg)</h4>
+          <Tabs tabs={createTabs('lg')} size="lg" tabsVariant="pills" />
+        </div>
+        
+        <div>
+          <h4 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>Extra Large (xl)</h4>
+          <Tabs tabs={createTabs('xl')} size="xl" tabsVariant="line" />
+        </div>
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+### 📏 **Tamaños Estándar del Sistema**
+
+**5 tamaños estándar** disponibles en todos los componentes:
+
+- **xs**: Extra small - Para interfaces compactas, mobile
+- **sm**: Small - Para sidebars, contenido secundario  
+- **md**: Medium - Tamaño por defecto, la mayoría de casos
+- **lg**: Large - Para interfaces principales, desktop
+- **xl**: Extra large - Para dashboards, pantallas grandes
+
+**Tokens automáticos:** Cada tamaño usa automáticamente los design tokens apropiados para padding, font-size, y spacing.
+      `
+      }
+    }
+  }
+};
+
+export const SystemStandardStates = {
+  name: '⚡ Sistema: Estados Estándar',
+  render: () => {
+    const baseTabs = [
+      { id: 'tab1', label: 'Normal', icon: 'info', content: <div style={{ padding: '2rem' }}>Estado normal</div> },
+      { id: 'tab2', label: 'Con Badge', icon: 'bell', badge: '12', content: <div style={{ padding: '2rem' }}>Con notificaciones</div> },
+      { id: 'tab3', label: 'Premium', icon: 'star', content: <div style={{ padding: '2rem' }}>Contenido premium</div> }
+    ];
+    
+    return (
+      <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+        <div>
+          <h4 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>Estado Normal</h4>
+          <Tabs tabs={baseTabs} tabsVariant="line" />
+        </div>
+        
+        <div>
+          <h4 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>Estado Loading</h4>
+          <Tabs tabs={baseTabs} tabsVariant="pills" loading={true} />
+          <p style={{ marginTop: '0.5rem', color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-sm)' }}>
+            ⏳ El tab activo muestra spinner de loading
+          </p>
+        </div>
+        
+        <div>
+          <h4 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>Estado Disabled</h4>
+          <Tabs tabs={baseTabs} tabsVariant="card" disabled={true} />
+          <p style={{ marginTop: '0.5rem', color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-sm)' }}>
+            🚫 Componente completo deshabilitado con overlay
+          </p>
+        </div>
+        
+        <div>
+          <h4 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>Tabs Individuales Disabled</h4>
+          <Tabs tabs={[
+            { id: 'available', label: 'Disponible', icon: 'check', content: <div style={{ padding: '2rem' }}>Contenido disponible</div> },
+            { id: 'premium', label: 'Premium Only', icon: 'lock', disabled: true, content: <div style={{ padding: '2rem' }}>Requiere premium</div> },
+            { id: 'coming', label: 'Próximamente', icon: 'zap', disabled: true, content: <div style={{ padding: '2rem' }}>En desarrollo</div> }
+          ]} tabsVariant="pills" />
+        </div>
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+### ⚡ **Estados Estándar del Sistema**
+
+**Estados globales:**
+- **loading={true}**: Muestra spinner en tab activo, otros tabs con opacity reducida
+- **disabled={true}**: Deshabilita todo el componente con overlay
+
+**Estados individuales:**
+- **tab.disabled**: Tabs específicos deshabilitados (ej: premium features)
+- **Iconos contextuales**: lock, zap, check para indicar estado
+
+**UX Notes:**
+- Loading no bloquea navegación entre tabs
+- Disabled tabs mantienen accesibilidad (aria-disabled) 
+- Visual feedback claro para cada estado
+      `
+      }
+    }
+  }
+};
+
+export const SystemRoundedVariants = {
+  name: '🔄 Sistema: Variantes Rounded',
+  render: () => {
+    const tabs = [
+      { id: 'tab1', label: 'Configuración', icon: 'settings', content: <div style={{ padding: '2rem' }}>Contenido 1</div> },
+      { id: 'tab2', label: 'Notificaciones', icon: 'bell', badge: '3', content: <div style={{ padding: '2rem' }}>Contenido 2</div> }
+    ];
+    
+    return (
+      <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+        <div>
+          <h4 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>Small (sm)</h4>
+          <Tabs tabs={tabs} tabsVariant="card" rounded="sm" />
+        </div>
+        
+        <div>
+          <h4 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>Medium (md) - Default</h4>
+          <Tabs tabs={tabs} tabsVariant="card" rounded="md" />
+        </div>
+        
+        <div>
+          <h4 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>Large (lg)</h4>
+          <Tabs tabs={tabs} tabsVariant="card" rounded="lg" />
+        </div>
+        
+        <div>
+          <h4 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>Extra Large (xl)</h4>
+          <Tabs tabs={tabs} tabsVariant="card" rounded="xl" />
+        </div>
+        
+        <div>
+          <h4 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>Full (circular)</h4>
+          <Tabs tabs={tabs} tabsVariant="pills" rounded="full" />
+        </div>
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+### 🔄 **Variantes Rounded del Sistema**
+
+**Radio de bordes estándar** aplicado a todos los tabs:
+
+- **sm**: Esquinas suaves (0.6rem)
+- **md**: Default equilibrado (1.2rem)  
+- **lg**: Esquinas redondeadas (1.8rem)
+- **xl**: Muy redondeado (2.4rem)
+- **full**: Completamente redondeado/circular (9999px)
+
+**Ajustes automáticos:**
+- Line variant: Solo rounded en parte superior
+- Pills/Card: Rounded completo  
+- Tokens automáticos de design system
+      `
+      }
+    }
+  }
+};
+
+export const BackwardCompatibilityDemo = {
+  name: '🔄 Backward Compatibility',
+  render: () => {
+    const tabs = [
+      { id: 'tab1', label: 'Información', icon: 'info', content: <div style={{ padding: '2rem' }}>Contenido legacy</div> },
+      { id: 'tab2', label: 'Configuración', icon: 'settings', content: <div style={{ padding: '2rem' }}>Settings legacy</div> }
+    ];
+    
+    return (
+      <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+        <div>
+          <h4 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>✅ Nueva API (Recomendada)</h4>
+          <Tabs tabs={tabs} tabsVariant="line" variant="primary" />
+          <pre style={{ 
+            background: 'var(--color-surface-secondary)', 
+            padding: '1rem', 
+            borderRadius: 'var(--border-radius-sm)',
+            marginTop: '0.5rem',
+            fontSize: 'var(--font-size-xs)'
+          }}>
+{`<Tabs 
+  tabs={tabs} 
+  tabsVariant="line"    // Funcionalidad de tabs
+  variant="primary"     // Variante semántica
+  size="md"
+  rounded="md" 
+/>`}
+          </pre>
+        </div>
+        
+        <div>
+          <h4 style={{ marginBottom: '1rem', color: 'var(--color-warning-600)' }}>⚠️ API Legacy (Funciona pero deprecada)</h4>
+          <Tabs tabs={tabs} variant="pills" />
+          <pre style={{ 
+            background: 'var(--color-surface-secondary)', 
+            padding: '1rem', 
+            borderRadius: 'var(--border-radius-sm)',
+            marginTop: '0.5rem',
+            fontSize: 'var(--font-size-xs)'
+          }}>
+{`<Tabs 
+  tabs={tabs} 
+  variant="pills"       // ⚠️ DEPRECADO - usa tabsVariant
+/>`}
+          </pre>
+          <p style={{ color: 'var(--color-warning-600)', fontSize: 'var(--font-size-sm)', marginTop: '0.5rem' }}>
+            💡 <strong>Console Warning:</strong> "variant='pills' está deprecado. Usar tabsVariant='pills'"
+          </p>
+        </div>
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+### 🔄 **Backward Compatibility Garantizada**
+
+**⚠️ Props deprecadas pero funcionales:**
+- \`variant="line|pills|card"\` → \`tabsVariant="line|pills|card"\`
+
+**✅ Migración sin breaking changes:**
+1. API legacy sigue funcionando exactamente igual
+2. Console warnings informativos en desarrollo  
+3. Transición gradual recomendada
+4. Zero downtime en producción
+
+**🎯 Plan de migración:**
+1. **Ahora**: API legacy funciona perfectamente
+2. **Próximas semanas**: Migrar gradualmente a nueva API
+3. **Futuro**: Eventual eliminación de props deprecadas (con aviso previo)
+
+**Beneficios nueva API:**
+- Consistencia con todo el sistema de diseño
+- Variantes semánticas (colors) separadas de funcionales (layout)
+- Props estándar: size, rounded, loading, disabled
+- Mejor DX y autocompletado
+      `
+      }
+    }
+  }
+};
 
 export const Playground = {
   name: '🧪 Playground Interactivo',
@@ -1165,12 +1518,19 @@ export const Playground = {
     );
   },
   args: {
-    variant: 'line',
+    // Props estándar del sistema
     size: 'md',
+    variant: 'primary', 
+    rounded: 'md',
+    
+    // Props específicas de Tabs
+    tabsVariant: 'line',
     orientation: 'horizontal',
     scrollable: true,
     equalWidth: false,
     lazy: false,
+    
+    // Estados
     disabled: false,
     loading: false
   },

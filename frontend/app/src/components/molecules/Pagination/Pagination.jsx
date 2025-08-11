@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import { Button } from '../../atoms/Button/Button';
 import { Select } from '../../atoms/Select/Select';
 import { Icon } from '../../atoms/Icon/Icon';
+import { useStandardProps } from '../../../hooks/useStandardProps';
+import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens/standardProps';
 import './Pagination.css';
 
 /**
@@ -19,54 +21,82 @@ import './Pagination.css';
  * ✅ INDEPENDIENTE de TanStack Table
  * ✅ API simple e intuitiva (1-based pages)
  * ✅ Mobile-first responsive
- * ✅ Múltiples variantes (full, simple, compact)
+ * ✅ Sistema de diseño estándar integrado
  * 
  * ❌ NO usar para DataTable (ya tiene TanStack pagination)
+ * 
+ * @param {Object} props - Props del componente
+ * @param {number} props.currentPage - Página actual (1-based)
+ * @param {number} props.totalPages - Total de páginas
+ * @param {Function} props.onPageChange - Callback de cambio de página
+ * @param {number} props.totalItems - Total de elementos
+ * @param {number} props.itemsPerPage - Elementos por página
+ * @param {Function} props.onItemsPerPageChange - Callback cambio tamaño página
  */
-function Pagination({
-  // Navegación básica (requerida)
-  currentPage = 1,
-  totalPages = 1,
-  onPageChange = () => {},
-  
-  // Información detallada (opcional)
-  totalItems = null,
-  itemsPerPage = null,
-  onItemsPerPageChange = null,
-  itemsPerPageOptions = [10, 25, 50, 100],
-  
-  // Personalización
-  variant = 'full',
-  size = 'md',
-  showInfo = true,
-  showSizeSelector = true,
-  showFirstLast = true,
-  
-  // Estados
-  disabled = false,
-  loading = false,
-  
-  // Responsive
-  breakpoint = 768,
-  
-  // Personalización de textos
-  labels = {
-    first: 'Primero',
-    previous: 'Anterior', 
-    next: 'Siguiente',
-    last: 'Último',
-    showing: 'Mostrando',
-    to: 'a',
-    of: 'de',
-    results: 'resultados',
-    page: 'Página',
-    itemsPerPage: 'por página'
-  },
-  
-  // Props adicionales
-  className = '',
-  ...restProps
-}) {
+function Pagination(props) {
+  // Extraer props específicas del componente
+  const {
+    // Navegación básica (requerida)
+    currentPage = 1,
+    totalPages = 1,
+    onPageChange = () => {},
+    
+    // Información detallada (opcional)
+    totalItems = null,
+    itemsPerPage = null,
+    onItemsPerPageChange = null,
+    itemsPerPageOptions = [10, 25, 50, 100],
+    
+    // Personalización (ahora usa paginationVariant para evitar conflicto)
+    paginationVariant = 'full', // full, simple, compact
+    showInfo = true,
+    showSizeSelector = true,
+    showFirstLast = true,
+    
+    // Responsive
+    breakpoint = 768,
+    
+    // Personalización de textos
+    labels = {
+      first: 'Primero',
+      previous: 'Anterior', 
+      next: 'Siguiente',
+      last: 'Último',
+      showing: 'Mostrando',
+      to: 'a',
+      of: 'de',
+      results: 'resultados',
+      page: 'Página',
+      itemsPerPage: 'por página'
+    },
+    
+    ...restProps
+  } = props;
+
+  // Hook estándar - Pagination es tipo navegación
+  const {
+    size,
+    variant, // Esta es la variante semántica estándar
+    rounded,
+    disabled,
+    loading,
+    className,
+    tokens,
+    renderIcon,
+    ...standardProps
+  } = useStandardProps(restProps, {
+    componentType: 'pagination',
+    defaultSize: 'md',
+    defaultVariant: 'neutral',
+    defaultRounded: 'md'
+  });
+
+  // Props seguros para DOM
+  const domProps = extractDOMProps({
+    ...standardProps,
+    disabled,
+    className
+  });
   
   // Validaciones
   const safeTotalPages = Math.max(1, totalPages);
@@ -119,32 +149,57 @@ function Pagination({
     
   const effectiveVariant = isMobile && variant === 'full' ? 'compact' : variant;
   
-  // Construir clases CSS
+  // Mapear variante legacy para backward compatibility
+  const effectivePaginationVariant = (() => {
+    // Si se pasó la prop legacy variant directamente en props
+    const legacyVariant = props.variant;
+    if (legacyVariant && typeof legacyVariant === 'string' && ['full', 'simple', 'compact'].includes(legacyVariant)) {
+      if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
+         
+        console.warn('⚠️ Pagination: prop "variant" está deprecada para variants de paginación. Usar "paginationVariant"');
+      }
+      return legacyVariant;
+    }
+    return paginationVariant;
+  })();
+
+  // Detectar mobile y ajustar variante
+  const finalPaginationVariant = isMobile && effectivePaginationVariant === 'full' ? 'compact' : effectivePaginationVariant;
+
+  // Construir clases CSS usando sistema estándar
   const paginationClasses = [
     'pagination',
-    `pagination--variant-${effectiveVariant}`,
+    `pagination--pagination-variant-${finalPaginationVariant}`,
     `pagination--size-${size}`,
+    `pagination--variant-${variant}`,
     disabled && 'pagination--disabled',
     loading && 'pagination--loading',
     className
   ].filter(Boolean).join(' ');
   
   // Si solo hay una página, no mostrar paginación (opcional)
-  if (safeTotalPages <= 1 && variant !== 'full') {
+  if (safeTotalPages <= 1 && finalPaginationVariant !== 'full') {
     return null;
   }
   
   return (
-    <div className={paginationClasses} {...restProps}>
+    <div 
+      className={paginationClasses}
+      style={{
+        borderRadius: tokens.rounded,
+        ...domProps.style
+      }}
+      {...domProps}
+    >
       {/* Información de elementos (solo variant full y simple) */}
-      {effectiveVariant !== 'compact' && showInfo && totalItems && itemsPerPage && (
+      {finalPaginationVariant !== 'compact' && showInfo && totalItems && itemsPerPage && (
         <div className="pagination__info">
           <span className="pagination__info-text">
             {labels.showing} {startItem} {labels.to} {endItem} {labels.of} {totalItems} {labels.results}
           </span>
           
           {/* Selector de items por página */}
-          {showSizeSelector && onItemsPerPageChange && effectiveVariant === 'full' && (
+          {showSizeSelector && onItemsPerPageChange && finalPaginationVariant === 'full' && (
             <div className="pagination__size-selector">
               <Select
                 value={itemsPerPage}
@@ -165,17 +220,17 @@ function Pagination({
       {/* Controles de navegación */}
       <div className="pagination__controls">
         {/* Botón Primera (solo full variant) */}
-        {effectiveVariant === 'full' && showFirstLast && (
+        {finalPaginationVariant === 'full' && showFirstLast && (
           <Button
             variant="outline"
             size={size}
             onClick={() => handlePageChange(1)}
             disabled={disabled || loading || isFirstPage}
             className="pagination__button pagination__button--first"
-            leftIcon={<Icon name="chevron-left" size="xs" />}
+            leftIcon={renderIcon ? renderIcon('chevron-left') : <Icon name="chevron-left" size="xs" />}
             title={labels.first}
           >
-            {effectiveVariant === 'compact' ? '⏮️' : labels.first}
+            {finalPaginationVariant === 'compact' ? '⏮️' : labels.first}
           </Button>
         )}
         
@@ -186,15 +241,15 @@ function Pagination({
           onClick={() => handlePageChange(safeCurrentPage - 1)}
           disabled={disabled || loading || !canGoPrevious}
           className="pagination__button pagination__button--previous"
-          leftIcon={effectiveVariant !== 'compact' ? <Icon name="chevron-left" size="xs" /> : null}
+          leftIcon={finalPaginationVariant !== 'compact' ? (renderIcon ? renderIcon('chevron-left') : <Icon name="chevron-left" size="xs" />) : null}
           title={labels.previous}
         >
-          {effectiveVariant === 'compact' ? '◀️' : labels.previous}
+          {finalPaginationVariant === 'compact' ? '◀️' : labels.previous}
         </Button>
         
         {/* Información de página actual */}
         <div className="pagination__current">
-          {effectiveVariant === 'compact' ? (
+          {finalPaginationVariant === 'compact' ? (
             <span className="pagination__current-compact">
               {safeCurrentPage}/{safeTotalPages}
             </span>
@@ -205,11 +260,7 @@ function Pagination({
           )}
           
           {loading && (
-            <Icon 
-              name="loader" 
-              size="xs" 
-              className="pagination__loading-icon" 
-            />
+            renderIcon ? renderIcon('loader') : <Icon name="loader" size="xs" className="pagination__loading-icon" />
           )}
         </div>
         
@@ -220,24 +271,24 @@ function Pagination({
           onClick={() => handlePageChange(safeCurrentPage + 1)}
           disabled={disabled || loading || !canGoNext}
           className="pagination__button pagination__button--next"
-          rightIcon={effectiveVariant !== 'compact' ? <Icon name="chevron-right" size="xs" /> : null}
+          rightIcon={finalPaginationVariant !== 'compact' ? (renderIcon ? renderIcon('chevron-right') : <Icon name="chevron-right" size="xs" />) : null}
           title={labels.next}
         >
-          {effectiveVariant === 'compact' ? '▶️' : labels.next}
+          {finalPaginationVariant === 'compact' ? '▶️' : labels.next}
         </Button>
         
         {/* Botón Última (solo full variant) */}
-        {effectiveVariant === 'full' && showFirstLast && (
+        {finalPaginationVariant === 'full' && showFirstLast && (
           <Button
             variant="outline"
             size={size}
             onClick={() => handlePageChange(safeTotalPages)}
             disabled={disabled || loading || isLastPage}
             className="pagination__button pagination__button--last"
-            rightIcon={<Icon name="chevron-right" size="xs" />}
+            rightIcon={renderIcon ? renderIcon('chevron-right') : <Icon name="chevron-right" size="xs" />}
             title={labels.last}
           >
-            {effectiveVariant === 'compact' ? '⏭️' : labels.last}
+            {finalPaginationVariant === 'compact' ? '⏭️' : labels.last}
           </Button>
         )}
       </div>
@@ -246,6 +297,10 @@ function Pagination({
 }
 
 Pagination.propTypes = {
+  // Props estándar del sistema de diseño
+  ...STANDARD_PROP_TYPES,
+  
+  // Props específicas del componente
   // Navegación básica
   currentPage: PropTypes.number,
   totalPages: PropTypes.number.isRequired,
@@ -257,16 +312,11 @@ Pagination.propTypes = {
   onItemsPerPageChange: PropTypes.func,
   itemsPerPageOptions: PropTypes.arrayOf(PropTypes.number),
   
-  // Personalización
-  variant: PropTypes.oneOf(['full', 'simple', 'compact']),
-  size: PropTypes.oneOf(['sm', 'md', 'lg']),
+  // Personalización específica de paginación
+  paginationVariant: PropTypes.oneOf(['full', 'simple', 'compact']),
   showInfo: PropTypes.bool,
   showSizeSelector: PropTypes.bool,
   showFirstLast: PropTypes.bool,
-  
-  // Estados
-  disabled: PropTypes.bool,
-  loading: PropTypes.bool,
   
   // Responsive
   breakpoint: PropTypes.number,
@@ -283,10 +333,7 @@ Pagination.propTypes = {
     results: PropTypes.string,
     page: PropTypes.string,
     itemsPerPage: PropTypes.string
-  }),
-  
-  // Props adicionales
-  className: PropTypes.string
+  })
 };
 
 export { Pagination };

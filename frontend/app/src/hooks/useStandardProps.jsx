@@ -213,6 +213,17 @@ export const useToastProps = (props) => useStandardProps(props, {
   defaultRounded: 'md'
 });
 
+/**
+ * Hook especializado para componentes tipo Tabs
+ * Configuración optimizada para navegación por pestañas
+ */
+export const useTabsProps = (props) => useStandardProps(props, {
+  componentType: 'tabs',
+  defaultSize: 'md',
+  defaultVariant: 'primary',
+  defaultRounded: 'md'
+});
+
 // ===== HOOKS COMPUESTOS PARA CASOS ESPECÍFICOS =====
 
 /**
