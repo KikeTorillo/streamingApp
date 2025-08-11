@@ -308,28 +308,6 @@ function SeriesEditPage() {
         { label: 'Series', href: '/admin/series' },
         { label: currentSeries?.title || 'Editar' }
       ]}
-      headerActions={
-        <div className="series-edit__header-actions">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleCancel}
-            disabled={editing}
-          >
-            Cancelar
-          </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => document.getElementById('series-edit-form')?.requestSubmit()}
-            loading={editing}
-            disabled={!hasChanges || editing}
-            leftIcon="💾"
-          >
-            {editing ? 'Guardando...' : 'Guardar Cambios'}
-          </Button>
-        </div>
-      }
     >
       <div className="series-edit">
         

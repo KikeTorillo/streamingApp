@@ -309,28 +309,6 @@ function MovieEditPage() {
         { label: 'Películas', href: '/admin/movies' },
         { label: currentMovie?.title || 'Editar' }
       ]}
-      headerActions={
-        <div className="movie-edit__header-actions">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleCancel}
-            disabled={editing}
-          >
-            Cancelar
-          </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => document.getElementById('movie-edit-form')?.requestSubmit()}
-            loading={editing}
-            disabled={!hasChanges || editing}
-            leftIcon="💾"
-          >
-            {editing ? 'Guardando...' : 'Guardar Cambios'}
-          </Button>
-        </div>
-      }
     >
       <div className="movie-edit">
         
