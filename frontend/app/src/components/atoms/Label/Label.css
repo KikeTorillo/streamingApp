@@ -51,6 +51,11 @@
   color: var(--text-primary);
 }
 
+/* Mapeo backward compatibility: default → neutral */
+.label--variant-neutral {
+  color: var(--text-primary);
+}
+
 .label--variant-primary {
   color: var(--color-primary);
 }
@@ -85,9 +90,70 @@
   opacity: 0.6;
 }
 
+/* Estado loading */
+.label--loading {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.label--loading .label__text {
+  animation: labelLoading 1.5s ease-in-out infinite;
+}
+
 .label--disabled .label__icon,
 .label--disabled .label__tooltip-icon {
   opacity: 0.5;
+}
+
+.label--loading .label__icon,
+.label--loading .label__tooltip-icon {
+  opacity: 0.7;
+}
+
+/* ===== CLASES ADICIONALES DEL SISTEMA ESTÁNDAR ===== */
+
+/* Labels con icono izquierdo específico */
+.label--has-left-icon .label__text {
+  margin-left: var(--space-xs);
+}
+
+/* Labels con icono derecho específico */
+.label--has-right-icon .label__text {
+  margin-right: var(--space-xs);
+}
+
+/* ===== ESTADOS SEMÁNTICOS ===== */
+
+/* Estado error (variante danger) */
+.label--error {
+  color: var(--color-danger);
+}
+
+.label--error .label__required {
+  color: var(--color-danger);
+  animation: errorPulse 0.3s ease-in-out;
+}
+
+/* Estado success (variante success) */
+.label--success {
+  color: var(--color-success);
+}
+
+.label--success::after {
+  content: '✓';
+  margin-left: var(--space-xs);
+  font-size: 0.9em;
+  opacity: 0.8;
+}
+
+/* Estado warning (variante warning) */
+.label--warning {
+  color: var(--color-warning);
+}
+
+.label--warning .label__tooltip-icon {
+  color: var(--color-warning);
+  animation: warningPulse 2s ease-in-out infinite;
 }
 
 /* Clickeable */
@@ -400,5 +466,38 @@
   }
   100% {
     transform: scale(1);
+  }
+}
+
+/* Animación para estado loading */
+@keyframes labelLoading {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Animación para estado error */
+@keyframes errorPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Animación para estado warning */
+@keyframes warningPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
   }
 }

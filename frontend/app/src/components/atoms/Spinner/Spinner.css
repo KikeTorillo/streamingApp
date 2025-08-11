@@ -1,4 +1,68 @@
 /* src/components/atoms/Spinner/Spinner.css */
+/* ✅ MIGRADO AL SISTEMA ESTÁNDAR DE DISEÑO */
+
+/* ===== COMPONENTE BASE ===== */
+.spinner {
+  /* Base para todos los spinners */
+  display: inline-block;
+  position: relative;
+}
+
+/* ===== VARIANTES DE COLOR DEL SISTEMA ESTÁNDAR ===== */
+.spinner--variant-primary {
+  /* Colores primary por defecto */
+}
+
+.spinner--variant-secondary {
+  /* Usar tokens secondary */
+}
+
+.spinner--variant-success {
+  /* Usar tokens success */
+}
+
+.spinner--variant-warning {
+  /* Usar tokens warning */
+}
+
+.spinner--variant-danger {
+  /* Usar tokens danger */
+}
+
+.spinner--variant-neutral {
+  /* Usar tokens neutral */
+}
+
+/* ===== ESTADOS DEL SISTEMA ESTÁNDAR ===== */
+.spinner--loading {
+  /* Activo por defecto */
+}
+
+.spinner--disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* ===== BORDES REDONDEADOS (PARA PULSE) ===== */
+.spinner-pulse--rounded-sm {
+  border-radius: var(--radius-sm);
+}
+
+.spinner-pulse--rounded-md {
+  border-radius: var(--radius-md);
+}
+
+.spinner-pulse--rounded-lg {
+  border-radius: var(--radius-lg);
+}
+
+.spinner-pulse--rounded-xl {
+  border-radius: var(--radius-xl);
+}
+
+.spinner-pulse--rounded-full {
+  border-radius: var(--radius-full);
+}
 
 /* ===== OVERLAY MODE ===== */
 .spinner-overlay {
@@ -26,6 +90,31 @@
   justify-content: center;
 }
 
+/* Variantes de overlay container */
+.spinner-overlay__container--variant-primary {
+  /* Por defecto */
+}
+
+.spinner-overlay__container--variant-secondary {
+  background-color: var(--bg-secondary);
+}
+
+.spinner-overlay__container--variant-success {
+  background-color: var(--bg-success-subtle);
+}
+
+.spinner-overlay__container--variant-warning {
+  background-color: var(--bg-warning-subtle);
+}
+
+.spinner-overlay__container--variant-danger {
+  background-color: var(--bg-danger-subtle);
+}
+
+.spinner-overlay__container--variant-neutral {
+  background-color: var(--bg-neutral);
+}
+
 .spinner-overlay__spinner {
   margin-bottom: var(--space-lg);
 }
@@ -47,32 +136,50 @@
   text-align: center;
 }
 
-/* ===== TAMAÑOS ===== */
-.spinner--sm {
-  width: 3.2rem;
+/* ===== TAMAÑOS DEL SISTEMA ESTÁNDAR ===== */
+.spinner--size-xs {
+  width: 2.4rem;  /* 24px */
+  height: 2.4rem;
+}
+
+.spinner--size-sm {
+  width: 3.2rem;  /* 32px */
   height: 3.2rem;
 }
 
-.spinner--md {
-  width: 4.8rem;
+.spinner--size-md {
+  width: 4.8rem;  /* 48px */
   height: 4.8rem;
 }
 
-.spinner--lg {
-  width: 6.4rem;
+.spinner--size-lg {
+  width: 6.4rem;  /* 64px */
   height: 6.4rem;
 }
 
-.spinner__message--sm {
+.spinner--size-xl {
+  width: 8.0rem;  /* 80px */
+  height: 8.0rem;
+}
+
+.spinner__message--size-xs {
+  font-size: var(--font-size-xs);
+}
+
+.spinner__message--size-sm {
   font-size: var(--font-size-sm);
 }
 
-.spinner__message--md {
+.spinner__message--size-md {
   font-size: var(--font-size-base);
 }
 
-.spinner__message--lg {
+.spinner__message--size-lg {
   font-size: var(--font-size-lg);
+}
+
+.spinner__message--size-xl {
+  font-size: var(--font-size-xl);
 }
 
 /* ===== VARIANTES ===== */
@@ -96,8 +203,16 @@
   border-top: 0.4rem solid var(--color-success);
 }
 
+.spinner-circle--warning {
+  border-top: 0.4rem solid var(--color-warning);
+}
+
 .spinner-circle--danger {
   border-top: 0.4rem solid var(--color-danger);
+}
+
+.spinner-circle--neutral {
+  border-top: 0.4rem solid var(--color-neutral);
 }
 
 /* Dots Spinner */
@@ -126,8 +241,16 @@
   background-color: var(--color-success);
 }
 
+.spinner-dot--warning {
+  background-color: var(--color-warning);
+}
+
 .spinner-dot--danger {
   background-color: var(--color-danger);
+}
+
+.spinner-dot--neutral {
+  background-color: var(--color-neutral);
 }
 
 .spinner-dot:nth-child(1) {
@@ -160,8 +283,16 @@
   background-color: var(--color-success);
 }
 
+.spinner-pulse--warning {
+  background-color: var(--color-warning);
+}
+
 .spinner-pulse--danger {
   background-color: var(--color-danger);
+}
+
+.spinner-pulse--neutral {
+  background-color: var(--color-neutral);
 }
 
 /* Bars Spinner */
@@ -190,8 +321,16 @@
   background-color: var(--color-success);
 }
 
+.spinner-bar--warning {
+  background-color: var(--color-warning);
+}
+
 .spinner-bar--danger {
   background-color: var(--color-danger);
+}
+
+.spinner-bar--neutral {
+  background-color: var(--color-neutral);
 }
 
 .spinner-bar:nth-child(1) {

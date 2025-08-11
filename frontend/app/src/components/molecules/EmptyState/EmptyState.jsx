@@ -1,10 +1,19 @@
 // EmptyState.jsx
 import PropTypes from 'prop-types';
 import { Card } from '../../atoms/Card/Card';
+import { Icon } from '../../atoms/Icon/Icon';
+import { useEmptyStateProps } from '../../../hooks/useStandardProps.jsx';
+import { STANDARD_PROP_TYPES } from '../../../tokens/standardProps.js';
 import './EmptyState.css';
 
 /**
  * Componente EmptyState - Molecule
+ * 
+ * ✅ MIGRADO: Sistema de diseño estándar completo
+ * ✅ HOOKS: useEmptyStateProps() integrado
+ * ✅ TOKENS: Spacing/sizing automáticos con design tokens
+ * ✅ ICONS: Sistema de iconos unificado con renderIcon
+ * ✅ COMPATIBILITY: Backward compatibility con deprecation warnings
  * 
  * Muestra un estado vacío cuando no hay contenido que mostrar.
  * Incluye ícono, título, descripción y acción opcional.
@@ -19,34 +28,89 @@ function EmptyState({
   // Acción opcional
   action = null,
   
-  // Estilos
+  // Props estándar del sistema
   size = 'md',
-  variant = 'default',
+  variant = 'neutral',
+  rounded = 'lg',
+  disabled = false,
+  loading = false,
   
   // Propiedades adicionales
   className = '',
   ...restProps
 }) {
   
-  // Clases CSS dinámicas
+  // ===== INTEGRACIÓN SISTEMA DE DISEÑO =====
+  const {
+    size: finalSize,
+    variant: finalVariant,
+    rounded: finalRounded,
+    disabled: isDisabled,
+    loading: isLoading,
+    tokens,
+    renderIcon,
+    className: standardClassName,
+    ...standardProps
+  } = useEmptyStateProps({ 
+    size, 
+    variant, 
+    rounded, 
+    disabled, 
+    loading, 
+    className, 
+    ...restProps 
+  });
+  
+  // Backward compatibility: mapear variants legacy
+  const finalVariantCompat = (() => {
+    // Mapear variantes legacy a estándar
+    const variantMapping = {
+      'default': 'neutral',
+      'muted': 'neutral',
+      'info': 'primary',
+      'error': 'danger'
+    };
+    
+    const mappedVariant = variantMapping[finalVariant] || finalVariant;
+    
+    // Warning para variantes deprecated
+    if (variantMapping[finalVariant] && process.env.NODE_ENV === 'development') {
+      console.warn(`⚠️ EmptyState: variant="${finalVariant}" is deprecated. Use variant="${mappedVariant}" instead.`);
+    }
+    
+    return mappedVariant;
+  })();
+  
+  // Clases CSS dinámicas con sistema de tokens
   const emptyStateClasses = [
     'empty-state',
-    `empty-state--size-${size}`,
-    `empty-state--variant-${variant}`,
-    className
+    `empty-state--size-${finalSize}`,
+    `empty-state--variant-${finalVariantCompat}`,
+    isDisabled && 'empty-state--disabled',
+    isLoading && 'empty-state--loading',
+    standardClassName
   ].filter(Boolean).join(' ');
 
+  // ===== RENDER =====
   return (
     <Card 
-      variant="outlined" 
-      padding={size === 'sm' ? 'lg' : size === 'lg' ? '2xl' : 'xl'}
+      variant="outline"
+      size={finalSize}
       className={emptyStateClasses}
-      {...restProps}
+      disabled={isDisabled}
+      loading={isLoading}
+      {...standardProps}
     >
       <div className="empty-state__content">
-        {/* Ícono */}
+        {/* Ícono con sistema unificado */}
         <div className="empty-state__icon">
-          {icon}
+          {renderIcon ? renderIcon(icon) : (
+            typeof icon === 'string' && icon.length <= 2 ? (
+              icon // Emoji directo
+            ) : (
+              <Icon name={icon} size={tokens.size.iconSize} />
+            )
+          )}
         </div>
         
         {/* Título */}
@@ -65,19 +129,35 @@ function EmptyState({
             {action}
           </div>
         )}
+        
+        {/* Estado loading overlay */}
+        {isLoading && (
+          <div className="empty-state__loading-overlay">
+            <Icon name="loader-2" size={tokens.size.iconSize} className="animate-spin" />
+          </div>
+        )}
       </div>
     </Card>
   );
 }
 
 EmptyState.propTypes = {
+  // Contenido específico
   icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   title: PropTypes.string,
   description: PropTypes.string,
   action: PropTypes.node,
-  size: PropTypes.oneOf(['sm', 'md', 'lg']),
-  variant: PropTypes.oneOf(['default', 'muted', 'primary', 'success', 'warning', 'danger']),
-  className: PropTypes.string
+  
+  // Props estándar del sistema
+  ...STANDARD_PROP_TYPES,
+  
+  // Soporte legacy (deprecated)
+  variant: PropTypes.oneOf([
+    // Estándar
+    'primary', 'secondary', 'success', 'warning', 'danger', 'neutral',
+    // Legacy - Deprecated
+    'default', 'muted', 'info', 'error'
+  ])
 };
 
 export { EmptyState };

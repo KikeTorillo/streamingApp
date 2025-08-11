@@ -11,20 +11,41 @@ export default {
     docs: {
       description: {
         component: `
-# DynamicForm
+# DynamicForm - ✅ Migrado al Sistema Estándar
 
-Generador automático de formularios basado en configuración JSON. Utiliza los componentes del sistema de diseño (TextInput, TextSelect, Button) manteniendo consistencia visual y funcional.
+**Sistema de formularios dinámicos totalmente integrado con el sistema de diseño**
 
-## 🎯 Características principales
+## ✅ **Migración Completa:**
+- Props estándar (size, variant, rounded, disabled, loading)
+- Validación automática con validateStandardProps
+- Tokens automáticos de spacing y sizing
+- Integración con TextInput y TextSelect migrados
+- Herencia de props a todos los campos hijos
+- Backward compatibility con deprecation warnings
 
-- **Generación automática**: Crea formularios completos desde configuración
-- **Tipos de campo**: text, email, password, number, tel, url, date, select, textarea, checkbox, radio
-- **Layout responsive**: 1-4 columnas que se adaptan automáticamente
-- **Validación**: Por tipo de campo y validación personalizada
-- **Integración**: Usa los componentes del sistema de diseño
+## 🎯 **Características principales**
+- **Props estándar:** size, variant, rounded aplicadas a todos los campos
+- **Generación automática:** Crea formularios completos desde configuración
+- **Tipos de campo:** text, email, password, number, tel, url, date, select, textarea, checkbox, radio, file, image-crop
+- **Layout responsive:** 1-4 columnas que se adaptan automáticamente
+- **Validación:** Por tipo de campo y validación personalizada
+- **Tokens automáticos:** Spacing, sizing y colores del sistema
 
-## 🔧 Configuración básica de campos
+## 🔧 **API Estándar del Sistema**
+\`\`\`jsx
+<DynamicForm
+  size="md"              // Tamaño aplicado a todos los campos
+  variant="primary"      // Variante aplicada a campos
+  rounded="md"           // Border radius aplicado a campos
+  disabled={false}       // Deshabilita todo el formulario
+  loading={false}        // Estado de carga
+  spacing="lg"           // Espaciado entre campos
+  fields={fields}
+  onSubmit={handleSubmit}
+/>
+\`\`\`
 
+## 📝 **Configuración de campos con sistema estándar**
 \`\`\`jsx
 const fields = [
   {
@@ -33,14 +54,14 @@ const fields = [
     label: 'Correo electrónico',
     placeholder: 'tu@ejemplo.com',
     required: true,
-    leftIcon: '📧',
+    leftIcon: 'mail',      // Iconos del sistema
     helperText: 'Te enviaremos confirmaciones aquí'
   },
   {
     name: 'country',
     type: 'select',
     label: 'País',
-    leftIcon: '🌍',
+    leftIcon: 'globe',     // Sistema de iconos unificado
     options: [
       { value: 'mx', label: 'México' },
       { value: 'us', label: 'Estados Unidos' }
@@ -61,6 +82,43 @@ const fields = [
     }
   },
   argTypes: {
+    // Props estándar del sistema
+    size: {
+      name: 'Tamaño',
+      description: 'Tamaño aplicado a todos los campos',
+      control: 'select',
+      options: ['xs', 'sm', 'md', 'lg', 'xl']
+    },
+    variant: {
+      name: 'Variante',
+      description: 'Variante aplicada a campos',
+      control: 'select',
+      options: ['primary', 'secondary', 'success', 'danger', 'warning', 'neutral']
+    },
+    rounded: {
+      name: 'Border radius',
+      description: 'Border radius aplicado a campos',
+      control: 'select', 
+      options: ['sm', 'md', 'lg', 'xl', 'full']
+    },
+    disabled: {
+      name: 'Deshabilitado',
+      description: 'Deshabilita todo el formulario',
+      control: 'boolean'
+    },
+    loading: {
+      name: 'Cargando',
+      description: 'Estado de carga del formulario',
+      control: 'boolean'
+    },
+    spacing: {
+      name: 'Espaciado',
+      description: 'Espaciado entre campos',
+      control: 'select',
+      options: ['xs', 'sm', 'md', 'lg', 'xl']
+    },
+    
+    // Props específicas del formulario
     fields: {
       name: 'Campos',
       description: 'Array de configuración de campos',
@@ -71,23 +129,33 @@ const fields = [
       description: 'Número de columnas en desktop (1-4)',
       control: { type: 'range', min: 1, max: 4, step: 1 }
     },
-    fieldSize: {
-      name: 'Tamaño de campos',
-      control: 'select',
-      options: ['xs', 'sm', 'md', 'lg', 'xl']
-    },
-    fieldRounded: {
-      name: 'Border radius',
-      control: 'select', 
-      options: ['sm', 'md', 'lg', 'xl', 'full']
-    },
-    submitVariant: {
-      name: 'Estilo del botón',
-      control: 'select',
-      options: ['primary', 'secondary', 'success', 'danger', 'outline', 'ghost']
+    compact: {
+      name: 'Compacto',
+      description: 'Versión compacta del formulario',
+      control: 'boolean'
     },
     validateOnChange: {
       name: 'Validar al escribir',
+      description: 'Validar campos al cambiar',
+      control: 'boolean'
+    },
+    
+    // Props del botón
+    submitVariant: {
+      name: 'Estilo del botón',
+      description: 'Variante del botón de envío',
+      control: 'select',
+      options: ['primary', 'secondary', 'success', 'danger', 'warning', 'neutral']
+    },
+    submitSize: {
+      name: 'Tamaño del botón',
+      description: 'Tamaño del botón de envío',
+      control: 'select',
+      options: ['xs', 'sm', 'md', 'lg', 'xl']
+    },
+    submitFullWidth: {
+      name: 'Botón ancho completo',
+      description: 'Hacer el botón de envío ancho completo',
       control: 'boolean'
     }
   }
@@ -97,12 +165,21 @@ const fields = [
 
 export const Playground = {
   args: {
+    // Props estándar del sistema
+    size: 'md',
+    variant: 'primary',
+    rounded: 'md',
+    disabled: false,
+    loading: false,
+    spacing: 'lg',
+    
+    // Props del formulario
     fields: [
       { 
         name: 'name', 
         label: 'Nombre completo', 
         placeholder: 'Tu nombre...',
-        leftIcon: '👤',
+        leftIcon: 'user',
         required: true 
       },
       { 
@@ -110,7 +187,7 @@ export const Playground = {
         type: 'email', 
         label: 'Email', 
         placeholder: 'tu@ejemplo.com',
-        leftIcon: '📧',
+        leftIcon: 'mail',
         required: true 
       },
       {
@@ -118,7 +195,7 @@ export const Playground = {
         type: 'select',
         label: 'País',
         placeholder: 'Selecciona tu país',
-        leftIcon: '🌍',
+        leftIcon: 'globe',
         options: [
           { value: 'mx', label: 'México' },
           { value: 'us', label: 'Estados Unidos' },
@@ -127,13 +204,165 @@ export const Playground = {
       }
     ],
     columnsPerRow: 1,
-    fieldSize: 'md',
-    fieldRounded: 'md',
-    submitVariant: 'primary',
+    compact: false,
     validateOnChange: false,
-    submitText: 'Enviar formulario'
+    
+    // Props del botón
+    submitVariant: 'primary',
+    submitSize: 'md',
+    submitText: 'Enviar formulario',
+    submitFullWidth: false
   }
 };
+
+// ========== SISTEMA ESTÁNDAR DEMOS ==========
+
+// Story para demostrar todas las variantes del sistema
+export const StandardVariants = () => (
+  <div style={{ display: 'grid', gap: 'var(--space-xl)', padding: 'var(--space-lg)' }}>
+    <h2>Variantes del Sistema Estándar</h2>
+    
+    {['primary', 'secondary', 'success', 'danger', 'warning', 'neutral'].map(variant => (
+      <div key={variant} style={{ border: '1px solid var(--border-default)', padding: 'var(--space-md)', borderRadius: 'var(--radius-md)' }}>
+        <h3 style={{ marginTop: 0, textTransform: 'capitalize' }}>Variant: {variant}</h3>
+        <DynamicForm
+          variant={variant}
+          size="md"
+          spacing="md"
+          fields={[
+            { name: 'input1', label: `Input ${variant}`, placeholder: 'Escribe algo...', leftIcon: 'user' },
+            { name: 'select1', type: 'select', label: `Select ${variant}`, leftIcon: 'globe', options: [
+              { value: '1', label: 'Opción 1' },
+              { value: '2', label: 'Opción 2' }
+            ]}
+          ]}
+          submitVariant={variant}
+          submitText={`Botón ${variant}`}
+          onSubmit={() => console.log(`Submit ${variant}`)}
+        />
+      </div>
+    ))}
+  </div>
+);
+
+// Story para demostrar tamaños
+export const StandardSizes = () => (
+  <div style={{ display: 'grid', gap: 'var(--space-xl)', padding: 'var(--space-lg)' }}>
+    <h2>Tamaños del Sistema Estándar</h2>
+    
+    {['xs', 'sm', 'md', 'lg', 'xl'].map(size => (
+      <div key={size} style={{ border: '1px solid var(--border-default)', padding: 'var(--space-md)', borderRadius: 'var(--radius-md)' }}>
+        <h3 style={{ marginTop: 0 }}>Size: {size}</h3>
+        <DynamicForm
+          size={size}
+          variant="primary"
+          spacing="md"
+          fields={[
+            { name: `input_${size}`, label: `Input ${size}`, placeholder: 'Escribe algo...', leftIcon: 'user' },
+            { name: `select_${size}`, type: 'select', label: `Select ${size}`, leftIcon: 'globe', options: [
+              { value: '1', label: 'Opción 1' },
+              { value: '2', label: 'Opción 2' }
+            ]}
+          ]}
+          submitSize={size}
+          submitText={`Botón ${size}`}
+          onSubmit={() => console.log(`Submit ${size}`)}
+        />
+      </div>
+    ))}
+  </div>
+);
+
+// Story para demostrar espaciado
+export const StandardSpacing = () => (
+  <div style={{ display: 'grid', gap: 'var(--space-xl)', padding: 'var(--space-lg)' }}>
+    <h2>Espaciado del Sistema Estándar</h2>
+    
+    {['xs', 'sm', 'md', 'lg', 'xl'].map(spacing => (
+      <div key={spacing} style={{ border: '1px solid var(--border-default)', padding: 'var(--space-md)', borderRadius: 'var(--radius-md)' }}>
+        <h3 style={{ marginTop: 0 }}>Spacing: {spacing}</h3>
+        <DynamicForm
+          size="md"
+          variant="primary"
+          spacing={spacing}
+          fields={[
+            { name: `input1_${spacing}`, label: 'Campo 1', placeholder: 'Primer campo', leftIcon: 'user' },
+            { name: `input2_${spacing}`, label: 'Campo 2', placeholder: 'Segundo campo', leftIcon: 'mail' },
+            { name: `input3_${spacing}`, label: 'Campo 3', placeholder: 'Tercer campo', leftIcon: 'phone' }
+          ]}
+          submitText={`Espaciado ${spacing}`}
+          onSubmit={() => console.log(`Submit spacing ${spacing}`)}
+        />
+      </div>
+    ))}
+  </div>
+);
+
+// Story para demostrar estados
+export const StandardStates = () => (
+  <div style={{ display: 'grid', gap: 'var(--space-xl)', padding: 'var(--space-lg)', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+    <div style={{ border: '1px solid var(--border-default)', padding: 'var(--space-md)', borderRadius: 'var(--radius-md)' }}>
+      <h3 style={{ marginTop: 0 }}>Estado Normal</h3>
+      <DynamicForm
+        size="md"
+        variant="primary"
+        fields={[
+          { name: 'normal1', label: 'Campo normal', placeholder: 'Escribe algo...', leftIcon: 'user' },
+          { name: 'normal2', type: 'select', label: 'Select normal', leftIcon: 'globe', options: [{ value: '1', label: 'Opción 1' }] }
+        ]}
+        submitText="Enviar normal"
+        onSubmit={() => console.log('Submit normal')}
+      />
+    </div>
+    
+    <div style={{ border: '1px solid var(--border-default)', padding: 'var(--space-md)', borderRadius: 'var(--radius-md)' }}>
+      <h3 style={{ marginTop: 0 }}>Estado Loading</h3>
+      <DynamicForm
+        size="md"
+        variant="primary"
+        loading={true}
+        fields={[
+          { name: 'loading1', label: 'Campo loading', placeholder: 'Escribe algo...', leftIcon: 'user' },
+          { name: 'loading2', type: 'select', label: 'Select loading', leftIcon: 'globe', options: [{ value: '1', label: 'Opción 1' }] }
+        ]}
+        submitText="Cargando..."
+        onSubmit={() => console.log('Submit loading')}
+      />
+    </div>
+    
+    <div style={{ border: '1px solid var(--border-default)', padding: 'var(--space-md)', borderRadius: 'var(--radius-md)' }}>
+      <h3 style={{ marginTop: 0 }}>Estado Disabled</h3>
+      <DynamicForm
+        size="md"
+        variant="neutral"
+        disabled={true}
+        fields={[
+          { name: 'disabled1', label: 'Campo disabled', placeholder: 'Escribe algo...', leftIcon: 'user' },
+          { name: 'disabled2', type: 'select', label: 'Select disabled', leftIcon: 'globe', options: [{ value: '1', label: 'Opción 1' }] }
+        ]}
+        submitText="Deshabilitado"
+        onSubmit={() => console.log('Submit disabled')}
+      />
+    </div>
+    
+    <div style={{ border: '1px solid var(--border-default)', padding: 'var(--space-md)', borderRadius: 'var(--radius-md)' }}>
+      <h3 style={{ marginTop: 0 }}>Estado Compact</h3>
+      <DynamicForm
+        size="sm"
+        variant="primary"
+        compact={true}
+        spacing="sm"
+        fields={[
+          { name: 'compact1', label: 'Campo compacto', placeholder: 'Escribe algo...', leftIcon: 'user' },
+          { name: 'compact2', type: 'select', label: 'Select compacto', leftIcon: 'globe', options: [{ value: '1', label: 'Opción 1' }] }
+        ]}
+        submitText="Compacto"
+        submitSize="sm"
+        onSubmit={() => console.log('Submit compact')}
+      />
+    </div>
+  </div>
+);
 
 // ========== FORMULARIO DE CONTACTO ==========
 

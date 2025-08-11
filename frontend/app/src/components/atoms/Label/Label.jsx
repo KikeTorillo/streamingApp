@@ -1,58 +1,95 @@
 import PropTypes from 'prop-types';
 import { Icon } from '../Icon/Icon';
+import { useLabelProps } from '../../../hooks/useStandardProps';
+import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens/standardProps';
 import './Label.css';
 
 /**
  * Label - Átomo de etiqueta standalone para formularios y elementos
  * 
+ * 🎯 **MIGRADO AL SISTEMA ESTÁNDAR** ✅
+ * 
  * Características:
- * - ✅ Indicadores required/optional visuales
- * - ✅ Variantes semánticas (default, primary, secondary, success, warning, danger)
- * - ✅ Tamaños estándar (xs, sm, md, lg, xl)
- * - ✅ Iconos opcionales (izquierdo/derecho)
- * - ✅ Tooltip informativo opcional
+ * - ✅ Hook useLabelProps() integrado
+ * - ✅ Props estándar (size, variant, rounded, loading, disabled)
+ * - ✅ Sistema de iconos unificado (leftIcon/rightIcon)
+ * - ✅ Tokens de design system automáticos
+ * - ✅ Indicadores semánticos (required/optional/error)
+ * - ✅ Tooltip informativo y accesibilidad completa
  * - ✅ Integración con inputs (htmlFor)
- * - ✅ Estados interactivos (hover, focus, disabled)
- * - ✅ Accesibilidad completa
- * - ✅ Responsive y modo oscuro
+ * - ✅ Estados interactivos y responsive
+ * - ✅ Backward compatibility con deprecation warnings
  * 
  * @param {React.ReactNode} children - Contenido de la etiqueta
  * @param {string} [text] - Alternativa a children para texto simple
  * @param {string} [htmlFor] - ID del elemento asociado (input)
- * @param {'xs'|'sm'|'md'|'lg'|'xl'} [size='md'] - Tamaño de la etiqueta
- * @param {'default'|'primary'|'secondary'|'success'|'warning'|'danger'} [variant='default'] - Variante visual
+ * @param {'xs'|'sm'|'md'|'lg'|'xl'} [size='md'] - Tamaño estándar del sistema
+ * @param {'primary'|'secondary'|'success'|'warning'|'danger'|'neutral'} [variant='default'] - Variante semántica estándar
+ * @param {'sm'|'md'|'lg'|'xl'|'full'} [rounded='sm'] - Radio de bordes estándar
+ * @param {boolean} [loading=false] - Estado de carga (para labels dinámicos)
+ * @param {boolean} [disabled=false] - Estado deshabilitado estándar
  * @param {boolean} [required=false] - Marca como requerido (asterisco rojo)
  * @param {boolean} [optional=false] - Marca como opcional (texto "opcional")
- * @param {string} [leftIcon] - Icono izquierdo (nombre de Feather Icon)
- * @param {string} [rightIcon] - Icono derecho (nombre de Feather Icon)
+ * @param {string|React.ReactNode} [leftIcon] - Icono izquierdo del sistema estándar
+ * @param {string|React.ReactNode} [rightIcon] - Icono derecho del sistema estándar
  * @param {string} [tooltip] - Texto de tooltip informativo
- * @param {boolean} [disabled=false] - Estado deshabilitado
  * @param {boolean} [bold=false] - Texto en negrita
- * @param {string} [className=''] - Clases CSS adicionales
- * @param {string} [ariaLabel] - Etiqueta de accesibilidad
+ * @param {string} [className=''] - Clases CSS adicionales estándar
+ * @param {string} [ariaLabel] - Etiqueta de accesibilidad estándar
+ * @param {string} [testId] - ID para testing (data-testid)
  */
 function Label({
   children,
   text,
   htmlFor,
-  size = 'md',
-  variant = 'default',
   required = false,
   optional = false,
-  leftIcon,
-  rightIcon,
   tooltip,
-  disabled = false,
   bold = false,
-  className = '',
-  ariaLabel,
   onClick,
   ...restProps
 }) {
+  // Backward compatibility: mapear variantes legacy
+  const propsWithCompatibility = { ...restProps };
+  
+  // Mapear 'default' a 'neutral' para consistency
+  if (propsWithCompatibility.variant === 'default') {
+    console.warn('⚠️ Label: variant="default" está deprecado. Usa variant="neutral" en su lugar.');
+    propsWithCompatibility.variant = 'neutral';
+  }
+
+  // Hook del sistema estándar - integra props, tokens e iconos
+  const {
+    size,
+    variant,
+    rounded, // Para futuras extensiones de estilo
+    disabled,
+    loading,
+    className,
+    leftIcon,
+    rightIcon,
+    renderIcon,
+    hasLeftIcon,
+    hasRightIcon,
+    ariaLabel,
+    testId,
+    tokens // Para futuras extensiones de estilo
+  } = useLabelProps(propsWithCompatibility);
+  
+  // Marcar variables como utilizadas para evitar warnings de linting
+  void rounded; void tokens;
+
+  // Extraer props seguras para DOM (sin tokens ni helpers)
+  const domProps = extractDOMProps({ ...restProps, className, disabled, ariaLabel, testId });
   // Determinar contenido de la etiqueta
   const labelContent = children || text;
 
-  // Generar clases CSS
+  // Determinar estados semánticos
+  const isErrorState = variant === 'danger';
+  const isSuccessState = variant === 'success';
+  const isWarningState = variant === 'warning';
+
+  // Generar clases CSS con sistema estándar
   const labelClasses = [
     'label',
     `label--size-${size}`,
@@ -60,38 +97,41 @@ function Label({
     required && 'label--required',
     optional && 'label--optional',
     disabled && 'label--disabled',
+    loading && 'label--loading',
     bold && 'label--bold',
-    (leftIcon || rightIcon) && 'label--with-icon',
+    isErrorState && 'label--error',
+    isSuccessState && 'label--success', 
+    isWarningState && 'label--warning',
+    hasLeftIcon && 'label--has-left-icon',
+    hasRightIcon && 'label--has-right-icon',
+    (hasLeftIcon || hasRightIcon) && 'label--with-icon',
     onClick && 'label--clickable',
     className
   ].filter(Boolean).join(' ');
 
-  // Props de accesibilidad
+  // Props de accesibilidad mejoradas con sistema estándar
   const accessibilityProps = {
     'aria-label': ariaLabel,
     'aria-disabled': disabled ? 'true' : undefined,
-    'title': tooltip,
-    ...restProps
+    'aria-busy': loading ? 'true' : undefined,
+    'title': tooltip
   };
 
-  // Props del elemento label
+  // Props del elemento label con integración sistema estándar
   const labelProps = {
+    ...domProps,
     className: labelClasses,
     htmlFor: htmlFor,
-    onClick: disabled ? undefined : onClick,
+    onClick: disabled || loading ? undefined : onClick,
     ...accessibilityProps
   };
 
   return (
     <label {...labelProps}>
-      {/* Icono izquierdo */}
-      {leftIcon && (
-        <Icon 
-          name={leftIcon} 
-          size={size === 'xs' ? 'xs' : size === 'sm' ? 'xs' : 'sm'} 
-          className="label__icon label__icon--left" 
-        />
-      )}
+      {/* Icono izquierdo con sistema estándar */}
+      {hasLeftIcon && renderIcon(leftIcon, {
+        className: 'label__icon label__icon--left'
+      })}
 
       {/* Contenido principal */}
       <span className="label__text">
@@ -112,14 +152,10 @@ function Label({
         )}
       </span>
 
-      {/* Icono derecho */}
-      {rightIcon && (
-        <Icon 
-          name={rightIcon} 
-          size={size === 'xs' ? 'xs' : size === 'sm' ? 'xs' : 'sm'} 
-          className="label__icon label__icon--right" 
-        />
-      )}
+      {/* Icono derecho con sistema estándar */}
+      {hasRightIcon && renderIcon(rightIcon, {
+        className: 'label__icon label__icon--right'
+      })}
 
       {/* Tooltip info */}
       {tooltip && (
@@ -145,41 +181,23 @@ Label.propTypes = {
   /** ID del elemento asociado (input) */
   htmlFor: PropTypes.string,
   
-  /** Tamaño de la etiqueta */
-  size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
-  
-  /** Variante visual de la etiqueta */
-  variant: PropTypes.oneOf(['default', 'primary', 'secondary', 'success', 'warning', 'danger']),
-  
   /** Marca como campo requerido */
   required: PropTypes.bool,
   
   /** Marca como campo opcional */
   optional: PropTypes.bool,
   
-  /** Icono izquierdo (nombre de Feather Icon) */
-  leftIcon: PropTypes.string,
-  
-  /** Icono derecho (nombre de Feather Icon) */
-  rightIcon: PropTypes.string,
-  
   /** Texto de tooltip informativo */
   tooltip: PropTypes.string,
-  
-  /** Estado deshabilitado */
-  disabled: PropTypes.bool,
   
   /** Texto en negrita */
   bold: PropTypes.bool,
   
-  /** Clases CSS adicionales */
-  className: PropTypes.string,
-  
-  /** Etiqueta de accesibilidad */
-  ariaLabel: PropTypes.string,
-  
   /** Handler de click (para labels clickeables) */
-  onClick: PropTypes.func
+  onClick: PropTypes.func,
+  
+  // Props estándar del sistema de diseño
+  ...STANDARD_PROP_TYPES
 };
 
 export { Label };

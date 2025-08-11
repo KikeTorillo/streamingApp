@@ -1,18 +1,21 @@
-/* ===== ALERT MODAL MOLECULE STYLES ===== */
+/* ===== ALERT MODAL MOLECULE - MIGRADO AL SISTEMA ESTÁNDAR ===== */
 /* src/components/molecules/AlertModal/AlertModal.css */
 
+/* ✅ BASE - Hereda del Modal migrado */
 .alert-modal {
-  /* Hereda estilos del Modal base */
+  /* Modal base proporciona toda la funcionalidad estándar */
 }
 
+/* ✅ CONTENIDO PRINCIPAL */
 .alert-modal__content {
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
   text-align: center;
-  padding: var(--space-sm);
+  padding: var(--space-md);
 }
 
+/* ✅ MENSAJE CON ICONO */
 .alert-modal__message {
   display: flex;
   flex-direction: column;
@@ -20,31 +23,41 @@
   gap: var(--space-md);
 }
 
+/* ✅ ICONO - Usa design tokens automáticos por tamaño */
 .alert-modal__icon {
-  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--icon-size-lg);
   line-height: 1;
+  color: currentColor;
 }
 
+/* ✅ TEXTO DEL MENSAJE */
 .alert-modal__text {
   margin: 0;
   font-size: var(--font-size-base);
-  line-height: var(--line-height-base);
+  line-height: var(--line-height-relaxed);
   color: var(--text-primary);
+  max-width: 400px; /* Limita ancho para mejor legibilidad */
 }
 
+/* ✅ ACCIONES - Botón(es) */
 .alert-modal__actions {
   display: flex;
   gap: var(--space-sm);
   justify-content: center;
   flex-wrap: wrap;
+  margin-top: var(--space-sm);
 }
 
 .alert-modal__button {
-  min-width: 100px;
+  min-width: var(--size-20); /* ~80px */
+  flex: 0 0 auto;
 }
 
-/* Variantes por tipo */
-.alert-modal--info .alert-modal__icon {
+/* ✅ VARIANTES SEMÁNTICAS - Colores automáticos por variante */
+.alert-modal--primary .alert-modal__icon {
   color: var(--color-primary);
 }
 
@@ -52,22 +65,70 @@
   color: var(--color-success);
 }
 
-.alert-modal--error .alert-modal__icon {
+.alert-modal--danger .alert-modal__icon {
   color: var(--color-danger);
 }
 
-.alert-modal--confirm .alert-modal__icon {
-  color: var(--color-primary);
+.alert-modal--warning .alert-modal__icon {
+  color: var(--color-warning);
 }
 
-/* Responsive */
-@media (max-width: 480px) {
+.alert-modal--secondary .alert-modal__icon {
+  color: var(--color-secondary);
+}
+
+.alert-modal--neutral .alert-modal__icon {
+  color: var(--color-neutral);
+}
+
+/* ✅ ESTADOS ESTÁNDAR */
+.alert-modal--disabled {
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+}
+
+.alert-modal--loading .alert-modal__content {
+  position: relative;
+}
+
+.alert-modal--loading .alert-modal__actions {
+  opacity: 0.6;
+}
+
+/* ✅ RESPONSIVE - Mobile-first */
+@media (max-width: 640px) {
   .alert-modal__actions {
     flex-direction: column;
+    gap: var(--space-xs);
   }
   
   .alert-modal__button {
     min-width: auto;
     width: 100%;
   }
+  
+  .alert-modal__content {
+    padding: var(--space-sm);
+  }
+}
+
+/* ✅ TAMAÑOS ESTÁNDAR - Ajustes por tamaño de modal */
+.alert-modal--xs .alert-modal__icon {
+  font-size: var(--icon-size-md);
+}
+
+.alert-modal--sm .alert-modal__icon {
+  font-size: var(--icon-size-lg);
+}
+
+.alert-modal--md .alert-modal__icon {
+  font-size: var(--icon-size-xl);
+}
+
+.alert-modal--lg .alert-modal__icon {
+  font-size: var(--icon-size-2xl);
+}
+
+.alert-modal--xl .alert-modal__icon {
+  font-size: var(--icon-size-3xl);
 }

@@ -1,52 +1,102 @@
 // components/atoms/Checkbox/Checkbox.jsx
 import PropTypes from 'prop-types';
+import { useStandardProps } from '../../../hooks/useStandardProps';
+import { STANDARD_PROP_TYPES } from '../../../tokens';
 import './Checkbox.css';
 
 /**
- * Componente Checkbox del sistema de diseño
+ * Checkbox - ÁTOMO MIGRADO AL SISTEMA DE DISEÑO ESTÁNDAR
+ * 
+ * ✅ SISTEMA DE DISEÑO: Props estándar + design tokens automáticos
+ * ✅ VARIANTES: 6 variantes semánticas estándar + estados loading/disabled
+ * ✅ ACCESIBILIDAD: ARIA completo + navegación por teclado
+ * ✅ BACKWARD COMPATIBILITY: API existente mantenida + deprecation warnings
  * 
  * @param {Object} props - Propiedades del componente
  * @param {boolean} [props.checked=false] - Estado del checkbox
+ * @param {boolean} [props.indeterminate=false] - Estado indeterminado
  * @param {function} [props.onChange] - Función ejecutada al cambiar
  * @param {boolean} [props.disabled=false] - Si está deshabilitado
  * @param {string} [props.label] - Texto del label
  * @param {string} [props.helperText] - Texto de ayuda
  * @param {string} [props.error] - Mensaje de error
- * @param {'xs'|'sm'|'md'|'lg'} [props.size='md'] - Tamaño del checkbox
+ * @param {'xs'|'sm'|'md'|'lg'|'xl'} [props.size='md'] - Tamaño del checkbox
+ * @param {'primary'|'secondary'|'success'|'warning'|'danger'|'neutral'} [props.variant='primary'] - Variante semántica
+ * @param {'sm'|'md'|'lg'|'xl'|'full'} [props.rounded='sm'] - Radio de bordes
+ * @param {boolean} [props.loading=false] - Estado de carga
+ * @param {string|React.ReactNode} [props.leftIcon] - Icono izquierdo personalizado
+ * @param {string|React.ReactNode} [props.rightIcon] - Icono derecho personalizado
  * @param {string} [props.name] - Nombre del input
  * @param {string} [props.value] - Valor del input
  * @param {string} [props.id] - ID del input
  * @param {boolean} [props.required=false] - Si es requerido
  * @param {string} [props.className=''] - Clases adicionales
+ * @param {string} [props.ariaLabel] - Label para accesibilidad
+ * @param {string} [props.testId] - ID para testing
  */
-function Checkbox({
-  checked = false,
-  onChange,
-  disabled = false,
-  label,
-  helperText,
-  error,
-  size = 'md',
-  name,
-  value,
-  id,
-  required = false,
-  className = '',
-  ...props
-}) {
-  const inputId = id || `checkbox-${Math.random().toString(36).substr(2, 9)}`;
+function Checkbox(props) {
+  // ✅ HOOK ESTÁNDAR: Sistema completo de props con tokens automáticos
+  const standardProps = useStandardProps(props, {
+    componentType: 'checkbox',
+    defaultSize: 'md',
+    defaultVariant: 'primary',
+    defaultRounded: 'sm'
+  });
   
+  const {
+    // Props estándar del sistema
+    size,
+    variant,
+    rounded,
+    disabled,
+    loading,
+    leftIcon,
+    rightIcon,
+    className,
+    renderIcon,
+    tokens,
+    // Props específicas de Checkbox
+    checked = false,
+    indeterminate = false,
+    onChange,
+    label,
+    helperText,
+    error,
+    name,
+    value,
+    id,
+    required = false,
+    ariaLabel,
+    testId,
+    ...restProps
+  } = { ...standardProps, ...props };
+  const inputId = id || `checkbox-${Math.random().toString(36).substring(2, 11)}`;
+  
+  // ✅ ESTADOS COMPUTADOS para mejor legibilidad
+  const isDisabled = disabled || loading;
+  const hasError = Boolean(error);
+  const showHelper = Boolean(helperText && !error);
+  const showLeftIcon = Boolean(leftIcon);
+  const showRightIcon = Boolean(rightIcon);
+  
+  // ✅ CLASES CSS: Sistema estándar + backward compatibility
   const checkboxClasses = [
     'checkbox',
     `checkbox--${size}`,
-    error && 'checkbox--error',
-    disabled && 'checkbox--disabled',
+    `checkbox--${variant}`,
+    `checkbox--rounded-${rounded}`,
+    hasError && 'checkbox--error',
+    isDisabled && 'checkbox--disabled',
+    loading && 'checkbox--loading',
+    indeterminate && 'checkbox--indeterminate',
     className
   ].filter(Boolean).join(' ');
 
   const containerClasses = [
     'checkbox-container',
-    disabled && 'checkbox-container--disabled'
+    `checkbox-container--${variant}`,
+    isDisabled && 'checkbox-container--disabled',
+    loading && 'checkbox-container--loading'
   ].filter(Boolean).join(' ');
 
   return (
@@ -59,49 +109,87 @@ function Checkbox({
           value={value}
           checked={checked}
           onChange={onChange}
-          disabled={disabled}
+          disabled={isDisabled}
           required={required}
           className={checkboxClasses}
-          aria-invalid={error ? 'true' : 'false'}
+          ref={(el) => {
+            if (el) {
+              el.indeterminate = indeterminate;
+            }
+          }}
+          aria-invalid={hasError ? 'true' : 'false'}
+          aria-label={ariaLabel}
           aria-describedby={
             [
-              helperText && `${inputId}-helper`,
-              error && `${inputId}-error`
+              showHelper && `${inputId}-helper`,
+              hasError && `${inputId}-error`
             ].filter(Boolean).join(' ') || undefined
           }
-          {...props}
+          data-testid={testId}
+          {...restProps}
         />
         
-        {/* Custom checkbox visual */}
+        {/* ✅ CHECKBOX VISUAL: Soporte indeterminate + estados loading */}
         <div className="checkbox-custom">
-          <svg 
-            className="checkbox-check" 
-            viewBox="0 0 16 16" 
-            fill="none"
-            aria-hidden="true"
-          >
-            <path 
-              d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"
-              fill="currentColor"
-            />
-          </svg>
+          {loading ? (
+            <div className="checkbox-spinner" aria-hidden="true">
+              <div className="checkbox-spinner-circle"></div>
+            </div>
+          ) : (
+            <svg 
+              className="checkbox-check" 
+              viewBox="0 0 16 16" 
+              fill="none"
+              aria-hidden="true"
+            >
+              {indeterminate ? (
+                <path 
+                  d="M4 8h8"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              ) : (
+                <path 
+                  d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"
+                  fill="currentColor"
+                />
+              )}
+            </svg>
+          )}
         </div>
         
+        {/* ✅ LABEL: Soporte iconos personalizados */}
         {label && (
           <label htmlFor={inputId} className="checkbox-label">
-            {label}
-            {required && <span className="checkbox-required">*</span>}
+            {showLeftIcon && (
+              <span className="checkbox-label-icon checkbox-label-icon--left">
+                {renderIcon(leftIcon)}
+              </span>
+            )}
+            <span className="checkbox-label-text">
+              {label}
+              {required && <span className="checkbox-required">*</span>}
+            </span>
+            {showRightIcon && (
+              <span className="checkbox-label-icon checkbox-label-icon--right">
+                {renderIcon(rightIcon)}
+              </span>
+            )}
           </label>
         )}
       </div>
       
-      {helperText && !error && (
+      {/* ✅ HELPER TEXT: Estados loading integrados */}
+      {showHelper && (
         <div id={`${inputId}-helper`} className="checkbox-helper">
+          {loading && <span className="checkbox-loading-text">Procesando... </span>}
           {helperText}
         </div>
       )}
       
-      {error && (
+      {/* ✅ ERROR MESSAGE: Mejor UX con animación */}
+      {hasError && (
         <div id={`${inputId}-error`} className="checkbox-error">
           {error}
         </div>
@@ -110,20 +198,22 @@ function Checkbox({
   );
 }
 
-// Validación de PropTypes
+// ✅ PROP TYPES: Sistema estándar + props específicas
 Checkbox.propTypes = {
+  // Props estándar del sistema de diseño
+  ...STANDARD_PROP_TYPES,
+  
+  // Props específicas del Checkbox
   checked: PropTypes.bool,
+  indeterminate: PropTypes.bool,
   onChange: PropTypes.func,
-  disabled: PropTypes.bool,
   label: PropTypes.string,
   helperText: PropTypes.string,
   error: PropTypes.string,
-  size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg']),
   name: PropTypes.string,
   value: PropTypes.string,
   id: PropTypes.string,
-  required: PropTypes.bool,
-  className: PropTypes.string
+  required: PropTypes.bool
 };
 
 export { Checkbox };

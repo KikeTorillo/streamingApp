@@ -147,10 +147,10 @@ import { Label } from './atoms/Label';
       name: 'Variante',
       description: 'Variante visual de la etiqueta',
       control: { type: 'select' },
-      options: ['default', 'primary', 'secondary', 'success', 'warning', 'danger'],
+      options: ['neutral', 'primary', 'secondary', 'success', 'warning', 'danger'],
       table: {
-        type: { summary: "'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger'" },
-        defaultValue: { summary: "'default'" },
+        type: { summary: "'neutral' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger'" },
+        defaultValue: { summary: "'neutral'" },
         category: 'Appearance'
       }
     },
@@ -247,7 +247,7 @@ export const Default = {
   args: {
     text: 'Nombre de usuario',
     size: 'md',
-    variant: 'default'
+    variant: 'neutral'
   }
 };
 
@@ -293,7 +293,7 @@ export const Variants = () => (
     padding: 'var(--space-lg)'
   }}>
     {[
-      { variant: 'default', desc: 'Color por defecto, uso general', icon: 'tag' },
+      { variant: 'neutral', desc: 'Color por defecto, uso general', icon: 'tag' },
       { variant: 'primary', desc: 'Campos importantes o principales', icon: 'star' },
       { variant: 'secondary', desc: 'Campos secundarios o alternativos', icon: 'circle' },
       { variant: 'success', desc: 'Validación exitosa o confirmación', icon: 'check' },
@@ -761,6 +761,95 @@ export const PracticalExamples = () => (
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+);
+
+// Estados del sistema migrado
+export const SystemStates = () => (
+  <div style={{ 
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--space-2xl)',
+    padding: 'var(--space-lg)'
+  }}>
+    <div>
+      <h3 style={{ 
+        marginBottom: 'var(--space-lg)',
+        color: 'var(--color-primary)'
+      }}>
+        Estados Estándar del Sistema Migrado
+      </h3>
+      <div style={{ 
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+        gap: 'var(--space-xl)'
+      }}>
+        {/* Estado normal */}
+        <div>
+          <h4 style={{ marginBottom: 'var(--space-md)' }}>Estado Normal</h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+            <Label text="Label neutral" variant="neutral" leftIcon="tag" />
+            <Label text="Label primary" variant="primary" leftIcon="star" />
+            <Label text="Label secondary" variant="secondary" leftIcon="circle" />
+          </div>
+        </div>
+
+        {/* Estados semánticos */}
+        <div>
+          <h4 style={{ marginBottom: 'var(--space-md)' }}>Estados Semánticos</h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+            <Label text="Validación exitosa" variant="success" leftIcon="check" />
+            <Label text="Advertencia importante" variant="warning" leftIcon="alert-triangle" />
+            <Label text="Error en campo" variant="danger" leftIcon="alert-circle" />
+          </div>
+        </div>
+
+        {/* Estados especiales */}
+        <div>
+          <h4 style={{ marginBottom: 'var(--space-md)' }}>Estados del Sistema</h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+            <Label text="Label deshabilitado" variant="primary" disabled leftIcon="lock" />
+            <Label text="Estado loading" variant="secondary" loading leftIcon="loader" />
+            <Label text="Con tooltip" variant="neutral" tooltip="Información adicional" leftIcon="info" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Migración y backward compatibility */}
+    <div>
+      <h3 style={{ 
+        marginBottom: 'var(--space-lg)',
+        color: 'var(--color-warning)'
+      }}>
+        Migración y Backward Compatibility
+      </h3>
+      <div style={{ 
+        padding: 'var(--space-lg)',
+        backgroundColor: 'var(--bg-secondary)',
+        borderRadius: 'var(--radius-lg)',
+        border: '1px solid var(--border-light)'
+      }}>
+        <p style={{ 
+          marginBottom: 'var(--space-md)',
+          color: 'var(--text-secondary)'
+        }}>
+          ✅ <strong>Componente migrado al sistema estándar</strong>
+        </p>
+        <ul style={{ 
+          marginLeft: 'var(--space-lg)',
+          color: 'var(--text-muted)',
+          lineHeight: '1.6'
+        }}>
+          <li>Hook <code>useLabelProps()</code> integrado</li>
+          <li>Props estándar: size, variant, rounded, loading, disabled</li>
+          <li>Sistema de iconos unificado (leftIcon/rightIcon)</li>
+          <li>Tokens automáticos del design system</li>
+          <li>Estados semánticos mejorados</li>
+          <li>Backward compatibility con variant=&quot;default&quot; → &quot;neutral&quot;</li>
+        </ul>
       </div>
     </div>
   </div>

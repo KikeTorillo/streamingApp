@@ -1,5 +1,7 @@
-/* ===== EMPTY STATE MOLECULE ===== */
-/* EmptyState.css - Usando el sistema de diseño completo */
+/* ===== EMPTY STATE MOLECULE - MIGRADO ===== */
+/* ✅ SISTEMA DE DISEÑO: Tokens automáticos integrados */
+/* ✅ NUEVA API: Props estándar (size, variant, rounded, loading, disabled) */
+/* ✅ BACKWARD COMPATIBILITY: Soporte variantes legacy con deprecation warnings */
 
 /* ===== CONTENEDOR BASE ===== */
 .empty-state {
@@ -64,7 +66,26 @@
 
 /* ===== TAMAÑOS ===== */
 
-/* Tamaño pequeño */
+/* ===== TAMAÑOS CON TOKENS AUTOMÁTICOS ===== */
+
+/* Tamaño XS */
+.empty-state--size-xs .empty-state__content {
+  gap: var(--space-xs);
+}
+
+.empty-state--size-xs .empty-state__icon {
+  font-size: var(--font-size-xl);
+}
+
+.empty-state--size-xs .empty-state__title {
+  font-size: var(--font-size-sm);
+}
+
+.empty-state--size-xs .empty-state__description {
+  font-size: var(--font-size-xs);
+}
+
+/* Tamaño pequeño (SM) */
 .empty-state--size-sm .empty-state__content {
   gap: var(--space-sm);
 }
@@ -81,7 +102,10 @@
   font-size: var(--font-size-sm);
 }
 
-/* Tamaño grande */
+/* Tamaño mediano (MD) - default */
+/* Ya definido en base */
+
+/* Tamaño grande (LG) */
 .empty-state--size-lg .empty-state__content {
   gap: var(--space-lg);
 }
@@ -102,18 +126,57 @@
   margin-top: var(--space-md);
 }
 
-/* ===== VARIANTES ===== */
-
-/* Variante de información */
-.empty-state--variant-info .empty-state__title {
-  color: var(--color-info);
+/* Tamaño XL */
+.empty-state--size-xl .empty-state__content {
+  gap: var(--space-xl);
 }
 
-.empty-state--variant-info .empty-state__icon {
-  color: var(--color-info);
+.empty-state--size-xl .empty-state__icon {
+  font-size: var(--font-size-8xl);
 }
 
-/* Variante de advertencia */
+.empty-state--size-xl .empty-state__title {
+  font-size: var(--font-size-2xl);
+}
+
+.empty-state--size-xl .empty-state__description {
+  font-size: var(--font-size-xl);
+}
+
+.empty-state--size-xl .empty-state__action {
+  margin-top: var(--space-lg);
+}
+
+/* ===== VARIANTES ESTÁNDAR ===== */
+
+/* Variante primary */
+.empty-state--variant-primary .empty-state__title {
+  color: var(--color-primary);
+}
+
+.empty-state--variant-primary .empty-state__icon {
+  color: var(--color-primary);
+}
+
+/* Variante secondary */
+.empty-state--variant-secondary .empty-state__title {
+  color: var(--color-secondary);
+}
+
+.empty-state--variant-secondary .empty-state__icon {
+  color: var(--color-secondary);
+}
+
+/* Variante success */
+.empty-state--variant-success .empty-state__title {
+  color: var(--color-success);
+}
+
+.empty-state--variant-success .empty-state__icon {
+  color: var(--color-success);
+}
+
+/* Variante warning */
 .empty-state--variant-warning .empty-state__title {
   color: var(--color-warning);
 }
@@ -122,13 +185,22 @@
   color: var(--color-warning);
 }
 
-/* Variante de error */
-.empty-state--variant-error .empty-state__title {
+/* Variante danger */
+.empty-state--variant-danger .empty-state__title {
   color: var(--color-danger);
 }
 
-.empty-state--variant-error .empty-state__icon {
+.empty-state--variant-danger .empty-state__icon {
   color: var(--color-danger);
+}
+
+/* Variante neutral (default) */
+.empty-state--variant-neutral .empty-state__title {
+  color: var(--text-primary);
+}
+
+.empty-state--variant-neutral .empty-state__icon {
+  opacity: 0.8;
 }
 
 /* ===== RESPONSIVE ===== */
@@ -150,9 +222,53 @@
   }
 }
 
+/* ===== ESTADOS LOADING Y DISABLED ===== */
+
+/* Estado disabled */
+.empty-state--disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.empty-state--disabled .empty-state__action {
+  opacity: 0.5;
+}
+
+/* Estado loading */
+.empty-state--loading {
+  position: relative;
+}
+
+.empty-state__loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(var(--color-background-rgb), 0.8);
+  backdrop-filter: blur(2px);
+  border-radius: inherit;
+}
+
+.empty-state__loading-overlay .animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 /* ===== ACCESIBILIDAD ===== */
 @media (prefers-reduced-motion: reduce) {
   .empty-state__icon {
+    animation: none;
+  }
+  
+  .empty-state__loading-overlay .animate-spin {
     animation: none;
   }
 }

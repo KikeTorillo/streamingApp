@@ -1,5 +1,8 @@
+// Spinner.stories.jsx - MIGRADO AL SISTEMA DE DISEÑO ESTÁNDAR
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Spinner } from './Spinner';
+import { Button } from '../Button/Button';
 
 export default {
   title: 'Components/Atoms/Spinner',
@@ -11,411 +14,501 @@ export default {
         component: `
 # Spinner Atom
 
-El átomo **Spinner** proporciona indicadores de carga elegantes y versátiles para operaciones rápidas como subida de imágenes.
+El átomo **Spinner** proporciona indicadores de carga elegantes completamente migrado al sistema estándar de diseño.
+
+## ✅ Migración Completada
+
+- **Props estándar**: size, variant, rounded, loading, disabled
+- **validateStandardProps**: Con deprecation warnings integradas  
+- **STANDARD_PROP_TYPES**: Para consistencia total
+- **Backward compatibility**: color → variant automático
+- **6 variantes semánticas**: primary, secondary, success, warning, danger, neutral
+- **5 tamaños estándar**: xs, sm, md, lg, xl
 
 ## 🎯 Características principales
 
-- **4 variantes**: circle, dots, pulse, bars
-- **3 tamaños**: sm, md, lg
-- **4 colores**: primary, secondary, success, danger
+- **4 tipos de animación**: circle, dots, pulse, bars
+- **5 tamaños estándar**: xs(24px), sm(32px), md(48px), lg(64px), xl(80px)
+- **6 variantes semánticas**: primary, secondary, success, warning, danger, neutral
+- **Bordes redondeados**: sm, md, lg, xl, full (aplicable en pulse)
+- **Estados del sistema**: loading, disabled
 - **Overlay opcional**: Para bloquear la interfaz durante cargas
-- **CSS externo**: Estilos organizados en archivo separado
-- **Funcionalidad completa**: Inline y overlay modes
+- **Control externo**: loading={false} oculta el spinner
 
-## 🔧 Uso básico
+## 🔧 Uso básico con sistema estándar
 
 \`\`\`jsx
 import { Spinner } from './atoms/Spinner';
 
-// Spinner simple inline
-<Spinner variant="circle" size="md" color="primary" />
+// Spinner con props estándar
+<Spinner size="md" variant="primary" />
 
-// Con mensaje
+// Spinner con animación específica
 <Spinner 
-  variant="dots" 
-  message="Subiendo imagen..." 
+  size="lg" 
+  variant="success" 
+  spinnerVariant="pulse"
+  rounded="xl"
 />
 
-// Overlay completo (bloquea UI)
-<Spinner 
-  variant="circle" 
-  size="lg"
-  overlay={true} 
-  message="Creando serie..." 
-/>
+// Control condicional
+<Spinner loading={isLoading} disabled={!isActive} />
 \`\`\`
 
-## 💡 Casos de uso
+## 🎨 Integración con otros componentes
 
-- **Series**: Spinner overlay durante subida de imagen de portada
-- **Formularios**: Loading states en envío de datos
-- **Listas**: Carga de contenido
-- **Operaciones rápidas**: Procesos que no requieren progreso detallado
+Usado automáticamente en:
+- **Button**: Estados de loading
+- **Input**: Estados de loading
+- **Modal**: Overlays de carga
+- **AdminLayout**: Estados de loading global
         `
       }
     }
   },
   argTypes: {
-    variant: {
-      name: 'Variante',
-      description: 'Tipo de animación del spinner',
-      control: 'select',
-      options: ['circle', 'dots', 'pulse', 'bars'],
-      table: { 
-        type: { summary: "'circle' | 'dots' | 'pulse' | 'bars'" },
-        defaultValue: { summary: 'circle' }
-      }
-    },
+    // Props del sistema estándar
     size: {
-      name: 'Tamaño',
-      description: 'Tamaño del spinner',
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
-      table: { 
-        type: { summary: "'sm' | 'md' | 'lg'" },
-        defaultValue: { summary: 'md' }
-      }
+      control: { type: 'select' },
+      options: ['xs', 'sm', 'md', 'lg', 'xl'],
+      description: 'Tamaño del spinner'
     },
-    color: {
-      name: 'Color',
-      description: 'Color del spinner',
-      control: 'select',
-      options: ['primary', 'secondary', 'success', 'danger'],
-      table: { 
-        type: { summary: "'primary' | 'secondary' | 'success' | 'danger'" },
-        defaultValue: { summary: 'primary' }
-      }
+    variant: {
+      control: { type: 'select' },
+      options: ['primary', 'secondary', 'success', 'warning', 'danger', 'neutral'],
+      description: 'Variante semántica que determina colores'
+    },
+    rounded: {
+      control: { type: 'select' },
+      options: ['sm', 'md', 'lg', 'xl', 'full'],
+      description: 'Radio de bordes (aplicable en pulse mode)'
+    },
+    loading: {
+      control: 'boolean',
+      description: 'Si está activo (permite control externo)'
+    },
+    disabled: {
+      control: 'boolean',
+      description: 'Si está deshabilitado'
+    },
+    
+    // Props específicos del spinner
+    spinnerVariant: {
+      control: { type: 'select' },
+      options: ['circle', 'dots', 'pulse', 'bars'],
+      description: 'Tipo de animación del spinner'
     },
     message: {
-      name: 'Mensaje',
-      description: 'Texto descriptivo opcional',
       control: 'text',
-      table: { 
-        type: { summary: 'string' },
-        defaultValue: { summary: 'Cargando...' }
-      }
+      description: 'Texto del mensaje'
     },
     overlay: {
-      name: 'Overlay',
-      description: 'Si debe mostrar overlay de fondo',
       control: 'boolean',
-      table: { 
-        type: { summary: 'boolean' },
-        defaultValue: { summary: 'false' }
-      }
+      description: 'Si debe mostrar overlay de fondo'
     },
-    className: {
-      name: 'Clase CSS',
-      description: 'Clases CSS adicionales',
-      control: 'text',
-      table: { 
-        type: { summary: 'string' }
+    
+    // Props legacy (deprecados)
+    color: {
+      control: { type: 'select' },
+      options: ['primary', 'secondary', 'success', 'danger', 'warning'],
+      description: '⚠️ DEPRECADO: Usar variant en su lugar'
+    }
+  }
+};
+
+// ===== STORIES =====
+
+/**
+ * Configuración básica del Spinner con props por defecto del sistema estándar
+ */
+export const Default = {
+  args: {}
+};
+
+/**
+ * Todas las variantes del sistema estándar
+ */
+export const StandardVariants = {
+  render: () => (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem', alignItems: 'center' }}>
+      <div style={{ textAlign: 'center' }}>
+        <h4>Primary</h4>
+        <Spinner variant="primary" message="Cargando..." />
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <h4>Secondary</h4>
+        <Spinner variant="secondary" message="Procesando..." />
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <h4>Success</h4>
+        <Spinner variant="success" message="Completando..." />
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <h4>Warning</h4>
+        <Spinner variant="warning" message="Validando..." />
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <h4>Danger</h4>
+        <Spinner variant="danger" message="Eliminando..." />
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <h4>Neutral</h4>
+        <Spinner variant="neutral" message="Esperando..." />
+      </div>
+    </div>
+  )
+};
+
+/**
+ * Todos los tamaños del sistema estándar
+ */
+export const StandardSizes = {
+  render: () => (
+    <div style={{ display: 'flex', gap: '3rem', alignItems: 'center' }}>
+      {['xs', 'sm', 'md', 'lg', 'xl'].map(size => (
+        <div key={size} style={{ textAlign: 'center' }}>
+          <h4>{size.toUpperCase()}</h4>
+          <Spinner size={size} variant="primary" />
+          <p style={{ fontSize: '0.8rem', marginTop: '0.5rem', color: 'var(--text-secondary)' }}>
+            {size === 'xs' && '24px'}
+            {size === 'sm' && '32px'}
+            {size === 'md' && '48px'}
+            {size === 'lg' && '64px'}
+            {size === 'xl' && '80px'}
+          </p>
+        </div>
+      ))}
+    </div>
+  )
+};
+
+/**
+ * Diferentes tipos de animación (spinnerVariant)
+ */
+export const SpinnerVariants = {
+  render: () => (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '3rem' }}>
+      <div style={{ textAlign: 'center' }}>
+        <h4>Circle</h4>
+        <Spinner spinnerVariant="circle" variant="primary" message="Cargando..." />
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <h4>Dots</h4>
+        <Spinner spinnerVariant="dots" variant="secondary" message="Procesando..." />
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <h4>Pulse</h4>
+        <Spinner spinnerVariant="pulse" variant="success" message="Pulsando..." />
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <h4>Bars</h4>
+        <Spinner spinnerVariant="bars" variant="warning" message="Cargando datos..." />
+      </div>
+    </div>
+  )
+};
+
+/**
+ * Diferentes bordes redondeados (aplicable en pulse mode)
+ */
+export const RoundedVariants = {
+  render: () => (
+    <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+      {['sm', 'md', 'lg', 'xl', 'full'].map(rounded => (
+        <div key={rounded} style={{ textAlign: 'center' }}>
+          <h4>Rounded {rounded.toUpperCase()}</h4>
+          <Spinner 
+            spinnerVariant="pulse" 
+            variant="primary" 
+            rounded={rounded} 
+            size="lg"
+            message={`Rounded ${rounded}`}
+          />
+        </div>
+      ))}
+    </div>
+  )
+};
+
+/**
+ * Estados del sistema estándar
+ */
+export const StandardStates = {
+  render: () => {
+    const [loading, setLoading] = useState(true);
+    const [disabled, setDisabled] = useState(false);
+    
+    return (
+      <div style={{ display: 'grid', gap: '2rem' }}>
+        <div>
+          <h4>Control de Estados</h4>
+          <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+            <Button 
+              variant="primary" 
+              size="sm"
+              onClick={() => setLoading(!loading)}
+            >
+              {loading ? 'Detener' : 'Iniciar'} Loading
+            </Button>
+            <Button 
+              variant="secondary" 
+              size="sm"
+              onClick={() => setDisabled(!disabled)}
+            >
+              {disabled ? 'Habilitar' : 'Deshabilitar'}
+            </Button>
+          </div>
+        </div>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '2rem' }}>
+          <div style={{ textAlign: 'center' }}>
+            <h4>Loading: {loading ? 'true' : 'false'}</h4>
+            <Spinner 
+              variant="primary" 
+              loading={loading}
+              message={loading ? 'Cargando...' : 'Detenido'}
+            />
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <h4>Disabled: {disabled ? 'true' : 'false'}</h4>
+            <Spinner 
+              variant="secondary" 
+              disabled={disabled}
+              message={disabled ? 'Deshabilitado' : 'Habilitado'}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+};
+
+/**
+ * Modo overlay para bloquear interfaz
+ */
+export const OverlayMode = {
+  render: () => {
+    const [showOverlay, setShowOverlay] = useState(false);
+    
+    return (
+      <div>
+        <div style={{ marginBottom: '2rem' }}>
+          <Button 
+            variant="primary"
+            onClick={() => setShowOverlay(!showOverlay)}
+          >
+            {showOverlay ? 'Ocultar' : 'Mostrar'} Overlay
+          </Button>
+        </div>
+        
+        <div style={{ 
+          position: 'relative',
+          height: '300px',
+          padding: '2rem',
+          backgroundColor: 'var(--bg-secondary)',
+          borderRadius: 'var(--radius-md)'
+        }}>
+          <h3>Contenido de la página</h3>
+          <p>Este contenido se bloquea cuando se muestra el overlay.</p>
+          <Button variant="outline" disabled={showOverlay}>
+            Botón de ejemplo
+          </Button>
+          
+          {showOverlay && (
+            <Spinner 
+              overlay={true}
+              variant="primary"
+              spinnerVariant="circle"
+              message="Procesando solicitud..."
+              size="lg"
+            />
+          )}
+        </div>
+      </div>
+    );
+  }
+};
+
+/**
+ * Diferentes variantes de overlay con colores
+ */
+export const OverlayVariants = {
+  render: () => (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem' }}>
+      {['primary', 'success', 'warning'].map(variant => (
+        <div key={variant} style={{
+          position: 'relative',
+          height: '200px',
+          padding: '1rem',
+          backgroundColor: 'var(--bg-secondary)',
+          borderRadius: 'var(--radius-md)'
+        }}>
+          <h4>Overlay {variant}</h4>
+          <p>Contenido de fondo</p>
+          <Spinner 
+            overlay={true}
+            variant={variant}
+            spinnerVariant="pulse"
+            message={`Procesando ${variant}...`}
+            size="md"
+          />
+        </div>
+      ))}
+    </div>
+  )
+};
+
+/**
+ * Integración con Button (loading states)
+ */
+export const ButtonIntegration = {
+  render: () => {
+    const [loading, setLoading] = useState(false);
+    
+    const handleClick = () => {
+      setLoading(true);
+      setTimeout(() => setLoading(false), 2000);
+    };
+    
+    return (
+      <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+        <Button
+          variant="primary"
+          loading={loading}
+          onClick={handleClick}
+          leftIcon="save"
+        >
+          {loading ? 'Guardando...' : 'Guardar'}
+        </Button>
+        
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ marginBottom: '1rem' }}>Spinner independiente:</p>
+          <Spinner 
+            variant="primary"
+            loading={loading}
+            size="sm"
+            message={loading ? 'Guardando...' : 'Listo'}
+          />
+        </div>
+      </div>
+    );
+  }
+};
+
+/**
+ * Backward Compatibility: color prop (deprecado)
+ */
+export const BackwardCompatibility = {
+  args: {
+    color: 'success', // ⚠️ Deprecation warning esperado
+    spinnerVariant: 'circle',
+    message: 'Usando prop deprecada'
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+⚠️ Esta story usa la prop \`color\` que está **deprecada**.  
+Verifica la consola para ver el deprecation warning.  
+Se mapea automáticamente a \`variant\`.
+
+**Migración:**
+- \`color="success"\` → \`variant="success"\`
+- \`color="primary"\` → \`variant="primary"\`
+- \`color="danger"\` → \`variant="danger"\`
+        `
       }
     }
   }
 };
 
-// ========== 1. DEFAULT ==========
-export const Default = {
+/**
+ * Sin mensaje (solo spinner)
+ */
+export const WithoutMessage = {
   args: {
-    variant: 'circle',
-    size: 'md',
-    color: 'primary',
-    message: 'Cargando...'
+    variant: 'primary',
+    spinnerVariant: 'dots',
+    message: '', // Sin mensaje
+    size: 'lg'
   }
 };
 
-// ========== 2. VARIANTS ==========
-export const Variants = () => (
-  <div style={{
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-    gap: '2rem',
-    padding: '1rem',
-    textAlign: 'center'
-  }}>
-    {['circle', 'dots', 'pulse', 'bars'].map((variant) => (
-      <div key={variant} style={{
-        border: '1px solid #e5e7eb',
-        borderRadius: '8px',
-        padding: '2rem',
-        backgroundColor: '#f9fafb'
-      }}>
-        <h4 style={{ 
-          margin: '0 0 1rem 0',
-          fontSize: '0.875rem',
-          fontWeight: '600',
-          color: '#374151',
-          textTransform: 'capitalize'
-        }}>
-          {variant}
-        </h4>
-        <Spinner variant={variant} size="lg" color="primary" />
-      </div>
-    ))}
-  </div>
-);
-Variants.parameters = {
-  docs: { 
-    description: { 
-      story: 'Las 4 variantes disponibles: circle, dots, pulse, bars.' 
-    } 
-  }
-};
-
-// ========== 3. SIZES ==========
-export const Sizes = () => (
-  <div style={{
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '2rem',
-    padding: '1rem',
-    textAlign: 'center',
-    alignItems: 'center'
-  }}>
-    {['sm', 'md', 'lg'].map((size) => (
-      <div key={size} style={{
-        border: '1px solid #e5e7eb',
-        borderRadius: '8px',
-        padding: '1.5rem',
-        backgroundColor: '#f9fafb'
-      }}>
-        <h4 style={{ 
-          margin: '0 0 1rem 0',
-          fontSize: '0.75rem',
-          fontWeight: '600',
-          color: '#6b7280',
-          textTransform: 'uppercase'
-        }}>
-          {size}
-        </h4>
-        <Spinner variant="circle" size={size} color="primary" />
-      </div>
-    ))}
-  </div>
-);
-Sizes.parameters = {
-  docs: { 
-    description: { 
-      story: 'Los 3 tamaños disponibles: sm, md, lg.' 
-    } 
-  }
-};
-
-// ========== 4. COLORS ==========
-export const Colors = () => (
-  <div style={{
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-    gap: '1.5rem',
-    padding: '1rem',
-    textAlign: 'center'
-  }}>
-    {[
-      { color: 'primary', label: 'Primary' },
-      { color: 'secondary', label: 'Secondary' },
-      { color: 'success', label: 'Success' },
-      { color: 'danger', label: 'Danger' }
-    ].map((item) => (
-      <div key={item.color} style={{
-        border: '1px solid #e5e7eb',
-        borderRadius: '8px',
-        padding: '1.5rem',
-        backgroundColor: '#f9fafb'
-      }}>
-        <h4 style={{ 
-          margin: '0 0 1rem 0',
-          fontSize: '0.75rem',
-          fontWeight: '600',
-          color: '#6b7280'
-        }}>
-          {item.label}
-        </h4>
-        <Spinner variant="circle" size="md" color={item.color} />
-      </div>
-    ))}
-  </div>
-);
-Colors.parameters = {
-  docs: { 
-    description: { 
-      story: 'Los 4 colores disponibles siguiendo el sistema de diseño.' 
-    } 
-  }
-};
-
-// ========== 5. WITH MESSAGE ==========
-export const WithMessage = () => (
-  <div style={{
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-    gap: '2rem',
-    padding: '1rem',
-    textAlign: 'center'
-  }}>
-    <div style={{
-      border: '1px solid #e5e7eb',
-      borderRadius: '8px',
-      padding: '2rem',
-      backgroundColor: '#f9fafb'
-    }}>
-      <Spinner 
-        variant="dots" 
-        size="md" 
-        color="primary" 
-        message="Subiendo imagen..." 
-      />
-    </div>
-    
-    <div style={{
-      border: '1px solid #e5e7eb',
-      borderRadius: '8px',
-      padding: '2rem',
-      backgroundColor: '#f9fafb'
-    }}>
-      <Spinner 
-        variant="circle" 
-        size="lg" 
-        color="success" 
-        message="Creando serie..." 
-      />
-    </div>
-    
-    <div style={{
-      border: '1px solid #e5e7eb',
-      borderRadius: '8px',
-      padding: '2rem',
-      backgroundColor: '#f9fafb'
-    }}>
-      <Spinner 
-        variant="pulse" 
-        size="md" 
-        color="secondary" 
-        message="Procesando datos..." 
-      />
-    </div>
-  </div>
-);
-WithMessage.parameters = {
-  docs: { 
-    description: { 
-      story: 'Spinners con mensajes descriptivos para contexto adicional.' 
-    } 
-  }
-};
-
-// ========== 6. OVERLAY DEMO ==========
-export const OverlayDemo = () => {
-  const [showOverlay, setShowOverlay] = useState(false);
-  
-  const handleShowOverlay = () => {
-    setShowOverlay(true);
-    setTimeout(() => setShowOverlay(false), 3000);
-  };
-
-  return (
-    <div style={{ 
-      padding: '2rem',
-      textAlign: 'center'
-    }}>
-      <button 
-        onClick={handleShowOverlay}
-        disabled={showOverlay}
-        style={{
-          padding: '0.75rem 1.5rem',
-          backgroundColor: showOverlay ? '#6b7280' : '#3b82f6',
-          color: 'white',
-          border: 'none',
-          borderRadius: '8px',
-          cursor: showOverlay ? 'not-allowed' : 'pointer',
-          fontSize: '0.875rem',
-          fontWeight: '500'
-        }}
-      >
-        {showOverlay ? 'Mostrando overlay...' : '🎭 Mostrar Overlay'}
-      </button>
-      
-      <p style={{
-        margin: '1rem 0',
-        color: '#6b7280',
-        fontSize: '0.875rem'
-      }}>
-        El overlay se mostrará por 3 segundos y luego desaparecerá automáticamente.
-      </p>
-
-      {showOverlay && (
-        <Spinner 
-          variant="circle" 
-          size="lg" 
-          color="primary" 
-          message="Subiendo imagen de portada..."
-          overlay={true}
-        />
-      )}
-    </div>
-  );
-};
-OverlayDemo.parameters = {
-  docs: { 
-    description: { 
-      story: 'Demostración del overlay que bloquea toda la interfaz durante el proceso.' 
-    } 
-  }
-};
-
-// ========== 7. SERIES USE CASE ==========
-export const SeriesUseCase = () => (
-  <div style={{
-    maxWidth: '600px',
-    margin: '0 auto',
-    padding: '2rem'
-  }}>
-    <h3 style={{
-      margin: '0 0 2rem 0',
-      fontSize: '1.125rem',
-      fontWeight: '600',
-      color: '#111827',
-      textAlign: 'center'
-    }}>
-      🎬 Caso de Uso: Creación de Series
-    </h3>
-    
-    <div style={{
-      border: '1px solid #e5e7eb',
-      borderRadius: '12px',
-      padding: '2rem',
-      backgroundColor: '#f9fafb',
-      textAlign: 'center'
-    }}>
-      <div style={{ marginBottom: '1.5rem' }}>
-        <Spinner 
-          variant="circle" 
-          size="lg" 
-          color="primary" 
-          message="Subiendo imagen de portada..." 
-        />
+/**
+ * Casos de uso reales
+ */
+export const UseCases = {
+  render: () => (
+    <div style={{ display: 'grid', gap: '3rem' }}>
+      <div>
+        <h4>Carga de Página</h4>
+        <div style={{ textAlign: 'center', padding: '2rem' }}>
+          <Spinner 
+            variant="primary" 
+            spinnerVariant="circle"
+            size="lg"
+            message="Cargando página..."
+          />
+        </div>
       </div>
       
-      <div style={{
-        padding: '1rem',
-        backgroundColor: 'white',
-        borderRadius: '8px',
-        fontSize: '0.875rem',
-        color: '#374151',
-        lineHeight: '1.6'
-      }}>
-        <strong>💡 Perfecto para Series:</strong><br />
-        Las series solo suben imagen de portada (proceso rápido), 
-        por lo que un spinner overlay es más apropiado que un modal de progreso completo.
-        El overlay bloquea la interfaz evitando acciones duplicadas.
+      <div>
+        <h4>Procesando Formulario</h4>
+        <div style={{ textAlign: 'center', padding: '2rem', backgroundColor: 'var(--bg-secondary)' }}>
+          <Spinner 
+            variant="success" 
+            spinnerVariant="pulse"
+            size="md"
+            message="Guardando información..."
+          />
+        </div>
+      </div>
+      
+      <div>
+        <h4>Eliminando Datos</h4>
+        <div style={{ textAlign: 'center', padding: '2rem', backgroundColor: 'var(--bg-danger-subtle)' }}>
+          <Spinner 
+            variant="danger" 
+            spinnerVariant="bars"
+            size="md"
+            message="Eliminando archivo..."
+          />
+        </div>
+      </div>
+      
+      <div>
+        <h4>Cargando Lista</h4>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem' }}>
+          <Spinner 
+            variant="neutral" 
+            spinnerVariant="dots"
+            size="sm"
+            message=""
+          />
+          <span>Cargando usuarios...</span>
+        </div>
       </div>
     </div>
-  </div>
-);
-SeriesUseCase.parameters = {
-  docs: { 
-    description: { 
-      story: 'Ejemplo específico de cómo usar el Spinner en la creación de series.' 
-    } 
-  }
+  )
+};
+
+// ===== PROPTYPES (PARA STORYBOOK) =====
+StandardStates.propTypes = {
+  render: PropTypes.func
+};
+
+OverlayMode.propTypes = {
+  render: PropTypes.func
+};
+
+ButtonIntegration.propTypes = {
+  render: PropTypes.func
+};
+
+BackwardCompatibility.propTypes = {
+  args: PropTypes.object
+};
+
+WithoutMessage.propTypes = {
+  args: PropTypes.object
 };

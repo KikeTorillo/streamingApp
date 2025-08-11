@@ -4,26 +4,26 @@
 import { useEffect, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '../Button/Button';
+import { useToastProps } from '../../../hooks/useStandardProps';
+import { STANDARD_PROP_TYPES } from '../../../tokens/standardProps';
 import './Toast.css';
 
 /**
  * Toast - Componente de notificación flotante
  * 
- * ✅ DESIGN SYSTEM: Consistente con Modal, Button, Badge
- * ✅ TIPOS: success, error, info, warning
+ * ✅ DESIGN SYSTEM: Consistente con sistema estándar
+ * ✅ VARIANTES SEMÁNTICAS: 6 variantes estándar del sistema
  * ✅ AUTO-DISMISS: Desaparece automáticamente
  * ✅ ACCIONES: Botón opcional para acciones
  * ✅ ANIMACIONES: Entrada y salida suaves
  * ✅ POSICIONAMIENTO: Fixed, no afecta layout
  * ✅ ACCESIBILIDAD: ARIA roles y labels
+ * ✅ ICONOS AUTOMÁTICOS: Iconos Feather integrados por variante
  */
 function Toast({
   // Control básico
   isOpen = false,
   onClose = null,
-  
-  // Tipo de toast
-  type = 'info', // 'success', 'error', 'info', 'warning'
   
   // Contenido
   title = '',
@@ -37,44 +37,69 @@ function Toast({
   // Acción opcional
   action = null, // { text: 'Ver', onClick: () => {} }
   
-  // Configuración
+  // Configuración específica Toast
   position = 'top-right', // 'top-right', 'top-left', 'bottom-right', 'bottom-left'
   showCloseButton = true,
   
-  // Estilos
-  className = '',
+  // Props legacy para backward compatibility
+  type = null, // DEPRECATED: usar variant
   
   ...restProps
 }) {
+  // Integrar sistema estándar
+  const standardProps = useToastProps(restProps);
+  const {
+    size,
+    variant: propVariant,
+    rounded,
+    disabled,
+    loading,
+    className,
+    renderIcon,
+    tokens
+  } = standardProps;
   
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   
-  // Configuración por tipo
-  const typeConfig = {
+  // Mapeo backward compatibility: type → variant
+  const finalVariant = type ? mapLegacyTypeToVariant(type) : propVariant;
+  
+  // Configuración por variante semántica estándar
+  const variantConfig = {
+    primary: {
+      icon: 'info',
+      iconClass: 'toast__icon--primary',
+      containerClass: 'toast--primary'
+    },
     success: {
-      icon: '✅',
+      icon: 'check-circle',
       iconClass: 'toast__icon--success',
       containerClass: 'toast--success'
     },
-    error: {
-      icon: '❌', 
-      iconClass: 'toast__icon--error',
-      containerClass: 'toast--error'
-    },
-    info: {
-      icon: 'ℹ️',
-      iconClass: 'toast__icon--info', 
-      containerClass: 'toast--info'
+    danger: {
+      icon: 'x-circle', 
+      iconClass: 'toast__icon--danger',
+      containerClass: 'toast--danger'
     },
     warning: {
-      icon: '⚠️',
+      icon: 'alert-triangle',
       iconClass: 'toast__icon--warning',
       containerClass: 'toast--warning'
+    },
+    neutral: {
+      icon: 'info',
+      iconClass: 'toast__icon--neutral',
+      containerClass: 'toast--neutral'
+    },
+    secondary: {
+      icon: 'alert-circle',
+      iconClass: 'toast__icon--secondary',
+      containerClass: 'toast--secondary'
     }
   };
   
-  const config = typeConfig[type] || typeConfig.info;
+  const config = variantConfig[finalVariant] || variantConfig.primary;
   
   // Manejar cierre con animación
   const handleClose = useCallback(() => {
@@ -125,12 +150,16 @@ function Toast({
     return null;
   }
   
-  // Clases CSS
+  // Clases CSS con sistema estándar
   const toastClasses = [
     'toast',
     config.containerClass,
     `toast--${position}`,
+    `toast--size-${size}`,
+    `toast--rounded-${rounded}`,
     isAnimating ? 'toast--visible' : 'toast--hidden',
+    disabled && 'toast--disabled',
+    loading && 'toast--loading',
     className
   ].filter(Boolean).join(' ');
   
@@ -143,11 +172,12 @@ function Toast({
       {...restProps}
     >
       <div className="toast__content">
-        {/* Icono */}
+        {/* Icono usando sistema estándar */}
         <div className={`toast__icon ${config.iconClass}`}>
-          <span role="img" aria-label={type}>
-            {config.icon}
-          </span>
+          {renderIcon(config.icon, {
+            size: getIconSize(size),
+            'aria-label': finalVariant
+          })}
         </div>
         
         {/* Mensaje */}
@@ -181,7 +211,7 @@ function Toast({
               size="xs"
               onClick={handleClose}
               className="toast__close-button"
-              leftIcon="✕"
+              leftIcon="x"
               aria-label="Cerrar notificación"
             />
           )}
@@ -189,11 +219,12 @@ function Toast({
       </div>
       
       {/* Barra de progreso para auto-close */}
-      {autoClose && (
+      {autoClose && !disabled && (
         <div 
           className="toast__progress"
           style={{
-            animationDuration: `${autoCloseDelay}ms`
+            animationDuration: `${autoCloseDelay}ms`,
+            backgroundColor: tokens.variant.color
           }}
         />
       )}
@@ -201,12 +232,55 @@ function Toast({
   );
 }
 
+// ===== HELPER FUNCTIONS =====
+
+/**
+ * Mapear props legacy type a variant estándar
+ */
+function mapLegacyTypeToVariant(type) {
+  const typeToVariantMap = {
+    'success': 'success',
+    'error': 'danger',
+    'info': 'primary', 
+    'warning': 'warning'
+  };
+  
+  const mappedVariant = typeToVariantMap[type] || 'primary';
+  
+  // Deprecation warning en desarrollo
+  if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
+    console.warn(
+      `Toast: La prop "type=${type}" está deprecada. ` +
+      `Usar "variant=${mappedVariant}" en su lugar.`
+    );
+  }
+  
+  return mappedVariant;
+}
+
+/**
+ * Obtener tamaño de icono basado en tamaño del toast
+ */
+function getIconSize(size) {
+  const sizeMap = {
+    'xs': 14,
+    'sm': 16, 
+    'md': 18,
+    'lg': 20,
+    'xl': 22
+  };
+  return sizeMap[size] || 18;
+}
+
 Toast.propTypes = {
+  // Props estándar del sistema
+  ...STANDARD_PROP_TYPES,
+  
+  // Props específicas de Toast
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
-  type: PropTypes.oneOf(['success', 'error', 'info', 'warning']),
   title: PropTypes.string,
-  message: PropTypes.string,
+  message: PropTypes.string.isRequired,
   autoClose: PropTypes.bool,
   autoCloseDelay: PropTypes.number,
   onAutoClose: PropTypes.func,
@@ -216,7 +290,10 @@ Toast.propTypes = {
   }),
   position: PropTypes.oneOf(['top-right', 'top-left', 'bottom-right', 'bottom-left']),
   showCloseButton: PropTypes.bool,
-  className: PropTypes.string
+  
+  // Props legacy (deprecated)
+  type: PropTypes.oneOf(['success', 'error', 'info', 'warning'])
 };
 
 export { Toast };
+export default Toast;

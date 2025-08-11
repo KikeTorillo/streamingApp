@@ -6,6 +6,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { AdminSidebar } from '../../organisms/AdminSidebar/AdminSidebar';
 import { Button } from '../../atoms/Button/Button';
+import { Container } from '../../atoms/Container/Container';
+import { validateStandardProps, STANDARD_PROP_TYPES } from '../../../tokens/standardProps';
 import './AdminLayout.css';
 
 // Importar servicios para obtener contadores en tiempo real
@@ -17,7 +19,13 @@ import { getCategoriesService } from '../../../services/Categories/getCategories
 /**
  * AdminLayout - Template base para el panel de administración
  * 
+ * ✅ MIGRADO AL SISTEMA ESTÁNDAR DE DISEÑO ✅
+ * 
  * Características implementadas:
+ * - ✅ Props estándar del sistema (size, variant, rounded, loading, disabled)
+ * - ✅ validateStandardProps con deprecation warnings integradas
+ * - ✅ STANDARD_PROP_TYPES para consistencia
+ * - ✅ Backward compatibility para variant='default' → 'primary'
  * - ✅ Sidebar integrado con contadores dinámicos
  * - ✅ Header administrativo con breadcrumbs
  * - ✅ Área de contenido principal responsive
@@ -25,6 +33,7 @@ import { getCategoriesService } from '../../../services/Categories/getCategories
  * - ✅ Manejo de autenticación admin
  * - ✅ Responsive design completo
  * - ✅ Integración con servicios (SIN episodios)
+ * - ✅ Container del sistema estándar integrado
  */
 function AdminLayout({
   // Contenido principal
@@ -33,7 +42,7 @@ function AdminLayout({
   // Configuración del header
   title,
   subtitle,
-  // breadcrumbs = [],
+  breadcrumbs = [],
 
   // Acciones del header
   headerActions,
@@ -42,13 +51,33 @@ function AdminLayout({
   sidebarCollapsed = false,
   onSidebarToggle,
 
-  // Props de customización
-  className = '',
-  variant = 'default', // 'default' | 'compact' | 'full'
-
+  // ===== PROPS ESTÁNDAR DEL SISTEMA =====
+  size = 'xl',           // Tamaño del container principal ('xs', 'sm', 'md', 'lg', 'xl')
+  variant = 'primary',   // Esquema de colores ('primary', 'secondary', 'success', 'warning', 'danger', 'neutral')
+  rounded = 'lg',        // Radio de bordes ('sm', 'md', 'lg', 'xl', 'full')
+  disabled = false,      // Deshabilitar interacciones
+  loading = false,       // Estado de loading global
+  className = '',        // Clases CSS adicionales
+  
   // Props adicionales
   ...restProps
 }) {
+  // ===== VALIDAR PROPS ESTÁNDAR =====
+  validateStandardProps({
+    size, variant, rounded, disabled, loading, className,
+    sidebarCollapsed, onSidebarToggle, title, subtitle, breadcrumbs, headerActions,
+    ...restProps
+  }, 'AdminLayout');
+  
+  // Mapear variant legacy con deprecation warning
+  let finalVariant = variant;
+  if (variant === 'default') {
+    console.warn('AdminLayout: variant="default" está deprecada. Usar variant="primary" en su lugar.');
+    finalVariant = 'primary';
+  }
+  
+  // Extraer variantes de layout legacy (mantener compatibilidad)
+  const layoutVariant = restProps.layoutVariant || (variant === 'compact' ? 'compact' : variant === 'full' ? 'full' : 'default');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -163,21 +192,26 @@ function AdminLayout({
   // };
 
 
-  // ===== CLASSES CSS =====
+  // ===== CLASSES CSS CON SISTEMA ESTÁNDAR =====
   const layoutClasses = [
     'admin-layout',
-    `admin-layout--${variant}`,
+    `admin-layout--${layoutVariant}`, // Layout variant (default, compact, full)
+    `admin-layout--variant-${finalVariant}`, // Color variant del sistema estándar
+    `admin-layout--size-${size}`, // Tamaño del sistema estándar
+    `admin-layout--rounded-${rounded}`, // Radio del sistema estándar
     isCollapsed ? 'admin-layout--collapsed' : '',
+    loading ? 'admin-layout--loading' : '',
+    disabled ? 'admin-layout--disabled' : '',
     className
   ].filter(Boolean).join(' ');
 
-  // ===== SI NO HAY USUARIO, MOSTRAR LOADING =====
-  if (!user) {
+  // ===== SI NO HAY USUARIO O LOADING GLOBAL, MOSTRAR LOADING =====
+  if (!user || loading) {
     return (
       <div className="admin-layout__loading">
         <div className="admin-layout__loading-content">
           <div className="admin-layout__spinner"></div>
-          <p>Verificando acceso de administrador...</p>
+          <p>{loading ? 'Cargando panel de administración...' : 'Verificando acceso de administrador...'}</p>
         </div>
       </div>
     );
@@ -208,25 +242,62 @@ function AdminLayout({
             onClick={handleSidebarToggle}
             className="admin-layout__mobile-menu-button"
             aria-label={isCollapsed ? 'Abrir menú' : 'Cerrar menú'}
+            disabled={disabled}
           >
             ☰
           </Button>
 
-          {/* Título de página */}
+          {/* Contenido del header */}
           <div className="admin-layout__header-content">
-            <div className="admin-layout__header-text">
-              {title && <h1 className="admin-layout__title">{title}</h1>}
-              {subtitle && <p className="admin-layout__subtitle">{subtitle}</p>}
-            </div>
-
-            {/* Acciones del header */}
-            <div className="admin-layout__header-actions">
-              {headerActions}
+            {/* Breadcrumbs */}
+            {breadcrumbs && breadcrumbs.length > 0 && (
+              <nav className="admin-layout__breadcrumbs" aria-label="Navegación de páginas">
+                <ol className="admin-layout__breadcrumb-list">
+                  {breadcrumbs.map((crumb, index) => (
+                    <li key={index} className="admin-layout__breadcrumb-item">
+                      {crumb.href && index !== breadcrumbs.length - 1 ? (
+                        <a href={crumb.href} className="admin-layout__breadcrumb-link">
+                          {crumb.label}
+                        </a>
+                      ) : (
+                        <span className="admin-layout__breadcrumb-current" aria-current="page">
+                          {crumb.label}
+                        </span>
+                      )}
+                    </li>
+                  ))}
+                </ol>
+              </nav>
+            )}
+            
+            {/* Título y acciones */}
+            <div className="admin-layout__header-row">
+              <div className="admin-layout__header-info">
+                {title && <h1 className="admin-layout__title">{title}</h1>}
+                {subtitle && <p className="admin-layout__subtitle">{subtitle}</p>}
+              </div>
+              
+              {/* Acciones del header */}
+              {headerActions && (
+                <div className="admin-layout__actions">
+                  {headerActions}
+                </div>
+              )}
             </div>
           </div>
         </header>
+        
+        {/* ===== CONTENIDO PRINCIPAL CON CONTAINER DEL SISTEMA ===== */}
         <main className="admin-layout__content">
-          {children}
+          <Container 
+            size={size}
+            variant="simple" // Neutral para no interferir con contenido
+            className="admin-layout__content-wrapper"
+            disabled={disabled}
+            loading={loadingCounts && !user}
+          >
+            {children}
+          </Container>
         </main>
       </div>
     </div>
@@ -234,6 +305,7 @@ function AdminLayout({
 }
 
 AdminLayout.propTypes = {
+  // Contenido y configuración
   children: PropTypes.node,
   title: PropTypes.string,
   subtitle: PropTypes.string,
@@ -242,10 +314,14 @@ AdminLayout.propTypes = {
     href: PropTypes.string
   })),
   headerActions: PropTypes.node,
+  
+  // Props del layout
   sidebarCollapsed: PropTypes.bool,
   onSidebarToggle: PropTypes.func,
-  className: PropTypes.string,
-  variant: PropTypes.oneOf(['default', 'compact', 'full'])
+  layoutVariant: PropTypes.oneOf(['default', 'compact', 'full']), // Layout específico (legacy)
+  
+  // ===== PROPS ESTÁNDAR DEL SISTEMA =====
+  ...STANDARD_PROP_TYPES
 };
 
 export { AdminLayout };

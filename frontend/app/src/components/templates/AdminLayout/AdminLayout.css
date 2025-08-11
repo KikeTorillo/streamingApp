@@ -1,5 +1,6 @@
 /* ===== ADMIN LAYOUT STYLES ===== */
 /* src/components/templates/AdminLayout/AdminLayout.css */
+/* ✅ MIGRADO AL SISTEMA ESTÁNDAR DE DISEÑO */
 
 /* ===== CONTENEDOR PRINCIPAL ===== */
 .admin-layout {
@@ -17,7 +18,97 @@
   font-family: var(--font-family-base);
 }
 
-/* ===== VARIANTES DEL LAYOUT ===== */
+/* ===== VARIANTES DE COLOR DEL SISTEMA ESTÁNDAR ===== */
+.admin-layout--variant-primary {
+  /* Esquema de colores primario por defecto */
+}
+
+.admin-layout--variant-secondary {
+  background-color: var(--bg-secondary);
+}
+
+.admin-layout--variant-neutral {
+  background-color: var(--bg-neutral);
+  color: var(--text-neutral);
+}
+
+.admin-layout--variant-success {
+  background-color: var(--bg-success-subtle);
+}
+
+.admin-layout--variant-warning {
+  background-color: var(--bg-warning-subtle);
+}
+
+.admin-layout--variant-danger {
+  background-color: var(--bg-danger-subtle);
+}
+
+/* ===== TAMAÑOS DEL SISTEMA ESTÁNDAR ===== */
+.admin-layout--size-xs .admin-layout__content {
+  padding: var(--space-sm);
+}
+
+.admin-layout--size-sm .admin-layout__content {
+  padding: var(--space-md);
+}
+
+.admin-layout--size-md .admin-layout__content {
+  padding: var(--space-lg);
+}
+
+.admin-layout--size-lg .admin-layout__content {
+  padding: var(--space-xl);
+}
+
+.admin-layout--size-xl .admin-layout__content {
+  padding: var(--space-2xl);
+}
+
+/* ===== BORDES REDONDEADOS DEL SISTEMA ESTÁNDAR ===== */
+.admin-layout--rounded-sm .admin-layout__header,
+.admin-layout--rounded-sm .admin-layout__content {
+  border-radius: var(--radius-sm);
+}
+
+.admin-layout--rounded-md .admin-layout__header,
+.admin-layout--rounded-md .admin-layout__content {
+  border-radius: var(--radius-md);
+}
+
+.admin-layout--rounded-lg .admin-layout__header,
+.admin-layout--rounded-lg .admin-layout__content {
+  border-radius: var(--radius-lg);
+}
+
+.admin-layout--rounded-xl .admin-layout__header,
+.admin-layout--rounded-xl .admin-layout__content {
+  border-radius: var(--radius-xl);
+}
+
+.admin-layout--rounded-full .admin-layout__header,
+.admin-layout--rounded-full .admin-layout__content {
+  border-radius: var(--radius-full);
+}
+
+/* ===== ESTADOS DEL SISTEMA ESTÁNDAR ===== */
+.admin-layout--loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.admin-layout--disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  filter: grayscale(50%);
+}
+
+.admin-layout--disabled .admin-layout__header,
+.admin-layout--disabled .admin-layout__content {
+  cursor: not-allowed;
+}
+
+/* ===== VARIANTES DE LAYOUT (LEGACY - MANTENER COMPATIBILIDAD) ===== */
 .admin-layout--compact .admin-layout__main {
   max-width: 120rem;
   margin: 0 auto;
@@ -25,6 +116,10 @@
 
 .admin-layout--full .admin-layout__main {
   max-width: none;
+}
+
+.admin-layout--default .admin-layout__main {
+  /* Comportamiento por defecto */
 }
 
 /* ===== CONTENIDO PRINCIPAL ===== */

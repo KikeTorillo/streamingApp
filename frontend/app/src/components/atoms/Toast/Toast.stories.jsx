@@ -14,48 +14,73 @@ export default {
     docs: {
       description: {
         component: `
-# Toast Atom
+# Toast Atom - Sistema de Diseño Estándar
 
-Componente de notificación flotante para mostrar mensajes de éxito, error, información o advertencia.
+Componente de notificación flotante completamente integrado con el sistema de diseño estándar.
 
 ## 🎯 Características
 
-- **✅ Tipos**: success, error, info, warning
+- **✅ 6 Variantes Semánticas**: primary, secondary, success, danger, warning, neutral
+- **✅ 5 Tamaños**: xs, sm, md, lg, xl con tokens automáticos
+- **✅ Props Estándar**: Consistente con Button, Badge, Card, etc.
+- **✅ Iconos Feather**: Sistema unificado con renderizado automático
 - **✅ Auto-dismiss**: Desaparece automáticamente
-- **✅ Acciones**: Botón opcional para redirecciones
-- **✅ Posicionamiento**: Fixed, no afecta el layout
-- **✅ Animaciones**: Entrada y salida suaves
-- **✅ Responsive**: Adaptable a móviles
+- **✅ Estados**: disabled, loading con overlays visuales
+- **✅ Backward Compatibility**: Soporte para props legacy con warnings
 
 ## 🚀 Uso básico
 
 \`\`\`jsx
 <Toast
   isOpen={true}
-  type="success"
+  variant="success"
+  size="md"
   message="¡Operación completada exitosamente!"
 />
 \`\`\`
 
 ## 🔧 Casos de uso
 
-- **Success**: Confirmación de acciones exitosas
-- **Error**: Notificación de errores
-- **Info**: Información general
+- **Success**: Confirmación de acciones exitosas  
+- **Danger**: Notificación de errores
+- **Primary**: Información general
 - **Warning**: Advertencias importantes
+- **Secondary**: Notificaciones secundarias
+- **Neutral**: Información neutra
         `
       }
     }
   },
   argTypes: {
-    type: {
+    // Props estándar del sistema
+    size: {
       control: 'select',
-      options: ['success', 'error', 'info', 'warning'],
-      description: 'Tipo de toast'
+      options: ['xs', 'sm', 'md', 'lg', 'xl'],
+      description: 'Tamaño del toast'
     },
+    variant: {
+      control: 'select', 
+      options: ['primary', 'secondary', 'success', 'danger', 'warning', 'neutral'],
+      description: 'Variante semántica'
+    },
+    rounded: {
+      control: 'select',
+      options: ['sm', 'md', 'lg', 'xl', 'full'], 
+      description: 'Radio de bordes'
+    },
+    disabled: {
+      control: 'boolean',
+      description: 'Toast deshabilitado'
+    },
+    loading: {
+      control: 'boolean',
+      description: 'Estado de carga'
+    },
+    
+    // Props específicas de Toast
     message: {
       control: 'text',
-      description: 'Mensaje principal'
+      description: 'Mensaje principal (requerido)'
     },
     title: {
       control: 'text',
@@ -68,20 +93,31 @@ Componente de notificación flotante para mostrar mensajes de éxito, error, inf
     autoCloseDelay: {
       control: 'number',
       description: 'Tiempo en ms para auto-cerrar'
+    },
+    
+    // Props legacy (deprecated)
+    type: {
+      control: 'select',
+      options: ['success', 'error', 'info', 'warning'],
+      description: '⚠️ DEPRECADO: Usar variant'
     }
   }
 };
 
-// Historia base interactiva
+// Historia base interactiva con sistema estándar
 export const Playground = {
   args: {
-    type: 'success',
-    message: 'Esta es una notificación de ejemplo',
+    variant: 'success',
+    size: 'md',
+    rounded: 'md',
+    message: 'Esta es una notificación de ejemplo con sistema estándar',
     title: '',
     autoClose: true,
     autoCloseDelay: 4000,
     showCloseButton: true,
-    position: 'top-right'
+    position: 'top-right',
+    disabled: false,
+    loading: false
   },
   render: (args) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -118,7 +154,7 @@ export const Success = {
         
         <Toast
           isOpen={isOpen}
-          type="success"
+          variant="success"
           message="¡Categoría eliminada exitosamente!"
           autoClose={true}
           autoCloseDelay={3000}
@@ -145,7 +181,7 @@ export const Error = {
         
         <Toast
           isOpen={isOpen}
-          type="error"
+          variant="danger"
           message="Error al eliminar la categoría. Por favor, intenta de nuevo."
           autoClose={false}
           onClose={() => setIsOpen(false)}
@@ -171,7 +207,7 @@ export const Info = {
         
         <Toast
           isOpen={isOpen}
-          type="info"
+          variant="primary"
           message="La categoría ha sido actualizada en el sistema."
           autoClose={true}
           autoCloseDelay={4000}
@@ -198,7 +234,7 @@ export const Warning = {
         
         <Toast
           isOpen={isOpen}
-          type="warning"
+          variant="warning"
           message="Esta acción no se puede deshacer. ¿Estás seguro?"
           autoClose={true}
           autoCloseDelay={5000}
@@ -222,7 +258,7 @@ export const WithTitle = {
         
         <Toast
           isOpen={isOpen}
-          type="success"
+          variant="success"
           title="Operación Exitosa"
           message="La categoría 'Acción' ha sido eliminada correctamente del sistema."
           autoClose={true}
@@ -247,7 +283,7 @@ export const WithAction = {
         
         <Toast
           isOpen={isOpen}
-          type="success"
+          variant="success"
           message="Usuario creado exitosamente"
           autoClose={false}
           action={{
@@ -298,7 +334,7 @@ export const Positions = {
         {position && (
           <Toast
             isOpen={true}
-            type="info"
+            variant="primary"
             message={`Toast en posición ${position}`}
             position={position}
             autoClose={true}
@@ -306,6 +342,215 @@ export const Positions = {
             onClose={() => setPosition(null)}
           />
         )}
+      </div>
+    );
+  }
+};
+
+// ===== NUEVAS STORIES SISTEMA ESTÁNDAR =====
+
+// Variantes semánticas estándar
+export const SystemStandardVariants = {
+  render: () => {
+    const [openVariants, setOpenVariants] = useState({});
+    
+    const variants = [
+      { key: 'primary', label: 'Primary', message: 'Información general del sistema' },
+      { key: 'secondary', label: 'Secondary', message: 'Notificación secundaria' },
+      { key: 'success', label: 'Success', message: '¡Operación completada exitosamente!' },
+      { key: 'danger', label: 'Danger', message: 'Error crítico en el sistema' },
+      { key: 'warning', label: 'Warning', message: 'Advertencia importante' },
+      { key: 'neutral', label: 'Neutral', message: 'Información neutra' }
+    ];
+    
+    return (
+      <div style={{ 
+        padding: '20px', 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(2, 1fr)', 
+        gap: '1rem',
+        height: '300px'
+      }}>
+        {variants.map(variant => (
+          <Button 
+            key={variant.key}
+            variant={variant.key}
+            size="sm"
+            onClick={() => setOpenVariants(prev => ({
+              ...prev,
+              [variant.key]: true
+            }))}
+          >
+            {variant.label}
+          </Button>
+        ))}
+        
+        {variants.map(variant => 
+          openVariants[variant.key] && (
+            <Toast
+              key={variant.key}
+              isOpen={true}
+              variant={variant.key}
+              message={variant.message}
+              position="top-right"
+              autoClose={true}
+              autoCloseDelay={3000}
+              onClose={() => setOpenVariants(prev => ({
+                ...prev,
+                [variant.key]: false
+              }))}
+            />
+          )
+        )}
+      </div>
+    );
+  }
+};
+
+// Tamaños estándar
+export const SystemStandardSizes = {
+  render: () => {
+    const [openSizes, setOpenSizes] = useState({});
+    
+    const sizes = [
+      { key: 'xs', label: 'Extra Small' },
+      { key: 'sm', label: 'Small' },
+      { key: 'md', label: 'Medium (Default)' },
+      { key: 'lg', label: 'Large' },
+      { key: 'xl', label: 'Extra Large' }
+    ];
+    
+    return (
+      <div style={{ 
+        padding: '20px', 
+        display: 'flex', 
+        gap: '1rem',
+        height: '200px',
+        flexWrap: 'wrap'
+      }}>
+        {sizes.map(size => (
+          <Button 
+            key={size.key}
+            size={size.key}
+            onClick={() => setOpenSizes(prev => ({
+              ...prev,
+              [size.key]: true
+            }))}
+          >
+            {size.label}
+          </Button>
+        ))}
+        
+        {sizes.map(size => 
+          openSizes[size.key] && (
+            <Toast
+              key={size.key}
+              isOpen={true}
+              variant="primary"
+              size={size.key}
+              message={`Toast tamaño ${size.key.toUpperCase()}`}
+              title={`Tamaño ${size.label}`}
+              position="top-right"
+              autoClose={true}
+              autoCloseDelay={4000}
+              onClose={() => setOpenSizes(prev => ({
+                ...prev,
+                [size.key]: false
+              }))}
+            />
+          )
+        )}
+      </div>
+    );
+  }
+};
+
+// Estados estándar
+export const SystemStandardStates = {
+  render: () => {
+    const [openStates, setOpenStates] = useState({});
+    
+    return (
+      <div style={{ 
+        padding: '20px', 
+        display: 'flex', 
+        gap: '1rem',
+        height: '200px'
+      }}>
+        <Button 
+          variant="neutral"
+          onClick={() => setOpenStates(prev => ({ ...prev, disabled: true }))}
+        >
+          Toast Disabled
+        </Button>
+        
+        <Button 
+          variant="secondary"
+          onClick={() => setOpenStates(prev => ({ ...prev, loading: true }))}
+        >
+          Toast Loading
+        </Button>
+        
+        {openStates.disabled && (
+          <Toast
+            isOpen={true}
+            variant="neutral"
+            message="Toast en estado disabled"
+            disabled={true}
+            position="top-right"
+            autoClose={true}
+            autoCloseDelay={5000}
+            onClose={() => setOpenStates(prev => ({ ...prev, disabled: false }))}
+          />
+        )}
+        
+        {openStates.loading && (
+          <Toast
+            isOpen={true}
+            variant="secondary"
+            message="Toast con estado loading"
+            loading={true}
+            position="top-left"
+            autoClose={true}
+            autoCloseDelay={5000}
+            onClose={() => setOpenStates(prev => ({ ...prev, loading: false }))}
+          />
+        )}
+      </div>
+    );
+  }
+};
+
+// Backward compatibility con deprecation warnings
+export const BackwardCompatibility = {
+  render: () => {
+    const [isOpen, setIsOpen] = useState(false);
+    
+    return (
+      <div style={{ padding: '20px', position: 'relative', height: '200px' }}>
+        <Button 
+          variant="warning"
+          onClick={() => setIsOpen(true)}
+        >
+          Toast Legacy (type prop)
+        </Button>
+        <p style={{ 
+          fontSize: '0.875rem', 
+          color: '#666', 
+          marginTop: '0.5rem' 
+        }}>
+          ⚠️ Abre la consola para ver deprecation warnings
+        </p>
+        
+        <Toast
+          isOpen={isOpen}
+          type="success" // Prop legacy - generará warning
+          message="Toast usando prop 'type' legacy (deprecated)"
+          title="Backward Compatibility"
+          autoClose={true}
+          autoCloseDelay={4000}
+          onClose={() => setIsOpen(false)}
+        />
       </div>
     );
   }

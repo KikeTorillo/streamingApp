@@ -2,44 +2,67 @@
 import React, { useState, useEffect, memo } from 'react';
 import PropTypes from 'prop-types';
 import { TextInput } from '../TextInput/TextInput';
-import { TextSelect } from '../TextSelect/TextSelect'; // ← NUEVA IMPORTACIÓN
+import { TextSelect } from '../TextSelect/TextSelect';
 import { Button } from '../../atoms/Button/Button';
 import { FileInputField } from '../FileInputField/FileInputField';
-import { ImageCropField } from '../ImageCropField/ImageCropField'; // ← NUEVA IMPORTACIÓN
-import { Checkbox } from '../../atoms/Checkbox/Checkbox'; // ← AGREGAR ESTA LÍNEA
+import { ImageCropField } from '../ImageCropField/ImageCropField';
+import { Checkbox } from '../../atoms/Checkbox/Checkbox';
+import { validateStandardProps, STANDARD_PROP_TYPES } from '../../../tokens/standardProps';
 import './DynamicForm.css';
 
 /**
- * Componente DynamicForm mejorado - Usa TextSelect del sistema de diseño
- * Integración completa con TextInput y TextSelect para máxima consistencia
+ * DynamicForm - Sistema de formularios dinámicos con integración completa al sistema de diseño
  * 
- * @param {Object} props - Propiedades del componente
- * @param {Array} props.fields - Array de configuración de campos
- * @param {function} props.onSubmit - Función llamada al enviar el formulario
- * @param {function} [props.onChange] - Función llamada cuando cambian los datos
- * @param {Object} [props.initialData={}] - Datos iniciales del formulario
- * @param {number} [props.columnsPerRow=1] - Número de columnas en desktop
- * @param {number} [props.tabletColumns=2] - Columnas en tablet
- * @param {number} [props.mobileColumns=1] - Columnas en móvil
- * @param {boolean} [props.responsive=true] - Si adapta columnas según pantalla
- * @param {boolean} [props.validateOnChange=false] - Validar al cambiar
- * @param {boolean} [props.validateOnBlur=true] - Validar al perder foco
- * @param {boolean} [props.loading=false] - Estado de carga
- * @param {boolean} [props.disabled=false] - Si todo el formulario está deshabilitado
- * @param {boolean} [props.compact=false] - Versión compacta
- * @param {string} [props.className=''] - Clases CSS adicionales
+ * ✅ MIGRADO AL SISTEMA ESTÁNDAR:
+ * - Props estándar (size, variant, rounded, disabled, loading)
+ * - Validación automática con validateStandardProps
+ * - Tokens automáticos de spacing y sizing
+ * - Integración con TextInput y TextSelect migrados
+ * - Herencia de props a todos los campos hijos
+ * - Backward compatibility con deprecation warnings
  * 
- * // Props heredadas para componentes del sistema
- * @param {'xs'|'sm'|'md'|'lg'|'xl'} [props.fieldSize='md'] - Tamaño para TextInput y TextSelect
- * @param {'sm'|'md'|'lg'|'xl'|'full'} [props.fieldRounded='md'] - Border radius para campos
- * @param {'primary'|'secondary'|'success'|'danger'|'outline'|'ghost'|'warning'} [props.submitVariant='primary'] - Variante del botón
- * @param {'xs'|'sm'|'md'|'lg'|'xl'} [props.submitSize='md'] - Tamaño del botón
- * @param {'sm'|'md'|'lg'|'xl'|'full'} [props.submitRounded='md'] - Border radius del botón
- * @param {string} [props.submitText='Enviar'] - Texto del botón
- * @param {string|React.ReactNode} [props.submitIcon] - Icono del botón
- * @param {boolean} [props.submitFullWidth=false] - Botón ancho completo
+ * **Props estándar del sistema:**
+ * @param {'xs'|'sm'|'md'|'lg'|'xl'} [size='md'] - Tamaño aplicado a todos los campos
+ * @param {'primary'|'secondary'|'success'|'danger'|'warning'|'neutral'} [variant='primary'] - Variante aplicada a campos
+ * @param {'sm'|'md'|'lg'|'xl'|'full'} [rounded='md'] - Border radius aplicado a campos
+ * @param {boolean} [disabled=false] - Deshabilita todo el formulario
+ * @param {boolean} [loading=false] - Estado de carga del formulario
+ * @param {string} [className=''] - Clases CSS adicionales
+ * 
+ * **Props específicas del formulario:**
+ * @param {Array} fields - Array de configuración de campos
+ * @param {function} onSubmit - Función llamada al enviar el formulario
+ * @param {function} [onChange] - Función llamada cuando cambian los datos
+ * @param {Object} [initialData={}] - Datos iniciales del formulario
+ * @param {number} [columnsPerRow=1] - Número de columnas en desktop
+ * @param {number} [tabletColumns=2] - Columnas en tablet
+ * @param {number} [mobileColumns=1] - Columnas en móvil
+ * @param {boolean} [responsive=true] - Si adapta columnas según pantalla
+ * @param {boolean} [validateOnChange=false] - Validar al cambiar
+ * @param {boolean} [validateOnBlur=true] - Validar al perder foco
+ * @param {boolean} [compact=false] - Versión compacta
+ * @param {'xs'|'sm'|'md'|'lg'|'xl'} [spacing='lg'] - Espaciado entre campos
+ * 
+ * **Props del botón de submit:**
+ * @param {'primary'|'secondary'|'success'|'danger'|'warning'|'neutral'} [submitVariant='primary'] - Variante del botón
+ * @param {'xs'|'sm'|'md'|'lg'|'xl'} [submitSize='md'] - Tamaño del botón
+ * @param {'sm'|'md'|'lg'|'xl'|'full'} [submitRounded='md'] - Border radius del botón
+ * @param {string} [submitText='Enviar'] - Texto del botón
+ * @param {string|React.ReactNode} [submitLeftIcon] - Icono izquierdo del botón
+ * @param {string|React.ReactNode} [submitRightIcon] - Icono derecho del botón
+ * @param {boolean} [submitFullWidth=false] - Botón ancho completo
+ * @param {Array} [actions] - Array de botones de acción personalizados
  */
 const DynamicForm = ({
+  // Props estándar del sistema
+  size = 'md',
+  variant = 'primary', 
+  rounded = 'md',
+  disabled = false,
+  loading = false,
+  className = '',
+  
+  // Props específicas del formulario
   fields = [],
   onSubmit,
   onChange = () => { },
@@ -50,24 +73,51 @@ const DynamicForm = ({
   responsive = true,
   validateOnChange = false,
   validateOnBlur = true,
-  loading = false,
-  disabled = false,
   compact = false,
-  className = '',
+  spacing = 'lg',
 
-  // Props para componentes del sistema
-  fieldSize = 'md',
-  fieldRounded = 'md',
+  // Props del botón de submit
   submitVariant = 'primary',
   submitSize = 'md',
   submitRounded = 'md',
   submitText = 'Enviar',
-  submitIcon,
+  submitLeftIcon,
+  submitRightIcon,
   submitFullWidth = false,
 
-  // Nuevo prop para múltiples acciones
-  actions = null
+  // Props múltiples acciones
+  actions = null,
+  
+  // DEPRECATED PROPS - Backward compatibility
+  fieldSize,
+  fieldRounded,
+  submitIcon
 }) => {
+  // Validar props estándar
+  validateStandardProps({ 
+    size, variant, rounded, disabled, loading, className 
+  }, 'DynamicForm');
+  
+  // Backward compatibility warnings
+  React.useEffect(() => {
+    // eslint-disable-next-line no-undef
+    if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
+      if (fieldSize) {
+        console.warn('DynamicForm: prop "fieldSize" está deprecada. Usar "size" en su lugar.');
+      }
+      if (fieldRounded) {
+        console.warn('DynamicForm: prop "fieldRounded" está deprecada. Usar "rounded" en su lugar.');
+      }
+      if (submitIcon) {
+        console.warn('DynamicForm: prop "submitIcon" está deprecada. Usar "submitLeftIcon" o "submitRightIcon" en su lugar.');
+      }
+    }
+  }, [fieldSize, fieldRounded, submitIcon]);
+  
+  // Resolver props finales con backward compatibility
+  const finalSize = fieldSize || size;
+  const finalRounded = fieldRounded || rounded;
+  const finalSubmitLeftIcon = submitIcon || submitLeftIcon;
   // Estado del formulario con datos iniciales
   const [formData, setFormData] = useState(() => {
     const initialFormData = { ...initialData };
@@ -350,11 +400,11 @@ const DynamicForm = ({
             rightIcon={fieldRightIcon}
             maxLength={fieldMaxLength}
             showCharCount={fieldShowCharCount}
-            size={fieldSize}
-            rounded={fieldRounded}
+            size={finalSize}
+            rounded={finalRounded}
             compact={compact}
             fullWidth
-            variant={hasError ? 'error' : 'primary'}
+            variant={hasError ? 'danger' : variant}
             autoComplete={fieldType === 'email' ? 'email' : fieldType === 'tel' ? 'tel' : undefined}
           />
         </div>
@@ -375,9 +425,9 @@ const DynamicForm = ({
             errorText={hasError ? fieldError : ''}
             required={fieldRequired}
             disabled={fieldDisabled}
-            size={fieldSize}
-            rounded={fieldRounded}
-            variant={hasError ? 'danger' : (field.variant || 'primary')}
+            size={finalSize}
+            rounded={finalRounded}
+            variant={hasError ? 'danger' : (field.variant || variant)}
             fullWidth={true}
             compact={compact}
             onChange={(e) => {
@@ -405,9 +455,9 @@ const DynamicForm = ({
             errorText={hasError ? fieldError : ''}
             required={fieldRequired}
             disabled={fieldDisabled}
-            size={fieldSize}
-            rounded={fieldRounded}
-            variant={hasError ? 'danger' : (field.variant || 'primary')}
+            size={finalSize}
+            rounded={finalRounded}
+            variant={hasError ? 'danger' : (field.variant || variant)}
             fullWidth={true}
             compact={compact}
             // Props específicas de ImageCropField
@@ -444,11 +494,11 @@ const DynamicForm = ({
             errorText={hasError ? fieldError : ''}
             helperText={!hasError ? fieldHelperText : ''}
             leftIcon={fieldLeftIcon}
-            size={fieldSize}
-            rounded={fieldRounded}
+            size={finalSize}
+            rounded={finalRounded}
             compact={compact}
             fullWidth
-            variant={hasError ? 'error' : 'primary'}
+            variant={hasError ? 'danger' : variant}
           />
         </div>
       );
@@ -568,14 +618,20 @@ const DynamicForm = ({
   const currentColumns = getResponsiveColumns();
   const formClasses = [
     'dynamic-form',
+    `dynamic-form--size-${finalSize}`,
+    `dynamic-form--variant-${variant}`,
+    `dynamic-form--rounded-${finalRounded}`,
+    `dynamic-form--spacing-${spacing}`,
     loading && 'dynamic-form--loading',
+    disabled && 'dynamic-form--disabled',
     compact && 'dynamic-form--compact',
     className
   ].filter(Boolean).join(' ');
 
   const gridClasses = [
     'dynamic-form__grid',
-    `dynamic-form__grid--${currentColumns}-cols`
+    `dynamic-form__grid--${currentColumns}-cols`,
+    `dynamic-form__grid--spacing-${spacing}`
   ].join(' ');
 
   return (
@@ -627,7 +683,8 @@ const DynamicForm = ({
                 variant={submitVariant}
                 size={submitSize}
                 rounded={submitRounded}
-                icon={submitIcon}
+                leftIcon={finalSubmitLeftIcon}
+                rightIcon={submitRightIcon}
                 loading={loading}
                 disabled={disabled}
                 fullWidth={submitFullWidth}
@@ -642,8 +699,12 @@ const DynamicForm = ({
   );
 };
 
-// Definir PropTypes
+// Definir PropTypes con integración del sistema estándar
 DynamicForm.propTypes = {
+  // Props estándar del sistema
+  ...STANDARD_PROP_TYPES,
+  
+  // Props específicas de DynamicForm
   fields: PropTypes.arrayOf(
     PropTypes.oneOfType([
       PropTypes.string,
@@ -659,6 +720,7 @@ DynamicForm.propTypes = {
         defaultValue: PropTypes.any,
         helperText: PropTypes.string,
         leftIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+        rightIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
         variant: PropTypes.string,
         size: PropTypes.string,
         rounded: PropTypes.string,
@@ -687,17 +749,16 @@ DynamicForm.propTypes = {
   responsive: PropTypes.bool,
   validateOnChange: PropTypes.bool,
   validateOnBlur: PropTypes.bool,
-  loading: PropTypes.bool,
-  disabled: PropTypes.bool,
   compact: PropTypes.bool,
-  className: PropTypes.string,
-  fieldSize: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
-  fieldRounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'full']),
-  submitVariant: PropTypes.oneOf(['primary', 'secondary', 'success', 'danger', 'outline', 'ghost', 'warning']),
+  spacing: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
+  
+  // Props del botón de submit
+  submitVariant: PropTypes.oneOf(['primary', 'secondary', 'success', 'danger', 'warning', 'neutral']),
   submitSize: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
   submitRounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'full']),
   submitText: PropTypes.string,
-  submitIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  submitLeftIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  submitRightIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   submitFullWidth: PropTypes.bool,
   actions: PropTypes.arrayOf(
     PropTypes.shape({
@@ -716,7 +777,12 @@ DynamicForm.propTypes = {
       children: PropTypes.node,
       show: PropTypes.bool
     })
-  )
+  ),
+  
+  // DEPRECATED PROPS - Backward compatibility
+  fieldSize: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
+  fieldRounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'full']),
+  submitIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node])
 };
 
 // Memoizar DynamicForm - formularios complejos con muchos campos

@@ -180,6 +180,39 @@ export const useModalProps = (props) => useStandardProps(props, {
   defaultRounded: 'xl'
 });
 
+/**
+ * Hook especializado para componentes tipo Label
+ * Configuración optimizada para labels con estados semánticos específicos
+ */
+export const useLabelProps = (props) => useStandardProps(props, {
+  componentType: 'label',
+  defaultSize: 'md',
+  defaultVariant: 'default', 
+  defaultRounded: 'sm'
+});
+
+/**
+ * Hook especializado para componentes tipo EmptyState
+ * Configuración optimizada para estados vacíos con iconos grandes
+ */
+export const useEmptyStateProps = (props) => useStandardProps(props, {
+  componentType: 'empty-state',
+  defaultSize: 'md',
+  defaultVariant: 'neutral',
+  defaultRounded: 'lg'
+});
+
+/**
+ * Hook especializado para componentes tipo Toast
+ * Configuración optimizada para notificaciones con iconos semánticos
+ */
+export const useToastProps = (props) => useStandardProps(props, {
+  componentType: 'toast',
+  defaultSize: 'md',
+  defaultVariant: 'primary',
+  defaultRounded: 'md'
+});
+
 // ===== HOOKS COMPUESTOS PARA CASOS ESPECÍFICOS =====
 
 /**

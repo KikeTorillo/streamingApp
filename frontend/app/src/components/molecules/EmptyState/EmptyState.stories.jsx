@@ -69,9 +69,10 @@ import { Button } from './atoms/Button';
     }
   },
   argTypes: {
+    // Contenido específico
     icon: {
       name: 'Ícono',
-      description: 'Emoji o texto para el ícono principal',
+      description: 'Emoji, nombre de ícono Feather o elemento React',
       control: 'text'
     },
     title: {
@@ -84,22 +85,40 @@ import { Button } from './atoms/Button';
       description: 'Texto descriptivo del estado',
       control: 'text'
     },
-    size: {
-      name: 'Tamaño',
-      description: 'Tamaño del componente',
-      control: 'select',
-      options: ['sm', 'md', 'lg']
-    },
-    variant: {
-      name: 'Variante',
-      description: 'Variante visual del estado',
-      control: 'select',
-      options: ['default', 'info', 'warning', 'error']
-    },
     action: {
       name: 'Acción',
       description: 'Elemento React para acción (botón, enlace)',
       control: false
+    },
+    
+    // Props estándar del sistema (5 tamaños)
+    size: {
+      name: 'Tamaño',
+      description: 'Tamaño del componente (sistema estándar)',
+      control: 'select',
+      options: ['xs', 'sm', 'md', 'lg', 'xl']
+    },
+    variant: {
+      name: 'Variante',
+      description: 'Variante semántica (sistema estándar)',
+      control: 'select',
+      options: ['primary', 'secondary', 'success', 'warning', 'danger', 'neutral']
+    },
+    rounded: {
+      name: 'Rounded',
+      description: 'Radio de borde del componente',
+      control: 'select',
+      options: ['sm', 'md', 'lg', 'xl', 'full']
+    },
+    disabled: {
+      name: 'Deshabilitado',
+      description: 'Deshabilita la interacción con el componente',
+      control: 'boolean'
+    },
+    loading: {
+      name: 'Cargando',
+      description: 'Muestra estado de carga con overlay',
+      control: 'boolean'
     }
   }
 };
@@ -109,7 +128,9 @@ export const Default = {
   args: {
     icon: '📭',
     title: 'No hay contenido',
-    description: 'No se encontraron elementos para mostrar.'
+    description: 'No se encontraron elementos para mostrar.',
+    variant: 'neutral',
+    size: 'md'
   }
 };
 
@@ -456,6 +477,197 @@ Interactive.parameters = {
   docs: {
     description: {
       story: 'Demostración interactiva de diferentes estados del EmptyState. Cambia entre estados para ver las variaciones.'
+    }
+  }
+};
+
+// ========== SISTEMA ESTÁNDAR - NUEVAS FUNCIONALIDADES ==========
+
+export const SystemStandardProps = () => (
+  <div style={{ padding: 'var(--space-md)' }}>
+    <h3 style={{ 
+      marginBottom: 'var(--space-lg)', 
+      color: 'var(--text-primary)',
+      borderBottom: '1px solid var(--border-default)',
+      paddingBottom: 'var(--space-sm)'
+    }}>
+      🎨 Sistema Estándar - Props Migradas
+    </h3>
+    
+    <div style={{
+      display: 'grid',
+      gap: 'var(--space-xl)',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))'
+    }}>
+      {/* Tamaños estándar (5) */}
+      <div>
+        <h4 style={{ marginBottom: 'var(--space-md)', color: 'var(--text-secondary)' }}>
+          📏 5 Tamaños: XS → XL
+        </h4>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+          {['xs', 'sm', 'md', 'lg', 'xl'].map(size => (
+            <EmptyState
+              key={size}
+              icon="📦"
+              title={`Tamaño ${size.toUpperCase()}`}
+              description="Tokens automáticos"
+              size={size}
+              variant="neutral"
+            />
+          ))}
+        </div>
+      </div>
+      
+      {/* Variantes estándar (6) */}
+      <div>
+        <h4 style={{ marginBottom: 'var(--space-md)', color: 'var(--text-secondary)' }}>
+          🎨 6 Variantes Semánticas
+        </h4>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+          {[
+            { variant: 'primary', icon: '🔵' },
+            { variant: 'secondary', icon: '🟠' },
+            { variant: 'success', icon: '✅' },
+            { variant: 'warning', icon: '⚠️' },
+            { variant: 'danger', icon: '❌' },
+            { variant: 'neutral', icon: '⚪' }
+          ].map(({ variant, icon }) => (
+            <EmptyState
+              key={variant}
+              icon={icon}
+              title={`${variant.charAt(0).toUpperCase() + variant.slice(1)}`}
+              description="Colores semánticos automáticos"
+              variant={variant}
+              size="sm"
+            />
+          ))}
+        </div>
+      </div>
+      
+      {/* Estados especiales */}
+      <div>
+        <h4 style={{ marginBottom: 'var(--space-md)', color: 'var(--text-secondary)' }}>
+          🔧 Estados Loading/Disabled
+        </h4>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+          <EmptyState
+            icon="loader-2"
+            title="Estado Loading"
+            description="Con overlay automático"
+            loading={true}
+            action={<Button variant="primary">Cancelar</Button>}
+          />
+          <EmptyState
+            icon="ban"
+            title="Estado Disabled"
+            description="Interacción deshabilitada"
+            disabled={true}
+            action={<Button variant="primary">No clickeable</Button>}
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+SystemStandardProps.parameters = {
+  docs: {
+    description: {
+      story: '🎯 **MIGRACIÓN COMPLETA** - EmptyState ahora usa el sistema de diseño estándar con 5 tamaños, 6 variantes semánticas, tokens automáticos, sistema de iconos integrado y estados loading/disabled.'
+    }
+  }
+};
+
+// ========== BACKWARD COMPATIBILITY ==========
+export const BackwardCompatibility = () => (
+  <div style={{ padding: 'var(--space-md)' }}>
+    <h3 style={{ 
+      marginBottom: 'var(--space-lg)', 
+      color: 'var(--text-primary)',
+      borderBottom: '1px solid var(--border-default)',
+      paddingBottom: 'var(--space-sm)'
+    }}>
+      🔄 Backward Compatibility - Variantes Legacy
+    </h3>
+    
+    <div style={{
+      display: 'grid',
+      gap: 'var(--space-xl)',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))'
+    }}>
+      {/* Variantes legacy con warnings */}
+      <div>
+        <h4 style={{ marginBottom: 'var(--space-md)', color: 'var(--text-secondary)' }}>
+          ⚠️ Props Legacy (con warnings)
+        </h4>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+          <EmptyState
+            icon="📄"
+            title="variant='default'"
+            description="Se mapea automáticamente a 'neutral'"
+            variant="default" // Legacy
+          />
+          <EmptyState
+            icon="💡"
+            title="variant='info'"
+            description="Se mapea automáticamente a 'primary'"
+            variant="info" // Legacy
+          />
+          <EmptyState
+            icon="❌"
+            title="variant='error'"
+            description="Se mapea automáticamente a 'danger'"
+            variant="error" // Legacy
+          />
+        </div>
+      </div>
+      
+      <div>
+        <h4 style={{ marginBottom: 'var(--space-md)', color: 'var(--text-secondary)' }}>
+          ✅ Props Nuevas Recomendadas
+        </h4>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+          <EmptyState
+            icon="⚪"
+            title="variant='neutral'"
+            description="Nueva API estándar"
+            variant="neutral"
+          />
+          <EmptyState
+            icon="🔵"
+            title="variant='primary'"
+            description="Nueva API estándar"
+            variant="primary"
+          />
+          <EmptyState
+            icon="🔴"
+            title="variant='danger'"
+            description="Nueva API estándar"
+            variant="danger"
+          />
+        </div>
+      </div>
+    </div>
+    
+    <div style={{ 
+      padding: 'var(--space-md)', 
+      backgroundColor: 'var(--color-warning-light)', 
+      borderRadius: 'var(--radius-md)',
+      marginTop: 'var(--space-lg)',
+      fontSize: 'var(--font-size-sm)',
+      color: 'var(--text-primary)'
+    }}>
+      <strong>💡 Desarrollo:</strong> Abre DevTools Console para ver deprecation warnings de variantes legacy. 
+      <br />
+      <strong>🚀 Migración:</strong> Usa las 6 variantes estándar: primary, secondary, success, warning, danger, neutral.
+    </div>
+  </div>
+);
+
+BackwardCompatibility.parameters = {
+  docs: {
+    description: {
+      story: '🛡️ **CERO BREAKING CHANGES** - Las props legacy funcionan perfectamente con mapping automático y deprecation warnings informativos en desarrollo.'
     }
   }
 };

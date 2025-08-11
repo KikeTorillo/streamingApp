@@ -1,5 +1,5 @@
-/* ===== DYNAMIC FORM COMPONENT - CON TEXTSELECT INTEGRADO ===== */
-/* DynamicForm.css - Actualizado para usar TextSelect */
+/* ===== DYNAMIC FORM COMPONENT - SISTEMA DE DISEÑO ESTÁNDAR ===== */
+/* DynamicForm.css - ✅ MIGRADO al sistema estándar con tokens automáticos */
 
 /* Contenedor principal del formulario dinámico */
 .dynamic-form {
@@ -7,15 +7,52 @@
   color: var(--text-primary);
   width: 100%;
   box-sizing: border-box;
+  position: relative;
 }
+
+/* ===== VARIANTES DEL SISTEMA ESTÁNDAR ===== */
+.dynamic-form--variant-primary { /* color: var(--color-primary); /* Tema primario */ }
+.dynamic-form--variant-secondary { /* color: var(--color-secondary); */ }
+.dynamic-form--variant-success { /* color: var(--color-success); */ }
+.dynamic-form--variant-danger { /* color: var(--color-danger); */ }
+.dynamic-form--variant-warning { /* color: var(--color-warning); */ }
+.dynamic-form--variant-neutral { /* color: var(--color-neutral); */ }
+
+/* ===== TAMAÑOS DEL SISTEMA ESTÁNDAR ===== */
+.dynamic-form--size-xs { /* font-size: var(--font-size-xs); */ }
+.dynamic-form--size-sm { font-size: var(--font-size-sm); }
+.dynamic-form--size-md { font-size: var(--font-size-base); }
+.dynamic-form--size-lg { font-size: var(--font-size-lg); }
+.dynamic-form--size-xl { font-size: var(--font-size-xl); }
+
+/* ===== ROUNDED DEL SISTEMA ESTÁNDAR ===== */
+.dynamic-form--rounded-sm { --form-radius: var(--radius-sm); }
+.dynamic-form--rounded-md { --form-radius: var(--radius-md); }
+.dynamic-form--rounded-lg { --form-radius: var(--radius-lg); }
+.dynamic-form--rounded-xl { --form-radius: var(--radius-xl); }
+.dynamic-form--rounded-full { --form-radius: var(--radius-full); }
+
+/* ===== SPACING DEL SISTEMA ESTÁNDAR ===== */
+.dynamic-form--spacing-xs { --form-spacing: var(--space-xs); }
+.dynamic-form--spacing-sm { --form-spacing: var(--space-sm); }
+.dynamic-form--spacing-md { --form-spacing: var(--space-md); }
+.dynamic-form--spacing-lg { --form-spacing: var(--space-lg); }
+.dynamic-form--spacing-xl { --form-spacing: var(--space-xl); }
 
 /* Grid de campos */
 .dynamic-form__grid {
   display: grid;
-  gap: var(--space-lg); /* Incrementado para mejor separación */
+  gap: var(--form-spacing, var(--space-lg)); /* Token automático con fallback */
   margin-bottom: var(--space-xl);
   width: 100%;
 }
+
+/* ===== SPACING ESPECÍFICO POR GRID ===== */
+.dynamic-form__grid--spacing-xs { gap: var(--space-xs); }
+.dynamic-form__grid--spacing-sm { gap: var(--space-sm); }
+.dynamic-form__grid--spacing-md { gap: var(--space-md); }
+.dynamic-form__grid--spacing-lg { gap: var(--space-lg); }
+.dynamic-form__grid--spacing-xl { gap: var(--space-xl); }
 
 /* Contenedor individual de cada campo */
 .dynamic-form__field {
@@ -290,10 +327,29 @@
   gap: var(--space-md);
 }
 
-/* ===== ESTADOS DEL FORMULARIO ===== */
+/* ===== ESTADOS DEL SISTEMA ESTÁNDAR ===== */
 .dynamic-form--loading {
   opacity: 0.7;
   pointer-events: none;
+  position: relative;
+}
+
+.dynamic-form--loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--bg-overlay, rgba(255, 255, 255, 0.8));
+  z-index: 10;
+  border-radius: var(--form-radius, var(--radius-md));
+}
+
+.dynamic-form--disabled {
+  opacity: 0.6;
+  pointer-events: none;
+  filter: grayscale(0.3);
 }
 
 .dynamic-form--compact .dynamic-form__grid {
