@@ -160,16 +160,6 @@ function UsersListPage() {
       headerActions={
         <div className="users-list__header-actions">
           <Button
-            variant="outline"
-            size="sm"
-            leftIcon="🔄"
-            onClick={handleRefresh}
-            loading={loading}
-            disabled={loading}
-          >
-            Actualizar
-          </Button>
-          <Button
             variant="primary"
             size="sm"
             leftIcon="➕"

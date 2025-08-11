@@ -225,16 +225,6 @@ function MoviesListPage() {
       headerActions={
         <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
           <Button
-            variant="outline"
-            size="sm"
-            leftIcon="refresh"
-            onClick={handleRefresh}
-            loading={loading}
-            disabled={loading}
-          >
-            Actualizar
-          </Button>
-          <Button
             variant="primary"
             size="sm"
             onClick={handleCreateMovie}

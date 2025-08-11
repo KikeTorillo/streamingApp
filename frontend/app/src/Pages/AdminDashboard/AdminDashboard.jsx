@@ -178,7 +178,9 @@ function AdminDashboard() {
 
   // ===== RENDER =====
   return (
-    <AdminLayout>
+    <AdminLayout
+    title="Dashboard"
+    >
       <div className="admin-dashboard">
         
         {/* ===== ESTADÍSTICAS PRINCIPALES ===== */}

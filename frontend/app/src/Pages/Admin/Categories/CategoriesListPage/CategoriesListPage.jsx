@@ -195,22 +195,8 @@ function CategoriesListContent() {
   return (
     <AdminLayout
       title="Gestión de Categorías"
-      breadcrumbs={[
-        { label: 'Admin', href: '/admin' },
-        { label: 'Categorías' }
-      ]}
       headerActions={
         <div className="categories-list__header-actions">
-          <Button
-            variant="warning"
-            size="sm"
-            leftIcon="🔄"
-            onClick={handleRefresh}
-            loading={loading}
-            disabled={loading}
-          >
-            Actualizar
-          </Button>
           <Button
             variant="primary"
             size="sm"
