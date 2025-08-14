@@ -20,7 +20,7 @@ const useAlert = () => {
     onConfirm: null,
     confirmText: 'Confirmar',
     cancelText: 'Cancelar',
-    size: 'sm',
+    size: 'md',
     autoClose: false,
     autoCloseDelay: 3000,
     onAutoClose: null

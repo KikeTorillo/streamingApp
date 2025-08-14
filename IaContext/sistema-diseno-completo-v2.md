@@ -31,6 +31,60 @@ Atoms (23 componentes) → Molecules (19 componentes) → Organisms (6 component
 - **Props Estándar:** API unificada en todos los componentes  
 - **Hooks Especializados:** 24 hooks para casos específicos
 
+#### **4. Sistema de Iconos - Arquitectura Dual**
+
+**🔧 REGLA FUNDAMENTAL: Separación por Responsabilidad**
+
+##### **COMPONENTES BASE (átomos/moléculas) = renderIcon**
+- **Scope:** Componentes del design system (`@kike-dev/contextual-ui`)
+- **Aplicación:** Button, Input, Badge, Card, Modal - reutilizables cross-proyecto
+- **Beneficio:** Consistencia automática según contexto y tamaño
+
+```javascript
+// ✅ PATRÓN: Componentes base de la librería
+const Button = ({ leftIcon, rightIcon, size }) => {
+  const renderIcon = createStandardIconRenderer('button', size);
+  return (
+    <button>
+      {leftIcon && renderIcon(leftIcon)}    // Auto-contextual
+      {rightIcon && renderIcon(rightIcon)}  // Auto-contextual
+    </button>
+  );
+};
+```
+
+##### **COMPONENTES APLICACIÓN (organismos/páginas) = Icon directo**
+- **Scope:** Componentes específicos del dominio streaming
+- **Aplicación:** AlertModal, EditModal, UserProfile, Dashboard
+- **Beneficio:** Control total, fácil debugging, casos específicos
+
+```javascript
+// ✅ PATRÓN: Componentes de aplicación específica
+<div className="alert-modal__icon">
+  <Icon name="warning" size="lg" variant="danger" />  // Control específico
+</div>
+
+// ✅ PATRÓN: Composición con componentes base
+<Button leftIcon="save" size="lg">Guardar</Button>
+```
+
+##### **📋 Clasificación Arquitectural:**
+
+**Componentes BASE (renderIcon):**
+- `Button` ✅ `Input` ✅ `Badge` ✅ `Card` ✅ `Modal` ✅
+- Cualquier átomo/molécula reutilizable entre proyectos
+
+**Componentes APLICACIÓN (Icon directo):**
+- `AlertModal` ✅ `EditModal` ✅ `UserProfile` ✅ Páginas CRUD ✅
+- Cualquier organismo/página específica del dominio
+
+##### **🎯 Verificación Rápida:**
+```
+¿Este componente será reutilizado en múltiples proyectos?
+├── SÍ → Componente BASE → usar renderIcon
+└── NO → Componente APLICACIÓN → usar Icon directo
+```
+
 ---
 
 ## 🎯 **COMPONENTS INVENTORY - 100% COMPATIBLE**

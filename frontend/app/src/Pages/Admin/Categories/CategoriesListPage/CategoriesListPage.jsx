@@ -195,6 +195,10 @@ function CategoriesListContent() {
   return (
     <AdminLayout
       title="Gestión de Categorías"
+      subtitle="Administración completa de categorías para organizar contenido"
+      breadcrumbs={[
+        { label: 'Categorías' }
+      ]}
       headerActions={
         <div className="categories-list__header-actions">
           <Button
@@ -248,6 +252,8 @@ function CategoriesListContent() {
         minLength={2}
         maxLength={50}
         size="md"
+        variant="primary"
+        rounded="xl"
       />
     </AdminLayout>
   );

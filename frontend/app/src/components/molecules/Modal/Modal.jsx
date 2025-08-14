@@ -5,7 +5,6 @@ import { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '../../atoms/Button/Button';
 import { validateStandardProps, STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens';
-import { createStandardIconRenderer } from '../../../utils/iconHelpers';
 import './Modal.css';
 
 /**
@@ -78,13 +77,10 @@ function Modal(props) {
   
   const dialogRef = useRef(null);
   
-  // Función para renderizar iconos usando el sistema centralizado
-  const renderIcon = createStandardIconRenderer('modal', size);
-  
-  // Configuración del botón de cierre con valores por defecto
+  // Configuración del botón de cierre con valores por defecto del sistema
   const closeButtonConfig = {
     size: size === 'xs' ? 'xs' : size === 'sm' ? 'sm' : 'sm', // Botón más pequeño que el modal
-    variant: 'ghost',
+    variant: 'secondary', // Usar variante del sistema en lugar de ghost
     rounded: 'full',
     iconOnly: true,
     ...closeButton
@@ -171,6 +167,7 @@ function Modal(props) {
   return (
     <dialog
       ref={dialogRef}
+      {...domProps}
       className={modalClasses}
       onClose={handleDialogClose}
       onClick={handleBackdropClick}
@@ -178,7 +175,6 @@ function Modal(props) {
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledBy}
       aria-describedby={ariaDescribedBy}
-      {...domProps}
     >
       {/* Contenido del modal */}
       <div className="modal__content">
@@ -195,9 +191,8 @@ function Modal(props) {
                 aria-label="Cerrar modal"
                 className="modal__close"
                 disabled={disabled || loading}
-              >
-                {renderIcon('x')}
-              </Button>
+                leftIcon="x"
+              />
             )}
           </div>
         )}

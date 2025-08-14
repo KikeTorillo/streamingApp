@@ -204,8 +204,7 @@ function SeriesCreatePage() {
       title="Crear Nueva Serie"
       subtitle="Agregar una nueva serie al catálogo multimedia"
       breadcrumbs={[
-        { label: 'Admin', href: '/admin' },
-        { label: 'Series', href: '/admin/series' },
+        { label: 'Series', to: '/admin/series' },
         { label: 'Crear Serie' }
       ]}
     >

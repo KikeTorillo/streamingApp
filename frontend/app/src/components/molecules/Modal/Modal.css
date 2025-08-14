@@ -1,183 +1,165 @@
-/* ===== MODAL MOLECULE BASE - CON <dialog> ===== */
+/* ===== MODAL MOLECULE - SISTEMA DE DISE�O @kike-dev/contextual-ui ===== */
 /* src/components/molecules/Modal/Modal.css */
 
-/* ===== DIALOG BASE ===== */
+/* ===== RESET COMPLETO PARA <dialog> NATIVO ===== */
+dialog.modal,
 .modal {
-  /* Reset dialog styles */
-  padding: 0;
-  border: none;
-  background: transparent;
-  max-width: none;
-  max-height: none;
-  overflow: visible;
+  /* Reset total de user agent styles del <dialog> */
+  all: unset !important;
   
-  /* Positioning */
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  /* Re-establecer display y position */
+  display: block !important;
+  position: fixed !important;
+  
+  /* Centrado perfecto usando translate */
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) scale(0.9) !important;
+  
+  /* Reset espec�ficos cr�ticos */
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+  
+  /* Sizing autom�tico */
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: 95vw !important;
+  max-height: 95vh !important;
   
   /* Layout */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  overflow: visible !important;
   
-  /* Animation */
+  /* Z-index alto para estar sobre todo */
+  z-index: var(--z-modal) !important;
+  
+  /* Animation inicial */
   opacity: 0;
-  transform: scale(0.9);
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: opacity var(--transition-fast) ease, transform var(--transition-fast) ease;
 }
 
-/* Estado abierto */
+/* Estado abierto del modal */
+dialog.modal[open],
 .modal[open] {
-  opacity: 1;
-  transform: scale(1);
+  opacity: 1 !important;
+  transform: translate(-50%, -50%) scale(1) !important;
 }
 
-/* ===== BACKDROP ===== */
+/* ===== BACKDROP DEL MODAL ===== */
+dialog.modal::backdrop,
 .modal::backdrop {
-  background: var(--backdrop-default);
-  backdrop-filter: blur(4px);
-  opacity: 0;
-  transition: opacity 0.2s ease;
+  background: var(--backdrop-default) !important;
+  backdrop-filter: blur(4px) !important;
+  opacity: 0 !important;
+  transition: opacity var(--transition-fast) ease !important;
 }
 
+dialog.modal[open]::backdrop,
 .modal[open]::backdrop {
-  opacity: 1;
+  opacity: 1 !important;
 }
 
-/* Backdrop para modales no cerrables (no bloquea interacción) */
+/* Backdrop para modales no cerrables */
 .modal--non-closable::backdrop {
   pointer-events: none;
 }
 
 /* ===== CONTENIDO DEL MODAL ===== */
 .modal__content {
-  /* Layout */
+  /* Background del sistema de diseño */
   background: var(--bg-primary);
-  border-radius: var(--radius-lg);
+  
+  /* Border radius del sistema */
+  border-radius: var(--radius-xl);
+  
+  /* Border del sistema */
   border: 0.1rem solid var(--border-default);
-  box-shadow: var(--shadow-lg);
   
-  /* Positioning */
+  /* Shadow del sistema */
+  box-shadow: var(--shadow-xl);
+  
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  
+  /* ===== SIZING AUTO-ADAPTATIVO ===== */
+  /* Tamaño inteligente basado en contenido */
+  width: auto;
+  min-width: 20rem;                    /* Mínimo para usabilidad */
+  max-width: min(90vw, var(--modal-max-width)); /* Nunca más del 90% viewport */
+  max-height: 85vh;
+  
+  /* Auto-sizing: se adapta al contenido */
+  width: fit-content;
+  width: -moz-fit-content;
+  
+  /* Overflow para contenido largo */
+  overflow: hidden;
+  
+  /* Position */
   position: relative;
-  max-height: 90vh;
-  overflow-y: auto;
-  
-  /* Responsive width por tamaño */
-  width: 90vw;
-  max-width: var(--modal-max-width);
+  margin: 0;
 }
 
-/* ===== TAMAÑOS ===== */
+/* ===== TAMAÑOS ESTÁNDAR DEL SISTEMA (AUTO-ADAPTATIVOS) ===== */
+/* Los tamaños ahora actúan como máximos sugeridos, no fijos */
 .modal--xs {
-  --modal-max-width: 20rem; /* 320px */
+  --modal-max-width: 24rem; /* 384px - Un poco más generoso */
 }
 
 .modal--sm {
-  --modal-max-width: 24rem; /* 384px */
+  --modal-max-width: 32rem; /* 512px - Más espacio para AlertModals */
 }
 
 .modal--md {
-  --modal-max-width: 32rem; /* 512px */
+  --modal-max-width: 42rem; /* 672px - Mejor para contenido medio */
 }
 
 .modal--lg {
-  --modal-max-width: 48rem; /* 768px */
+  --modal-max-width: 56rem; /* 896px - Más apropiado para formularios */
 }
 
 .modal--xl {
-  --modal-max-width: 64rem; /* 1024px */
+  --modal-max-width: 72rem; /* 1152px - Para contenido extenso */
 }
 
-/* ===== VARIANTES SEMÁNTICAS - SISTEMA ESTÁNDAR 6 VARIANTES ===== */
-
-/* Primary (default) */
+/* ===== VARIANTES SEM�NTICAS DEL SISTEMA ===== */
 .modal--primary .modal__content {
-  background: var(--bg-primary);
+  background: var(--surface-primary);
   border-color: var(--border-default);
 }
 
-.modal--primary .modal__header {
-  border-bottom-color: var(--border-light);
-}
-
-.modal--primary .modal__title {
-  color: var(--text-primary);
-}
-
-/* Secondary */
 .modal--secondary .modal__content {
   background: var(--color-secondary-light);
   border-color: var(--color-secondary);
 }
 
-.modal--secondary .modal__header {
-  border-bottom-color: var(--color-secondary);
-}
-
-.modal--secondary .modal__title {
-  color: var(--color-secondary-dark);
-}
-
-/* Success */
 .modal--success .modal__content {
   background: var(--color-success-light);
   border-color: var(--color-success);
 }
 
-.modal--success .modal__header {
-  border-bottom-color: var(--color-success);
-}
-
-.modal--success .modal__title {
-  color: var(--color-success-dark);
-}
-
-/* Warning */
 .modal--warning .modal__content {
   background: var(--color-warning-light);
   border-color: var(--color-warning);
 }
 
-.modal--warning .modal__header {
-  border-bottom-color: var(--color-warning);
-}
-
-.modal--warning .modal__title {
-  color: var(--color-warning-dark);
-}
-
-/* Danger */
 .modal--danger .modal__content {
   background: var(--color-danger-light);
   border-color: var(--color-danger);
 }
 
-.modal--danger .modal__header {
-  border-bottom-color: var(--color-danger);
-}
-
-.modal--danger .modal__title {
-  color: var(--color-danger-dark);
-}
-
-/* Neutral */
 .modal--neutral .modal__content {
   background: var(--color-neutral-light);
   border-color: var(--color-neutral);
 }
 
-.modal--neutral .modal__header {
-  border-bottom-color: var(--color-neutral);
-}
-
-.modal--neutral .modal__title {
-  color: var(--color-neutral-dark);
-}
-
-/* ===== RADIO DE BORDES ===== */
+/* ===== RADIO DE BORDES DEL SISTEMA ===== */
 .modal--rounded-sm .modal__content {
   border-radius: var(--radius-sm);
 }
@@ -198,11 +180,11 @@
   border-radius: var(--radius-full);
 }
 
-/* ===== ESTADOS ===== */
+/* ===== ESTADOS DEL SISTEMA ===== */
 
-/* Disabled */
+/* Estado disabled */
 .modal--disabled .modal__content {
-  opacity: 0.6;
+  opacity: var(--opacity-disabled);
   pointer-events: none;
 }
 
@@ -210,7 +192,7 @@
   color: var(--text-disabled);
 }
 
-/* Loading */
+/* Estado loading */
 .modal--loading .modal__content {
   position: relative;
 }
@@ -222,10 +204,15 @@
   right: 0;
   bottom: 0;
   z-index: 10;
+  
+  /* Layout centrado */
   display: flex;
   align-items: center;
   justify-content: center;
+  
+  /* Mantener border radius */
   border-radius: inherit;
+  overflow: hidden;
 }
 
 .modal__loading-overlay {
@@ -234,8 +221,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: var(--bg-primary);
-  opacity: 0.8;
+  background: rgba(255, 255, 255, 0.8);
   border-radius: inherit;
 }
 
@@ -243,66 +229,82 @@
   position: relative;
   z-index: 11;
   color: var(--text-secondary);
-  font-size: 2rem;
   animation: spin 1s linear infinite;
 }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* ===== HEADER ===== */
+/* ===== HEADER DEL MODAL ===== */
 .modal__header {
   /* Layout */
   display: flex;
   align-items: center;
   justify-content: space-between;
   
-  /* Spacing */
+  /* Spacing del sistema */
   padding: var(--space-lg);
   padding-bottom: var(--space-md);
   
-  /* Styling */
-  border-bottom: 0.1rem solid var(--border-light);
+  /* Border del sistema */
+  border-bottom: var(--border-width-thin) solid var(--border-light);
+  
+  /* Flex shrink */
+  flex-shrink: 0;
 }
 
 .modal__title {
-  /* Typography */
+  /* Typography del sistema */
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-semibold);
   color: var(--text-primary);
+  line-height: var(--line-height-tight);
   
   /* Reset */
   margin: 0;
   
-  /* Truncate */
+  /* Truncate para t�tulos largos */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  
+  /* Flex */
+  flex: 1;
+  min-width: 0;
 }
 
-/* Botón de cierre usa componente Button del sistema - no necesita CSS específico */
+/* Bot�n de cierre - usa componente Button del sistema */
 .modal__close {
   flex-shrink: 0;
+  margin-left: var(--space-md);
 }
 
-/* ===== BODY ===== */
+/* ===== BODY DEL MODAL ===== */
 .modal__body {
+  /* Spacing del sistema */
   padding: var(--space-lg);
+  
+  /* Scroll interno cuando sea necesario */
+  overflow-y: auto;
+  overflow-x: hidden;
+  
+  /* Altura m�xima para scroll */
+  max-height: calc(85vh - var(--space-32)); /* Restar espacio para header */
+  
+  /* Flex */
+  flex: 1;
+  min-height: 0;
 }
 
-/* Sin header, ajustar padding */
+/* Sin header, ajustar padding superior */
 .modal__content:not(:has(.modal__header)) .modal__body {
   padding-top: var(--space-lg);
 }
 
-/* ===== RESPONSIVE ===== */
+/* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) {
   .modal__content {
-    width: 95vw;
-    max-height: 95vh;
-    margin: 2.5vh auto;
+    width: 95vw !important;
+    min-width: unset !important;
+    max-width: 95vw !important;
+    max-height: 90vh;
   }
   
   .modal__header {
@@ -312,6 +314,7 @@
   
   .modal__body {
     padding: var(--space-md);
+    max-height: calc(90vh - var(--space-24));
   }
   
   .modal__title {
@@ -319,11 +322,27 @@
   }
 }
 
+/* ===== ANIMACIONES DEL SISTEMA ===== */
+@keyframes spin {
+  from { 
+    transform: rotate(0deg); 
+  }
+  to { 
+    transform: rotate(360deg); 
+  }
+}
+
 /* ===== REDUCED MOTION ===== */
 @media (prefers-reduced-motion: reduce) {
+  dialog.modal,
   .modal,
+  dialog.modal::backdrop,
   .modal::backdrop {
     transition: none;
+  }
+  
+  .modal__loading-spinner {
+    animation: none;
   }
 }
 
@@ -332,15 +351,35 @@
   outline: none;
 }
 
+.modal__content:focus-within {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 /* ===== SCROLL LOCK ===== */
-/* Cuando el modal está abierto, prevenir scroll del body */
+/* Cuando el modal est� abierto, prevenir scroll del body */
 body:has(.modal[open]) {
   overflow: hidden;
 }
 
-/* ===== DARK MODE ===== */
+/* ===== TEMA OSCURO ===== */
 @media (prefers-color-scheme: dark) {
+  dialog.modal::backdrop,
   .modal::backdrop {
     background: var(--backdrop-dark);
+  }
+  
+  .modal__content {
+    background: var(--bg-secondary);
+    border-color: var(--border-default);
+    box-shadow: var(--shadow-xl);
+  }
+  
+  .modal__title {
+    color: var(--text-primary);
+  }
+  
+  .modal__header {
+    border-bottom-color: var(--border-light);
   }
 }

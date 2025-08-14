@@ -263,8 +263,7 @@ function SeriesEditPage() {
         title="Editar Serie"
         subtitle="Cargando datos de la serie..."
         breadcrumbs={[
-          { label: 'Admin', href: '/admin' },
-          { label: 'Series', href: '/admin/series' },
+          { label: 'Series', to: '/admin/series' },
           { label: 'Editar' }
         ]}
       >
@@ -282,8 +281,7 @@ function SeriesEditPage() {
         title="Error"
         subtitle="No se pudo cargar la serie"
         breadcrumbs={[
-          { label: 'Admin', href: '/admin' },
-          { label: 'Series', href: '/admin/series' },
+          { label: 'Series', to: '/admin/series' },
           { label: 'Error' }
         ]}
       >
@@ -304,8 +302,7 @@ function SeriesEditPage() {
       title={`Editar: ${currentSeries?.title || 'Serie'}`}
       subtitle={`${currentSeries?.release_year || ''} • ${categories.find(c => c.id === currentSeries?.category_id)?.name || 'Sin categoría'}`}
       breadcrumbs={[
-        { label: 'Admin', href: '/admin' },
-        { label: 'Series', href: '/admin/series' },
+        { label: 'Series', to: '/admin/series' },
         { label: currentSeries?.title || 'Editar' }
       ]}
     >

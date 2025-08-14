@@ -257,6 +257,10 @@ function SeriesListPage() {
   return (
     <AdminLayout
       title="Gestión de Series"
+      subtitle="Administración completa del catálogo de series"
+      breadcrumbs={[
+        { label: 'Series' }
+      ]}
       headerActions={
         <div className="series-list__header-actions">
           <Button

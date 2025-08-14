@@ -180,8 +180,7 @@ function CategoryCreatePage() {
       title="Crear Nueva Categoría"
       subtitle="Agregar una nueva categoría para organizar el contenido multimedia"
       breadcrumbs={[
-        { label: 'Admin', href: '/admin' },
-        { label: 'Categorías', href: '/admin/categories' },
+        { label: 'Categorías', to: '/admin/categories' },
         { label: 'Crear Categoría' }
       ]}
     >

@@ -252,6 +252,10 @@ function EpisodesListPage() {
   return (
     <AdminLayout
       title="Gestión de Episodios"
+      subtitle="Lista completa de episodios organizados por serie"
+      breadcrumbs={[
+        { label: 'Episodios' }
+      ]}
       headerActions={
         <div className="episodes-list__header-actions">
           <Button

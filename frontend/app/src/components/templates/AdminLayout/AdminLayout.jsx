@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { AdminSidebar } from '../../organisms/AdminSidebar/AdminSidebar';
 import { Button } from '../../atoms/Button/Button';
 import { Container } from '../../atoms/Container/Container';
+import { Breadcrumb } from '../../molecules/Breadcrumb/Breadcrumb';
 import { validateStandardProps, STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens/standardProps';
 import './AdminLayout.css';
 
@@ -251,26 +252,23 @@ function AdminLayout({
           </Button>
 
           {/* Contenido del header */}
-          <div className="admin-layout__header-content">
+          <div className="admin-layout__header-content">  
             {/* Breadcrumbs */}
             {breadcrumbs && breadcrumbs.length > 0 && (
-              <nav className="admin-layout__breadcrumbs" aria-label="Navegación de páginas">
-                <ol className="admin-layout__breadcrumb-list">
-                  {breadcrumbs.map((crumb, index) => (
-                    <li key={index} className="admin-layout__breadcrumb-item">
-                      {crumb.href && index !== breadcrumbs.length - 1 ? (
-                        <a href={crumb.href} className="admin-layout__breadcrumb-link">
-                          {crumb.label}
-                        </a>
-                      ) : (
-                        <span className="admin-layout__breadcrumb-current" aria-current="page">
-                          {crumb.label}
-                        </span>
-                      )}
-                    </li>
-                  ))}
-                </ol>
-              </nav>
+              <div className="admin-layout__breadcrumbs">
+                <Breadcrumb 
+                  items={breadcrumbs}
+                  size="sm"
+                  variant="neutral"
+                  showHome={true}
+                  showIcons={true}
+                  homeItem={{
+                    label: 'Admin',
+                    to: '/admin',
+                    icon: 'settings'
+                  }}
+                />
+              </div>
             )}
             
             {/* Título y acciones */}
@@ -314,7 +312,7 @@ AdminLayout.propTypes = {
   subtitle: PropTypes.string,
   breadcrumbs: PropTypes.arrayOf(PropTypes.shape({
     label: PropTypes.string.isRequired,
-    href: PropTypes.string
+    to: PropTypes.string
   })),
   headerActions: PropTypes.node,
   

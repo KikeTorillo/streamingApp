@@ -1,121 +1,114 @@
-/* ===== ALERT MODAL MOLECULE - MIGRADO AL SISTEMA ESTÁNDAR ===== */
+/* ===== ALERT MODAL MOLECULE - ESTILOS MÍNIMOS ===== */
 /* src/components/molecules/AlertModal/AlertModal.css */
 
-/* ✅ BASE - Hereda del Modal migrado */
-.alert-modal {
-  /* Modal base proporciona toda la funcionalidad estándar */
-}
+/* 
+ * PRINCIPIO COMO EDITMODAL: Mínimos estilos específicos
+ * Modal.css maneja: posicionamiento, responsive, tamaños, animaciones
+ * AlertModal.css maneja: SOLO layout interno específico de alertas
+ */
 
-/* ✅ CONTENIDO PRINCIPAL */
+/* ===== CONTENIDO ESPECÍFICO DE ALERTMODAL ===== */
 .alert-modal__content {
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
-  text-align: center;
-  padding: var(--space-md);
+  padding: var(--space-sm) 0;
 }
 
-/* ✅ MENSAJE CON ICONO */
+/* ===== MENSAJE (ICONO + TEXTO) ===== */
 .alert-modal__message {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-md);
+  padding: 0 var(--space-xs);
 }
 
-/* ✅ ICONO - MIGRADO AL SISTEMA DE ICONOS ESTÁNDAR */
+/* ===== ICONO SEMÁNTICO ===== */
 .alert-modal__icon {
+  flex-shrink: 0;
+  width: 2.4rem;
+  height: 2.4rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Tamaño controlado por Icon component - NO por font-size */
+  margin-top: 0.2rem;
+  color: var(--text-secondary);
 }
 
-/* ✅ TEXTO DEL MENSAJE */
+/* Colores por tipo */
+.alert-modal--info .alert-modal__icon { color: var(--color-primary); }
+.alert-modal--success .alert-modal__icon { color: var(--color-success); }
+.alert-modal--danger .alert-modal__icon,
+.alert-modal--delete .alert-modal__icon { color: var(--color-danger); }
+.alert-modal--warning .alert-modal__icon { color: var(--color-warning); }
+.alert-modal--neutral .alert-modal__icon { color: var(--color-neutral); }
+
+/* ===== TEXTO ===== */
 .alert-modal__text {
-  margin: 0;
+  flex: 1;
+  min-width: 0;
   font-size: var(--font-size-base);
   line-height: var(--line-height-relaxed);
   color: var(--text-primary);
-  max-width: 400px; /* Limita ancho para mejor legibilidad */
+  word-wrap: break-word;
 }
 
-/* ✅ ACCIONES - Botón(es) */
+.alert-modal__text strong {
+  font-weight: var(--font-weight-semibold);
+}
+
+/* ===== BOTONES ===== */
 .alert-modal__actions {
   display: flex;
   gap: var(--space-sm);
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-top: var(--space-sm);
+  justify-content: space-around;
+  padding: 0 var(--space-xs);
+  margin-top: var(--space-xs);
 }
 
 .alert-modal__button {
-  min-width: var(--size-20); /* ~80px */
+  min-width: 6rem;
   flex: 0 0 auto;
 }
 
-/* ✅ VARIANTES SEMÁNTICAS - Colores automáticos por variante */
-.alert-modal--primary .alert-modal__icon {
-  color: var(--color-primary);
+/* Centrar cuando hay un solo botón */
+.alert-modal__actions:has(.alert-modal__button:only-child) {
+  justify-content: center;
 }
 
-.alert-modal--success .alert-modal__icon {
-  color: var(--color-success);
+.alert-modal__button:only-child {
+  min-width: 8rem;
 }
 
-.alert-modal--danger .alert-modal__icon {
-  color: var(--color-danger);
-}
-
-.alert-modal--warning .alert-modal__icon {
-  color: var(--color-warning);
-}
-
-.alert-modal--secondary .alert-modal__icon {
-  color: var(--color-secondary);
-}
-
-.alert-modal--neutral .alert-modal__icon {
-  color: var(--color-neutral);
-}
-
-/* ✅ ESTADOS ESTÁNDAR */
-.alert-modal--disabled {
-  opacity: var(--opacity-disabled);
-  pointer-events: none;
-}
-
-.alert-modal--loading .alert-modal__content {
-  position: relative;
-}
-
-.alert-modal--loading .alert-modal__actions {
-  opacity: 0.6;
-}
-
-/* ✅ RESPONSIVE - Mobile-first */
-@media (max-width: 640px) {
+/* ===== RESPONSIVE MÍNIMO ===== */
+@media (max-width: 480px) {
+  .alert-modal__content {
+    gap: var(--space-md);
+    padding: var(--space-xs) 0;
+  }
+  
+  .alert-modal__message {
+    gap: var(--space-sm);
+    padding: 0;
+  }
+  
+  .alert-modal__icon {
+    width: 2rem;
+    height: 2rem;
+  }
+  
+  .alert-modal__text {
+    font-size: var(--font-size-sm);
+  }
+  
   .alert-modal__actions {
-    flex-direction: column;
+    flex-direction: column-reverse;
     gap: var(--space-xs);
+    padding: 0;
   }
   
   .alert-modal__button {
-    min-width: auto;
     width: 100%;
-  }
-  
-  .alert-modal__content {
-    padding: var(--space-sm);
+    min-width: unset;
   }
 }
-
-/* ✅ TAMAÑOS ESTÁNDAR - MIGRADO AL SISTEMA DE ICONOS ESTÁNDAR */
-/* Los tamaños ahora se controlan vía props del Icon component:
- * - xs modal → Icon size="md" 
- * - sm modal → Icon size="lg"  
- * - md modal → Icon size="xl"
- * - lg modal → Icon size="xl" 
- * - xl modal → Icon size="xl"
- * Esto se maneja en el componente AlertModal.jsx, no en CSS
- */

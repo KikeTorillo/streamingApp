@@ -267,8 +267,7 @@ function EpisodeEditPage() {
         title="Editar Episodio"
         subtitle="Cargando datos del episodio..."
         breadcrumbs={[
-          { label: 'Admin', href: '/admin' },
-          { label: 'Episodios', href: '/admin/episodes' },
+          { label: 'Episodios', to: '/admin/episodes' },
           { label: 'Editar' }
         ]}
       >
@@ -286,8 +285,7 @@ function EpisodeEditPage() {
         title="Error"
         subtitle="No se pudo cargar el episodio"
         breadcrumbs={[
-          { label: 'Admin', href: '/admin' },
-          { label: 'Episodios', href: '/admin/episodes' },
+          { label: 'Episodios', to: '/admin/episodes' },
           { label: 'Error' }
         ]}
       >
@@ -310,9 +308,8 @@ function EpisodeEditPage() {
       title={`Editar: ${currentEpisode?.title || `T${currentEpisode?.season}E${currentEpisode?.episode_number}`}`}
       subtitle={`${currentSeries?.title || 'Serie'} • Temporada ${currentEpisode?.season} • Episodio ${currentEpisode?.episode_number}`}
       breadcrumbs={[
-        { label: 'Admin', href: '/admin' },
-        { label: 'Episodios', href: '/admin/episodes' },
-        { label: currentEpisode?.title || 'Editar' }
+        { label: 'Episodios', to: '/admin/episodes' },
+        { label: currentEpisode?.title || `T${currentEpisode?.season}E${currentEpisode?.episode_number}` }
       ]}
       headerActions={
         <div className="episode-edit__header-actions">

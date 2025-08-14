@@ -274,8 +274,7 @@ function EpisodesCreatePage() {
       title="Crear Nuevo Episodio"
       subtitle="Agregar un nuevo episodio a una serie existente"
       breadcrumbs={[
-        { label: 'Admin', href: '/admin' },
-        { label: 'Episodios', href: '/admin/episodes' },
+        { label: 'Episodios', to: '/admin/episodes' },
         { label: 'Crear Episodio' }
       ]}
     >

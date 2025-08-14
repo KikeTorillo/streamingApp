@@ -162,8 +162,7 @@ function UserCreatePage() {
       title="Crear Nuevo Usuario"
       subtitle="Agregar un usuario al sistema con permisos específicos"
       breadcrumbs={[
-        { label: 'Admin', href: '/admin' },
-        { label: 'Usuarios', href: '/admin/users' },
+        { label: 'Usuarios', to: '/admin/users' },
         { label: 'Crear Usuario' }
       ]}
     >

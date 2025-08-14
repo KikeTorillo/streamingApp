@@ -186,6 +186,7 @@
 /* ===== BREADCRUMBS ===== */
 .admin-layout__breadcrumbs {
   margin-bottom: var(--space-sm);
+  /* Integración con componente Breadcrumb del sistema de diseño */
 }
 
 .admin-layout__breadcrumb-list {

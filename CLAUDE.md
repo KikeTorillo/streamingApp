@@ -17,6 +17,162 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **OBLIGATORIO**: Logs de debugging y mensajes de error deben estar en español
 - **PROHIBIDO**: Responder en inglés al usuario mexicano
 
+### Sistema de Diseño - Uso Obligatorio
+- **FUNDAMENTAL**: SIEMPRE usar componentes del sistema de diseño `@kike-dev/contextual-ui`
+- **PROHIBIDO**: Crear componentes custom sin justificación específica del dominio
+- **PROHIBIDO**: Usar HTML nativo (div, button, input) cuando existe componente del sistema
+- **PROHIBIDO**: Usar iconos externos o crear SVGs custom sin autorización
+- **OBLIGATORIO**: Usar sistema de iconos contextual integrado (`leftIcon`, `rightIcon`)
+- **OBLIGATORIO**: Usar hooks estándar (`useStandardProps`, `useButtonProps`, etc.)
+- **OBLIGATORIO**: Seguir props API unificada (size, variant, rounded, disabled, loading)
+
+#### ✅ **Patrones Correctos del Sistema:**
+```javascript
+// ✅ CORRECTO: Componentes del sistema
+import { Button, Badge, Input } from '../components/atoms/';
+<Button leftIcon="plus" variant="primary" size="lg">Crear</Button>
+<Badge variant="success" size="sm">Activo</Badge>
+<Input leftIcon="search" placeholder="Buscar..." />
+
+// ✅ CORRECTO: Hooks del sistema
+const { size, variant, tokens, renderIcon } = useButtonProps(props);
+```
+
+#### ❌ **Patrones PROHIBIDOS:**
+```javascript
+// ❌ PROHIBIDO: HTML nativo
+<button className="custom-btn">Click</button>
+<div className="custom-card">Content</div>
+
+// ❌ PROHIBIDO: Iconos externos
+import { FaUser } from 'react-icons/fa';
+<SomeExternalIcon />
+
+// ❌ PROHIBIDO: Props inconsistentes  
+<CustomButton type="large" color="blue" rounded />
+
+// ❌ PROHIBIDO: Estilos inline sin tokens
+<div style={{ padding: '20px', color: '#blue' }}>
+```
+
+#### 🎯 **Excepciones Permitidas:**
+- **Componentes de dominio específico**: VideoPlayer, TMDBSearchView, etc.
+- **Páginas específicas**: Solo cuando componen componentes del sistema
+- **Lógica de negocio**: Hooks específicos del proyecto (useAuth, useMovies)
+- **Layouts específicos**: Cuando extienden templates base del sistema
+
+#### 🔍 **Verificación Obligatoria:**
+Antes de crear cualquier componente, verificar:
+1. ¿Existe ya en el sistema de diseño?
+2. ¿Puede componerse con componentes existentes?
+3. ¿Es específico del dominio streaming o genérico?
+4. ¿Sigue la API de props estándar?
+
+#### 📚 **Storybook - Documentación Obligatoria:**
+- **OBLIGATORIO**: Verificar en http://localhost:6006 antes de usar cualquier componente
+- **OBLIGATORIO**: Solo usar componentes que tengan .stories.jsx completado
+- **PROHIBIDO**: Usar componentes sin documentación en Storybook
+- **OBLIGATORIO**: Al crear componentes nuevos, crear .stories.jsx ANTES de usar
+
+```bash
+# Verificar Storybook antes de desarrollo
+npm run storybook  # http://localhost:6006
+
+# Verificar que el componente tiene stories completas
+ls frontend/app/src/components/atoms/Button/Button.stories.jsx
+```
+
+#### 🎯 **Flujo de Trabajo Obligatorio:**
+1. **BUSCAR**: ¿Existe el componente en Storybook?
+2. **VERIFICAR**: ¿Tiene todas las variantes documentadas?
+3. **USAR**: Import y uso según documentación de Storybook
+4. **COMPONER**: Combinar componentes existentes antes de crear nuevos
+
+### Sistema de Iconos - Reglas Arquitecturales
+
+#### 🔧 **REGLA FUNDAMENTAL: Separación por Responsabilidad**
+
+**COMPONENTES BASE (átomos/moléculas) = renderIcon**
+- **QUÉ**: Componentes que forman parte del design system (`@kike-dev/contextual-ui`)
+- **CUÁNDO**: Button, Input, Badge, Card, Modal - componentes reutilizables de la librería
+- **POR QUÉ**: Consistencia automática según contexto y tamaño del componente
+
+```javascript
+// ✅ CORRECTO: En componentes base de la librería
+const Button = ({ leftIcon, rightIcon, size }) => {
+  const renderIcon = createStandardIconRenderer('button', size);
+  return (
+    <button>
+      {leftIcon && renderIcon(leftIcon)}    // Auto-contextual según size
+      {children}
+      {rightIcon && renderIcon(rightIcon)}  // Auto-contextual según size
+    </button>
+  );
+};
+```
+
+**COMPONENTES APLICACIÓN (organismos/páginas) = Icon directo**
+- **QUÉ**: Componentes que USAN el design system (aplicaciones, páginas, modales específicos)
+- **CUÁNDO**: AlertModal, EditModal, UserProfile, Dashboard - casos específicos de negocio
+- **POR QUÉ**: Control total sobre cada icono específico, fácil debugging
+
+```javascript
+// ✅ CORRECTO: En componentes de aplicación
+<div className="alert-modal__icon">
+  <Icon name="warning" size="lg" variant="danger" />  // Control específico
+</div>
+
+// ✅ CORRECTO: Usando componentes base con props simples
+<Button leftIcon="save" size="lg">Guardar</Button>
+```
+
+#### 📋 **Clasificación de Componentes:**
+
+**Componentes BASE (renderIcon):**
+- `Button` ✅ - Átomo reutilizable
+- `Input` ✅ - Átomo reutilizable  
+- `Badge` ✅ - Átomo reutilizable
+- `Card` ✅ - Molécula reutilizable
+- `Modal` ✅ - Molécula base reutilizable
+
+**Componentes APLICACIÓN (Icon directo):**
+- `AlertModal` ✅ - Caso específico de confirmación
+- `EditModal` ✅ - Caso específico de edición
+- `UserProfile` ✅ - Página específica
+- `MoviesListPage` ✅ - Página específica
+- Cualquier página/organismo del dominio streaming
+
+#### ❌ **Errores Comunes:**
+```javascript
+// ❌ MAL: renderIcon en componente de aplicación (overkill)
+const AlertModal = () => {
+  const renderIcon = createStandardIconRenderer('alert-modal', 'md');
+  return <div>{renderIcon('warning')}</div>; // Innecesariamente complejo
+};
+
+// ✅ BIEN: Icon directo en componente de aplicación
+const AlertModal = () => {
+  return <Icon name="warning" size="lg" variant="danger" />; // Simple y claro
+};
+```
+
+#### 🎯 **Beneficios de esta Arquitectura:**
+
+**Para la librería:**
+- **Consistencia automática** en componentes base
+- **API simple** para usuarios finales
+- **Mantenimiento centralizado** de contextos de iconos
+
+**Para desarrolladores:**
+- **Fácil de entender**: "Usa Icon cuando necesites control específico"
+- **Fácil de debuggear**: Icon directo es transparente
+- **Flexibilidad total**: Control completo sobre iconos específicos
+
+#### 🔍 **Verificación Rápida:**
+**Pregunta**: ¿Este componente será reutilizado en múltiples proyectos?
+- **SÍ** → Componente BASE → usar `renderIcon`
+- **NO** → Componente APLICACIÓN → usar `Icon` directo
+
 ## Comandos Clave
 
 > **📋 Referencia Completa**: Ver [README.md](./readme.md) para lista completa de comandos y opciones de entorno
@@ -261,6 +417,25 @@ No Crítico    │  Usar   │ Crear
 
 ## Frontend Specialist - Contexto Específico del Proyecto
 
+### 🎨 **REGLA FUNDAMENTAL: Sistema de Diseño Primero**
+**ANTES de cualquier desarrollo frontend, SIEMPRE:**
+1. **Revisar Storybook**: http://localhost:6006 para ver componentes disponibles
+2. **Usar componentes del sistema**: NUNCA crear HTML nativo si existe componente
+3. **Seguir patrones existentes**: Revisar páginas similares antes de implementar
+4. **Verificar hooks disponibles**: useAuth, useStandardProps, etc.
+
+```javascript
+// ✅ OBLIGATORIO: Patrón correcto
+import { Button, Card, Input } from '../../../components/atoms/';
+import { DynamicForm } from '../../../components/molecules/';
+import { useButtonProps } from '../../../hooks/useStandardProps';
+
+// ❌ PROHIBIDO: HTML nativo o librerías externas
+import { Button } from 'antd';  // ❌ 
+<button>Click</button>          // ❌
+<div className="custom-card">   // ❌
+```
+
 ### Contextos React Disponibles
 - **AuthContext**: Autenticación (user, isAuthenticated, login/logout)
 - **UserContext**: Gestión de usuarios CRUD
@@ -302,10 +477,20 @@ No Crítico    │  Usar   │ Crear
 
 ### Para Frontend Specialist - Flujo de Trabajo
 
-1. **ANTES de crear componentes**: Buscar patrones similares existentes
-2. **ANTES de usar contextos**: Verificar hooks disponibles (useAuth, useUsers, etc.)
-3. **ANTES de crear servicios**: Revisar servicios existentes en misma carpeta
-4. **ANTES de definir estilos**: Usar variables CSS del design system
+**🎯 WORKFLOW OBLIGATORIO - Sistema de Diseño Primero:**
+
+1. **ANTES de CUALQUIER código**: Verificar en Storybook (http://localhost:6006)
+2. **ANTES de crear componentes**: Buscar en sistema de diseño existente
+3. **ANTES de usar HTML nativo**: Verificar si existe componente (`<button>` → `<Button>`)
+4. **ANTES de usar contextos**: Verificar hooks disponibles (useAuth, useUsers, etc.)
+5. **ANTES de crear servicios**: Revisar servicios existentes en misma carpeta
+6. **ANTES de definir estilos**: Usar tokens del design system ÚNICAMENTE
+
+**❌ PASOS PROHIBIDOS:**
+- Crear `<div>`, `<button>`, `<input>` si existe componente del sistema
+- Usar `style={{}}` con valores hardcoded
+- Importar librerías externas de UI (Material-UI, Ant Design, etc.)
+- Crear iconos SVG custom sin autorización
 
 ### Ejemplos de Consistencia Requerida
 - Si trabajas en UsersCreatePage, revisar MoviesCreatePage y SeriesCreatePage

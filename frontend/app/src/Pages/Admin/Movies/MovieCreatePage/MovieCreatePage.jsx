@@ -241,7 +241,14 @@ function MovieCreatePage() {
 
   // ===== RENDER PRINCIPAL =====
   return (
-    <AdminLayout>
+    <AdminLayout
+      title="Crear Nueva Película"
+      subtitle="Agregar contenido nuevo al catálogo desde TMDB o manualmente"
+      breadcrumbs={[
+        { label: 'Películas', to: '/admin/movies' },
+        { label: 'Crear Película' }
+      ]}
+    >
       <Container size='lg'>
         <div className="movie-create-page">
           {/* Botón volver a películas */}

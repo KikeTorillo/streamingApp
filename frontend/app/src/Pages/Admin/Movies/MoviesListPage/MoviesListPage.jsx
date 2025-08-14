@@ -222,6 +222,10 @@ function MoviesListPage() {
   return (
     <AdminLayout
       title="Gestión de Películas"
+      subtitle="Administración completa del catálogo de películas"
+      breadcrumbs={[
+        { label: 'Películas' }
+      ]}
       headerActions={
         <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
           <Button

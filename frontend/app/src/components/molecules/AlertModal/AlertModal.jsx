@@ -5,9 +5,9 @@ import { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Modal } from '../Modal/Modal';
 import { Button } from '../../atoms/Button/Button';
+import { Icon } from '../../atoms/Icon/Icon';
 import { validateStandardProps, STANDARD_PROP_TYPES } from '../../../tokens';
-import { createStandardIconRenderer } from '../../../utils/iconHelpers';
-import './AlertModal.css';
+import './AlertModal.css'
 
 /**
  * AlertModal - Componente para confirmaciones y alertas críticas
@@ -40,8 +40,8 @@ function AlertModal(props) {
   const validatedProps = validateStandardProps(props, 'AlertModal');
 
   const {
-    // Props estándar del sistema
-    size = 'sm',
+    // Props estándar del sistema (size ignorado para auto-adaptación)
+    size, // ← No usar size por defecto, sera ignorado
     variant,
     rounded = 'xl',
     disabled = false,
@@ -69,9 +69,6 @@ function AlertModal(props) {
     
     ...restProps
   } = validatedProps;
-  
-  // Función para renderizar iconos usando el sistema centralizado
-  const renderIcon = createStandardIconRenderer('alert-modal', size);
   
   // ✅ CONFIGURACIÓN POR TIPO - Usando sistema de iconos Feather + variantes estándar
   const typeConfig = useMemo(() => ({
@@ -145,7 +142,7 @@ function AlertModal(props) {
       isOpen={isOpen}
       onClose={handleCancel}
       title={modalTitle}
-      size={size}
+      // ❌ size removido - AlertModal usa auto-adaptación completa
       variant={finalVariant}
       rounded={rounded}
       disabled={disabled}
@@ -158,7 +155,7 @@ function AlertModal(props) {
         {/* Icono y mensaje */}
         <div className="alert-modal__message">
           <div className="alert-modal__icon" role="img" aria-label={type}>
-            {renderIcon(config.icon)}
+            <Icon name={config.icon} size="lg" variant={finalVariant} />
           </div>
           <div 
             className="alert-modal__text"
@@ -172,8 +169,8 @@ function AlertModal(props) {
             // Modo confirmación: Cancelar + Confirmar
             <>
               <Button
-                size={size === 'xs' ? 'xs' : 'sm'}
-                variant="outline"
+                size="sm" // Tamaño fijo para botones en AlertModal
+                variant="secondary"
                 disabled={disabled || loading}
                 onClick={handleCancel}
                 className="alert-modal__button"
@@ -181,7 +178,7 @@ function AlertModal(props) {
                 {cancelText}
               </Button>
               <Button
-                size={size === 'xs' ? 'xs' : 'sm'}
+                size="sm" // Tamaño fijo para botones en AlertModal
                 variant={finalVariant}
                 disabled={disabled || loading}
                 loading={loading}
@@ -194,7 +191,7 @@ function AlertModal(props) {
           ) : (
             // Modo información: Solo OK
             <Button
-              size={size === 'xs' ? 'xs' : 'sm'}
+              size="sm" // Tamaño fijo para botones en AlertModal
               variant={finalVariant}
               disabled={disabled || loading}
               loading={loading}

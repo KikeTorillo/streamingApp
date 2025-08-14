@@ -63,7 +63,7 @@ function AlertProvider({ children }) {
         onConfirm={alertState.onConfirm}
         confirmText={alertState.confirmText}
         cancelText={alertState.cancelText}
-        size={alertState.size}
+        // ❌ size removido - AlertModal usa auto-adaptación
       />
       
       {/* Toast container para notificaciones */}

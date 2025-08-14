@@ -157,6 +157,10 @@ function UsersListPage() {
   return (
     <AdminLayout
       title="Gestión de Usuarios"
+      subtitle="Administración completa de usuarios del sistema"
+      breadcrumbs={[
+        { label: 'Usuarios' }
+      ]}
       headerActions={
         <div className="users-list__header-actions">
           <Button

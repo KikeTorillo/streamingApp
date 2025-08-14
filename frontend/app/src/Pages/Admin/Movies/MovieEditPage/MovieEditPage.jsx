@@ -262,8 +262,7 @@ function MovieEditPage() {
         title="Editar Película"
         subtitle="Cargando datos de la película..."
         breadcrumbs={[
-          { label: 'Admin', href: '/admin' },
-          { label: 'Películas', href: '/admin/movies' },
+          { label: 'Películas', to: '/admin/movies' },
           { label: 'Editar' }
         ]}
       >
@@ -283,8 +282,7 @@ function MovieEditPage() {
         title="Error"
         subtitle="No se pudo cargar la película"
         breadcrumbs={[
-          { label: 'Admin', href: '/admin' },
-          { label: 'Películas', href: '/admin/movies' },
+          { label: 'Películas', to: '/admin/movies' },
           { label: 'Error' }
         ]}
       >
@@ -305,8 +303,7 @@ function MovieEditPage() {
       title={`Editar: ${currentMovie?.title || 'Película'}`}
       subtitle={`${currentMovie?.release_year || ''} • ${categories.find(c => c.id === currentMovie?.category_id)?.name || 'Sin categoría'}`}
       breadcrumbs={[
-        { label: 'Admin', href: '/admin' },
-        { label: 'Películas', href: '/admin/movies' },
+        { label: 'Películas', to: '/admin/movies' },
         { label: currentMovie?.title || 'Editar' }
       ]}
     >

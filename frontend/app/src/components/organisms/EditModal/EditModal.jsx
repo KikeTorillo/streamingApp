@@ -6,9 +6,9 @@ import PropTypes from 'prop-types';
 import { Modal } from '../../molecules/Modal/Modal';
 import { TextInput } from '../../molecules/TextInput/TextInput';
 import { Button } from '../../atoms/Button/Button';
+import { Icon } from '../../atoms/Icon/Icon';
 import { useEditModalProps } from '../../../hooks/useStandardProps';
 import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens';
-import { createStandardIconRenderer } from '../../../utils/iconHelpers';
 import './EditModal.css';
 
 /**
@@ -76,9 +76,6 @@ function EditModal(props) {
   
   // ✅ EXTRAER DOM PROPS - Solo pasar props válidas de DOM
   const domProps = extractDOMProps(restProps);
-  
-  // ✅ CREAR RENDERIZADOR DE ICONOS - Configurado para modal
-  const renderIconHelper = createStandardIconRenderer('modal', size);
   
   // ✅ MAPEO ICONOS LEGACY - Compatibilidad automática
   const iconMappings = useMemo(() => {
@@ -223,7 +220,7 @@ function EditModal(props) {
       rounded={rounded}
       disabled={isDisabled}
       loading={isLoading}
-      className={className}
+      className={`edit-modal-wrapper ${className}`}
       closeOnBackdrop={!hasChanges && !isLoading}
       closeOnEscape={!hasChanges && !isLoading}
       aria-labelledby={fieldId}
@@ -235,7 +232,7 @@ function EditModal(props) {
           <div className="edit-modal__overlay">
             {isLoading && (
               <div className="edit-modal__overlay-content">
-                {renderIconHelper('loader', 'lg')}
+                <Icon name="loader" size="sm" variant="primary" spinning />
                 <span>Guardando cambios...</span>
               </div>
             )}
@@ -277,7 +274,7 @@ function EditModal(props) {
         {/* Error general */}
         {error && (
           <div className="edit-modal__error" id={errorId}>
-            {renderIconHelper('alert-circle', 'sm')}
+            <Icon name="alert-circle" size="sm" variant="danger" />
             <span className="edit-modal__error-message">{error}</span>
           </div>
         )}
@@ -314,12 +311,12 @@ function EditModal(props) {
           <p>
             {hasChanges ? (
               <>
-                {renderIconHelper('edit', 'sm')}
+                <Icon name="edit" size="sm" variant="warning" />
                 Tienes cambios sin guardar
               </>
             ) : (
               <>
-                {renderIconHelper('info', 'sm')}
+                <Icon name="info" size="sm" variant="primary" />
                 Modifica el valor y presiona Guardar
               </>
             )}

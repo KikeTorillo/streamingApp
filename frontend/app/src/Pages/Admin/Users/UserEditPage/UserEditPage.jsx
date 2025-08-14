@@ -220,8 +220,7 @@ function UserEditPage() {
         title="Editar Usuario"
         subtitle="Cargando datos del usuario..."
         breadcrumbs={[
-          { label: 'Admin', href: '/admin' },
-          { label: 'Usuarios', href: '/admin/users' },
+          { label: 'Usuarios', to: '/admin/users' },
           { label: 'Editar' }
         ]}
       >
@@ -239,8 +238,7 @@ function UserEditPage() {
         title="Error"
         subtitle="No se pudo cargar el usuario"
         breadcrumbs={[
-          { label: 'Admin', href: '/admin' },
-          { label: 'Usuarios', href: '/admin/users' },
+          { label: 'Usuarios', to: '/admin/users' },
           { label: 'Error' }
         ]}
       >
@@ -261,8 +259,7 @@ function UserEditPage() {
       title={`Editar Usuario: ${userData?.username || 'Usuario'}`}
       subtitle={`${userData?.roleName || 'Rol'} • Creado ${userData?.createdAt ? new Date(userData.createdAt).toLocaleDateString() : 'N/A'}`}
       breadcrumbs={[
-        { label: 'Admin', href: '/admin' },
-        { label: 'Usuarios', href: '/admin/users' },
+        { label: 'Usuarios', to: '/admin/users' },
         { label: userData?.username || 'Editar' }
       ]}
       headerActions={

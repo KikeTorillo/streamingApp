@@ -1,263 +1,159 @@
-/* ===== EDIT MODAL ORGANISM MIGRADO ===== */
+/* ===== EDIT MODAL ORGANISM - ESTILOS ESPECÍFICOS ===== */
 /* src/components/organisms/EditModal/EditModal.css */
 
-/* ✅ SISTEMA DE DISEÑO MIGRADO: Design tokens automáticos */
-/* ✅ ESTADOS AVANZADOS: Overlays loading/disabled */
-/* ✅ RESPONSIVE: Mobile-first con breakpoints */
-/* ✅ ACCESIBILIDAD: Focus management y ARIA */
-/* ✅ PERFORMANCE: GPU-accelerated animations */
+/* 
+ * PRINCIPIO COMO ALERTMODAL: Mínimos estilos específicos
+ * Modal.css maneja: posicionamiento, responsive, tamaños, animaciones
+ * EditModal.css maneja: SOLO layout interno específico de edición
+ */
 
-/* ===== CONTENEDOR PRINCIPAL ===== */
+/* ===== CONTENIDO ESPECÍFICO DE EDITMODAL ===== */
 .edit-modal {
-  /* Layout */
-  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
-  min-width: 0; /* Permite que el contenido se ajuste */
-  
-  /* Design tokens automáticos */
-  padding: var(--space-md);
-  border-radius: var(--radius-lg);
-  
-  /* States */
-  transition: all 0.2s ease-out;
+  padding: var(--space-sm) 0;
 }
 
-/* ===== OVERLAYS PARA ESTADOS LOADING/DISABLED ===== */
+/* ===== OVERLAY PARA ESTADOS ===== */
 .edit-modal__overlay {
-  /* Positioning */
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: inherit;
   z-index: 10;
-  
-  /* Layout */
   display: flex;
   align-items: center;
   justify-content: center;
-  
-  /* Styling con design tokens */
-  background: rgba(var(--color-overlay-rgb), 0.8);
-  border-radius: inherit;
-  backdrop-filter: blur(0.4rem);
-  
-  /* Animation */
-  animation: fadeIn 0.2s ease-out;
 }
 
 .edit-modal__overlay-content {
-  /* Layout */
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-md);
-  
-  /* Styling */
-  padding: var(--space-lg);
-  background: var(--color-surface);
-  border: 0.1rem solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  
-  /* Typography */
-  color: var(--text-primary);
+  gap: var(--space-sm);
+  color: var(--text-secondary);
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  text-align: center;
-}
-
-.edit-modal__overlay-content svg {
-  animation: spin 1s linear infinite;
 }
 
 /* ===== CAMPO DE ENTRADA ===== */
 .edit-modal__field {
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: 0 var(--space-xs);
 }
 
+/* ===== CONTADOR DE CARACTERES ===== */
 .edit-modal__counter {
-  /* Positioning */
-  position: absolute;
-  right: 0;
-  top: 100%;
-  margin-top: var(--space-xs);
-  
-  /* Typography */
+  text-align: right;
   font-size: var(--font-size-sm);
   color: var(--text-secondary);
-  
-  /* Accessibility */
-  user-select: none;
+  margin-top: var(--space-xs);
 }
 
 /* ===== ERROR GENERAL ===== */
 .edit-modal__error {
-  /* Layout */
   display: flex;
   align-items: flex-start;
   gap: var(--space-sm);
-  
-  /* Styling con design tokens automáticos */
-  padding: var(--space-md);
+  padding: var(--space-sm);
   background: var(--color-danger-light);
-  border: 0.1rem solid var(--color-danger);
+  border: 1px solid var(--color-danger);
   border-radius: var(--radius-md);
-  
-  /* Typography */
+  color: var(--color-danger);
   font-size: var(--font-size-sm);
-  color: var(--color-danger);
-  
-  /* Animation */
-  animation: slideIn 0.2s ease-out;
-}
-
-.edit-modal__error svg {
-  /* Flex */
-  flex-shrink: 0;
-  
-  /* Size automático desde renderIcon */
-  color: var(--color-danger);
+  margin: 0 var(--space-xs);
 }
 
 .edit-modal__error-message {
-  /* Layout */
   flex: 1;
-  
-  /* Typography */
-  font-weight: var(--font-weight-medium);
-  line-height: 1.4;
+  min-width: 0;
 }
 
 /* ===== BOTONES ===== */
 .edit-modal__actions {
-  /* Layout */
   display: flex;
-  gap: var(--space-md);
-  justify-content: flex-end;
-  
-  /* Spacing */
-  margin-top: var(--space-sm);
+  gap: var(--space-sm);
+  justify-content: space-around;
+  padding: 0 var(--space-xs);
+  margin-top: var(--space-xs);
+}
+
+.edit-modal__actions .button {
+  min-width: 6rem;
+  flex: 0 0 auto;
 }
 
 /* ===== INFORMACIÓN DE AYUDA ===== */
 .edit-modal__help {
-  /* Spacing */
-  margin-top: calc(var(--space-md) * -1);
-  
-  /* Typography con design tokens */
-  font-size: var(--font-size-sm);
-  color: var(--text-muted);
+  padding: 0 var(--space-xs);
+  text-align: center;
 }
 
 .edit-modal__help p {
-  /* Reset */
-  margin: 0;
-  
-  /* Layout */
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-sm);
-  
-  /* Typography */
-  line-height: 1.4;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin: 0;
 }
 
-.edit-modal__help svg {
-  /* Flex */
-  flex-shrink: 0;
-  
-  /* Color automático desde renderIcon */
-  color: var(--text-muted);
-}
-
-/* ===== ESTADOS ===== */
-
-/* Campo con error */
-.edit-modal__field:has(.text-input--error) .edit-modal__counter {
-  color: var(--color-danger);
-}
-
-/* Campo cerca del límite */
-.edit-modal__counter--warning {
-  color: var(--color-warning);
-  font-weight: var(--font-weight-medium);
-}
-
-/* Campo en el límite */
-.edit-modal__counter--danger {
-  color: var(--color-danger);
-  font-weight: var(--font-weight-semibold);
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
+/* ===== RESPONSIVE MÍNIMO ===== */
+@media (max-width: 480px) {
   .edit-modal {
     gap: var(--space-md);
+    padding: var(--space-xs) 0;
+  }
+  
+  .edit-modal__field {
+    gap: var(--space-xs);
+    padding: 0;
+  }
+  
+  .edit-modal__error {
+    gap: var(--space-xs);
+    padding: var(--space-sm);
+    margin: 0;
   }
   
   .edit-modal__actions {
-    /* Stack buttons on mobile */
     flex-direction: column-reverse;
-    gap: var(--space-sm);
+    gap: var(--space-xs);
+    padding: 0;
   }
   
   .edit-modal__actions .button {
     width: 100%;
-  }
-  
-  .edit-modal__error {
-    padding: var(--space-sm);
-  }
-}
-
-/* ===== ANIMACIONES ===== */
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-0.5rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* ===== REDUCED MOTION ===== */
-@media (prefers-reduced-motion: reduce) {
-  .edit-modal__error {
-    animation: none;
-  }
-}
-
-/* ===== DARK MODE ===== */
-@media (prefers-color-scheme: dark) {
-  .edit-modal__error {
-    background: var(--color-danger-light);
-    color: var(--color-danger);
+    min-width: unset;
   }
   
   .edit-modal__help {
-    color: var(--text-muted);
+    padding: 0;
+  }
+  
+  .edit-modal__help p {
+    font-size: var(--font-size-xs);
+    gap: var(--space-xs);
+  }
+}
+
+/* ===== TEMA OSCURO ===== */
+@media (prefers-color-scheme: dark) {
+  .edit-modal__overlay {
+    background: rgba(0, 0, 0, 0.8);
+  }
+  
+  .edit-modal__counter {
+    color: var(--text-secondary);
+  }
+  
+  .edit-modal__help p {
+    color: var(--text-secondary);
   }
 }

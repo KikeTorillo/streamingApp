@@ -121,6 +121,24 @@ export const CONTEXT_ICON_MAPS = {
     xl: 'lg'   // 24px
   },
 
+  // Modal: iconos pequeños para botón de cerrar
+  modal: {
+    xs: 'xs',  // 12px
+    sm: 'sm',  // 16px
+    md: 'sm',  // 16px
+    lg: 'sm',  // 16px
+    xl: 'md'   // 20px
+  },
+
+  // AlertModal: iconos medianos para buena visibilidad
+  'alert-modal': {
+    xs: 'sm',  // 16px
+    sm: 'md',  // 20px
+    md: 'md',  // 20px
+    lg: 'lg',  // 24px
+    xl: 'lg'   // 24px
+  },
+
   // ===== COMPONENTES LEGACY (MANTENER COMPATIBILIDAD) =====
   
   // StatsCard: iconos medianos/grandes para destacar
