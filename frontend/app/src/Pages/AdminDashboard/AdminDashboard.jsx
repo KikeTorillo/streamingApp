@@ -4,9 +4,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../components/templates/AdminLayout/AdminLayout';
+import { Container } from '../../components/atoms/Container/Container';
 import { StatsCard } from '../../components/molecules/StatsCard/StatsCard';
 import { Button } from '../../components/atoms/Button/Button';
-import { Icon } from '../../components/atoms/Icon/Icon';
+import { Skeleton } from '../../components/atoms/Skeleton/Skeleton';
+import { EmptyState } from '../../components/molecules/EmptyState/EmptyState';
+import { createIconRenderer } from '../../utils/iconHelpers';
 import './AdminDashboard.css';
 
 // Importar servicios para datos reales
@@ -29,6 +32,9 @@ import { getCategoriesService } from '../../services/Categories/getCategoriesSer
  */
 function AdminDashboard() {
   const navigate = useNavigate();
+  
+  // ===== SISTEMA DE ICONOS CENTRALIZADO =====
+  const renderIcon = createIconRenderer('sm'); // Tamaño por defecto más pequeño para títulos
 
   // ===== ESTADOS =====
   const [stats, setStats] = useState({
@@ -151,27 +157,29 @@ function AdminDashboard() {
     }
   ];
 
-  // ===== MANEJO DE ERRORES =====
+  // ===== MANEJO DE ERRORES CON SISTEMA DE DISEÑO =====
   if (error) {
     return (
       <AdminLayout>
-        <div className="admin-dashboard admin-dashboard--error">
-          <div style={{
-            textAlign: 'center',
-            padding: 'var(--space-3xl)',
-            color: 'var(--text-secondary)'
-          }}>
-            <h2><Icon name="x" size="xs" color="danger" /> Error al cargar el dashboard</h2>
-            <p>{error}</p>
-            <Button
-              variant="primary"
-              onClick={() => window.location.reload()}
-              style={{ marginTop: 'var(--space-md)' }}
-            >
-              Reintentar
-            </Button>
-          </div>
-        </div>
+        <Container size="lg" className="admin-dashboard admin-dashboard--error">
+          <EmptyState
+            icon="alert-triangle"
+            title="Error al cargar el dashboard"
+            description={error}
+            variant="danger"
+            size="lg"
+            action={
+              <Button
+                variant="primary"
+                size="md"
+                onClick={() => window.location.reload()}
+                leftIcon="refresh-cw"
+              >
+                Reintentar
+              </Button>
+            }
+          />
+        </Container>
       </AdminLayout>
     );
   }
@@ -181,20 +189,24 @@ function AdminDashboard() {
     <AdminLayout
     title="Dashboard"
     >
-      <div className="admin-dashboard">
+      <Container size="lg" className="admin-dashboard">
         
         {/* ===== ESTADÍSTICAS PRINCIPALES ===== */}
         <section className="admin-dashboard__stats">
           <h2 className="admin-dashboard__section-title">
-            <Icon name="trending" size="xs" /> Resumen General
+            {renderIcon('trending')} Resumen General
           </h2>
           
           {loading ? (
             <div className="admin-dashboard__stats-grid">
               {[...Array(4)].map((_, index) => (
-                <div key={index} className="stats-card--loading">
-                  <div className="stats-card__skeleton"></div>
-                </div>
+                <Skeleton.Card
+                  key={index}
+                  size="lg"
+                  height={120}
+                  loading={true}
+                  className="stats-card-skeleton"
+                />
               ))}
             </div>
           ) : (
@@ -220,13 +232,14 @@ function AdminDashboard() {
         {/* ===== ACCIONES RÁPIDAS ===== */}
         <section className="admin-dashboard__quick-actions">
           <h2 className="admin-dashboard__section-title">
-            <Icon name="zap" size="xs" /> Acciones Rápidas
+            {renderIcon('zap')} Acciones Rápidas
           </h2>
           
           <div className="admin-dashboard__actions-grid">
             <Button
               variant="outline"
               size="md"
+              rounded="md"
               leftIcon="users"
               onClick={() => navigate('/admin/users/create')}
               className="admin-dashboard__action-button"
@@ -237,6 +250,7 @@ function AdminDashboard() {
             <Button
               variant="outline"
               size="md"
+              rounded="md"
               leftIcon="film"
               onClick={() => navigate('/admin/movies/create')}
               className="admin-dashboard__action-button"
@@ -247,6 +261,7 @@ function AdminDashboard() {
             <Button
               variant="outline"
               size="md"
+              rounded="md"
               leftIcon="video"
               onClick={() => navigate('/admin/series/create')}
               className="admin-dashboard__action-button"
@@ -257,6 +272,7 @@ function AdminDashboard() {
             <Button
               variant="outline"
               size="md"
+              rounded="md"
               leftIcon="folder"
               onClick={() => navigate('/admin/categories/create')}
               className="admin-dashboard__action-button"
@@ -266,7 +282,7 @@ function AdminDashboard() {
           </div>
         </section>
 
-      </div>
+      </Container>
     </AdminLayout>
   );
 }

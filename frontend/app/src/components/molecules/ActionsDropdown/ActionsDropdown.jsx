@@ -4,6 +4,7 @@
 import { useState, useEffect, useRef, memo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '../../atoms/Button/Button';
+import { createStandardIconRenderer } from '../../../utils/iconHelpers';
 import './ActionsDropdown.css';
 
 /**
@@ -30,11 +31,14 @@ function ActionsDropdown({
   variant = 'ghost',
   position = 'bottom-right',
   disabled = false,
-  triggerIcon = '⋮',
+  triggerIcon = 'more-vertical',
   triggerLabel = 'Opciones',
   onOpen,
   onClose
 }) {
+  // ===== SISTEMA DE ICONOS =====
+  const renderIcon = createStandardIconRenderer('dropdown', size);
+  
   // ===== ESTADOS =====
   const [isOpen, setIsOpen] = useState(false);
   
@@ -233,9 +237,9 @@ function ActionsDropdown({
         aria-haspopup="menu"
         aria-label={triggerLabel}
         className="actions-dropdown__trigger"
-      >
-        {triggerIcon}
-      </Button>
+        iconOnly={true}
+        leftIcon={triggerIcon}
+      />
 
       {/* ===== BACKDROP (Solo cuando está abierto) ===== */}
       {isOpen && (
@@ -277,7 +281,7 @@ function ActionsDropdown({
                 {/* Ícono */}
                 {action.icon && (
                   <span className="actions-dropdown__icon">
-                    {action.icon}
+                    {renderIcon(action.icon)}
                   </span>
                 )}
                 

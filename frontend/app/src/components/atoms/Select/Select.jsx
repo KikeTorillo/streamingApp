@@ -136,8 +136,13 @@ const Select = forwardRef((props, ref) => {
     autoComplete
   };
 
-  // Props DOM directos (sin extractDOMProps para consistencia con Input)
-  const domProps = restProps;
+  // Props DOM directos - filtrar solo testId problemático
+  const { testId, ...domProps } = restProps;
+  
+  // Agregar data-testid si testId está presente
+  if (testId) {
+    domProps['data-testid'] = testId;
+  }
 
   // Select base element
   const selectElement = (

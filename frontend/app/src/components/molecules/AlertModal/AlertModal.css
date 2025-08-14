@@ -23,14 +23,12 @@
   gap: var(--space-md);
 }
 
-/* ✅ ICONO - Usa design tokens automáticos por tamaño */
+/* ✅ ICONO - MIGRADO AL SISTEMA DE ICONOS ESTÁNDAR */
 .alert-modal__icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--icon-size-lg);
-  line-height: 1;
-  color: currentColor;
+  /* Tamaño controlado por Icon component - NO por font-size */
 }
 
 /* ✅ TEXTO DEL MENSAJE */
@@ -112,23 +110,12 @@
   }
 }
 
-/* ✅ TAMAÑOS ESTÁNDAR - Ajustes por tamaño de modal */
-.alert-modal--xs .alert-modal__icon {
-  font-size: var(--icon-size-md);
-}
-
-.alert-modal--sm .alert-modal__icon {
-  font-size: var(--icon-size-lg);
-}
-
-.alert-modal--md .alert-modal__icon {
-  font-size: var(--icon-size-xl);
-}
-
-.alert-modal--lg .alert-modal__icon {
-  font-size: var(--icon-size-2xl);
-}
-
-.alert-modal--xl .alert-modal__icon {
-  font-size: var(--icon-size-3xl);
-}
+/* ✅ TAMAÑOS ESTÁNDAR - MIGRADO AL SISTEMA DE ICONOS ESTÁNDAR */
+/* Los tamaños ahora se controlan vía props del Icon component:
+ * - xs modal → Icon size="md" 
+ * - sm modal → Icon size="lg"  
+ * - md modal → Icon size="xl"
+ * - lg modal → Icon size="xl" 
+ * - xl modal → Icon size="xl"
+ * Esto se maneja en el componente AlertModal.jsx, no en CSS
+ */

@@ -81,7 +81,7 @@ function CategoriesListContent() {
             {row.original.name}
           </div>
           <div>
-            🎭 Categoría
+            Categoría
           </div>
         </div>
       )
@@ -181,9 +181,9 @@ function CategoriesListContent() {
   /**
    * Actualizar lista
    */
-  const handleRefresh = () => {
-    loadCategories();
-  };
+  // const handleRefresh = () => {
+  //   loadCategories();
+  // };
 
   // ===== EFECTOS =====
   useEffect(() => {

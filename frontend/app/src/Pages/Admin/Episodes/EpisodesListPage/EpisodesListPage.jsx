@@ -8,7 +8,7 @@ import { DataTable } from '../../../../components/organisms/DataTable/DataTable'
 import { Button } from '../../../../components/atoms/Button/Button';
 import { Badge } from '../../../../components/atoms/Badge/Badge';
 import { Select } from '../../../../components/atoms/Select/Select';
-import { Icon } from '../../../../components/atoms/Icon/Icon';
+import { Label } from '../../../../components/atoms/Label/Label';
 import './EpisodesListPage.css';
 
 // Context y servicios
@@ -88,7 +88,7 @@ function EpisodesListPage() {
             size="sm"
             appearance="soft"
           >
-            <Icon name="video" size="xs" /> {serieName || `Serie #${serieId}`}
+            {serieName || `Serie #${serieId}`}
           </Badge>
         );
       }
@@ -269,11 +269,13 @@ function EpisodesListPage() {
       <div>
         {/* SELECTOR DE SERIES */}
         <div className="episodes-list__series-selector">
-          <label
+          <Label
             htmlFor="serie-selector"
+            leftIcon="video"
+            className="episodes-list__label"
           >
-            <Icon name="video" size="sm" /> Seleccionar Serie:
-          </label>
+            Seleccionar Serie:
+          </Label>
           <Select
             id="serie-selector"
             value={selectedSerieId}
@@ -294,7 +296,7 @@ function EpisodesListPage() {
             <Badge
               variant="danger"
               size="lg"
-              icon="❌"
+              leftIcon="x"
               appearance="soft"
             >
               {seriesError}
@@ -307,7 +309,7 @@ function EpisodesListPage() {
             <Badge
               variant="danger"
               size="lg"
-              icon="❌"
+              leftIcon="x"
               appearance="soft"
             >
               {error}

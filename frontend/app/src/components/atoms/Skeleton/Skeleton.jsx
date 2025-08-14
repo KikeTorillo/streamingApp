@@ -259,4 +259,12 @@ Skeleton.Card.propTypes = STANDARD_PROP_TYPES;
 // Optimizar performance con memoización
 const MemoizedSkeleton = memo(Skeleton);
 
+// ===== PRESERVAR COMPONENTES DE CONVENIENCIA EN LA EXPORTACIÓN =====
+// IMPORTANTE: Asignar las propiedades DESPUÉS de la memoización
+// para que estén disponibles cuando se use Skeleton.Card, Skeleton.Text, etc.
+MemoizedSkeleton.Text = Skeleton.Text;
+MemoizedSkeleton.Avatar = Skeleton.Avatar;
+MemoizedSkeleton.Image = Skeleton.Image;
+MemoizedSkeleton.Card = Skeleton.Card;
+
 export { MemoizedSkeleton as Skeleton };

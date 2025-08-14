@@ -84,7 +84,7 @@ function SeriesCreatePage() {
         label: 'Título *',
         placeholder: 'Ej: Breaking Bad, Game of Thrones...',
         required: true,
-        leftIcon: '📺',
+        leftIcon: 'video',
         helperText: 'Título principal que aparecerá en el catálogo'
       },
       {
@@ -94,7 +94,7 @@ function SeriesCreatePage() {
         placeholder: 'Escribe una descripción atractiva del contenido...',
         required: true,
         rows: 4,
-        leftIcon: '📝',
+        leftIcon: 'edit',
         helperText: 'Descripción que aparecerá en la página de detalles'
       },
       {
@@ -105,21 +105,21 @@ function SeriesCreatePage() {
         required: true,
         min: 1900,
         max: new Date().getFullYear() + 5,
-        leftIcon: '📅',
+        leftIcon: 'calendar',
         helperText: 'Año de estreno original'
       },
       {
         name: 'categoryId',
         type: 'select',
         label: (() => {
-          if (categoriesLoading) return '⏳ Cargando categorías...';
-          if (categoriesError) return '❌ Error al cargar categorías';
-          if (categories.length === 0) return '📋 Sin categorías disponibles - Ve a Administrar > Categorías para crear una.';
-          return `📋 Selecciona la categoría principal (${categories.length} disponibles)`;
+          if (categoriesLoading) return 'Cargando categorías...';
+          if (categoriesError) return 'Error al cargar categorías';
+          if (categories.length === 0) return 'Sin categorías disponibles - Ve a Administrar > Categorías para crear una.';
+          return `Selecciona la categoría principal (${categories.length} disponibles)`;
         })(),
         placeholder: categoriesLoading ? 'Cargando categorías...' : 'Selecciona una categoría',
         required: true,
-        leftIcon: '🏷️',
+        leftIcon: 'folder',
         options: categories.map(cat => ({
           value: cat.id,
           label: cat.name
@@ -200,7 +200,15 @@ function SeriesCreatePage() {
 
   // ===== RENDER PRINCIPAL =====
   return (
-    <AdminLayout>
+    <AdminLayout
+      title="Crear Nueva Serie"
+      subtitle="Agregar una nueva serie al catálogo multimedia"
+      breadcrumbs={[
+        { label: 'Admin', href: '/admin' },
+        { label: 'Series', href: '/admin/series' },
+        { label: 'Crear Serie' }
+      ]}
+    >
       <Container size='lg'>
         <div className="series-create-page">
           {/* Botón volver a series */}
@@ -219,7 +227,7 @@ function SeriesCreatePage() {
               onSelectItem={handleSelectFromTMDBWithReset}
               onManualCreate={handleManualCreateWithReset}
               contentType="tv"
-              title="📺 Buscar Series en TMDB"
+              title="Buscar Series en TMDB"
               description="Busca series en The Movie Database para agregar a tu catálogo"
               placeholder="Ej: Breaking Bad, Game of Thrones, The Office..."
               helperText="Busca series por título, año o palabras clave"

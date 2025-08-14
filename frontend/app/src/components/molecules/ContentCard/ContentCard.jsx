@@ -177,7 +177,7 @@ function ContentCard(props) {
             variant={type === 'movie' ? 'primary' : 'secondary'}
             size={size === 'xs' ? 'xs' : size === 'xl' ? 'sm' : 'xs'}
             appearance="soft"
-            leftIcon={type === 'movie' ? 'film' : 'tv'}
+            leftIcon={type === 'movie' ? 'film' : 'video'}
           >
             {type === 'movie' ? 'Película' : 'Serie'}
           </Badge>

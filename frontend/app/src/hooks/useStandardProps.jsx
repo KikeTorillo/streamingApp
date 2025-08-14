@@ -77,7 +77,7 @@ export const useStandardProps = (props = {}, options = {}) => {
     };
   }, [size, variant, rounded, componentType]);
 
-  // Hook de iconos integrado con memoización
+  // Hook de iconos integrado con sistema contextual y memoización
   const renderIcon = useIconRenderer(componentType, size);
 
   // Estados y flags computados
@@ -182,12 +182,15 @@ export const useModalProps = (props) => useStandardProps(props, {
 
 /**
  * Hook especializado para componentes tipo Label
- * Configuración optimizada para labels con estados semánticos específicos
+ * 
+ * ✅ SISTEMA CONTEXTUAL: Iconos automáticamente pequeños (xs/sm)
+ * ✅ CONFIGURACIÓN OPTIMIZADA: Para labels con iconos que no dominen el texto
+ * ✅ BACKWARD COMPATIBLE: Migración transparente desde código existente
  */
 export const useLabelProps = (props) => useStandardProps(props, {
   componentType: 'label',
   defaultSize: 'md',
-  defaultVariant: 'default', 
+  defaultVariant: 'primary', // Cambio: 'default' → 'primary' para consistencia
   defaultRounded: 'sm'
 });
 
@@ -237,7 +240,10 @@ export const useContentCardProps = (props) => useStandardProps(props, {
 
 /**
  * Hook especializado para componentes tipo DataTable
- * Configuración optimizada para tablas complejas con filtros y acciones
+ * 
+ * ✅ SISTEMA CONTEXTUAL: Iconos automáticamente medianos (sm/md) para buena visibilidad
+ * ✅ CONFIGURACIÓN OPTIMIZADA: Para tablas complejas con filtros y acciones
+ * ✅ SOLUCIÓN AUTOMÁTICA: Arregla problema de iconos grandes en no-results/error states
  */
 export const useDataTableProps = (props) => useStandardProps(props, {
   componentType: 'datatable',

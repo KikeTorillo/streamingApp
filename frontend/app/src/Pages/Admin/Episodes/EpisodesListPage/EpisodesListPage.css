@@ -209,10 +209,13 @@
 }
 
 .episodes-list__label {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
   font-weight: var(--font-weight-semibold);
   margin-bottom: var(--space-sm);
   color: var(--text-primary);
+  font-size: var(--font-size-sm);
 }
 
 

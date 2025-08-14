@@ -195,7 +195,7 @@ function CategoryCreatePage() {
           <Button
             variant="outline"
             size="sm"
-            leftIcon="←"
+            leftIcon="arrow-left"
             onClick={handleGoBack}
             disabled={loading}
           >
@@ -216,7 +216,7 @@ function CategoryCreatePage() {
         {/* Header del Formulario */}
         <div className="form-header">
           <h2 className="form-title">
-            grid Nueva Categoría
+            Nueva Categoría
           </h2>
           <p className="form-description">
             Las categorías ayudan a organizar y clasificar el contenido multimedia. 

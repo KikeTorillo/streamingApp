@@ -25,6 +25,18 @@
   font-weight: var(--font-weight-semibold);
   color: var(--text-primary);
   line-height: var(--line-height-tight);
+  
+  /* Layout para iconos */
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+/* Iconos en títulos de sección - Ahora protegidos por el sistema global */
+.admin-dashboard__section-title .icon {
+  /* Los tamaños son controlados automáticamente por Icon component */
+  /* Las protecciones CSS en Icon.css previenen interferencias */
+  flex-shrink: 0;
 }
 
 /* ===== ESTADÍSTICAS ===== */

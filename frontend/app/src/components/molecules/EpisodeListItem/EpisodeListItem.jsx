@@ -116,7 +116,7 @@ const EpisodeListItem = ({
                 variant="success"
                 size="xs"
                 appearance="soft"
-                icon="✓"
+                leftIcon="check"
               />
             </div>
           )}
@@ -141,7 +141,7 @@ const EpisodeListItem = ({
                 variant="warning"
                 size="xs"
                 appearance="soft"
-                icon="⭐"
+                leftIcon="star"
               >
                 {rating}
               </Badge>
@@ -162,7 +162,7 @@ const EpisodeListItem = ({
         <Button
           variant="primary"
           size="sm"
-          icon="▶"
+          leftIcon="play"
           onClick={handlePlayClick}
           disabled={disabled || loading}
           loading={loading}

@@ -17,6 +17,7 @@ import { TextInput } from '../../molecules/TextInput/TextInput';
 import { Select } from '../../atoms/Select/Select';
 import { EmptyState } from '../../molecules/EmptyState/EmptyState';
 import { ActionsDropdown } from '../../molecules/ActionsDropdown/ActionsDropdown';
+import { Label } from '../../atoms/Label/Label';
 
 // Sistema estándar de props y tokens
 import { useDataTableProps } from '../../../hooks/useStandardProps';
@@ -370,12 +371,18 @@ function DataTable(props) {
                 </tr>
               ))
             ) : error ? (
-              // Estado de error
+              // Estado de error - usando componente Label para iconos consistentes
               <tr className="data-table__row data-table__row--error">
                 <td colSpan={memoColumns.length} className="data-table__td">
                   <div className="data-table__error">
-                    {renderIcon('alert-circle', { variant: 'danger' })}
-                    <span className="data-table__error-message">{error}</span>
+                    <Label
+                      leftIcon="alert-circle"
+                      variant="danger"
+                      size={size}
+                      className="data-table__error-label"
+                    >
+                      {error}
+                    </Label>
                     {onRefresh && (
                       <Button
                         variant="outline"
@@ -391,14 +398,18 @@ function DataTable(props) {
                 </td>
               </tr>
             ) : table.getRowModel().rows.length === 0 ? (
-              // Sin resultados de búsqueda
+              // Sin resultados de búsqueda - usando componente Label para iconos consistentes
               <tr className="data-table__row data-table__row--empty">
                 <td colSpan={memoColumns.length} className="data-table__td">
                   <div className="data-table__no-results">
-                    {renderIcon('search', { variant: 'neutral' })}
-                    <span className="data-table__no-results-message">
+                    <Label
+                      leftIcon="search"
+                      variant="neutral"
+                      size={size}
+                      className="data-table__no-results-label"
+                    >
                       No se encontraron resultados para &ldquo;{debouncedGlobalFilter}&rdquo;
-                    </span>
+                    </Label>
                   </div>
                 </td>
               </tr>
