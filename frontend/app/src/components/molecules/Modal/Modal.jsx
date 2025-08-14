@@ -4,7 +4,7 @@
 import { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '../../atoms/Button/Button';
-import { validateStandardProps, STANDARD_PROP_TYPES } from '../../../tokens';
+import { validateStandardProps, STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens';
 import { createStandardIconRenderer } from '../../../utils/iconHelpers';
 import './Modal.css';
 
@@ -159,6 +159,9 @@ function Modal(props) {
     className
   ].filter(Boolean).join(' ');
   
+  // ✅ EXTRAER DOM PROPS - Solo pasar props válidas de DOM
+  const domProps = extractDOMProps(restProps);
+  
   // ✅ RENDERIZADO CONDICIONAL: Solo renderizar el <dialog> cuando isOpen es true
   // Esto evita problemas con el elemento <dialog> que puede interferir con otros controles
   if (!isOpen) {
@@ -175,7 +178,7 @@ function Modal(props) {
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledBy}
       aria-describedby={ariaDescribedBy}
-      {...restProps}
+      {...domProps}
     >
       {/* Contenido del modal */}
       <div className="modal__content">

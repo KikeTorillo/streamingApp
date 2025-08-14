@@ -99,14 +99,25 @@ import { Skeleton } from './atoms/Skeleton';
     }
   },
   argTypes: {
-    variant: {
-      name: 'Variante',
-      description: 'Tipo de skeleton',
+    skeletonVariant: {
+      name: 'Variante de Skeleton',
+      description: 'Tipo funcional de skeleton',
       control: { type: 'select' },
       options: ['text', 'avatar', 'image', 'card', 'custom'],
       table: {
         type: { summary: "'text' | 'avatar' | 'image' | 'card' | 'custom'" },
         defaultValue: { summary: "'text'" },
+        category: 'Appearance'
+      }
+    },
+    variant: {
+      name: 'Variante Semántica',
+      description: 'Variante semántica del sistema de diseño',
+      control: { type: 'select' },
+      options: ['primary', 'secondary', 'success', 'danger', 'warning', 'neutral'],
+      table: {
+        type: { summary: "'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'neutral'" },
+        defaultValue: { summary: "'neutral'" },
         category: 'Appearance'
       }
     },
@@ -169,9 +180,19 @@ import { Skeleton } from './atoms/Skeleton';
         category: 'Layout'
       }
     },
+    loading: {
+      name: 'Cargando',
+      description: 'Estado de carga (habilita animación shimmer)',
+      control: { type: 'boolean' },
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+        category: 'State'
+      }
+    },
     animate: {
-      name: 'Animación',
-      description: 'Habilitar animación shimmer',
+      name: 'Animación (Legacy)',
+      description: 'Habilitar animación shimmer (deprecado, usar loading)',
       control: { type: 'boolean' },
       table: {
         type: { summary: 'boolean' },
@@ -203,9 +224,9 @@ import { Skeleton } from './atoms/Skeleton';
 // Story principal
 export const Default = {
   args: {
-    variant: 'text',
+    skeletonVariant: 'text',
     size: 'md',
-    animate: true
+    loading: true
   }
 };
 
@@ -239,7 +260,7 @@ export const Variants = () => (
           {variant}
         </h4>
         <div style={{ marginBottom: 'var(--space-sm)' }}>
-          <Skeleton variant={variant} size="lg" />
+          <Skeleton skeletonVariant={variant} size="lg" />
         </div>
         <p style={{ 
           fontSize: 'var(--font-size-sm)',
@@ -291,9 +312,9 @@ export const Sizes = () => (
           </span>
         </div>
         <div style={{ display: 'flex', gap: 'var(--space-lg)', alignItems: 'center' }}>
-          <Skeleton variant="text" size={size} width="200px" />
-          <Skeleton variant="avatar" size={size} />
-          <Skeleton variant="image" size={size} width="120px" />
+          <Skeleton skeletonVariant="text" size={size} width="200px" />
+          <Skeleton skeletonVariant="avatar" size={size} />
+          <Skeleton skeletonVariant="image" size={size} width="120px" />
         </div>
       </div>
     ))}
@@ -322,7 +343,7 @@ export const Shapes = () => (
           {shape}
         </h4>
         <div style={{ marginBottom: 'var(--space-sm)' }}>
-          <Skeleton variant="custom" shape={shape} width="80px" height="80px" />
+          <Skeleton skeletonVariant="custom" shape={shape} width="80px" height="80px" />
         </div>
         <p style={{ 
           fontSize: 'var(--font-size-sm)',
@@ -353,7 +374,7 @@ export const MultipleLines = () => (
         }}>
           {lines} línea{lines > 1 ? 's' : ''}
         </h4>
-        <Skeleton variant="text" lines={lines} />
+        <Skeleton skeletonVariant="text" lines={lines} />
       </div>
     ))}
   </div>
@@ -381,7 +402,7 @@ export const AspectRatios = () => (
         }}>
           {ratio}
         </h4>
-        <Skeleton variant="image" aspectRatio={ratio} />
+        <Skeleton skeletonVariant="image" aspectRatio={ratio} />
         <p style={{ 
           fontSize: 'var(--font-size-sm)',
           color: 'var(--text-muted)',
@@ -591,7 +612,7 @@ export const PracticalExamples = () => (
               marginBottom: 'var(--space-md)'
             }}>
               <Skeleton.Text width="60%" />
-              <Skeleton variant="custom" width="24px" height="24px" shape="rounded" />
+              <Skeleton skeletonVariant="custom" width="24px" height="24px" shape="rounded" />
             </div>
             <div className="skeleton-card-body">
               <Skeleton.Text width="40%" size="xl" />
@@ -625,12 +646,12 @@ export const AnimationStates = () => (
         Con Animación (default)
       </h4>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
-        <Skeleton.Text lines={3} animate={true} />
+        <Skeleton.Text lines={3} loading={true} />
         <div style={{ display: 'flex', gap: 'var(--space-md)', alignItems: 'center' }}>
-          <Skeleton.Avatar size="md" animate={true} />
+          <Skeleton.Avatar size="md" loading={true} />
           <div style={{ flex: 1 }}>
-            <Skeleton.Text animate={true} />
-            <Skeleton.Text width="60%" size="sm" animate={true} />
+            <Skeleton.Text loading={true} />
+            <Skeleton.Text width="60%" size="sm" loading={true} />
           </div>
         </div>
       </div>
@@ -649,12 +670,12 @@ export const AnimationStates = () => (
         Sin Animación
       </h4>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
-        <Skeleton.Text lines={3} animate={false} />
+        <Skeleton.Text lines={3} loading={false} />
         <div style={{ display: 'flex', gap: 'var(--space-md)', alignItems: 'center' }}>
-          <Skeleton.Avatar size="md" animate={false} />
+          <Skeleton.Avatar size="md" loading={false} />
           <div style={{ flex: 1 }}>
-            <Skeleton.Text animate={false} />
-            <Skeleton.Text width="60%" size="sm" animate={false} />
+            <Skeleton.Text loading={false} />
+            <Skeleton.Text width="60%" size="sm" loading={false} />
           </div>
         </div>
       </div>

@@ -108,7 +108,7 @@ function SeriesListPage() {
         
         return (
           <Badge 
-            variant="neutral"
+            variant="primary"
             size="sm"
             appearance="soft"
             leftIcon="folder"
@@ -308,7 +308,7 @@ function SeriesListPage() {
           searchPlaceholder="Buscar por título, categoría o año..."
           pageSize={10}
           pageSizeOptions={[5, 10, 25, 50]}
-          variant="striped"
+          tableVariant="striped"
         />
       </div>
     </AdminLayout>

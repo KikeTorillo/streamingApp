@@ -40,7 +40,7 @@ function ContentSection(props) {
     empty = false,
     
     // Configuración del estado vacío
-    emptyIcon = '📭',
+    emptyIcon = 'folder',
     emptyTitle = 'No hay contenido',
     emptyDescription = 'No se encontraron elementos en esta sección.',
     emptyAction = null,

@@ -86,7 +86,9 @@
 }
 
 .stats-card--sm .stats-card__icon {
-  font-size: var(--font-size-lg);
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: var(--font-size-base);
 }
 
 .stats-card--md {
@@ -108,7 +110,9 @@
 }
 
 .stats-card--lg .stats-card__icon {
-  font-size: var(--font-size-2xl);
+  width: 3.5rem;
+  height: 3.5rem;
+  font-size: var(--font-size-xl);
 }
 
 /* ===== ESTADOS INTERACTIVOS ===== */
@@ -149,18 +153,18 @@
   flex-shrink: 0;
   
   /* Tamaño */
-  width: 4rem;
-  height: 4rem;
+  width: 3rem;
+  height: 3rem;
   
   /* Colores */
   background-color: var(--stats-card-color-light);
   color: var(--stats-card-color);
   
   /* Forma */
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   
   /* Tipografía */
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-lg);
   line-height: 1;
 }
 
@@ -381,9 +385,9 @@
   }
   
   .stats-card__icon {
-    width: 3.6rem;
-    height: 3.6rem;
-    font-size: var(--font-size-lg);
+    width: 2.8rem;
+    height: 2.8rem;
+    font-size: var(--font-size-base);
   }
 }
 

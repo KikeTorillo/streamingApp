@@ -55,8 +55,8 @@ function ThemeSelector({
           variant="primary"
           size={size}
           iconOnly={true}
-          rightIcon={palette === 'default' && (theme === 'dark' ? '🌙' : '☀️') || 
-                palette !== 'default' && (theme.endsWith('dark') ? '🌙' : '☀️')}
+          rightIcon={palette === 'default' && (theme === 'dark' ? 'moon' : 'sun') || 
+                palette !== 'default' && (theme.endsWith('dark') ? 'moon' : 'sun')}
         />
       </div>
     </div>

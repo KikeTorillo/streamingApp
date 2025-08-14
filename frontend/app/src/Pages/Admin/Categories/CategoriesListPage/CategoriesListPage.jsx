@@ -200,7 +200,7 @@ function CategoriesListContent() {
           <Button
             variant="primary"
             size="sm"
-            leftIcon="🎭"
+            leftIcon="grid"
             onClick={handleCreateCategory}
           >
             Crear Categoría
@@ -222,7 +222,7 @@ function CategoriesListContent() {
             variant="primary"
             emptyTitle="No hay categorías registradas"
             emptyDescription="Crea tu primera categoría para organizar el contenido multimedia"
-            emptyIcon="🎭"
+            emptyIcon="grid"
             onView={handleViewCategory}
             onEdit={handleEditCategory}
             onDelete={handleDeleteCategory}
@@ -243,7 +243,7 @@ function CategoriesListContent() {
         initialValue={editModal.category?.name || ''}
         loading={false}
         error={editError}
-        icon="📂"
+        leftIcon="folder"
         required
         minLength={2}
         maxLength={50}

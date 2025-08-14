@@ -177,7 +177,7 @@ function MovieFormView({
   return (
     <div className="movie-form-view">
       <Card variant="elevated" className="movie-form-view__container">
-        <CardBody padding="lg">
+        <CardBody size="lg">
           {/* ===== BOTÓN DE VOLVER ===== */}
           {showBackButton && (
             <div className="movie-form-view__back-section">
@@ -185,7 +185,7 @@ function MovieFormView({
                 onClick={onBackToSearch}
                 variant="outline"
                 size="sm"
-                leftIcon="←"
+                leftIcon="arrow-left"
               >
                 Volver a búsqueda
               </Button>

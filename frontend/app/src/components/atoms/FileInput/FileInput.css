@@ -153,14 +153,45 @@
   opacity: 0.6;
 }
 
-/* ===== VARIANTES SEMÁNTICAS - IDÉNTICAS A INPUT ===== */
+/* ===== VARIANTES SEMÁNTICAS - SISTEMA ESTÁNDAR ===== */
 
-/* Default */
-.file-input--default .file-input__button,
-.file-input__button--default {
+/* Primary */
+.file-input--primary .file-input__button {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.file-input--primary.file-input--focused .file-input__button {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 0.3rem var(--color-primary-light);
+  outline-color: var(--color-primary);
+}
+
+/* Secondary */
+.file-input--secondary .file-input__button {
+  background-color: var(--color-secondary-light);
+  color: var(--color-secondary);
+  border-color: var(--color-secondary);
+}
+
+.file-input--secondary.file-input--focused .file-input__button {
+  border-color: var(--color-secondary);
+  box-shadow: 0 0 0 0.3rem var(--color-secondary-light);
+  outline-color: var(--color-secondary);
+}
+
+/* Neutral (equivale al old 'default') */
+.file-input--neutral .file-input__button {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   border-color: var(--border-default);
+}
+
+/* Danger (equivale al old 'error') */
+.file-input--danger .file-input__button {
+  border-color: var(--color-danger);
+  background-color: var(--color-danger-light);
 }
 
 /* Success */
@@ -199,13 +230,6 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* Danger */
-.file-input--danger .file-input__button,
-.file-input__button--danger {
-  border-color: var(--color-danger);
-  background-color: var(--color-danger-light);
-}
-
 .file-input--danger.file-input--focused .file-input__button {
   border-color: var(--color-danger);
   box-shadow: 0 0 0 0.3rem var(--color-danger-light);
@@ -220,9 +244,29 @@
 /* ===== CONTENIDO DEL BOTÓN ===== */
 .file-input__icon {
   flex-shrink: 0;
-  font-size: 1.2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--text-secondary);
   transition: color var(--transition-normal);
+}
+
+.file-input__icon--right {
+  margin-left: auto;
+}
+
+/* Estados loading con spinner */
+.file-input__spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .file-input__text {
@@ -262,8 +306,78 @@
   font-weight: var(--font-weight-medium);
 }
 
+/* ===== ESTADOS LOADING ===== */
+.file-input-wrapper--loading {
+  position: relative;
+}
+
+.file-input__loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--bg-primary);
+  opacity: 0.9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: inherit;
+  z-index: 1;
+}
+
+.file-input__loading-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.file-input--loading .file-input__button {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* ===== SISTEMA DE ARCHIVOS MEJORADO ===== */
+.file-input__files-info {
+  margin-top: var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.file-input__file-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+}
+
+.file-input__file-icon {
+  flex-shrink: 0;
+  color: var(--text-secondary);
+}
+
+.file-input__file-name {
+  flex: 1;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-input__file-size {
+  flex-shrink: 0;
+  color: var(--text-muted);
+  font-weight: var(--font-weight-medium);
+}
+
 /* ===== MENSAJES DE AYUDA Y ERROR ===== */
-.file-input__helper {
+.file-input__helper-text {
   margin-top: var(--space-xs);
   font-size: var(--font-size-sm);
   color: var(--text-secondary);
@@ -271,13 +385,22 @@
   transition: color var(--transition-normal);
 }
 
-.file-input__error {
+.file-input__error-text {
   margin-top: var(--space-xs);
   font-size: var(--font-size-sm);
   color: var(--color-danger);
   line-height: var(--line-height-tight);
   font-weight: var(--font-weight-medium);
   animation: slideInError 0.2s ease-out;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+}
+
+.file-input__error-icon {
+  flex-shrink: 0;
+  color: var(--color-danger);
+  margin-top: 0.1rem; /* Alinear con texto */
 }
 
 /* Animación sutil para errores */
@@ -346,7 +469,11 @@
     transition: none;
   }
   
-  .file-input__error {
+  .file-input__error-text {
+    animation: none;
+  }
+  
+  .file-input__spinner {
     animation: none;
   }
 }
@@ -415,7 +542,8 @@
     box-shadow: none;
   }
   
-  .file-input__files-info {
+  .file-input__files-info,
+  .file-input__loading-overlay {
     display: none;
   }
 }

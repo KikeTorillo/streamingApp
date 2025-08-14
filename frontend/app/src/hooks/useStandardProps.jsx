@@ -225,6 +225,17 @@ export const useTabsProps = (props) => useStandardProps(props, {
 });
 
 /**
+ * Hook especializado para componentes tipo ContentCard
+ * Configuración optimizada para cards de películas/series
+ */
+export const useContentCardProps = (props) => useStandardProps(props, {
+  componentType: 'content-card',
+  defaultSize: 'md',
+  defaultVariant: 'neutral',
+  defaultRounded: 'lg'
+});
+
+/**
  * Hook especializado para componentes tipo DataTable
  * Configuración optimizada para tablas complejas con filtros y acciones
  */
@@ -233,6 +244,50 @@ export const useDataTableProps = (props) => useStandardProps(props, {
   defaultSize: 'md',
   defaultVariant: 'neutral',
   defaultRounded: 'lg'
+});
+
+/**
+ * Hook especializado para componentes tipo Avatar
+ * Configuración optimizada para avatares con iconos de perfil
+ */
+export const useAvatarProps = (props) => useStandardProps(props, {
+  componentType: 'avatar',
+  defaultSize: 'md',
+  defaultVariant: 'neutral',
+  defaultRounded: 'full'
+});
+
+/**
+ * Hook especializado para componentes tipo FileInput
+ * Configuración optimizada para inputs de archivo con iconos upload
+ */
+export const useFileInputProps = (props) => useStandardProps(props, {
+  componentType: 'file-input',
+  defaultSize: 'md',
+  defaultVariant: 'neutral',
+  defaultRounded: 'md'
+});
+
+/**
+ * Hook especializado para componentes tipo Link
+ * Configuración optimizada para enlaces con iconos de navegación
+ */
+export const useLinkProps = (props) => useStandardProps(props, {
+  componentType: 'link',
+  defaultSize: 'md',
+  defaultVariant: 'primary',
+  defaultRounded: 'sm'
+});
+
+/**
+ * Hook especializado para componentes tipo Skeleton
+ * Configuración optimizada para estados de carga con animaciones
+ */
+export const useSkeletonProps = (props) => useStandardProps(props, {
+  componentType: 'skeleton',
+  defaultSize: 'md',
+  defaultVariant: 'neutral',
+  defaultRounded: 'md'
 });
 
 // ===== HOOKS COMPUESTOS PARA CASOS ESPECÍFICOS =====
@@ -329,6 +384,81 @@ export const useStandardPropsDebug = (props, options, componentName = 'Component
   
   return standardProps;
 };
+
+// ===== HOOKS ESPECIALIZADOS POR COMPONENTE =====
+
+/**
+ * Hook especializado para Divider
+ * Configuración optimizada para separadores versátiles
+ */
+export const useDividerProps = createStandardHook({
+  componentType: 'divider',
+  defaultSize: 'md',
+  defaultVariant: 'neutral', // neutral para separadores sutiles
+  defaultRounded: 'none', // dividers normalmente no tienen rounded
+  allowedSizes: ['xs', 'sm', 'md', 'lg', 'xl'], // tamaño = grosor/espaciado
+  allowedVariants: ['primary', 'secondary', 'success', 'warning', 'danger', 'neutral']
+});
+
+/**
+ * Hook especializado para Breadcrumb
+ * Configuración optimizada para navegación jerárquica con iconos
+ */
+export const useBreadcrumbProps = (props) => {
+  // Mapear props legacy para backward compatibility
+  const legacyMappedProps = useMemo(() => {
+    const mapped = { ...props };
+    
+    // Mapear variant funcional legacy a breadcrumbVariant
+    if (mapped.variant && ['default', 'simple', 'compact'].includes(mapped.variant)) {
+      // Deprecation warning para variants funcionales
+      if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
+        console.warn(
+          `[Breadcrumb] DEPRECATION WARNING: prop "variant='${mapped.variant}'" está obsoleta. ` +
+          `Usa "breadcrumbVariant='${mapped.variant}'" y "variant" para variantes semánticas (primary, secondary, success, etc.). ` +
+          `Ver migración: https://docs.streaming-app.com/components/breadcrumb#migration`
+        );
+      }
+      
+      // Mover a breadcrumbVariant
+      mapped.breadcrumbVariant = mapped.variant;
+      mapped.variant = 'primary'; // Valor por defecto semántico
+    }
+    
+    return mapped;
+  }, [props]);
+  
+  return useStandardProps(legacyMappedProps, {
+    componentType: 'breadcrumb',
+    defaultSize: 'md',
+    defaultVariant: 'primary', // primary para items clickeables
+    defaultRounded: 'sm', // esquinas suaves para items
+    allowedSizes: ['xs', 'sm', 'md', 'lg', 'xl'], // tamaño = padding/font-size
+    allowedVariants: ['primary', 'secondary', 'success', 'warning', 'danger', 'neutral']
+  });
+};
+
+/**
+ * Hook especializado para FilterBar
+ * Configuración optimizada para barras de filtros con categorías
+ */
+export const useFilterBarProps = (props) => useStandardProps(props, {
+  componentType: 'filterBar',
+  defaultSize: 'md',
+  defaultVariant: 'primary', // primary para destacar la funcionalidad de filtro
+  defaultRounded: 'lg' // esquinas redondeadas para un look más suave
+});
+
+/**
+ * Hook especializado para EditModal
+ * Configuración optimizada para modales de edición CRUD
+ */
+export const useEditModalProps = (props) => useStandardProps(props, {
+  componentType: 'editModal',
+  defaultSize: 'md',
+  defaultVariant: 'primary', // primary para destacar la funcionalidad de edición
+  defaultRounded: 'xl' // esquinas extra redondeadas para un modal atractivo
+});
 
 // ===== EXPORTS DEFAULT =====
 export default useStandardProps;

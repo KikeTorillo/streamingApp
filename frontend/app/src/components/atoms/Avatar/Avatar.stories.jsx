@@ -201,8 +201,8 @@ Sizes.parameters = {
   }
 };
 
-// ========== 3. VARIANTS STORY (OBLIGATORIA) ==========
-export const Variants = () => (
+// ========== 3. SYSTEM STANDARD VARIANTS STORY (OBLIGATORIA) ==========
+export const SystemStandardVariants = () => (
   <div style={{
     display: 'grid',
     gap: 'var(--space-lg)',
@@ -211,37 +211,131 @@ export const Variants = () => (
     padding: 'var(--space-md)'
   }}>
     <div style={{ textAlign: 'center' }}>
-      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Default</h4>
-      <Avatar variant="default" name="Default" size="lg" />
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Primary</h4>
+      <Avatar variant="primary" name="Primary" size="lg" />
     </div>
     
     <div style={{ textAlign: 'center' }}>
-      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Elevated</h4>
-      <Avatar variant="elevated" name="Elevated" size="lg" />
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Secondary</h4>
+      <Avatar variant="secondary" name="Secondary" size="lg" />
     </div>
     
     <div style={{ textAlign: 'center' }}>
-      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Bordered</h4>
-      <Avatar variant="bordered" name="Bordered" size="lg" />
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Success</h4>
+      <Avatar variant="success" name="Success" size="lg" />
     </div>
     
     <div style={{ textAlign: 'center' }}>
-      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Minimal</h4>
-      <Avatar variant="minimal" name="Minimal" size="lg" />
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Warning</h4>
+      <Avatar variant="warning" name="Warning" size="lg" />
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Danger</h4>
+      <Avatar variant="danger" name="Danger" size="lg" />
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Neutral</h4>
+      <Avatar variant="neutral" name="Neutral" size="lg" />
     </div>
   </div>
 );
 
-Variants.parameters = {
+SystemStandardVariants.parameters = {
   docs: {
     description: {
-      story: 'Variantes de presentación: Default estándar, Elevated con sombra, Bordered con borde, Minimal sin decoración.'
+      story: '6 variantes semánticas estándar del sistema de diseño. Cada variante tiene colores semánticos coherentes con el resto de componentes.'
     }
   }
 };
 
-// ========== 4. STATES STORY (OBLIGATORIA) ==========
-export const States = () => (
+// Backward compatibility demo
+export const BackwardCompatibilityVariants = () => (
+  <div style={{
+    display: 'grid',
+    gap: 'var(--space-lg)',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+    alignItems: 'center',
+    padding: 'var(--space-md)',
+    border: '1px dashed var(--color-warning)',
+    borderRadius: 'var(--radius-md)',
+    backgroundColor: 'var(--color-warning-light)'
+  }}>
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Legacy: variant="default"</h4>
+      <Avatar variant="default" name="Default" size="lg" />
+      <small style={{ color: 'var(--color-warning)', fontSize: 'var(--text-xs)' }}>⚠️ Deprecated</small>
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>New: variant="neutral"</h4>
+      <Avatar variant="neutral" name="Neutral" size="lg" />
+      <small style={{ color: 'var(--color-success)', fontSize: 'var(--text-xs)' }}>✅ Standard</small>
+    </div>
+    
+    <div style={{ textAlign: 'center', gridColumn: '1 / -1' }}>
+      <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: 'var(--text-sm)' }}>
+        💡 <strong>Backward Compatibility:</strong> variant="default" automáticamente mapea a "neutral" con deprecation warning.
+      </p>
+    </div>
+  </div>
+);
+
+BackwardCompatibilityVariants.parameters = {
+  docs: {
+    description: {
+      story: 'Demostración de compatibilidad hacia atrás. Las variantes legacy funcionan pero muestran warnings de deprecation.'
+    }
+  }
+};
+
+// ========== 4. SYSTEM ROUNDED VARIANTS STORY ==========
+export const SystemRoundedVariants = () => (
+  <div style={{
+    display: 'grid',
+    gap: 'var(--space-lg)',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+    alignItems: 'center',
+    padding: 'var(--space-md)'
+  }}>
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>SM</h4>
+      <Avatar rounded="sm" name="SM" size="lg" variant="primary" />
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>MD</h4>
+      <Avatar rounded="md" name="MD" size="lg" variant="secondary" />
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>LG</h4>
+      <Avatar rounded="lg" name="LG" size="lg" variant="success" />
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>XL</h4>
+      <Avatar rounded="xl" name="XL" size="lg" variant="warning" />
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>FULL (Default)</h4>
+      <Avatar rounded="full" name="FULL" size="lg" variant="danger" />
+    </div>
+  </div>
+);
+
+SystemRoundedVariants.parameters = {
+  docs: {
+    description: {
+      story: '5 radios de bordes estándar del sistema. FULL (circular) es el valor por defecto para avatares.'
+    }
+  }
+};
+
+// ========== 5. SYSTEM STANDARD STATES STORY (OBLIGATORIA) ==========
+export const SystemStandardStates = () => (
   <div style={{
     display: 'grid',
     gap: 'var(--space-lg)',
@@ -282,15 +376,74 @@ export const States = () => (
   </div>
 );
 
-States.parameters = {
+SystemStandardStates.parameters = {
   docs: {
     description: {
-      story: 'Estados interactivos del componente. Loading muestra spinner, disabled previene interacciones.'
+      story: 'Estados interactivos del componente est\u00e1ndar. Loading muestra spinner, disabled previene interacciones.'
     }
   }
 };
 
-// ========== 5. INTERACTIVE STORY (OBLIGATORIA) ==========
+// ========== 6. SYSTEM ICONS STORY ==========
+export const SystemIconsIntegration = () => (
+  <div style={{
+    display: 'grid',
+    gap: 'var(--space-lg)',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+    alignItems: 'center',
+    padding: 'var(--space-md)'
+  }}>
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Default Icon</h4>
+      <Avatar size="lg" fallbackIcon="user" />
+      <small style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
+        fallbackIcon="user"
+      </small>
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Admin Icon</h4>
+      <Avatar size="lg" fallbackIcon="shield" variant="primary" />
+      <small style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
+        fallbackIcon="shield"
+      </small>
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Star Icon</h4>
+      <Avatar size="lg" fallbackIcon="star" variant="warning" />
+      <small style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
+        fallbackIcon="star"
+      </small>
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Settings Icon</h4>
+      <Avatar size="lg" fallbackIcon="settings" variant="neutral" />
+      <small style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
+        fallbackIcon="settings"
+      </small>
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Legacy Emoji</h4>
+      <Avatar size="lg" fallbackIcon="👤" variant="secondary" />
+      <small style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
+        fallbackIcon="👤" (emoji)
+      </small>
+    </div>
+  </div>
+);
+
+SystemIconsIntegration.parameters = {
+  docs: {
+    description: {
+      story: 'Sistema de iconos unificado. Usa iconos Feather del sistema por defecto, pero soporta emojis para backward compatibility.'
+    }
+  }
+};
+
+// ========== 7. INTERACTIVE STORY (OBLIGATORIA) ==========
 export const Interactive = () => (
   <div style={{
     display: 'flex',

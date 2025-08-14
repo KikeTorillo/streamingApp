@@ -135,13 +135,13 @@ const LoginCard = ({
             onBlur={handleFieldBlur('username')}
             errorText={touched.username ? formErrors.username : ''}
             helperText={!touched.username || !formErrors.username ? 'Nombre de usuario o email' : ''}
-            leftIcon="👤"
+            leftIcon="user"
             size={size}
             rounded={rounded}
             fullWidth
             required
             disabled={loading}
-            variant={touched.username && formErrors.username ? 'error' : 'default'}
+            variant={touched.username && formErrors.username ? 'danger' : 'primary'}
             autoComplete="username"
           />
 
@@ -156,13 +156,13 @@ const LoginCard = ({
             errorText={touched.password ? formErrors.password : ''}
             autoComplete="current-password"
             helperText={!touched.password || !formErrors.password ? 'Tu contraseña secreta' : ''}
-            leftIcon="🔒"
+            leftIcon="lock"
             size={size}
             rounded={rounded}
             fullWidth
             required
             disabled={loading}
-            variant={touched.password && formErrors.password ? 'error' : 'default'}
+            variant={touched.password && formErrors.password ? 'danger' : 'primary'}
           />
 
           {/* Mensaje de error global */}
@@ -181,7 +181,7 @@ const LoginCard = ({
             loading={loading}
             disabled={loading}
             fullWidth
-            icon="🔑"
+            leftIcon="lock"
           >
             {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </Button>

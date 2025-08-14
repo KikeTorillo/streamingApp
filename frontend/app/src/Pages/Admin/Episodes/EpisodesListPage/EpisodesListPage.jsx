@@ -8,6 +8,7 @@ import { DataTable } from '../../../../components/organisms/DataTable/DataTable'
 import { Button } from '../../../../components/atoms/Button/Button';
 import { Badge } from '../../../../components/atoms/Badge/Badge';
 import { Select } from '../../../../components/atoms/Select/Select';
+import { Icon } from '../../../../components/atoms/Icon/Icon';
 import './EpisodesListPage.css';
 
 // Context y servicios
@@ -87,7 +88,7 @@ function EpisodesListPage() {
             size="sm"
             appearance="soft"
           >
-            📺 {serieName || `Serie #${serieId}`}
+            <Icon name="video" size="xs" /> {serieName || `Serie #${serieId}`}
           </Badge>
         );
       }
@@ -257,7 +258,7 @@ function EpisodesListPage() {
             variant="primary"
             size="sm"
             onClick={handleCreateEpisode}
-            leftIcon="➕"
+            leftIcon="plus"
             disabled={!selectedSerieId}
           >
             Agregar Episodio
@@ -271,7 +272,7 @@ function EpisodesListPage() {
           <label
             htmlFor="serie-selector"
           >
-            📺 Seleccionar Serie:
+            <Icon name="video" size="sm" /> Seleccionar Serie:
           </label>
           <Select
             id="serie-selector"
@@ -284,7 +285,7 @@ function EpisodesListPage() {
               label: `${serie.title} (${serie.release_year})`
             }))}
             size="md"
-            variant="default"
+            variant="primary"
           />
         </div>
 
@@ -327,12 +328,12 @@ function EpisodesListPage() {
             ? "Esta serie no tiene episodios registrados"
             : "Elige una serie del selector para ver sus episodios"
           }
-          emptyIcon="📺"
+          emptyIcon="video"
           emptyAction={selectedSerieId ? (
             <Button
               variant="primary"
               onClick={handleCreateEpisode}
-              leftIcon="➕"
+              leftIcon="plus"
             >
               Agregar Primer Episodio
             </Button>
@@ -341,7 +342,7 @@ function EpisodesListPage() {
           searchPlaceholder="Buscar por título de episodio..."
           pageSize={10}
           pageSizeOptions={[5, 10, 25, 50]}
-          variant="striped"
+          tableVariant="striped"
         />
       </div>
     </AdminLayout>

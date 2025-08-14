@@ -8,21 +8,26 @@ export default {
     docs: {
       description: {
         component: `
-# Divider Atom
+# Divider Atom - MIGRADO AL SISTEMA DE DISEÑO ESTÁNDAR
 
-El átomo **Divider** es un separador versátil para organizar y estructurar contenido visualmente.
+El átomo **Divider** es un separador versátil para organizar y estructurar contenido visualmente, ahora completamente integrado al sistema de diseño estándar.
 
 ## 🎯 Características principales
 
+✅ **Props estándar**: size, variant, rounded, loading, disabled  
+✅ **Hook especializado**: useDividerProps() para configuración óptima  
+✅ **Sistema de iconos**: Feather Icons integrado con leftIcon/rightIcon  
+✅ **Backward compatibility**: Mapeo automático de props legacy  
+
 - **2 orientaciones**: horizontal (ancho completo), vertical (altura completa)
 - **4 variantes visuales**: solid, dashed, dotted, gradient
-- **6 niveles de espaciado**: none, xs, sm, md, lg, xl
-- **3 grosores**: thin (1px), normal (1px), thick (2px)
-- **5 colores semánticos**: muted, light, primary, secondary, danger
-- **Texto opcional**: En dividers horizontales con alineación configurable
+- **5 tamaños estándar**: xs, sm, md, lg, xl (grosor + espaciado)
+- **6 variantes semánticas**: primary, secondary, success, warning, danger, neutral
+- **Estados avanzados**: loading con spinner, disabled con overlay
+- **Texto opcional**: En dividers horizontales con iconos y alineación
 - **Longitud personalizada**: Control preciso del tamaño
 - **Responsive**: Adaptación automática a móvil
-- **Accesibilidad**: Roles ARIA apropiados
+- **Accesibilidad**: ARIA completo, navegación teclado
 
 ## 🔧 Uso básico
 
@@ -38,11 +43,19 @@ import { Divider } from './atoms/Divider';
 // Con texto en el medio
 <Divider text="o continúa con" />
 
-// Con estilo personalizado
+// Con estilo personalizado y sistema estándar
 <Divider 
-  variant="dashed" 
-  color="primary" 
-  spacing="lg" 
+  dividerVariant="dashed" 
+  variant="primary" 
+  size="lg" 
+/>
+
+// Con iconos y loading
+<Divider 
+  text="Cargando datos" 
+  leftIcon="database"
+  loading 
+  variant="primary"
 />
 \\\`\\\`\\\`
 
@@ -101,15 +114,68 @@ import { Divider } from './atoms/Divider';
         category: 'Layout'
       }
     },
-    variant: {
-      name: 'Variante',
-      description: 'Estilo visual del divider',
+    dividerVariant: {
+      name: 'Variante visual',
+      description: 'Estilo visual del divider (separado de variant semántica)',
       control: { type: 'select' },
       options: ['solid', 'dashed', 'dotted', 'gradient'],
       table: {
         type: { summary: "'solid' | 'dashed' | 'dotted' | 'gradient'" },
         defaultValue: { summary: "'solid'" },
         category: 'Appearance'
+      }
+    },
+    variant: {
+      name: 'Variante semántica',
+      description: 'Variante semántica del sistema estándar',
+      control: { type: 'select' },
+      options: ['primary', 'secondary', 'success', 'warning', 'danger', 'neutral'],
+      table: {
+        type: { summary: "'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'neutral'" },
+        defaultValue: { summary: "'neutral'" },
+        category: 'Standard Props'
+      }
+    },
+    size: {
+      name: 'Tamaño',
+      description: 'Tamaño del componente (grosor + espaciado)',
+      control: { type: 'select' },
+      options: ['xs', 'sm', 'md', 'lg', 'xl'],
+      table: {
+        type: { summary: "'xs' | 'sm' | 'md' | 'lg' | 'xl'" },
+        defaultValue: { summary: "'md'" },
+        category: 'Standard Props'
+      }
+    },
+    rounded: {
+      name: 'Bordes redondeados',
+      description: 'Radio de bordes para el texto',
+      control: { type: 'select' },
+      options: ['none', 'sm', 'md', 'lg', 'xl', 'full'],
+      table: {
+        type: { summary: "'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full'" },
+        defaultValue: { summary: "'none'" },
+        category: 'Standard Props'
+      }
+    },
+    loading: {
+      name: 'Estado loading',
+      description: 'Mostrar spinner de carga',
+      control: { type: 'boolean' },
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+        category: 'Standard Props'
+      }
+    },
+    disabled: {
+      name: 'Estado disabled',
+      description: 'Estado deshabilitado del divider',
+      control: { type: 'boolean' },
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+        category: 'Standard Props'
       }
     },
     spacing: {
@@ -165,6 +231,24 @@ import { Divider } from './atoms/Divider';
         category: 'Content'
       }
     },
+    leftIcon: {
+      name: 'Icono izquierdo',
+      description: 'Nombre del icono Feather para mostrar a la izquierda del texto',
+      control: { type: 'text' },
+      table: {
+        type: { summary: 'string | ReactNode' },
+        category: 'Icons'
+      }
+    },
+    rightIcon: {
+      name: 'Icono derecho',
+      description: 'Nombre del icono Feather para mostrar a la derecha del texto',
+      control: { type: 'text' },
+      table: {
+        type: { summary: 'string | ReactNode' },
+        category: 'Icons'
+      }
+    },
     length: {
       name: 'Longitud',
       description: 'Longitud personalizada (CSS value)',
@@ -199,9 +283,9 @@ import { Divider } from './atoms/Divider';
 export const Default = {
   args: {
     orientation: 'horizontal',
-    variant: 'solid',
-    spacing: 'md',
-    color: 'muted'
+    dividerVariant: 'solid',
+    size: 'md',
+    variant: 'neutral'
   }
 };
 
@@ -264,7 +348,7 @@ export const Orientations = () => (
         }}>
           Columna 2
         </div>
-        <Divider orientation="vertical" variant="dashed" color="secondary" />
+        <Divider orientation="vertical" dividerVariant="dashed" variant="secondary" />
         <div style={{ 
           flex: 1, 
           backgroundColor: 'var(--bg-secondary)', 
@@ -315,28 +399,36 @@ export const Variants = () => (
             {desc}
           </span>
         </div>
-        <Divider variant={variant} color="primary" />
+        <Divider dividerVariant={variant} variant="primary" />
       </div>
     ))}
   </div>
 );
 
-// Colores
-export const Colors = () => (
+// Variantes semánticas estándar
+export const SystemStandardVariants = () => (
   <div style={{ 
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--space-xl)',
     padding: 'var(--space-lg)'
   }}>
+    <h3 style={{ 
+      color: 'var(--color-primary)',
+      fontSize: 'var(--font-size-lg)',
+      marginBottom: 'var(--space-md)'
+    }}>
+      Variantes Semánticas Estándar
+    </h3>
     {[
-      { color: 'muted', desc: 'Separación sutil (default)', usage: 'Uso general' },
-      { color: 'light', desc: 'Separación muy suave', usage: 'Contenido delicado' },
-      { color: 'primary', desc: 'Separación destacada', usage: 'Secciones importantes' },
-      { color: 'secondary', desc: 'Separación alternativa', usage: 'Contenido secundario' },
-      { color: 'danger', desc: 'Separación de advertencia', usage: 'Zonas de peligro' }
-    ].map(({ color, desc, usage }) => (
-      <div key={color}>
+      { variant: 'primary', desc: 'Separación principal', usage: 'Secciones importantes' },
+      { variant: 'secondary', desc: 'Separación secundaria', usage: 'Contenido alternativo' },
+      { variant: 'success', desc: 'Separación de éxito', usage: 'Secciones completadas' },
+      { variant: 'warning', desc: 'Separación de advertencia', usage: 'Avisos importantes' },
+      { variant: 'danger', desc: 'Separación de peligro', usage: 'Zonas críticas' },
+      { variant: 'neutral', desc: 'Separación neutral (default)', usage: 'Uso general' }
+    ].map(({ variant, desc, usage }) => (
+      <div key={variant}>
         <div style={{ 
           display: 'flex',
           alignItems: 'center', 
@@ -347,10 +439,10 @@ export const Colors = () => (
             margin: 0,
             fontSize: 'var(--font-size-md)',
             fontWeight: 'var(--font-weight-semibold)',
-            color: `var(--color-${color === 'muted' || color === 'light' ? 'primary' : color})`,
+            color: `var(--color-${variant === 'neutral' ? 'primary' : variant})`,
             minWidth: '100px'
           }}>
-            {color.charAt(0).toUpperCase() + color.slice(1)}
+            {variant.charAt(0).toUpperCase() + variant.slice(1)}
           </h4>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <span style={{ 
@@ -367,7 +459,178 @@ export const Colors = () => (
             </span>
           </div>
         </div>
-        <Divider color={color} thickness="normal" />
+        <Divider variant={variant} size="md" />
+      </div>
+    ))}
+  </div>
+);
+
+// Tamaños estándar
+export const SystemStandardSizes = () => (
+  <div style={{ 
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--space-xl)',
+    padding: 'var(--space-lg)'
+  }}>
+    <h3 style={{ 
+      color: 'var(--color-primary)',
+      fontSize: 'var(--font-size-lg)',
+      marginBottom: 'var(--space-md)'
+    }}>
+      Tamaños Estándar (size = grosor + espaciado)
+    </h3>
+    {[
+      { size: 'xs', desc: 'Extra pequeño', usage: 'Separaciones sutiles' },
+      { size: 'sm', desc: 'Pequeño', usage: 'Contenido denso' },
+      { size: 'md', desc: 'Medio (default)', usage: 'Uso general' },
+      { size: 'lg', desc: 'Grande', usage: 'Secciones principales' },
+      { size: 'xl', desc: 'Extra grande', usage: 'Separaciones prominentes' }
+    ].map(({ size, desc, usage }) => (
+      <div key={size} style={{
+        backgroundColor: 'var(--bg-secondary)',
+        padding: 'var(--space-md)',
+        borderRadius: 'var(--radius-md)',
+        border: '1px solid var(--border-light)'
+      }}>
+        <div style={{ 
+          display: 'flex',
+          alignItems: 'center', 
+          gap: 'var(--space-md)',
+          marginBottom: 'var(--space-sm)'
+        }}>
+          <h4 style={{ 
+            margin: 0,
+            fontSize: 'var(--font-size-md)',
+            color: 'var(--text-primary)',
+            minWidth: '80px'
+          }}>
+            {size.toUpperCase()}
+          </h4>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' }}>
+              {desc}
+            </span>
+            <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)' }}>
+              {usage}
+            </span>
+          </div>
+        </div>
+        <p style={{ margin: '0 0 var(--space-sm) 0', fontSize: 'var(--font-size-sm)' }}>Contenido antes</p>
+        <Divider size={size} variant="primary" />
+        <p style={{ margin: 'var(--space-sm) 0 0 0', fontSize: 'var(--font-size-sm)' }}>Contenido después</p>
+      </div>
+    ))}
+  </div>
+);
+
+// Estados estándar
+export const SystemStandardStates = () => (
+  <div style={{ 
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--space-xl)',
+    padding: 'var(--space-lg)'
+  }}>
+    <h3 style={{ 
+      color: 'var(--color-primary)',
+      fontSize: 'var(--font-size-lg)',
+      marginBottom: 'var(--space-md)'
+    }}>
+      Estados Estándar del Sistema
+    </h3>
+    
+    <div>
+      <h4 style={{ marginBottom: 'var(--space-md)', color: 'var(--text-primary)' }}>
+        Estado Loading
+      </h4>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+        <Divider loading variant="primary" text="Cargando datos..." />
+        <Divider loading variant="secondary" />
+        <Divider loading variant="warning" text="Procesando" leftIcon="database" />
+      </div>
+    </div>
+
+    <div>
+      <h4 style={{ marginBottom: 'var(--space-md)', color: 'var(--text-primary)' }}>
+        Estado Disabled
+      </h4>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+        <Divider disabled variant="primary" text="Función deshabilitada" />
+        <Divider disabled variant="danger" />
+        <Divider disabled text="No disponible" leftIcon="x-circle" />
+      </div>
+    </div>
+
+    <div>
+      <h4 style={{ marginBottom: 'var(--space-md)', color: 'var(--text-primary)' }}>
+        Con Iconos del Sistema
+      </h4>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+        <Divider text="Datos guardados" leftIcon="check-circle" variant="success" />
+        <Divider text="Configuración avanzada" rightIcon="settings" variant="secondary" />
+        <Divider text="Zona de peligro" leftIcon="alert-triangle" rightIcon="shield" variant="danger" />
+      </div>
+    </div>
+  </div>
+);
+
+// Colores legacy (backward compatibility)
+export const BackwardCompatibilityColors = () => (
+  <div style={{ 
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--space-xl)',
+    padding: 'var(--space-lg)'
+  }}>
+    <h3 style={{ 
+      color: 'var(--color-warning)',
+      fontSize: 'var(--font-size-lg)',
+      marginBottom: 'var(--space-md)'
+    }}>
+      ⚠️ Props Legacy (Backward Compatibility)
+    </h3>
+    <div style={{
+      padding: 'var(--space-md)',
+      backgroundColor: 'var(--bg-warning)',
+      border: '1px solid var(--border-warning)',
+      borderRadius: 'var(--radius-md)',
+      marginBottom: 'var(--space-lg)'
+    }}>
+      <p style={{ 
+        margin: 0, 
+        fontSize: 'var(--font-size-sm)',
+        color: 'var(--text-warning)'
+      }}>
+        <strong>Nota:</strong> Las props <code>color</code>, <code>spacing</code> y <code>thickness</code> están deprecated. 
+        Usar <code>variant</code> y <code>size</code> en su lugar.
+      </p>
+    </div>
+    {[
+      { color: 'muted', newVariant: 'neutral', desc: 'muted → neutral' },
+      { color: 'light', newVariant: 'neutral', desc: 'light → neutral' },
+      { color: 'primary', newVariant: 'primary', desc: 'primary → primary' },
+      { color: 'secondary', newVariant: 'secondary', desc: 'secondary → secondary' },
+      { color: 'danger', newVariant: 'danger', desc: 'danger → danger' }
+    ].map(({ color, newVariant, desc }) => (
+      <div key={color} style={{ marginBottom: 'var(--space-lg)' }}>
+        <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-primary)' }}>
+          {desc}
+        </h4>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
+          <div>
+            <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)' }}>
+              Legacy: color="{color}"
+            </span>
+            <Divider color={color} thickness="normal" />
+          </div>
+          <div>
+            <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-success)' }}>
+              Nuevo: variant="{newVariant}"
+            </span>
+            <Divider variant={newVariant} size="md" />
+          </div>
+        </div>
       </div>
     ))}
   </div>

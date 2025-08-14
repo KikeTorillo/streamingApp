@@ -162,7 +162,7 @@ function UsersListPage() {
           <Button
             variant="primary"
             size="sm"
-            leftIcon="➕"
+            leftIcon="plus"
             onClick={handleCreateUser}
           >
             Crear Usuario
@@ -181,7 +181,7 @@ function UsersListPage() {
             searchPlaceholder="Buscar por usuario, email o rol..."
             pageSizeOptions={[10, 25, 50, 100]}
             pageSize={10}
-            variant="default"
+            variant="primary"
             emptyTitle="No hay usuarios registrados"
             emptyDescription="Crea tu primer usuario para comenzar a gestionar tu plataforma"
             emptyIcon="👥"

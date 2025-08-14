@@ -1,50 +1,90 @@
 // src/components/atoms/Avatar/Avatar.jsx
 import PropTypes from 'prop-types';
+import { useAvatarProps } from '../../../hooks/useStandardProps.jsx';
+import { STANDARD_PROP_TYPES } from '../../../tokens/standardProps.js';
+import { createIconRenderer, COMPONENT_SIZE_MAPS } from '../../../utils/iconHelpers.js';
 import './Avatar.css';
 
 /**
- * Avatar - ÁTOMO CORREGIDO PARA CUMPLIR REGLAS DEL PROYECTO
+ * Avatar - ÁTOMO MIGRADO AL SISTEMA DE DISEÑO ESTÁNDAR
  * 
- * ✅ EXPORT CONVENTION: Patrón function + export { Name }
- * ✅ TAMAÑOS ESTÁNDAR: 5 tamaños (xs, sm, md, lg, xl)
- * ✅ VARIANTES DE CONTENIDO: 4 variantes de presentación apropiadas
- * ✅ SISTEMA DE DISEÑO: Variables CSS del sistema
- * ✅ ATOMIC DESIGN: Átomo independiente y reutilizable
+ * ✅ SISTEMA ESTÁNDAR: Hook useAvatarProps() integrado
+ * ✅ PROPS ESTÁNDAR: size, variant, rounded, loading, disabled
+ * ✅ SISTEMA DE ICONOS: renderIcon integrado con fallbackIcon
+ * ✅ BACKWARD COMPATIBILITY: variant mapping 'default'→'neutral'
+ * ✅ DESIGN TOKENS: Tamaños y colores automáticos
  * ✅ ACCESIBILIDAD: ARIA completo, focus management
  * 
  * @param {Object} props - Propiedades del componente
  * @param {string} [props.src] - URL de la imagen del avatar
  * @param {string} [props.name] - Nombre del usuario (para generar iniciales)
- * @param {'xs'|'sm'|'md'|'lg'|'xl'} [props.size='md'] - Tamaño del avatar
- * @param {'default'|'elevated'|'bordered'|'minimal'} [props.variant='default'] - Variante de presentación
- * @param {'circle'|'rounded'|'square'} [props.shape='circle'] - Forma del avatar
+ * @param {'xs'|'sm'|'md'|'lg'|'xl'} [props.size='md'] - Tamaño estándar del sistema
+ * @param {'primary'|'secondary'|'success'|'warning'|'danger'|'neutral'} [props.variant='neutral'] - Variante semántica estándar
+ * @param {'sm'|'md'|'lg'|'xl'|'full'} [props.rounded='full'] - Radio de bordes estándar
  * @param {'online'|'offline'|'away'|'busy'} [props.status] - Estado de actividad
  * @param {string|number} [props.badge] - Insignia/contador a mostrar
  * @param {string} [props.className=''] - Clases CSS adicionales
  * @param {function} [props.onClick] - Función a ejecutar al hacer clic
- * @param {boolean} [props.loading=false] - Estado de carga
+ * @param {boolean} [props.loading=false] - Estado de carga estándar
+ * @param {boolean} [props.disabled=false] - Estado deshabilitado estándar
  * @param {string} [props.alt] - Texto alternativo personalizado
- * @param {string} [props.fallbackIcon='👤'] - Icono cuando no hay imagen ni nombre
- * @param {boolean} [props.disabled=false] - Si está deshabilitado
+ * @param {string|React.ReactNode} [props.fallbackIcon] - Icono del sistema o emoji cuando no hay imagen
  * @param {string} [props.ariaLabel] - Label para accesibilidad
+ * 
+ * @deprecated props.shape - Usar rounded en su lugar
+ * @deprecated props.variant='default' - Usar 'neutral'
  */
-function Avatar({
-  src,
-  name,
-  size = 'md',
-  variant = 'default',
-  shape = 'circle',
-  status,
-  badge,
-  className = '',
-  onClick,
-  loading = false,
-  alt,
-  fallbackIcon = '👤',
-  disabled = false,
-  ariaLabel,
-  ...restProps
-}) {
+function Avatar(props) {
+  // Backward compatibility: mapear props legacy
+  const {
+    variant: legacyVariant,
+    shape,
+    ...restPropsForHook
+  } = props;
+  
+  // Mapear props legacy para backward compatibility
+  const mappedProps = {
+    ...restPropsForHook,
+    // Mapear variant legacy 'default' -> 'neutral'
+    variant: legacyVariant === 'default' ? 'neutral' : legacyVariant,
+    // Mapear shape a rounded si se proporciona
+    rounded: props.rounded || (shape === 'circle' ? 'full' : shape === 'rounded' ? 'lg' : shape === 'square' ? 'md' : undefined)
+  };
+  
+  // Hook del sistema estándar
+  const avatarProps = useAvatarProps(mappedProps);
+  const {
+    size,
+    variant,
+    rounded,
+    disabled,
+    loading,
+    className,
+    renderIcon,
+    tokens,
+    ...restProps
+  } = avatarProps;
+  
+  // Props específicas del Avatar
+  const {
+    src,
+    name,
+    status,
+    badge,
+    alt,
+    fallbackIcon = 'user', // Por defecto usar icono del sistema
+    onClick,
+    ariaLabel
+  } = restProps;
+  
+  // Crear renderer de iconos para Avatar
+  const iconRenderer = createIconRenderer('sm', COMPONENT_SIZE_MAPS.avatar || {
+    xs: 'xs',
+    sm: 'xs', 
+    md: 'sm',
+    lg: 'md',
+    xl: 'lg'
+  });
   // Generar iniciales del nombre
   const getInitials = (fullName) => {
     if (!fullName) return '';
@@ -61,12 +101,22 @@ function Avatar({
       .toUpperCase();
   };
 
+  // Deprecation warnings en desarrollo
+  if (process.env.NODE_ENV === 'development') {
+    if (legacyVariant === 'default') {
+      console.warn('Avatar: variant="default" is deprecated. Use variant="neutral" instead.');
+    }
+    if (shape) {
+      console.warn('Avatar: prop "shape" is deprecated. Use "rounded" prop instead (circle=\'full\', rounded=\'lg\', square=\'md\')');
+    }
+  }
+  
   // Construir clases CSS dinámicamente
   const avatarClasses = [
     'avatar',
     `avatar--${size}`,
     `avatar--${variant}`,
-    `avatar--${shape}`,
+    `avatar--${rounded}`, // Usar rounded en lugar de shape
     onClick && 'avatar--clickable',
     loading && 'avatar--loading',
     disabled && 'avatar--disabled',
@@ -134,12 +184,12 @@ function Avatar({
           />
         )}
         
-        {/* Fallback con iniciales o icono */}
+        {/* Fallback con iniciales o icono del sistema */}
         <div 
           className="avatar__fallback"
           style={{ display: src ? 'none' : 'flex' }}
         >
-          {initials || fallbackIcon}
+          {initials || iconRenderer(fallbackIcon, size, variant)}
         </div>
         
         {/* Spinner de loading */}
@@ -174,20 +224,20 @@ function Avatar({
 }
 
 Avatar.propTypes = {
+  // Props estándar del sistema (heredadas de STANDARD_PROP_TYPES)
+  ...STANDARD_PROP_TYPES,
+  
+  // Props específicas del Avatar
   src: PropTypes.string,
   name: PropTypes.string,
-  size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
-  variant: PropTypes.oneOf(['default', 'elevated', 'bordered', 'minimal']),
-  shape: PropTypes.oneOf(['circle', 'rounded', 'square']),
   status: PropTypes.oneOf(['online', 'offline', 'away', 'busy']),
   badge: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  className: PropTypes.string,
   onClick: PropTypes.func,
-  loading: PropTypes.bool,
   alt: PropTypes.string,
-  fallbackIcon: PropTypes.string,
-  disabled: PropTypes.bool,
-  ariaLabel: PropTypes.string
+  fallbackIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  
+  // Props legacy (deprecated)
+  shape: PropTypes.oneOf(['circle', 'rounded', 'square']) // @deprecated usar rounded
 };
 
 export { Avatar };

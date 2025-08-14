@@ -70,7 +70,8 @@ function AppHeader({
       {showSearch && (
         <div className="app-header__search">
           <SearchBar
-            variant="simple"
+            searchVariant="simple"
+            variant="primary"
             placeholder={searchPlaceholder}
             value={searchValue}
             onChange={onSearchChange}

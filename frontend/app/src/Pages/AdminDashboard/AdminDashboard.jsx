@@ -161,7 +161,7 @@ function AdminDashboard() {
             padding: 'var(--space-3xl)',
             color: 'var(--text-secondary)'
           }}>
-            <h2><Icon name="x" size="sm" color="danger" /> Error al cargar el dashboard</h2>
+            <h2><Icon name="x" size="xs" color="danger" /> Error al cargar el dashboard</h2>
             <p>{error}</p>
             <Button
               variant="primary"
@@ -186,7 +186,7 @@ function AdminDashboard() {
         {/* ===== ESTADÍSTICAS PRINCIPALES ===== */}
         <section className="admin-dashboard__stats">
           <h2 className="admin-dashboard__section-title">
-            <Icon name="trending" size="sm" /> Resumen General
+            <Icon name="trending" size="xs" /> Resumen General
           </h2>
           
           {loading ? (
@@ -210,6 +210,7 @@ function AdminDashboard() {
                   color={card.color}
                   onClick={card.onClick}
                   loading={loading}
+                  size="md"
                 />
               ))}
             </div>
@@ -219,13 +220,13 @@ function AdminDashboard() {
         {/* ===== ACCIONES RÁPIDAS ===== */}
         <section className="admin-dashboard__quick-actions">
           <h2 className="admin-dashboard__section-title">
-            <Icon name="zap" size="sm" /> Acciones Rápidas
+            <Icon name="zap" size="xs" /> Acciones Rápidas
           </h2>
           
           <div className="admin-dashboard__actions-grid">
             <Button
               variant="outline"
-              size="lg"
+              size="md"
               leftIcon="users"
               onClick={() => navigate('/admin/users/create')}
               className="admin-dashboard__action-button"
@@ -235,7 +236,7 @@ function AdminDashboard() {
             
             <Button
               variant="outline"
-              size="lg"
+              size="md"
               leftIcon="film"
               onClick={() => navigate('/admin/movies/create')}
               className="admin-dashboard__action-button"
@@ -245,7 +246,7 @@ function AdminDashboard() {
             
             <Button
               variant="outline"
-              size="lg"
+              size="md"
               leftIcon="video"
               onClick={() => navigate('/admin/series/create')}
               className="admin-dashboard__action-button"
@@ -255,7 +256,7 @@ function AdminDashboard() {
             
             <Button
               variant="outline"
-              size="lg"
+              size="md"
               leftIcon="folder"
               onClick={() => navigate('/admin/categories/create')}
               className="admin-dashboard__action-button"

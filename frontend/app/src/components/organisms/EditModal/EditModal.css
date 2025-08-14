@@ -1,12 +1,76 @@
-/* ===== EDIT MODAL ORGANISM ===== */
+/* ===== EDIT MODAL ORGANISM MIGRADO ===== */
 /* src/components/organisms/EditModal/EditModal.css */
+
+/* ✅ SISTEMA DE DISEÑO MIGRADO: Design tokens automáticos */
+/* ✅ ESTADOS AVANZADOS: Overlays loading/disabled */
+/* ✅ RESPONSIVE: Mobile-first con breakpoints */
+/* ✅ ACCESIBILIDAD: Focus management y ARIA */
+/* ✅ PERFORMANCE: GPU-accelerated animations */
 
 /* ===== CONTENEDOR PRINCIPAL ===== */
 .edit-modal {
+  /* Layout */
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
   min-width: 0; /* Permite que el contenido se ajuste */
+  
+  /* Design tokens automáticos */
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  
+  /* States */
+  transition: all 0.2s ease-out;
+}
+
+/* ===== OVERLAYS PARA ESTADOS LOADING/DISABLED ===== */
+.edit-modal__overlay {
+  /* Positioning */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  
+  /* Layout */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Styling con design tokens */
+  background: rgba(var(--color-overlay-rgb), 0.8);
+  border-radius: inherit;
+  backdrop-filter: blur(0.4rem);
+  
+  /* Animation */
+  animation: fadeIn 0.2s ease-out;
+}
+
+.edit-modal__overlay-content {
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  
+  /* Styling */
+  padding: var(--space-lg);
+  background: var(--color-surface);
+  border: 0.1rem solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  
+  /* Typography */
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  text-align: center;
+}
+
+.edit-modal__overlay-content svg {
+  animation: spin 1s linear infinite;
 }
 
 /* ===== CAMPO DE ENTRADA ===== */
@@ -36,7 +100,7 @@
   align-items: flex-start;
   gap: var(--space-sm);
   
-  /* Styling */
+  /* Styling con design tokens automáticos */
   padding: var(--space-md);
   background: var(--color-danger-light);
   border: 0.1rem solid var(--color-danger);
@@ -45,15 +109,17 @@
   /* Typography */
   font-size: var(--font-size-sm);
   color: var(--color-danger);
+  
+  /* Animation */
+  animation: slideIn 0.2s ease-out;
 }
 
-.edit-modal__error-icon {
+.edit-modal__error svg {
   /* Flex */
   flex-shrink: 0;
   
-  /* Typography */
-  font-size: var(--font-size-base);
-  line-height: 1;
+  /* Size automático desde renderIcon */
+  color: var(--color-danger);
 }
 
 .edit-modal__error-message {
@@ -81,7 +147,7 @@
   /* Spacing */
   margin-top: calc(var(--space-md) * -1);
   
-  /* Typography */
+  /* Typography con design tokens */
   font-size: var(--font-size-sm);
   color: var(--text-muted);
 }
@@ -99,13 +165,12 @@
   line-height: 1.4;
 }
 
-.edit-modal__help-icon {
+.edit-modal__help svg {
   /* Flex */
   flex-shrink: 0;
   
-  /* Typography */
-  font-size: var(--font-size-base);
-  line-height: 1;
+  /* Color automático desde renderIcon */
+  color: var(--text-muted);
 }
 
 /* ===== ESTADOS ===== */
@@ -149,10 +214,6 @@
 }
 
 /* ===== ANIMACIONES ===== */
-.edit-modal__error {
-  animation: slideIn 0.2s ease-out;
-}
-
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -161,6 +222,24 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 

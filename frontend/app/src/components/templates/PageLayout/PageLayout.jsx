@@ -1,5 +1,6 @@
 // PageLayout.jsx
 import PropTypes from 'prop-types';
+import { extractDOMProps } from '../../../tokens/standardProps';
 import './PageLayout.css';
 
 /**
@@ -33,8 +34,11 @@ function PageLayout({
     className
   ].filter(Boolean).join(' ');
 
+  // Extraer solo props válidas para DOM
+  const validDOMProps = extractDOMProps(restProps);
+
   return (
-    <div className={layoutClasses} {...restProps}>
+    <div className={layoutClasses} {...validDOMProps}>
       {/* Header */}
       {header && (
         <div className="page-layout__header">

@@ -88,7 +88,7 @@ function MovieCreatePage() {
         label: 'Título *',
         placeholder: 'Ej: Avatar: El Camino del Agua',
         required: true,
-        leftIcon: '🎬',
+        leftIcon: 'film',
         helperText: 'Título principal que aparecerá en el catálogo'
       },
       {
@@ -248,7 +248,7 @@ function MovieCreatePage() {
             <Button
               variant="outline"
               size="md"
-              leftIcon="←"
+              leftIcon="arrow-left"
               onClick={() => navigate('/admin/movies')}
             >
               Volver a Películas

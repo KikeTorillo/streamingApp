@@ -143,7 +143,7 @@ function AdminSidebar({
           badge: seriesCount
         },
         {
-          icon: 'play-circle',
+          icon: 'play',
           label: 'Episodios',
           route: '/admin/episodes',
           badge: episodeCount
@@ -152,7 +152,7 @@ function AdminSidebar({
     },
     {
       id: 'categories',
-      icon: 'tag',
+      icon: 'grid',
       label: 'Categorías',
       route: '/admin/categories',
       description: 'Organización por géneros y categorías',

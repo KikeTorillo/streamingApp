@@ -100,7 +100,7 @@ function EpisodesCreatePage() {
       required: true,
       min: 1,
       max: 99,
-      leftIcon: '🎬',
+      leftIcon: 'film',
       helperText: 'Número de temporada (debe ser mayor a 0)',
       validation: {
         required: { value: true, message: 'La temporada es obligatoria' },
@@ -282,7 +282,7 @@ function EpisodesCreatePage() {
       {/* CONTENEDOR PRINCIPAL */}
       <Container 
         size="lg" 
-        variant="default"
+        variant="primary"
         className={`${uploadStatus !== 'idle' ? 'episodes-create--loading' : ''}`}
       >
         
@@ -342,7 +342,7 @@ function EpisodesCreatePage() {
           }
           submitVariant="primary"
           submitSize="md"
-          submitIcon="🎬"
+          submitIcon="film"
           validateOnBlur={true}
           validateOnChange={false}
           showSubmit={uploadStatus !== 'completed'}

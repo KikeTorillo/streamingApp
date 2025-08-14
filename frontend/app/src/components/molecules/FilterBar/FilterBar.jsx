@@ -1,7 +1,8 @@
 // FilterBar.jsx
 import PropTypes from 'prop-types';
+import { memo } from 'react';
 import { Button } from '../../atoms/Button/Button';
-import { useStandardProps, extractDOMProps } from '../../../tokens/index.js';
+import { useFilterBarProps, extractDOMProps, STANDARD_PROP_TYPES } from '../../../tokens/index.js';
 import './FilterBar.css';
 
 /**
@@ -17,7 +18,7 @@ import './FilterBar.css';
  * - Consistencia: Misma API que otros componentes del sistema
  */
 function FilterBar(props) {
-  // ✅ USAR SISTEMA DE DISEÑO: useStandardProps con configuración específica
+  // ✅ USAR SISTEMA DE DISEÑO: useFilterBarProps con configuración especializada
   const {
     // Props estándar del sistema
     size,
@@ -38,12 +39,7 @@ function FilterBar(props) {
     
     // Props restantes para DOM
     ...restProps
-  } = useStandardProps(props, {
-    componentType: 'filterBar',
-    defaultSize: 'md',
-    defaultVariant: 'primary', // Variante estándar del sistema
-    defaultRounded: 'lg'
-  });
+  } = useFilterBarProps(props);
   
   // ✅ EXTRAER PROPS DOM-SAFE: Filtrar automáticamente props del sistema
   const domProps = extractDOMProps({ 
@@ -127,23 +123,23 @@ function FilterBar(props) {
 }
 
 FilterBar.propTypes = {
-  // ✅ PROPS ESTÁNDAR DEL SISTEMA: Importar desde standardProps
-  // Todas estas props son validadas automáticamente por useStandardProps
+  // ✅ PROPS ESTÁNDAR DEL SISTEMA: Heredadas automáticamente
+  ...STANDARD_PROP_TYPES,
   
   // Props específicas de FilterBar
   categories: PropTypes.arrayOf(PropTypes.shape({
     value: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
-    icon: PropTypes.string // ✅ NUEVO: Soporte para iconos en categorías
+    icon: PropTypes.string // ✅ Soporte para iconos en categorías
   })),
   selectedCategory: PropTypes.string,
   onCategoryChange: PropTypes.func,
   actions: PropTypes.node,
   error: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
-  
-  // Nota: size, variant, rounded, disabled, loading, className
-  // son manejadas automáticamente por useStandardProps
-  // y validadas con STANDARD_PROP_TYPES
 };
 
-export { FilterBar };
+// ✅ OPTIMIZACIÓN: Memoizar componente para evitar re-renders innecesarios
+const FilterBarMemo = memo(FilterBar);
+FilterBarMemo.displayName = 'FilterBar';
+
+export { FilterBarMemo as FilterBar };

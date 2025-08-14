@@ -80,7 +80,13 @@ function Label({
   void rounded; void tokens;
 
   // Extraer props seguras para DOM (sin tokens ni helpers)
-  const domProps = extractDOMProps({ ...restProps, className, disabled, ariaLabel, testId });
+  const domProps = extractDOMProps({ 
+    ...restProps, 
+    className, 
+    disabled, 
+    ariaLabel, 
+    'data-testid': testId 
+  });
   // Determinar contenido de la etiqueta
   const labelContent = children || text;
 

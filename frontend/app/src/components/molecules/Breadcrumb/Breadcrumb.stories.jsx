@@ -1,9 +1,17 @@
 // Breadcrumb.stories.jsx
 import { Breadcrumb } from './Breadcrumb';
+import { BrowserRouter } from 'react-router-dom';
 
 const meta = {
   title: 'Components/Molecules/Breadcrumb',
   component: Breadcrumb,
+  decorators: [
+    (Story) => (
+      <BrowserRouter>
+        <Story />
+      </BrowserRouter>
+    ),
+  ],
   parameters: {
     layout: 'padded',
     docs: {

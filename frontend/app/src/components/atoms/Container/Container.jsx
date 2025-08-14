@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import { useStandardProps } from '../../../hooks/useStandardProps';
-import { STANDARD_PROP_TYPES } from '../../../tokens';
+import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens';
 import './Container.css';
 
 /**
@@ -30,7 +30,7 @@ function Container(props) {
     disabled,
     loading,
     className,
-    ...domProps
+    ...standardProps
   } = useStandardProps(props, {
     componentType: 'container',
     defaultSize: 'md',
@@ -46,8 +46,7 @@ function Container(props) {
     spacing,
     padding,
     // Props legacy con warnings
-    variant: originalVariant,
-    ...restProps
+    variant: originalVariant
   } = props;
 
   // ✅ DEPRECATION WARNING para variant="default"
@@ -85,6 +84,9 @@ function Container(props) {
     pointerEvents: disabled ? 'none' : 'auto'
   };
 
+  // ✅ FILTRAR PROPS PARA DOM
+  const domProps = extractDOMProps(standardProps);
+
   // ✅ CREAR ELEMENTO DINÁMICO
   const Element = as;
 
@@ -93,7 +95,6 @@ function Container(props) {
       className={containerClasses}
       style={containerStyles}
       {...domProps}
-      {...restProps}
     >
       {loading && (
         <div className="container__loading">

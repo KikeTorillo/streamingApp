@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import './TextSelect.css';
 import { Select } from '../../atoms/Select/Select';
 import { Label } from '../../atoms/Label/Label';
-import { useStandardProps } from '../../../hooks/useStandardProps';
-import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens/standardProps';
+import { validateStandardProps, STANDARD_PROP_TYPES } from '../../../tokens/standardProps';
+import { createStandardIconRenderer } from '../../../utils/iconHelpers';
 
 /**
  * TextSelect - Molécula que extiende el átomo Select con etiquetas y mensajes
@@ -39,6 +39,7 @@ import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens/standardPr
  * @param {string} [helperText] - Texto de ayuda debajo del select
  * @param {string} [errorText] - Mensaje de error (sobrescribe helperText y variant)
  * @param {function} [onLeftIconClick] - Handler para click en icono izquierdo
+ * @param {function} [onRightIconClick] - Handler para click en icono derecho
  * @param {boolean} [searchable=false] - Si permite búsqueda (funcionalidad futura)
  * @param {string} [ariaDescribedBy] - ID del elemento que describe el select
  * @param {React.Ref} ref - Referencia al elemento select
@@ -74,6 +75,7 @@ const TextSelect = forwardRef(({
     helperText,
     errorText,
     onLeftIconClick,
+    onRightIconClick,
     // searchable = false,
     ariaDescribedBy,
     
@@ -96,30 +98,33 @@ const TextSelect = forwardRef(({
         propsWithCompatibility.variant = legacyVariant;
     }
     
-    // Hook del sistema estándar - integra props, tokens e iconos
+    // ✅ VALIDAR PROPS ESTÁNDAR - Muestra deprecation warnings automáticamente  
+    const validatedProps = validateStandardProps(propsWithCompatibility, 'TextSelect');
+
     const {
-        size,
-        variant,
-        rounded,
-        disabled,
-        loading,
-        className,
+        // Props estándar del sistema
+        size = 'md',
+        variant = 'neutral',
+        rounded = 'md',
+        disabled = false,
+        loading = false,
+        className = '',
         leftIcon,
-        rightIcon, // Mantener para futuras extensiones
-        renderIcon,
-        hasLeftIcon,
-        hasRightIcon,
+        rightIcon,
         ariaLabel,
         testId,
-        tokens
-    } = useStandardProps(propsWithCompatibility, {
-        defaultSize: 'md',
-        defaultVariant: 'neutral',
-        componentType: 'textselect'
-    });
+        ...restValidatedProps
+    } = validatedProps;
+    
+    // Función para renderizar iconos usando el sistema centralizado
+    const renderIcon = createStandardIconRenderer('textselect', size);
+
+    // Determinar si necesitamos iconos
+    const hasLeftIcon = Boolean(leftIcon);
+    const hasRightIcon = Boolean(rightIcon);
     
     // Marcar variables como utilizadas para evitar warnings
-    void rightIcon;
+    // (rightIcon ahora se usa)
     
     // Estado interno para manejar focus (igual que TextInput)
     const [isFocused, setIsFocused] = useState(false);
@@ -130,8 +135,9 @@ const TextSelect = forwardRef(({
     // Construir clases CSS dinámicamente con sistema estándar
     const wrapperClasses = [
         'text-select-wrapper',
-        `text-select-wrapper--size-${size}`,
-        `text-select-wrapper--variant-${currentVariant}`,
+        `text-select-wrapper--${size}`,
+        currentVariant !== 'primary' && `text-select-wrapper--${currentVariant}`,
+        rounded !== 'md' && `text-select-wrapper--rounded-${rounded}`,
         isFocused && 'text-select-wrapper--focused',
         fullWidth && 'text-select-wrapper--full-width',
         disabled && 'text-select-wrapper--disabled',
@@ -187,23 +193,12 @@ const TextSelect = forwardRef(({
         footerText && (isError ? errorId : helperId)
     ].filter(Boolean).join(' ');
     
-    // Extraer props seguras para DOM
-    const domProps = extractDOMProps({ 
-        ...restProps, 
-        className: wrapperClasses, 
-        disabled, 
-        ariaLabel, 
-        testId 
-    });
+    // Props DOM directos (consistente con Select)
+    const domProps = restValidatedProps;
 
     return (
         <div 
-            className="text-select-wrapper" 
-            style={{
-                '--text-select-size': tokens?.size,
-                '--text-select-variant': tokens?.variant,
-                '--text-select-rounded': tokens?.rounded
-            }}
+            className={wrapperClasses}
             {...domProps}
         >
             {/* Label usando componente migrado del sistema estándar */}
@@ -234,10 +229,22 @@ const TextSelect = forwardRef(({
                         tabIndex={onLeftIconClick && !disabled && !loading ? 0 : undefined}
                         aria-hidden={!onLeftIconClick}
                     >
-                        {renderIcon(finalLeftIcon, {
-                            size: size,
-                            className: 'text-select__icon-element'
-                        })}
+                        {renderIcon(finalLeftIcon)}
+                    </div>
+                )}
+
+                {/* Icono derecho usando sistema estándar */}
+                {hasRightIcon && (
+                    <div 
+                        className={`text-select__icon text-select__icon--right ${
+                            onRightIconClick ? 'text-select__icon--clickable' : ''
+                        }`}
+                        onClick={disabled || loading ? undefined : onRightIconClick}
+                        role={onRightIconClick ? 'button' : undefined}
+                        tabIndex={onRightIconClick && !disabled && !loading ? 0 : undefined}
+                        aria-hidden={!onRightIconClick}
+                    >
+                        {renderIcon(rightIcon)}
                     </div>
                 )}
 
@@ -256,6 +263,9 @@ const TextSelect = forwardRef(({
                     size={size}
                     variant={currentVariant}
                     rounded={rounded}
+                    style={{
+                        borderRadius: 'var(--text-select-border-radius, var(--radius-md))'
+                    }}
                     disabled={disabled}
                     loading={loading}
                     required={required}
@@ -265,6 +275,8 @@ const TextSelect = forwardRef(({
                     ariaLabel={ariaLabel}
                     ariaDescribedBy={describedBy || undefined}
                     testId={testId}
+                    onLeftIconClick={onLeftIconClick}
+                    onRightIconClick={onRightIconClick}
                 />
             </div>
 
@@ -285,11 +297,7 @@ const TextSelect = forwardRef(({
             {/* Overlay de loading usando sistema estándar */}
             {loading && (
                 <div className="text-select__loading-overlay">
-                    {renderIcon('loader', {
-                        size: size,
-                        className: 'text-select__loading-spinner',
-                        spinning: true
-                    })}
+                    {renderIcon('loader')}
                 </div>
             )}
         </div>
@@ -333,8 +341,9 @@ TextSelect.propTypes = {
     helperText: PropTypes.string,
     errorText: PropTypes.string,
     
-    /** Handler para icono clickeable */
+    /** Handlers para iconos clickeables */
     onLeftIconClick: PropTypes.func,
+    onRightIconClick: PropTypes.func,
     
     /** Funcionalidades futuras */
     searchable: PropTypes.bool,

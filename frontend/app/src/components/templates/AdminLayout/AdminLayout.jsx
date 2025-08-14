@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { AdminSidebar } from '../../organisms/AdminSidebar/AdminSidebar';
 import { Button } from '../../atoms/Button/Button';
 import { Container } from '../../atoms/Container/Container';
-import { validateStandardProps, STANDARD_PROP_TYPES } from '../../../tokens/standardProps';
+import { validateStandardProps, STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens/standardProps';
 import './AdminLayout.css';
 
 // Importar servicios para obtener contadores en tiempo real
@@ -217,9 +217,12 @@ function AdminLayout({
     );
   }
 
+  // Extraer solo props válidas para DOM
+  const validDOMProps = extractDOMProps(restProps);
+
   // ===== RENDER PRINCIPAL =====
   return (
-    <div className={layoutClasses} {...restProps}>
+    <div className={layoutClasses} {...validDOMProps}>
 
       {/* ===== SIDEBAR ===== */}
       <AdminSidebar

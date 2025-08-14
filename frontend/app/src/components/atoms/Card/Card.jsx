@@ -168,7 +168,9 @@ const Card = (props) => {
         Object.entries(props).filter(([key]) => 
           !['size', 'variant', 'rounded', 'disabled', 'loading', 'className', 'ariaLabel',
             'children', 'hoverable', 'clickable', 'onClick', 'maxWidth', 'fullWidth', 
-            'shadow', 'role', 'tabIndex', 'padding'].includes(key)
+            'shadow', 'role', 'tabIndex', 'padding', 'leftIcon', 'rightIcon', 'iconOnly',
+            'tokens', 'renderIcon', 'hasLeftIcon', 'hasRightIcon', 'hasAnyIcon',
+            'isDisabled', 'isLoading', 'isEmpty'].includes(key)
         )
       )}
     >

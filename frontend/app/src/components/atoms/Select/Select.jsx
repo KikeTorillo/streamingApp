@@ -28,6 +28,8 @@ import './Select.css';
  * @param {string|React.ReactNode} [props.leftIcon] - Icono a la izquierda del select (como Input)
  * @param {string|React.ReactNode} [props.rightIcon] - Icono a la derecha del select (reemplaza flecha automática)
  * @param {boolean} [props.loading=false] - Estado de loading con spinner
+ * @param {function} [props.onLeftIconClick] - Handler para click en icono izquierdo
+ * @param {function} [props.onRightIconClick] - Handler para click en icono derecho
  * @param {string} [props.ariaLabel] - Label para accesibilidad
  * @param {string} [props.ariaDescribedBy] - ID del elemento que describe el select
  * @param {string} [props.ariaErrorMessage] - ID del mensaje de error
@@ -48,6 +50,8 @@ const Select = forwardRef((props, ref) => {
     className = '',
     leftIcon,
     rightIcon,
+    onLeftIconClick,
+    onRightIconClick,
     // Props específicas de Select
     options = [],
     value,
@@ -105,12 +109,16 @@ const Select = forwardRef((props, ref) => {
   // Clases para el wrapper (cuando tiene iconos)
   const wrapperClasses = [
     'select-wrapper',
-    `select-wrapper--${size}`,
     variant !== 'primary' && `select-wrapper--${variant}`,
-    rounded !== 'md' && `select-wrapper--rounded-${rounded}`,
     disabled && 'select-wrapper--disabled',
     loading && 'select-wrapper--loading',
     needsWrapper ? className : '' // Agregar className al wrapper si existe
+  ].filter(Boolean).join(' ');
+
+  // Clases simples para wrapper sin iconos (solo contenedor básico)
+  const simpleWrapperClasses = [
+    'select-wrapper',
+    !needsWrapper ? className : '' // Agregar className al wrapper simple
   ].filter(Boolean).join(' ');
 
   // Props adicionales para accesibilidad (igual que Input)
@@ -128,6 +136,9 @@ const Select = forwardRef((props, ref) => {
     autoComplete
   };
 
+  // Props DOM directos (sin extractDOMProps para consistencia con Input)
+  const domProps = restProps;
+
   // Select base element
   const selectElement = (
     <select
@@ -142,7 +153,7 @@ const Select = forwardRef((props, ref) => {
       autoFocus={autoFocus}
       {...accessibilityProps}
       {...validationProps}
-      {...restProps}
+      {...domProps}
     >
       {/* Opción placeholder si se proporciona */}
       {placeholder && (
@@ -174,7 +185,7 @@ const Select = forwardRef((props, ref) => {
   // Si no necesita wrapper, retornar solo el select con flecha
   if (!needsWrapper) {
     return (
-      <div className="select-wrapper">
+      <div className={simpleWrapperClasses}>
         {selectElement}
         
         {/* Flecha automática cuando no hay rightIcon personalizado */}
@@ -192,7 +203,19 @@ const Select = forwardRef((props, ref) => {
     <div className={wrapperClasses}>
       {/* Icono izquierdo */}
       {hasLeftIcon && (
-        <span className="select-wrapper__icon select-wrapper__icon--left">
+        <span 
+          className={`select-wrapper__icon select-wrapper__icon--left ${onLeftIconClick ? 'select-wrapper__icon--clickable' : ''}`}
+          onClick={onLeftIconClick}
+          onKeyDown={onLeftIconClick ? (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              onLeftIconClick(e);
+            }
+          } : undefined}
+          tabIndex={onLeftIconClick ? 0 : -1}
+          role={onLeftIconClick ? 'button' : undefined}
+          aria-label={onLeftIconClick ? 'Acción del icono izquierdo' : undefined}
+        >
           {renderIcon(leftIcon)}
         </span>
       )}
@@ -202,7 +225,19 @@ const Select = forwardRef((props, ref) => {
       
       {/* Icono derecho personalizado */}
       {hasRightIcon && (
-        <span className="select-wrapper__icon select-wrapper__icon--right">
+        <span 
+          className={`select-wrapper__icon select-wrapper__icon--right ${onRightIconClick ? 'select-wrapper__icon--clickable' : ''}`}
+          onClick={onRightIconClick}
+          onKeyDown={onRightIconClick ? (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              onRightIconClick(e);
+            }
+          } : undefined}
+          tabIndex={onRightIconClick ? 0 : -1}
+          role={onRightIconClick ? 'button' : undefined}
+          aria-label={onRightIconClick ? 'Acción del icono derecho' : undefined}
+        >
           {renderIcon(rightIcon)}
         </span>
       )}
@@ -261,7 +296,9 @@ Select.propTypes = {
   ariaLabel: PropTypes.string,
   ariaDescribedBy: PropTypes.string,
   ariaErrorMessage: PropTypes.string,
-  autoComplete: PropTypes.string
+  autoComplete: PropTypes.string,
+  onLeftIconClick: PropTypes.func,
+  onRightIconClick: PropTypes.func
 };
 
 export { Select };

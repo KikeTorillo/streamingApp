@@ -75,6 +75,7 @@ export {
   useModalProps,
   useLoadingButtonProps,
   useValidatedInputProps,
+  useFilterBarProps,
   createStandardHook,
   useStandardPropsDebug
 } from '../hooks/useStandardProps.jsx';

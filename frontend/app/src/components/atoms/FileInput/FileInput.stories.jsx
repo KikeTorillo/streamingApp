@@ -9,17 +9,19 @@ export default {
     docs: {
       description: {
         component: `
-# FileInput Atom
+# FileInput Atom - Sistema de Diseño Estándar
 
-El átomo **FileInput** es el componente base para selección de archivos en nuestro sistema de diseño.
+El átomo **FileInput** migrado al sistema de diseño estándar para selección de archivos.
 
-## 🎯 Características principales
+## ✨ Sistema de Diseño Estándar
 
-- **5 tamaños**: xs, sm, md, lg, xl
-- **4 variantes**: default, success, warning, error
-- **Estados completos**: normal, hover, focus, disabled
-- **Accesibilidad**: ARIA labels, navegación por teclado
-- **Theming**: Variables CSS del sistema
+- **Hook especializado**: \`useFileInputProps()\` con configuración óptima
+- **Props estándar**: \`size\`, \`variant\`, \`rounded\`, \`loading\`, \`disabled\`
+- **6 variantes semánticas**: primary, secondary, success, warning, danger, neutral
+- **Sistema de iconos**: Iconos Feather automáticos (upload, check-circle, loader, etc.)
+- **Estados avanzados**: loading con spinner, disabled con overlays
+- **Design tokens**: Aplicación automática de tokens del sistema
+- **Backward compatibility**: Mapeo automático de variantes legacy
 
 ## 🔧 Uso básico
 
@@ -28,10 +30,23 @@ import { FileInput } from './atoms/FileInput';
 
 <FileInput 
   size="md"
-  variant="default"
+  variant="neutral"
+  rounded="md"
   onChange={handleChange}
   text="Seleccionar archivo"
 />
+\\\`\\\`\\\`
+
+## 🔄 Migración desde API legacy
+
+\\\`\\\`\\\`jsx
+// ANTES (legacy)
+<FileInput variant="default" />
+
+// DESPUÉS (estándar)
+<FileInput variant="neutral" />
+
+// Auto-mapping: 'default' → 'neutral', 'error' → 'danger'
 \\\`\\\`\\\`
         `
       }
@@ -59,12 +74,47 @@ import { FileInput } from './atoms/FileInput';
     },
     variant: {
       name: 'Variante',
-      description: 'Variante de estado del componente',
+      description: 'Variante semántica del sistema de diseño estándar',
       control: 'select',
-      options: ['default', 'success', 'warning', 'error'],
+      options: ['primary', 'secondary', 'success', 'warning', 'danger', 'neutral', 'default', 'error'],
       table: {
-        type: { summary: "'default' | 'success' | 'warning' | 'error'" },
-        defaultValue: { summary: 'default' }
+        type: { summary: "'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'neutral'" },
+        defaultValue: { summary: 'neutral' }
+      }
+    },
+    rounded: {
+      name: 'Radio de bordes',
+      description: 'Radio de bordes según design system',
+      control: 'select',
+      options: ['sm', 'md', 'lg', 'xl', 'full'],
+      table: {
+        type: { summary: "'sm' | 'md' | 'lg' | 'xl' | 'full'" },
+        defaultValue: { summary: 'md' }
+      }
+    },
+    loading: {
+      name: 'Loading',
+      description: 'Estado de carga con spinner',
+      control: 'boolean',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' }
+      }
+    },
+    leftIcon: {
+      name: 'Icono izquierdo',
+      description: 'Icono del sistema Feather o componente React',
+      control: 'text',
+      table: {
+        type: { summary: 'string | ReactNode' }
+      }
+    },
+    rightIcon: {
+      name: 'Icono derecho',
+      description: 'Icono del sistema Feather o componente React',
+      control: 'text',
+      table: {
+        type: { summary: 'string | ReactNode' }
       }
     },
     accept: {
@@ -142,14 +192,15 @@ export const Default = {
   args: {
     text: 'Seleccionar archivo',
     size: 'md',
-    variant: 'default'
+    variant: 'neutral',
+    rounded: 'md'
   }
 };
 
 Default.parameters = {
   docs: {
     description: {
-      story: 'Configuración por defecto del FileInput. Acepta cualquier tipo de archivo.'
+      story: 'Configuración por defecto del FileInput con sistema de diseño estándar. Variante neutral, tamaño medium, con iconos automáticos del sistema.'
     }
   }
 };
@@ -198,8 +249,8 @@ Sizes.parameters = {
   }
 };
 
-// ========== 3. VARIANTS STORY (OBLIGATORIA) ==========
-export const Variants = () => (
+// ========== 3. SYSTEM STANDARD VARIANTS STORY (OBLIGATORIA) ==========
+export const SystemStandardVariants = () => (
   <div style={{
     display: 'grid',
     gap: 'var(--space-lg)',
@@ -208,37 +259,47 @@ export const Variants = () => (
     padding: 'var(--space-md)'
   }}>
     <div style={{ textAlign: 'center' }}>
-      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Default</h4>
-      <FileInput variant="default" text="Campo normal" />
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>Primary</h4>
+      <FileInput variant="primary" text="Acción principal" />
     </div>
     
     <div style={{ textAlign: 'center' }}>
-      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Success</h4>
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>Secondary</h4>
+      <FileInput variant="secondary" text="Acción secundaria" />
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>Success</h4>
       <FileInput variant="success" text="Campo válido" />
     </div>
     
     <div style={{ textAlign: 'center' }}>
-      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Warning</h4>
-      <FileInput variant="warning" text="Campo advertencia" />
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>Warning</h4>
+      <FileInput variant="warning" text="Advertencia" />
     </div>
     
     <div style={{ textAlign: 'center' }}>
-      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Error</h4>
-      <FileInput variant="error" text="Campo error" />
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>Danger</h4>
+      <FileInput variant="danger" text="Error crítico" />
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>Neutral</h4>
+      <FileInput variant="neutral" text="Campo neutro" />
     </div>
   </div>
 );
 
-Variants.parameters = {
+SystemStandardVariants.parameters = {
   docs: {
     description: {
-      story: 'Variantes semánticas del sistema: Default neutral, Success para confirmaciones, Warning para advertencias, Error para errores.'
+      story: '6 variantes semánticas del sistema de diseño estándar: Primary (acción principal), Secondary (acción secundaria), Success (confirmación), Warning (advertencia), Danger (error), Neutral (neutro).'
     }
   }
 };
 
-// ========== 4. STATES STORY (OBLIGATORIA) ==========
-export const States = () => (
+// ========== 4. SYSTEM STANDARD STATES STORY (OBLIGATORIA) ==========
+export const SystemStandardStates = () => (
   <div style={{
     display: 'grid',
     gap: 'var(--space-lg)',
@@ -247,47 +308,94 @@ export const States = () => (
     padding: 'var(--space-md)'
   }}>
     <div style={{ textAlign: 'center' }}>
-      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Normal</h4>
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>Normal</h4>
       <FileInput size="lg" text="Estado normal" />
     </div>
     
     <div style={{ textAlign: 'center' }}>
-      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Hover</h4>
-      <FileInput className="pseudo-hover" size="lg" text="Estado hover" />
-      <small style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
-        (Simulated)
-      </small>
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>Loading</h4>
+      <FileInput loading size="lg" text="Cargando archivo..." />
     </div>
     
     <div style={{ textAlign: 'center' }}>
-      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Focus</h4>
-      <FileInput className="pseudo-focus" size="lg" text="Estado focus" />
-      <small style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
-        (Simulated)
-      </small>
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>Disabled</h4>
+      <FileInput disabled size="lg" text="Deshabilitado" />
     </div>
     
     <div style={{ textAlign: 'center' }}>
-      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Required</h4>
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>Required</h4>
       <FileInput required size="lg" text="Campo requerido" />
     </div>
     
     <div style={{ textAlign: 'center' }}>
-      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Disabled</h4>
-      <FileInput disabled size="lg" text="Deshabilitado" />
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>With Error</h4>
+      <FileInput 
+        size="lg" 
+        text="Campo con error"
+        errorText="Este campo es obligatorio"
+      />
     </div>
   </div>
 );
 
-States.parameters = {
+SystemStandardStates.parameters = {
   docs: {
     description: {
-      story: 'Estados interactivos del componente. Required muestra asterisco, disabled previene interacciones.'
+      story: 'Estados estándar del sistema de diseño: Normal, Loading (con spinner automático), Disabled (con overlay), Required (asterisco), Error (con icono automático).'
     }
   }
 };
 
-// ========== 5. INTERACTIVE STORY (OBLIGATORIA) ==========
+// ========== 5. SYSTEM ICONS INTEGRATION STORY (NUEVA) ==========
+export const SystemIconsIntegration = () => (
+  <div style={{
+    display: 'grid',
+    gap: 'var(--space-lg)',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+    alignItems: 'center',
+    padding: 'var(--space-md)'
+  }}>
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>Default Upload</h4>
+      <FileInput size="lg" text="Archivo general" />
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>Custom Left Icon</h4>
+      <FileInput leftIcon="image" size="lg" text="Solo imágenes" />
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>Video Files</h4>
+      <FileInput leftIcon="video" size="lg" text="Archivos de video" />
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>Documents</h4>
+      <FileInput leftIcon="file-text" size="lg" text="Documentos PDF" />
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>With Right Icon</h4>
+      <FileInput leftIcon="folder" rightIcon="chevron-down" size="lg" text="Explorar carpeta" />
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>Success State</h4>
+      <FileInput variant="success" leftIcon="check-circle" size="lg" text="Archivo subido" />
+    </div>
+  </div>
+);
+
+SystemIconsIntegration.parameters = {
+  docs: {
+    description: {
+      story: 'Integración completa del sistema de iconos Feather. Iconos automáticos por contexto y estados personalizables con leftIcon/rightIcon.'
+    }
+  }
+};
+
+// ========== 6. INTERACTIVE STORY (OBLIGATORIA) ==========
 export const Interactive = () => (
   <div style={{
     display: 'flex',
@@ -298,8 +406,10 @@ export const Interactive = () => (
   }}>
     <FileInput 
       size="lg"
+      variant="neutral"
       text="Seleccionar cualquier archivo"
       helperText="Haz click para seleccionar un archivo"
+      leftIcon="upload"
     />
     
     <FileInput 
@@ -308,6 +418,7 @@ export const Interactive = () => (
       text="Solo imágenes"
       helperText="JPG, PNG, GIF, WebP"
       variant="success"
+      leftIcon="image"
     />
     
     <FileInput 
@@ -316,6 +427,8 @@ export const Interactive = () => (
       size="lg"
       text="Múltiples documentos"
       helperText="Selecciona varios archivos PDF o Word"
+      variant="primary"
+      leftIcon="file-text"
     />
     
     <FileInput 
@@ -324,6 +437,15 @@ export const Interactive = () => (
       text="Seleccionar video"
       helperText="MP4, WebM, AVI, MOV"
       variant="warning"
+      leftIcon="video"
+    />
+    
+    <FileInput 
+      loading
+      size="lg"
+      text="Procesando archivo..."
+      helperText="El archivo se está procesando"
+      variant="primary"
     />
   </div>
 );
@@ -331,12 +453,71 @@ export const Interactive = () => (
 Interactive.parameters = {
   docs: {
     description: {
-      story: 'Ejemplos interactivos del FileInput. Selecciona archivos para ver la funcionalidad en acción. Revisa la consola del navegador.'
+      story: 'Ejemplos interactivos con sistema de iconos integrado. Iconos automáticos según el tipo de archivo y estado. Incluye estados loading con spinner.'
     }
   }
 };
 
-// ========== 6. ACCESSIBILITY STORY (OBLIGATORIA) ==========
+// ========== 7. BACKWARD COMPATIBILITY DEMO STORY (NUEVA) ==========
+export const BackwardCompatibilityDemo = () => (
+  <div style={{
+    display: 'grid',
+    gap: 'var(--space-lg)',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+    alignItems: 'center',
+    padding: 'var(--space-md)'
+  }}>
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>
+        Legacy: variant="default"
+      </h4>
+      <FileInput variant="default" text="Auto-mapping a neutral" />
+      <small style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
+        (Auto-mapped to neutral)
+      </small>
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>
+        New: variant="neutral"
+      </h4>
+      <FileInput variant="neutral" text="Estándar neutro" />
+      <small style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
+        (Standard neutral)
+      </small>
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>
+        Legacy: variant="error"
+      </h4>
+      <FileInput variant="error" text="Auto-mapping a danger" />
+      <small style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
+        (Auto-mapped to danger)
+      </small>
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>
+        New: variant="danger"
+      </h4>
+      <FileInput variant="danger" text="Estándar danger" />
+      <small style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
+        (Standard danger)
+      </small>
+    </div>
+  </div>
+);
+
+BackwardCompatibilityDemo.parameters = {
+  docs: {
+    description: {
+      story: 'Demostración de backward compatibility. Las variantes legacy se mapean automáticamente: "default" → "neutral", "error" → "danger". Sin breaking changes.'
+    }
+  }
+};
+
+// ========== 8. ACCESSIBILITY STORY (OBLIGATORIA) ==========
 export const Accessibility = () => (
   <div style={{
     display: 'flex',
@@ -351,6 +532,8 @@ export const Accessibility = () => (
       size="lg"
       text="Subir currículum"
       helperText="Formatos permitidos: PDF, Word"
+      leftIcon="file-text"
+      variant="primary"
     />
     
     <FileInput 
@@ -359,7 +542,9 @@ export const Accessibility = () => (
       size="lg"
       text="Foto de perfil"
       helperText="Imagen para tu perfil público"
+      leftIcon="user"
       required
+      variant="success"
     />
     
     <FileInput 
@@ -368,6 +553,7 @@ export const Accessibility = () => (
       size="lg"
       text="No disponible"
       helperText="Esta función está temporalmente deshabilitada"
+      leftIcon="lock"
     />
     
     <FileInput 
@@ -375,7 +561,7 @@ export const Accessibility = () => (
       size="lg"
       text="Campo con error"
       errorText="Este campo es obligatorio"
-      variant="error"
+      variant="danger"
     />
     
     <div style={{ 
@@ -399,8 +585,9 @@ export const Accessibility = () => (
         <li>✅ Estados aria-required y aria-invalid</li>
         <li>✅ Navegación por teclado (Tab, Enter, Space)</li>
         <li>✅ Focus visible con outline</li>
-        <li>✅ Mensajes de error con role=&quot;alert&quot;</li>
+        <li>✅ Mensajes de error con role="alert"</li>
         <li>✅ Área táctil mínima de 44px</li>
+        <li>✅ Iconos automáticos con semántica clara</li>
       </ul>
     </div>
   </div>
@@ -409,7 +596,7 @@ export const Accessibility = () => (
 Accessibility.parameters = {
   docs: {
     description: {
-      story: 'Configuración de accesibilidad completa. Todos los FileInput son navegables por teclado y compatibles con screen readers.'
+      story: 'Configuración de accesibilidad completa con sistema de iconos integrado. Todos los FileInput son navegables por teclado y compatibles con screen readers. Iconos proporcionan contexto visual adicional.'
     }
   }
 };

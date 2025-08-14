@@ -69,7 +69,7 @@ function UserEditPage() {
         label: 'Correo Electrónico',
         placeholder: 'usuario@ejemplo.com',
         required: false,
-        leftIcon: '📧',
+        leftIcon: 'mail',
         helperText: 'Opcional: para notificaciones y recuperación de cuenta',
         width: 'half'
       },
@@ -79,7 +79,7 @@ function UserEditPage() {
         label: 'Nueva Contraseña',
         placeholder: 'Dejar vacío para mantener la actual',
         required: false,
-        leftIcon: '🔒',
+        leftIcon: 'lock',
         helperText: 'Mínimo 6 caracteres. Dejar vacío para no cambiar',
         width: 'half',
         validation: (value) => {
@@ -94,15 +94,15 @@ function UserEditPage() {
         type: 'select',
         label: 'Rol del Usuario',
         required: true,
-        leftIcon: '👥',
+        leftIcon: 'users',
         disabled: editingSelf, // No permitir cambiar su propio rol
         helperText: editingSelf 
           ? 'No puedes cambiar tu propio rol por seguridad'
           : 'Define los permisos del usuario en el sistema',
         options: [
-          { value: 1, label: '👑 Administrador', disabled: false },
-          { value: 2, label: '✏️ Editor', disabled: false },
-          { value: 3, label: '👤 Usuario', disabled: false }
+          { value: 1, label: 'Administrador', disabled: false },
+          { value: 2, label: 'Editor', disabled: false },
+          { value: 3, label: 'Usuario', disabled: false }
         ],
         width: 'full'
       }
@@ -281,7 +281,7 @@ function UserEditPage() {
             onClick={() => document.getElementById('user-edit-form')?.requestSubmit()}
             loading={loading}
             disabled={!hasChanges || loading}
-            leftIcon="💾"
+            leftIcon="save"
           >
             {loading ? 'Guardando...' : 'Guardar Cambios'}
           </Button>
@@ -393,7 +393,7 @@ function UserEditPage() {
               submitText={loading ? 'Guardando...' : 'Guardar Cambios'}
               submitVariant="primary"
               submitSize="md"
-              submitIcon="💾"
+              submitIcon="save"
               validateOnBlur={true}
               validateOnChange={false}
               showSubmit={!success} // Ocultar botón cuando hay éxito

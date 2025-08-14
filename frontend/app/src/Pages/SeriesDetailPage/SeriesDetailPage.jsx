@@ -422,7 +422,6 @@ function SeriesDetailPage() {
                                         <EpisodeListItem
                                             key={`episode-${episode.id}`}
                                             episode={transformedEpisode}
-                                            onPlay={() => handlePlayEpisode(episode)}
                                             onClick={() => handleEpisodeClick(episode)}
                                             showThumbnail={true}
                                             showDescription={true}

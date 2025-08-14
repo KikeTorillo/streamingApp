@@ -1,5 +1,5 @@
-/* ===== AVATAR COMPONENT - CORREGIDO PARA REGLAS DEL PROYECTO ===== */
-/* Avatar.css - Usando 5 tamaños estándar y 4 variantes de presentación */
+/* ===== AVATAR COMPONENT - MIGRADO AL SISTEMA DE DISEÑO ESTÁNDAR ===== */
+/* Avatar.css - 5 tamaños estándar + 6 variantes semánticas + design tokens automáticos */
 
 /* Clase base del avatar - Usando variables del sistema */
 .avatar {
@@ -74,47 +74,69 @@
   font-size: var(--font-size-xl);
 }
 
-/* VARIANTES DE PRESENTACIÓN - 4 VARIANTES APROPIADAS PARA CONTENIDO */
+/* VARIANTES SEMÁNTICAS ESTÁNDAR - 6 VARIANTES DEL SISTEMA */
 
-/* Default */
-.avatar--default .avatar__container {
+/* Primary - Acción principal */
+.avatar--primary .avatar__container {
+  background-color: var(--color-primary-light);
+  border-color: var(--color-primary);
+  box-shadow: none;
+}
+
+/* Secondary - Acción secundaria */
+.avatar--secondary .avatar__container {
+  background-color: var(--color-secondary-light);
+  border-color: var(--color-secondary);
+  box-shadow: none;
+}
+
+/* Success - Éxito */
+.avatar--success .avatar__container {
+  background-color: var(--color-success-light);
+  border-color: var(--color-success);
+  box-shadow: none;
+}
+
+/* Warning - Advertencia */
+.avatar--warning .avatar__container {
+  background-color: var(--color-warning-light);
+  border-color: var(--color-warning);
+  box-shadow: none;
+}
+
+/* Danger - Error/eliminar */
+.avatar--danger .avatar__container {
+  background-color: var(--color-danger-light);
+  border-color: var(--color-danger);
+  box-shadow: none;
+}
+
+/* Neutral - Por defecto */
+.avatar--neutral .avatar__container {
   background-color: var(--bg-secondary);
   border-color: var(--border-default);
   box-shadow: none;
 }
 
-/* Elevated */
-.avatar--elevated .avatar__container {
-  background-color: var(--bg-primary);
-  border-color: var(--border-default);
-  box-shadow: var(--shadow-md);
+/* ROUNDED - RADIOS ESTÁNDAR DEL SISTEMA */
+.avatar--sm .avatar__container {
+  border-radius: var(--radius-sm);
 }
 
-/* Bordered */
-.avatar--bordered .avatar__container {
-  background-color: var(--bg-primary);
-  border: 0.2rem solid var(--border-focus);
-  box-shadow: var(--shadow-sm);
+.avatar--md .avatar__container {
+  border-radius: var(--radius-md);
 }
 
-/* Minimal */
-.avatar--minimal .avatar__container {
-  background-color: var(--bg-muted);
-  border-color: transparent;
-  box-shadow: none;
-}
-
-/* FORMAS DEL AVATAR */
-.avatar--circle .avatar__container {
-  border-radius: var(--radius-full);
-}
-
-.avatar--rounded .avatar__container {
+.avatar--lg .avatar__container {
   border-radius: var(--radius-lg);
 }
 
-.avatar--square .avatar__container {
-  border-radius: var(--radius-md);
+.avatar--xl .avatar__container {
+  border-radius: var(--radius-xl);
+}
+
+.avatar--full .avatar__container {
+  border-radius: var(--radius-full);
 }
 
 /* IMAGEN DEL AVATAR */
@@ -139,7 +161,35 @@
   line-height: 1;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  /* Gradient dinámico basado en la variante */
   background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+}
+
+/* Variantes de fallback por color semántico */
+.avatar--primary .avatar__fallback {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+}
+
+.avatar--secondary .avatar__fallback {
+  background: linear-gradient(135deg, var(--color-secondary), var(--color-secondary-hover));
+}
+
+.avatar--success .avatar__fallback {
+  background: linear-gradient(135deg, var(--color-success), var(--color-success-hover));
+}
+
+.avatar--warning .avatar__fallback {
+  background: linear-gradient(135deg, var(--color-warning), var(--color-warning-hover));
+  color: var(--text-on-warning);
+}
+
+.avatar--danger .avatar__fallback {
+  background: linear-gradient(135deg, var(--color-danger), var(--color-danger-hover));
+}
+
+.avatar--neutral .avatar__fallback {
+  background: linear-gradient(135deg, var(--gray-400), var(--gray-500));
+  color: var(--text-primary);
 }
 
 /* ESTADOS INTERACTIVOS */

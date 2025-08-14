@@ -21,7 +21,7 @@ import './EmptyState.css';
  */
 function EmptyState({
   // Contenido
-  icon = '📭',
+  icon = 'folder',
   title = 'No hay contenido',
   description = 'No se encontraron elementos para mostrar.',
   

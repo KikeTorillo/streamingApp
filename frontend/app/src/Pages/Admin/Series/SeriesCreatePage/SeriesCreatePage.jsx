@@ -207,7 +207,7 @@ function SeriesCreatePage() {
             <Button
               variant="outline"
               size="md"
-              leftIcon="←"
+              leftIcon="arrow-left"
               onClick={() => navigate('/admin/series')}
             >
               Volver a Series

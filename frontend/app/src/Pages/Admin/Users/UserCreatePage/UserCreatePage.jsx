@@ -55,7 +55,7 @@ function UserCreatePage() {
       label: 'Nombre de Usuario',
       placeholder: 'Ej: juan_perez',
       required: true,
-      leftIcon: '👤',
+      leftIcon: 'user',
       helperText: 'Único, 3-30 caracteres, solo letras/números/guiones bajos',
       width: 'half'
     },
@@ -65,7 +65,7 @@ function UserCreatePage() {
       label: 'Correo Electrónico',
       placeholder: 'usuario@ejemplo.com',
       required: false, // Email es OPCIONAL en backend
-      leftIcon: '📧',
+      leftIcon: 'mail',
       helperText: 'Opcional. Para recuperación de contraseña',
       width: 'half'
     },
@@ -75,7 +75,7 @@ function UserCreatePage() {
       label: 'Contraseña',
       placeholder: 'Mínimo 6 caracteres',
       required: true,
-      leftIcon: '🔐',
+      leftIcon: 'lock',
       helperText: 'Mínimo 6 caracteres para seguridad',
       width: 'half'
     },
@@ -85,7 +85,7 @@ function UserCreatePage() {
       label: 'Confirmar Contraseña',
       placeholder: 'Repetir contraseña',
       required: true,
-      leftIcon: '🔒',
+      leftIcon: 'lock',
       helperText: 'Debe coincidir exactamente',
       width: 'half'
     },
@@ -95,7 +95,7 @@ function UserCreatePage() {
       label: 'Rol del Usuario',
       placeholder: 'Selecciona un rol',
       required: true,
-      leftIcon: '🎭',
+      leftIcon: 'users',
       options: [
         { value: 1, label: 'Administrador' },
         { value: 2, label: 'Usuario Regular' }
@@ -176,7 +176,7 @@ function UserCreatePage() {
         <Button
           variant="outline"
           size="md"
-          leftIcon="←"
+          leftIcon="arrow-left"
           onClick={handleGoBack}
           disabled={loading}
         >
@@ -239,7 +239,7 @@ function UserCreatePage() {
           </div>
 
           <div className="info-card">
-            <h4>🔒 Seguridad</h4>
+            <h4>🔐 Seguridad</h4>
             <ul>
               <li>Las contraseñas deben tener mínimo 6 caracteres</li>
               <li>El email es opcional pero recomendado para recuperación</li>

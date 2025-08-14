@@ -131,7 +131,7 @@ function TMDBSearchView({
       label: title,
       placeholder: placeholder,
       helperText: isApiKeyValid ? helperText : '⚠️ Configura VITE_TMDB_API_KEY para habilitar búsqueda',
-      leftIcon: '🔍',
+      leftIcon: 'search',
       value: searchQuery,
       required: true,
       minLength: 2,
@@ -141,7 +141,7 @@ function TMDBSearchView({
       name: 'sortBy',
       type: 'select',
       label: 'Ordenar por',
-      leftIcon: '📊',
+      leftIcon: 'sort',
       value: sortBy,
       options: sortOptions,
       disabled: !isApiKeyValid
@@ -220,7 +220,7 @@ function TMDBSearchView({
   // ===== ESTADOS DE LA INTERFAZ =====
   const renderWelcomeState = () => (
     <EmptyState
-      icon="🎬"
+      icon="film"
       title="Buscar en The Movie Database"
       description="Ingresa el nombre de una película o serie para buscar en la base de datos más completa del mundo."
       action={(
@@ -264,7 +264,7 @@ function TMDBSearchView({
           <Button
             variant="ghost"
             size="sm"
-            leftIcon="🗑️"
+            leftIcon="trash"
             onClick={handleClearResults}
           >
             Limpiar
@@ -277,7 +277,7 @@ function TMDBSearchView({
 
   const renderEmptyState = () => (
     <EmptyState
-      icon="🔍"
+      icon="search"
       title="Sin resultados"
       description={`No se encontraron resultados para "${safeSearchQuery}".`}
       action={(
@@ -294,7 +294,7 @@ function TMDBSearchView({
             <Button
               variant="secondary"
               size="sm"
-              leftIcon="✏️"
+              leftIcon="edit"
               onClick={onManualCreate}
             >
               Crear manualmente
@@ -325,13 +325,16 @@ function TMDBSearchView({
             onSubmit={handleSearchSubmit}
             onChange={handleSearchFormChange}
             className="tmdb-search-view__form"
+            size="md"
+            variant="primary"
+            rounded="md"
             actions={[
               {
                 key: 'search',
                 type: 'submit',
                 text: loading ? 'Buscando...' : 'Buscar',
                 variant: 'primary',
-                leftIcon: '🔍',
+                leftIcon: 'search',
                 loading: loading,
                 disabled: !safeSearchQuery || safeSearchQuery.length < 2 || !isApiKeyValid,
                 onClick: performSearch
@@ -340,7 +343,7 @@ function TMDBSearchView({
                 key: 'clear',
                 text: 'Limpiar',
                 variant: 'ghost',
-                leftIcon: '🗑️',
+                leftIcon: 'trash',
                 onClick: handleClearResults,
                 disabled: loading,
                 show: hasSearched
@@ -349,7 +352,7 @@ function TMDBSearchView({
                 key: 'manual',
                 text: 'Crear manualmente',
                 variant: 'secondary',
-                leftIcon: '✏️',
+                leftIcon: 'edit',
                 onClick: onManualCreate,
                 disabled: loading,
                 show: showManualCreate

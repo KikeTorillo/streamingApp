@@ -99,6 +99,15 @@ export const COMPONENT_SIZE_MAPS = {
     md: 'sm',
     lg: 'sm',
     xl: 'md'
+  },
+  
+  // Avatar: iconos proporcionales al tamaño del avatar
+  avatar: {
+    xs: 'xs',
+    sm: 'xs',
+    md: 'sm', 
+    lg: 'md',
+    xl: 'lg'
   }
 };
 

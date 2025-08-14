@@ -1,13 +1,26 @@
 /* ========================================
-   Breadcrumb - Estilos del Design System
+   Breadcrumb - Sistema de Diseño Estándar
    ======================================== */
 
-/* Container principal */
+/* Container principal con tokens automáticos */
 .breadcrumb {
   display: block;
   width: 100%;
   margin: 0;
   padding: 0;
+  
+  /* Tokens automáticos configurados desde JS */
+  font-size: var(--breadcrumb-size, var(--font-size-sm));
+  
+  /* Estados globales del sistema estándar */
+  &.breadcrumb--disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  
+  &.breadcrumb--loading {
+    position: relative;
+  }
 }
 
 /* Lista de breadcrumbs */
@@ -28,7 +41,7 @@
 }
 
 /* ========================================
-   Items de breadcrumb
+   Items de breadcrumb con tokens estándar
    ======================================== */
 
 .breadcrumb__item,
@@ -36,11 +49,11 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--border-radius-sm);
+  padding: var(--breadcrumb-spacing, var(--space-xs)) var(--breadcrumb-padding, var(--space-sm));
+  border-radius: var(--breadcrumb-rounded, var(--border-radius-sm));
   text-decoration: none;
   color: var(--color-text-secondary);
-  font-size: var(--font-size-sm);
+  font-size: var(--breadcrumb-size, var(--font-size-sm));
   line-height: 1.4;
   transition: all var(--duration-fast) var(--easing-standard);
   white-space: nowrap;
@@ -60,12 +73,43 @@
   outline-offset: 2px;
 }
 
-/* Item activo (página actual) */
+/* Item activo (página actual) - con variante semántica estándar */
 .breadcrumb__item--active,
 .breadcrumb__item-link--active {
   color: var(--color-text-primary);
   font-weight: var(--font-weight-semibold);
   background: var(--color-surface-tertiary);
+}
+
+/* Variantes semánticas estándar para item activo */
+.breadcrumb--variant-primary .breadcrumb__item--active {
+  background: var(--color-primary-50);
+  color: var(--color-primary-700);
+}
+
+.breadcrumb--variant-secondary .breadcrumb__item--active {
+  background: var(--color-secondary-50);
+  color: var(--color-secondary-700);
+}
+
+.breadcrumb--variant-success .breadcrumb__item--active {
+  background: var(--color-success-50);
+  color: var(--color-success-700);
+}
+
+.breadcrumb--variant-warning .breadcrumb__item--active {
+  background: var(--color-warning-50);
+  color: var(--color-warning-700);
+}
+
+.breadcrumb--variant-danger .breadcrumb__item--active {
+  background: var(--color-danger-50);
+  color: var(--color-danger-700);
+}
+
+.breadcrumb--variant-neutral .breadcrumb__item--active {
+  background: var(--color-neutral-50);
+  color: var(--color-neutral-700);
 }
 
 .breadcrumb__item-link--active {
@@ -93,94 +137,119 @@
 }
 
 .breadcrumb__loading-icon {
-  animation: spin 1s linear infinite;
   margin-left: var(--space-xs);
 }
 
 /* ========================================
-   Separadores
+   Separadores con tokens
    ======================================== */
 
 .breadcrumb__separator {
   color: var(--color-text-subtle);
-  font-size: var(--font-size-sm);
   user-select: none;
   flex-shrink: 0;
-  padding: 0 var(--space-xs);
+  /* font-size y padding configurados arriba en sección de tamaños */
 }
 
 /* ========================================
-   Variantes de tamaño
+   Tamaños estándar del sistema (xs, sm, md, lg, xl)
    ======================================== */
 
+.breadcrumb--size-xs {
+  --breadcrumb-size: var(--font-size-xs);
+  --breadcrumb-spacing: var(--space-xs);
+  --breadcrumb-padding: var(--space-xs);
+}
+
 .breadcrumb--size-sm {
-  font-size: var(--font-size-xs);
-}
-
-.breadcrumb--size-sm .breadcrumb__item,
-.breadcrumb--size-sm .breadcrumb__item-link {
-  padding: var(--space-xs);
-  font-size: var(--font-size-xs);
-}
-
-.breadcrumb--size-sm .breadcrumb__separator {
-  font-size: var(--font-size-xs);
-  padding: 0 var(--space-xs);
+  --breadcrumb-size: var(--font-size-xs);
+  --breadcrumb-spacing: var(--space-xs);
+  --breadcrumb-padding: var(--space-sm);
 }
 
 .breadcrumb--size-md {
-  /* Default styles */
+  /* Default values - defined in component style */
+  --breadcrumb-size: var(--font-size-sm);
+  --breadcrumb-spacing: var(--space-xs);
+  --breadcrumb-padding: var(--space-sm);
 }
 
-.breadcrumb--size-lg .breadcrumb__item,
-.breadcrumb--size-lg .breadcrumb__item-link {
-  padding: var(--space-sm) var(--space-md);
-  font-size: var(--font-size-md);
+.breadcrumb--size-lg {
+  --breadcrumb-size: var(--font-size-md);
+  --breadcrumb-spacing: var(--space-sm);
+  --breadcrumb-padding: var(--space-md);
 }
 
-.breadcrumb--size-lg .breadcrumb__separator {
-  font-size: var(--font-size-md);
-  padding: 0 var(--space-sm);
+.breadcrumb--size-xl {
+  --breadcrumb-size: var(--font-size-lg);
+  --breadcrumb-spacing: var(--space-sm);
+  --breadcrumb-padding: var(--space-lg);
+}
+
+/* Aplicar tamaños a separadores también */
+.breadcrumb__separator {
+  font-size: var(--breadcrumb-size, var(--font-size-sm));
+  padding: 0 var(--breadcrumb-spacing, var(--space-xs));
 }
 
 /* ========================================
-   Variantes de estilo
+   Variantes funcionales (breadcrumbVariant) - Separadas de variantes semánticas
    ======================================== */
 
-/* Variante default - Con fondos y bordes suaves */
-.breadcrumb--variant-default {
+/* Default - Con fondos y bordes suaves */
+.breadcrumb--breadcrumb-variant-default {
   /* Estilos por defecto ya aplicados */
 }
 
-/* Variante simple - Solo texto, sin fondos */
-.breadcrumb--variant-simple .breadcrumb__item,
-.breadcrumb--variant-simple .breadcrumb__item-link {
+/* Simple - Solo texto, sin fondos */
+.breadcrumb--breadcrumb-variant-simple .breadcrumb__item,
+.breadcrumb--breadcrumb-variant-simple .breadcrumb__item-link {
   background: transparent;
-  padding: var(--space-xs) 0;
+  padding: var(--breadcrumb-spacing, var(--space-xs)) 0;
 }
 
-.breadcrumb--variant-simple .breadcrumb__item-link:hover {
+.breadcrumb--breadcrumb-variant-simple .breadcrumb__item-link:hover {
   background: transparent;
   color: var(--color-primary-600);
 }
 
-.breadcrumb--variant-simple .breadcrumb__item--active {
+.breadcrumb--breadcrumb-variant-simple .breadcrumb__item--active {
   background: transparent;
 }
 
-/* Variante compact - Espaciado mínimo */
-.breadcrumb--variant-compact .breadcrumb__list {
+/* Compact - Espaciado mínimo */
+.breadcrumb--breadcrumb-variant-compact .breadcrumb__list {
   gap: 2px;
 }
 
-.breadcrumb--variant-compact .breadcrumb__item,
-.breadcrumb--variant-compact .breadcrumb__item-link {
+.breadcrumb--breadcrumb-variant-compact .breadcrumb__item,
+.breadcrumb--breadcrumb-variant-compact .breadcrumb__item-link {
   padding: var(--space-xs);
 }
 
-.breadcrumb--variant-compact .breadcrumb__separator {
+.breadcrumb--breadcrumb-variant-compact .breadcrumb__separator {
   padding: 0 var(--space-xs);
 }
+
+/* ========================================
+   Backward Compatibility - Props Legacy
+   ======================================== */
+
+/* Mapeo legacy: variant="default" → breadcrumbVariant="default" */
+.breadcrumb--variant-default {
+  /* Redirigir a nueva implementación */
+}
+
+.breadcrumb--variant-simple {
+  /* Redirigir a nueva implementación */
+}
+
+.breadcrumb--variant-compact {
+  /* Redirigir a nueva implementación */
+}
+
+/* Support para size legacy (sm, md, lg) - mantenido */
+/* No cambios necesarios, ya era compatible */
 
 /* ========================================
    Dropdown para items colapsados
@@ -249,20 +318,43 @@
 }
 
 /* ========================================
-   Estados del componente
+   Estados del sistema estándar
    ======================================== */
 
-.breadcrumb--disabled {
-  opacity: 0.6;
-  pointer-events: none;
-}
-
-.breadcrumb--loading {
-  position: relative;
-}
+/* Estados movidos al contenedor principal arriba */
 
 .breadcrumb--collapsed .breadcrumb__item-text {
   max-width: 120px; /* Truncate más agresivo en collapsed */
+}
+
+/* Estados de loading específicos */
+.breadcrumb__loading-icon--spinning {
+  animation: spin 1s linear infinite;
+}
+
+/* Rounded variants estándar */
+.breadcrumb--rounded-sm {
+  --breadcrumb-rounded: var(--border-radius-sm);
+}
+
+.breadcrumb--rounded-md {
+  --breadcrumb-rounded: var(--border-radius-md);
+}
+
+.breadcrumb--rounded-lg {
+  --breadcrumb-rounded: var(--border-radius-lg);
+}
+
+.breadcrumb--rounded-xl {
+  --breadcrumb-rounded: var(--border-radius-xl);
+}
+
+.breadcrumb--rounded-full {
+  --breadcrumb-rounded: var(--border-radius-full);
+}
+
+.breadcrumb--rounded-none {
+  --breadcrumb-rounded: 0;
 }
 
 /* ========================================

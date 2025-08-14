@@ -1,5 +1,5 @@
-/* ===== CONTENT CARD COMPONENT - MOLÉCULA PARA CARÁTULAS ===== */
-/* ContentCard.css - Usando el sistema de diseño completo */
+/* ===== CONTENT CARD COMPONENT - MOLÉCULA DEL SISTEMA ESTÁNDAR ===== */
+/* ContentCard.css - Usando design tokens automáticos del sistema */
 
 /* ===== CONTENEDOR PRINCIPAL ===== */
 .content-card {
@@ -9,10 +9,10 @@
   position: relative;
   width: 100%;
   
-  /* 🎨 CONTRASTE SUTIL - Fondo diferenciado del MainPage */
+  /* 🔄 DESIGN TOKENS AUTOMÁTICOS */
   background-color: var(--bg-secondary);
   border: 0.1rem solid var(--border-light);
-  border-radius: var(--radius-lg);
+  border-radius: var(--content-card-rounded, var(--radius-lg));
   box-shadow: var(--shadow-sm);
   
   /* El aspect ratio se manejará en el container de imagen */
@@ -33,20 +33,24 @@
   transform: translateY(-0.2rem) scale(1.01);
 }
 
-/* ===== TAMAÑOS DE CARD ===== */
-.content-card--sm {
+/* ===== TAMAÑOS ESTÁNDAR DEL SISTEMA ===== */
+.content-card--size-xs {
+  max-width: 16rem; /* 160px */
+}
+
+.content-card--size-sm {
   max-width: 20rem; /* 200px */
 }
 
-.content-card--md {
+.content-card--size-md {
   max-width: 28rem; /* 280px */
 }
 
-.content-card--lg {
+.content-card--size-lg {
   max-width: 32rem; /* 320px */
 }
 
-.content-card--xl {
+.content-card--size-xl {
   max-width: 36rem; /* 360px */
 }
 
@@ -169,7 +173,7 @@
 
 /* ===== INFORMACIÓN DE LA CARD ===== */
 .content-card__info {
-  padding: var(--space-md);
+  padding: var(--content-card-padding, var(--space-md));
   flex: 1;
 }
 
@@ -264,11 +268,11 @@
   }
   
   /* Ajustar tamaños en móviles */
-  .content-card--lg {
+  .content-card--size-lg {
     max-width: 24rem;
   }
   
-  .content-card--xl {
+  .content-card--size-xl {
     max-width: 28rem;
   }
 }
@@ -311,15 +315,15 @@
   }
   
   /* Tamaños más pequeños en móviles */
-  .content-card--md {
+  .content-card--size-md {
     max-width: 18rem;
   }
   
-  .content-card--lg {
+  .content-card--size-lg {
     max-width: 20rem;
   }
   
-  .content-card--xl {
+  .content-card--size-xl {
     max-width: 22rem;
   }
 }
@@ -399,30 +403,78 @@
   }
 }
 
+/* ===== VARIANTES SEMÁNTICAS ESTÁNDAR ===== */
+.content-card--variant-primary {
+  border-color: var(--color-primary-500);
+}
+
+.content-card--variant-secondary {
+  border-color: var(--color-secondary-500);
+}
+
+.content-card--variant-success {
+  border-color: var(--color-success-500);
+}
+
+.content-card--variant-danger {
+  border-color: var(--color-danger-500);
+}
+
+.content-card--variant-warning {
+  border-color: var(--color-warning-500);
+}
+
+.content-card--variant-neutral {
+  border-color: var(--border-light);
+}
+
+/* ===== VARIANTES FUNCIONALES ===== */
+.content-card--card-variant-elevated {
+  box-shadow: var(--shadow-md);
+}
+
+.content-card--card-variant-outlined {
+  border: 0.2rem solid var(--border-light);
+  box-shadow: none;
+}
+
+.content-card--card-variant-default {
+  border: 0.1rem solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+}
+
 /* ===== ASPECTOS ESPECÍFICOS POR TAMAÑO ===== */
 
 /* Ajustes de padding por tamaño */
-.content-card--sm .content-card__info {
+.content-card--size-xs .content-card__info {
+  padding: var(--space-xs);
+}
+
+.content-card--size-sm .content-card__info {
   padding: var(--space-sm);
 }
 
-.content-card--lg .content-card__info {
+.content-card--size-lg .content-card__info {
   padding: var(--space-lg);
 }
 
-.content-card--xl .content-card__info {
+.content-card--size-xl .content-card__info {
   padding: var(--space-lg);
 }
 
 /* Ajustes de tipografía por tamaño */
-.content-card--sm .content-card__title {
+.content-card--size-xs .content-card__title {
+  font-size: var(--font-size-xs);
+}
+
+.content-card--size-sm .content-card__title {
   font-size: var(--font-size-sm);
 }
 
-.content-card--lg .content-card__title {
+.content-card--size-lg .content-card__title {
   font-size: var(--font-size-lg);
 }
 
-.content-card--xl .content-card__title {
-  font-size: var(--font-size-lg);
+.content-card--size-xl .content-card__title {
+  font-size: var(--font-size-xl);
 }

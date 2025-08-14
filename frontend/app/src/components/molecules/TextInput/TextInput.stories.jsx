@@ -199,10 +199,10 @@ TextInput hereda automáticamente todas las mejoras del átomo Input:
       name: 'Variante',
       description: 'Estilo visual del input (usando las variantes del átomo Input mejorado)',
       control: 'select',
-      options: ['default', 'success', 'warning', 'error'],
+      options: ['primary', 'success', 'warning', 'danger'],
       table: {
         type: { summary: 'string' },
-        defaultValue: { summary: "'default'" }
+        defaultValue: { summary: "'primary'" }
       }
     },
     rounded: {
@@ -385,7 +385,7 @@ Playground.args = {
   placeholder: 'Personalízame...',
   label: 'Campo personalizable',
   size: 'md',
-  variant: 'default',
+  variant: 'primary',
   rounded: 'md'
 };
 Playground.parameters = {
@@ -463,7 +463,7 @@ export const InheritedVariants = () => {
       <TextInput
         label="Default (heredado del átomo)"
         placeholder="Estado normal del átomo Input"
-        variant="default"
+        variant="primary"
         rounded="md"
         value={values.default}
         onChange={handleChange('default')}
@@ -493,7 +493,7 @@ export const InheritedVariants = () => {
       <TextInput
         label="Error (heredado del átomo)"
         placeholder="Variante error del átomo"
-        variant="error"
+        variant="danger"
         rounded="full"
         value={values.error}
         onChange={handleChange('error')}
@@ -592,7 +592,7 @@ export const ClickableIcons = () => {
         onLeftIconClick={handleSearch}
         onRightIconClick={values.search ? handleClearSearch : undefined}
         helperText="Click en la lupa para buscar, en la X para limpiar"
-        variant={values.search ? 'success' : 'default'}
+        variant={values.search ? 'success' : 'primary'}
       />
       
       <TextInput
@@ -605,7 +605,7 @@ export const ClickableIcons = () => {
         onChange={handleChange('password')}
         onRightIconClick={togglePassword}
         helperText="Click en el ojo para mostrar/ocultar"
-        variant={values.password.length >= 8 ? 'success' : 'default'}
+        variant={values.password.length >= 8 ? 'success' : 'primary'}
       />
       
       <TextInput
@@ -617,7 +617,7 @@ export const ClickableIcons = () => {
         onChange={handleChange('validation')}
         onRightIconClick={validateField}
         helperText={isValidating ? "Validando..." : "Click en ✅ para validar"}
-        variant={values.validation.includes('@') ? 'success' : 'default'}
+        variant={values.validation.includes('@') ? 'success' : 'primary'}
         className={isValidating ? 'text-input__icon--loading' : ''}
       />
       
@@ -703,7 +703,7 @@ export const AdvancedValidation = () => {
   const getVariant = (field) => {
     if (errors[field]) return 'error';
     if (formData[field] && !errors[field]) return 'success';
-    return 'default';
+    return 'primary';
   };
 
   return (
@@ -803,14 +803,14 @@ export const IntelligentCounter = () => {
   const getTweetVariant = () => {
     if (tweet.length >= 280) return 'error';
     if (tweet.length > 260) return 'warning';
-    return 'default';
+    return 'primary';
   };
 
   const getBioVariant = () => {
     if (bio.length >= 160) return 'error';
     if (bio.length > 140) return 'warning';
     if (bio.length > 50) return 'success';
-    return 'default';
+    return 'primary';
   };
 
   return (
@@ -855,7 +855,7 @@ export const IntelligentCounter = () => {
         maxLength={500}
         showCharCount
         helperText="Resumen que aparecerá en la lista de artículos"
-        variant={post.length > 450 ? 'warning' : post.length > 100 ? 'success' : 'default'}
+        variant={post.length > 450 ? 'warning' : post.length > 100 ? 'success' : 'primary'}
         leftIcon="edit"
         rounded="lg"
       />
@@ -984,7 +984,7 @@ export const LoginForm = () => {
         required
         fullWidth
         helperText="Usa tu email registrado"
-        variant={formData.username.includes('@') ? 'success' : 'default'}
+        variant={formData.username.includes('@') ? 'success' : 'primary'}
         autoComplete="email"
         rounded="lg"
       />
@@ -1001,7 +1001,7 @@ export const LoginForm = () => {
         required
         fullWidth
         helperText="Mínimo 6 caracteres"
-        variant={formData.password.length >= 6 ? 'success' : 'default'}
+        variant={formData.password.length >= 6 ? 'success' : 'primary'}
         autoComplete="current-password"
         rounded="lg"
       />
@@ -1076,7 +1076,7 @@ export const SearchInterface = () => {
         onLeftIconClick={handleSearch}
         onRightIconClick={searchData.query ? () => handleClear('query') : undefined}
         helperText="Presiona la lupa para buscar o Enter"
-        variant={searchData.query ? 'success' : 'default'}
+        variant={searchData.query ? 'success' : 'primary'}
         size="lg"
         rounded="xl"
         fullWidth
@@ -1153,7 +1153,7 @@ export const DarkModeExample = () => (
         placeholder="Campo con error en modo oscuro" 
         leftIcon="x"
         errorText="Error con live regions en modo oscuro"
-        variant="error"
+        variant="danger"
         rounded="lg"
       />
       

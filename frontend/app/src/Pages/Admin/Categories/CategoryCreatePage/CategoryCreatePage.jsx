@@ -55,7 +55,7 @@ function CategoryCreatePage() {
       label: 'Nombre de la Categoría',
       placeholder: 'Ej: Acción, Drama, Comedia, Documental...',
       required: true,
-      leftIcon: '🎭',
+      leftIcon: 'grid',
       helperText: 'Máximo 100 caracteres. Debe ser único y descriptivo para facilitar la organización del contenido.',
       maxLength: 100,
       validation: {
@@ -188,7 +188,7 @@ function CategoryCreatePage() {
       {/* 🎯 CONTENEDOR PRINCIPAL - MIGRADO A CONTAINER COMPONENT */}
       <Container 
         size="lg" 
-        variant="default"
+        variant="primary"
       >
         
         {/* Header Actions */}
@@ -216,7 +216,7 @@ function CategoryCreatePage() {
         {/* Header del Formulario */}
         <div className="form-header">
           <h2 className="form-title">
-            🎭 Nueva Categoría
+            grid Nueva Categoría
           </h2>
           <p className="form-description">
             Las categorías ayudan a organizar y clasificar el contenido multimedia. 
@@ -242,7 +242,7 @@ function CategoryCreatePage() {
           submitText={loading ? "Creando Categoría..." : "Crear Categoría"}
           submitVariant="primary"
           submitSize="md"
-          submitIcon="🎭"
+          submitIcon="grid"
           validateOnBlur={true}
           validateOnChange={false}
           className="category-form"

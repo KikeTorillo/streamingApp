@@ -66,7 +66,7 @@ function MovieEditPage() {
         label: 'Título de la Película',
         placeholder: 'Ej: Avengers: Endgame',
         required: true,
-        leftIcon: '🎬',
+        leftIcon: 'film',
         helperText: 'Título principal que aparecerá en el catálogo',
         width: 'full'
       },
@@ -75,7 +75,7 @@ function MovieEditPage() {
         type: 'select',
         label: 'Categoría',
         required: true,
-        leftIcon: '📂',
+        leftIcon: 'folder',
         helperText: 'Selecciona la categoría que mejor describa el contenido',
         options: categories.map(cat => ({
           value: cat.id,
@@ -89,7 +89,7 @@ function MovieEditPage() {
         label: 'Año de Estreno',
         placeholder: 'Ej: 2019',
         required: true,
-        leftIcon: '📅',
+        leftIcon: 'calendar',
         helperText: 'Año en que se estrenó la película',
         width: 'half'
       },
@@ -420,7 +420,7 @@ function MovieEditPage() {
                   submitText={editing ? 'Guardando...' : 'Guardar Cambios'}
                   submitVariant="primary"
                   submitSize="md"
-                  submitIcon="💾"
+                  submitIcon="save"
                   validateOnBlur={true}
                   validateOnChange={false}
                   actions={[
@@ -439,7 +439,7 @@ function MovieEditPage() {
                       text: editing ? 'Guardando...' : 'Guardar Cambios',
                       loading: editing,
                       disabled: !hasChanges || editing,
-                      leftIcon: '💾'
+                      leftIcon: 'save'
                     }
                   ]}
                   className={`movie-edit__form ${success ? 'movie-edit__form--success' : ''}`}

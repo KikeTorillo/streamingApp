@@ -296,8 +296,8 @@ export const extractDOMProps = (props) => {
     tokens, renderIcon, hasLeftIcon, hasRightIcon, hasAnyIcon,
     isDisabled, isLoading, isEmpty,
     
-    // Props que SÍ van al DOM
-    className, style, disabled, 'aria-label': ariaLabel, 'data-testid': testId,
+    // Props que SÍ van al DOM pero necesitan transformación
+    className, style, disabled, ariaLabel, testId,
     ...domProps
   } = props;
 

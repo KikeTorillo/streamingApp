@@ -1,4 +1,4 @@
-/* ===== DIVIDER ATOM STYLES ===== */
+/* ===== DIVIDER ATOM STYLES - SISTEMA DE DISEÑO ESTÁNDAR ===== */
 
 .divider {
   /* Base */
@@ -38,7 +38,88 @@
   width: 1px; /* Ancho mínimo para la línea */
 }
 
-/* ===== ESPACIADO ===== */
+/* ===== TAMAÑOS ESTÁNDAR (size = grosor + espaciado) ===== */
+.divider--size-xs.divider--horizontal {
+  margin: var(--space-xs) 0;
+}
+
+.divider--size-xs.divider--vertical {
+  margin: 0 var(--space-xs);
+}
+
+.divider--size-xs:not(.divider--with-text) {
+  height: 1px; /* grosor mínimo */
+}
+
+.divider--size-xs.divider--vertical:not(.divider--with-text) {
+  width: 1px;
+}
+
+.divider--size-sm.divider--horizontal {
+  margin: var(--space-sm) 0;
+}
+
+.divider--size-sm.divider--vertical {
+  margin: 0 var(--space-sm);
+}
+
+.divider--size-sm:not(.divider--with-text) {
+  height: 1px;
+}
+
+.divider--size-sm.divider--vertical:not(.divider--with-text) {
+  width: 1px;
+}
+
+.divider--size-md.divider--horizontal {
+  margin: var(--space-md) 0;
+}
+
+.divider--size-md.divider--vertical {
+  margin: 0 var(--space-md);
+}
+
+.divider--size-md:not(.divider--with-text) {
+  height: 1px;
+}
+
+.divider--size-md.divider--vertical:not(.divider--with-text) {
+  width: 1px;
+}
+
+.divider--size-lg.divider--horizontal {
+  margin: var(--space-lg) 0;
+}
+
+.divider--size-lg.divider--vertical {
+  margin: 0 var(--space-lg);
+}
+
+.divider--size-lg:not(.divider--with-text) {
+  height: 2px; /* grosor mayor */
+}
+
+.divider--size-lg.divider--vertical:not(.divider--with-text) {
+  width: 2px;
+}
+
+.divider--size-xl.divider--horizontal {
+  margin: var(--space-xl) 0;
+}
+
+.divider--size-xl.divider--vertical {
+  margin: 0 var(--space-xl);
+}
+
+.divider--size-xl:not(.divider--with-text) {
+  height: 2px; /* grosor mayor */
+}
+
+.divider--size-xl.divider--vertical:not(.divider--with-text) {
+  width: 2px;
+}
+
+/* ===== BACKWARD COMPATIBILITY - ESPACIADO LEGACY ===== */
 .divider--spacing-none {
   margin: 0;
 }
@@ -124,9 +205,28 @@
   border-width: 2px;
 }
 
-/* ===== COLORES ===== */
+/* ===== VARIANTES SEMÁNTICAS ESTÁNDAR ===== */
 
-/* Muted (default) */
+/* Neutral (default - equivalente a muted) */
+.divider--color-neutral.divider--horizontal:not(.divider--with-text) {
+  background-color: var(--border-muted);
+}
+
+.divider--color-neutral.divider--vertical:not(.divider--with-text) {
+  background-color: var(--border-muted);
+}
+
+.divider--color-neutral .divider__line {
+  border-color: var(--border-muted);
+}
+
+.divider--color-neutral .divider__text {
+  color: var(--text-muted);
+}
+
+/* ===== BACKWARD COMPATIBILITY - COLORES LEGACY ===== */
+
+/* Muted (legacy - mapea a neutral) */
 .divider--color-muted.divider--horizontal:not(.divider--with-text) {
   background-color: var(--border-muted);
 }
@@ -192,6 +292,40 @@
 
 .divider--color-secondary .divider__text {
   color: var(--color-secondary);
+}
+
+/* Success */
+.divider--color-success.divider--horizontal:not(.divider--with-text) {
+  background-color: var(--color-success);
+}
+
+.divider--color-success.divider--vertical:not(.divider--with-text) {
+  background-color: var(--color-success);
+}
+
+.divider--color-success .divider__line {
+  border-color: var(--color-success);
+}
+
+.divider--color-success .divider__text {
+  color: var(--color-success);
+}
+
+/* Warning */
+.divider--color-warning.divider--horizontal:not(.divider--with-text) {
+  background-color: var(--color-warning);
+}
+
+.divider--color-warning.divider--vertical:not(.divider--with-text) {
+  background-color: var(--color-warning);
+}
+
+.divider--color-warning .divider__line {
+  border-color: var(--color-warning);
+}
+
+.divider--color-warning .divider__text {
+  color: var(--color-warning);
 }
 
 /* Danger */
@@ -300,6 +434,85 @@
   background: linear-gradient(to bottom, transparent, currentColor, transparent);
 }
 
+/* ===== ESTADOS ESTÁNDAR ===== */
+
+/* Estado deshabilitado */
+.divider--disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.divider--disabled .divider__text {
+  color: var(--text-disabled) !important;
+}
+
+.divider--disabled.divider--horizontal:not(.divider--with-text) {
+  background-color: var(--border-disabled) !important;
+}
+
+.divider--disabled.divider--vertical:not(.divider--with-text) {
+  background-color: var(--border-disabled) !important;
+}
+
+.divider--disabled .divider__line {
+  border-color: var(--border-disabled) !important;
+}
+
+/* Estado loading */
+.divider--loading {
+  position: relative;
+}
+
+.divider__loading-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--bg-primary);
+  padding: var(--space-xs);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.divider__loading {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--bg-primary);
+  padding: 0 var(--space-xs);
+  border-radius: var(--radius-sm);
+}
+
+.divider__spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ===== SISTEMA DE ICONOS ===== */
+.divider--with-icon .divider__text {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.divider__icon {
+  flex-shrink: 0;
+  display: inline-flex;
+}
+
+.divider__icon--left {
+  order: -1;
+}
+
+.divider__icon--right {
+  order: 1;
+}
+
 /* ===== DIVIDER CON TEXTO ===== */
 .divider--with-text {
   gap: var(--space-md);
@@ -323,6 +536,32 @@
   padding: 0 var(--space-sm);
   background-color: var(--bg-primary);
   white-space: nowrap;
+}
+
+.divider__text-content {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ===== SISTEMA ROUNDED (opcional) ===== */
+.divider--rounded-sm .divider__text {
+  border-radius: var(--radius-sm);
+}
+
+.divider--rounded-md .divider__text {
+  border-radius: var(--radius-md);
+}
+
+.divider--rounded-lg .divider__text {
+  border-radius: var(--radius-lg);
+}
+
+.divider--rounded-xl .divider__text {
+  border-radius: var(--radius-xl);
+}
+
+.divider--rounded-full .divider__text {
+  border-radius: var(--radius-full);
 }
 
 /* Alineación del texto */

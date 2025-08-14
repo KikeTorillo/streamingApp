@@ -20,7 +20,7 @@ El SearchBar es una molécula del design system que ofrece múltiples variantes 
 - **\`advanced\`**: Con todas las funciones nuevas (autocomplete, historial, filtros)
 - **\`compact\`**: Para espacios reducidos
 
-### ✨ **Nuevas Funcionalidades** (solo variant="advanced"):
+### ✨ **Nuevas Funcionalidades** (solo searchVariant="advanced"):
 - ✅ **Búsqueda en tiempo real** con debounce optimizado
 - ✅ **Autocomplete inteligente** con sugerencias de contenido  
 - ✅ **Historial persistente** de búsquedas del usuario
@@ -117,7 +117,8 @@ export default meta;
 export const Simple = {
   name: '🔄 Simple (Retrocompatible)',
   args: {
-    variant: 'simple',
+    searchVariant: 'simple',
+    variant: 'primary',
     placeholder: 'Buscar películas, series...',
     size: 'md'
   },
@@ -142,7 +143,8 @@ Esta variante mantiene **100% retrocompatibilidad** con el uso actual en AppHead
 
 // ✅ DESPUÉS (Migration compatible)
 <SearchBar
-  variant="simple"
+  searchVariant="simple"
+  variant="primary"
   placeholder="Buscar películas, series..."
   value={searchValue}
   onChange={onSearchChange}
@@ -286,11 +288,11 @@ export const Sizes = {
   name: '📏 Todos los Tamaños',
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      <SearchBar variant="simple" size="xs" placeholder="Extra Small (xs)" />
-      <SearchBar variant="simple" size="sm" placeholder="Small (sm)" />
-      <SearchBar variant="simple" size="md" placeholder="Medium (md) - Default" />
-      <SearchBar variant="simple" size="lg" placeholder="Large (lg)" />
-      <SearchBar variant="simple" size="xl" placeholder="Extra Large (xl)" />
+      <SearchBar searchVariant="simple" variant="primary" size="xs" placeholder="Extra Small (xs)" />
+      <SearchBar searchVariant="simple" variant="primary" size="sm" placeholder="Small (sm)" />
+      <SearchBar searchVariant="simple" variant="primary" size="md" placeholder="Medium (md) - Default" />
+      <SearchBar searchVariant="simple" variant="primary" size="lg" placeholder="Large (lg)" />
+      <SearchBar searchVariant="simple" variant="primary" size="xl" placeholder="Extra Large (xl)" />
     </div>
   ),
   parameters: {
@@ -375,7 +377,8 @@ export const MainPageUseCase = {
 **Integración:**
 \`\`\`jsx
 <SearchBar
-  variant="advanced"
+  searchVariant="advanced"
+  variant="primary"
   value={searchTerm}
   onChange={handleSearchChange}
   onSearch={handleSearch}
@@ -396,7 +399,8 @@ export const MainPageUseCase = {
 export const AppHeaderMigration = {
   name: '🔄 Caso: AppHeader (Migración)',
   args: {
-    variant: 'simple',
+    searchVariant: 'simple',
+    variant: 'primary',
     placeholder: 'Buscar películas, series...',
     size: 'md'
   },
@@ -420,7 +424,8 @@ export const AppHeaderMigration = {
 
 // DESPUÉS - Mismo API, mejores features
 <SearchBar
-  variant="simple"
+  searchVariant="simple"
+  variant="primary"
   placeholder={searchPlaceholder}
   value={searchValue} 
   onChange={onSearchChange}
@@ -431,7 +436,8 @@ export const AppHeaderMigration = {
 **Paso 2 - Upgrade gradual (futuro):**
 \`\`\`jsx
 <SearchBar
-  variant="advanced"  // Upgrade cuando esté listo
+  searchVariant="advanced"  // Upgrade cuando esté listo
+  variant="primary"
   // ... resto de props iguales
   enableShortcuts
   showSuggestions

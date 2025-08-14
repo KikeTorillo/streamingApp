@@ -1,9 +1,10 @@
 // Breadcrumb.jsx - Componente de navegación jerárquica
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Button } from '../../atoms/Button/Button';
-import { Icon } from '../../atoms/Icon/Icon';
+import { useBreadcrumbProps } from '../../../hooks/useStandardProps';
+import { extractDOMProps, STANDARD_PROP_TYPES } from '../../../tokens/standardProps';
 import './Breadcrumb.css';
 
 /**
@@ -24,49 +25,55 @@ import './Breadcrumb.css';
  * ✅ Overflow handling inteligente
  * ✅ Accesibilidad completa
  */
-function Breadcrumb({
-  // Configuración básica
-  items = [],
-  separator = '>',
-  maxItems = 4,
+function Breadcrumb(props) {
+  // Extraer props y aplicar sistema estándar
+  const {
+    // Configuración básica
+    items = [],
+    separator = '>',
+    maxItems = 4,
+    
+    // Props estándar del sistema
+    size, variant, rounded, disabled, loading, className,
+    leftIcon, rightIcon,
+    
+    // Props específicos de Breadcrumb
+    breadcrumbVariant = 'default', // Separar de variant semántica
+    showHome = true,
+    showIcons = true,
+    
+    // Comportamiento responsive
+    collapseAt = 768,
+    alwaysShowCurrent = true,
+    
+    // Navegación
+    onItemClick = null,
+    linkComponent = Link,
+    
+    // Personalización
+    homeItem = {
+      label: 'Inicio',
+      to: '/',
+      icon: 'home'
+    },
+    
+    // Tokens y sistema integrado
+    tokens, renderIcon,
+    
+    // Props DOM
+    ...domProps
+  } = useBreadcrumbProps(props);
   
-  // Personalización visual
-  variant = 'default',
-  size = 'md',
-  showHome = true,
-  showIcons = true,
+  // Extraer solo props válidas para DOM
+  const validDOMProps = extractDOMProps(domProps);
   
-  // Comportamiento responsive
-  collapseAt = 768,
-  alwaysShowCurrent = true,
-  
-  // Navegación
-  onItemClick = null,
-  linkComponent = Link,
-  
-  // Estados
-  disabled = false,
-  loading = false,
-  
-  // Personalización
-  homeItem = {
-    label: 'Inicio',
-    to: '/',
-    icon: 'home'
-  },
-  
-  // Props adicionales
-  className = '',
-  ...restProps
-}) {
-  
-  // Estados internos
+  // Estados internos memoizados
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== 'undefined' ? window.innerWidth : 1024
   );
   
-  // Effect para responsive
+  // Effect para responsive - memoizado
   useEffect(() => {
     if (typeof window === 'undefined') return;
     
@@ -84,8 +91,8 @@ function Breadcrumb({
     setIsCollapsed(shouldCollapse);
   }, [windowWidth, collapseAt, items.length, maxItems]);
   
-  // Preparar items finales
-  const finalItems = React.useMemo(() => {
+  // Preparar items finales con memoización optimizada
+  const finalItems = useMemo(() => {
     let allItems = [...items];
     
     // Agregar home item si está habilitado
@@ -104,8 +111,8 @@ function Breadcrumb({
     }));
   }, [items, showHome, homeItem, showIcons]);
   
-  // Lógica de collapse
-  const displayItems = React.useMemo(() => {
+  // Lógica de collapse con memoización optimizada
+  const displayItems = useMemo(() => {
     if (!isCollapsed || finalItems.length <= 3) {
       return finalItems;
     }
@@ -128,8 +135,8 @@ function Breadcrumb({
     return finalItems.slice(0, maxItems);
   }, [finalItems, isCollapsed, alwaysShowCurrent, maxItems]);
   
-  // Handler de click
-  const handleItemClick = (item, event) => {
+  // Handler de click con useCallback para performance
+  const handleItemClick = useCallback((item, event) => {
     if (disabled || loading || item.isActive || item.isCollapsed) {
       event?.preventDefault();
       return;
@@ -138,30 +145,23 @@ function Breadcrumb({
     if (onItemClick) {
       onItemClick(item, event);
     }
-  };
+  }, [disabled, loading, onItemClick]);
   
   // Renderizar item individual
-  const renderBreadcrumbItem = (item, index) => {
-    const isLast = index === displayItems.length - 1;
+  const renderBreadcrumbItem = (item) => {
     const isClickable = !item.isActive && !item.isCollapsed && item.to;
     
     const itemContent = (
       <span className="breadcrumb__item-content">
-        {item.icon && (
-          <Icon 
-            name={item.icon} 
-            size={size === 'lg' ? 'sm' : 'xs'} 
-            className="breadcrumb__item-icon"
-          />
-        )}
+        {item.icon && renderIcon(item.icon, {
+          className: 'breadcrumb__item-icon',
+          'data-breadcrumb-icon': true
+        })}
         <span className="breadcrumb__item-text">{item.label}</span>
-        {loading && item.isActive && (
-          <Icon 
-            name="loader" 
-            size="xs" 
-            className="breadcrumb__loading-icon"
-          />
-        )}
+        {loading && item.isActive && renderIcon('loader', {
+          className: 'breadcrumb__loading-icon breadcrumb__loading-icon--spinning',
+          'data-breadcrumb-loading': true
+        })}
       </span>
     );
     
@@ -174,6 +174,7 @@ function Breadcrumb({
           linkComponent={linkComponent}
           size={size}
           disabled={disabled}
+          renderIcon={renderIcon}
         />
       );
     }
@@ -205,16 +206,20 @@ function Breadcrumb({
     );
   };
   
-  // Construir clases CSS
-  const breadcrumbClasses = [
+  // Construir clases CSS con sistema estándar y tokens
+  const breadcrumbClasses = useMemo(() => [
     'breadcrumb',
+    // Variante semántica estándar (para item activo)
     `breadcrumb--variant-${variant}`,
+    // Variante funcional separada (para estilo visual general)
+    `breadcrumb--breadcrumb-variant-${breadcrumbVariant}`,
     `breadcrumb--size-${size}`,
+    rounded && `breadcrumb--rounded-${rounded}`,
     isCollapsed && 'breadcrumb--collapsed',
     disabled && 'breadcrumb--disabled',
     loading && 'breadcrumb--loading',
     className
-  ].filter(Boolean).join(' ');
+  ].filter(Boolean).join(' '), [variant, breadcrumbVariant, size, rounded, isCollapsed, disabled, loading, className]);
   
   if (finalItems.length === 0) {
     return null;
@@ -224,7 +229,16 @@ function Breadcrumb({
     <nav 
       className={breadcrumbClasses}
       aria-label="Breadcrumb navigation"
-      {...restProps}
+      aria-disabled={disabled}
+      aria-busy={loading}
+      style={{
+        '--breadcrumb-size': tokens.size.fontSize,
+        '--breadcrumb-spacing': tokens.size.spacing,
+        '--breadcrumb-padding': tokens.size.padding,
+        '--breadcrumb-rounded': tokens.rounded,
+        ...validDOMProps.style
+      }}
+      {...validDOMProps}
     >
       <ol className="breadcrumb__list" role="list">
         {displayItems.map((item, index) => {
@@ -236,7 +250,7 @@ function Breadcrumb({
               className="breadcrumb__list-item"
               role="listitem"
             >
-              {renderBreadcrumbItem(item, index)}
+              {renderBreadcrumbItem(item)}
               
               {!isLast && !item.isCollapsed && (
                 <span 
@@ -262,7 +276,8 @@ function CollapsedDropdown({
   onItemClick, 
   linkComponent: LinkComponent, 
   size, 
-  disabled 
+  disabled,
+  renderIcon
 }) {
   const [isOpen, setIsOpen] = useState(false);
   
@@ -285,7 +300,7 @@ function CollapsedDropdown({
         onClick={handleToggle}
         disabled={disabled}
         className="breadcrumb__collapsed-trigger"
-        rightIcon={<Icon name={isOpen ? 'chevron-up' : 'chevron-down'} size="xs" />}
+        rightIcon={isOpen ? 'chevron-up' : 'chevron-down'}
       >
         ...
       </Button>
@@ -300,9 +315,10 @@ function CollapsedDropdown({
                 className="breadcrumb__collapsed-item"
                 onClick={(e) => handleItemClick(item, e)}
               >
-                {item.icon && (
-                  <Icon name={item.icon} size="xs" />
-                )}
+                {item.icon && renderIcon(item.icon, {
+                  className: 'breadcrumb__collapsed-item-icon',
+                  'data-breadcrumb-collapsed-icon': true
+                })}
                 <span>{item.label}</span>
               </LinkComponent>
             ))}
@@ -318,10 +334,14 @@ CollapsedDropdown.propTypes = {
   onItemClick: PropTypes.func.isRequired,
   linkComponent: PropTypes.elementType.isRequired,
   size: PropTypes.string.isRequired,
-  disabled: PropTypes.bool
+  disabled: PropTypes.bool,
+  renderIcon: PropTypes.func.isRequired
 };
 
 Breadcrumb.propTypes = {
+  // Props estándar del sistema de diseño
+  ...STANDARD_PROP_TYPES,
+  
   // Configuración básica
   items: PropTypes.arrayOf(
     PropTypes.shape({
@@ -335,9 +355,8 @@ Breadcrumb.propTypes = {
   separator: PropTypes.string,
   maxItems: PropTypes.number,
   
-  // Personalización visual
-  variant: PropTypes.oneOf(['default', 'simple', 'compact']),
-  size: PropTypes.oneOf(['sm', 'md', 'lg']),
+  // Variantes específicas separadas de variant semántica
+  breadcrumbVariant: PropTypes.oneOf(['default', 'simple', 'compact']),
   showHome: PropTypes.bool,
   showIcons: PropTypes.bool,
   
@@ -349,19 +368,12 @@ Breadcrumb.propTypes = {
   onItemClick: PropTypes.func,
   linkComponent: PropTypes.elementType,
   
-  // Estados
-  disabled: PropTypes.bool,
-  loading: PropTypes.bool,
-  
   // Personalización
   homeItem: PropTypes.shape({
     label: PropTypes.string,
     to: PropTypes.string,
     icon: PropTypes.string
-  }),
-  
-  // Props adicionales
-  className: PropTypes.string
+  })
 };
 
 export { Breadcrumb };

@@ -1,55 +1,91 @@
 import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
-import { Icon } from '../Icon/Icon';
+import { useLinkProps } from '../../../hooks/useStandardProps.jsx';
+import { extractDOMProps, STANDARD_PROP_TYPES } from '../../../tokens/standardProps.js';
 import './Link.css';
 
 /**
- * Link - Átomo de enlace unificado con React Router
+ * Link - ÁTOMO MIGRADO AL SISTEMA DE DISEÑO ESTÁNDAR
  * 
- * Características:
- * - ✅ Integración con React Router (navegación interna)
- * - ✅ Enlaces externos con target="_blank" y rel="noopener"
- * - ✅ Variantes semánticas (primary, secondary, danger, muted)
- * - ✅ Tamaños estándar (xs, sm, md, lg, xl)
- * - ✅ Iconos izquierdo/derecho opcionales
- * - ✅ Estados hover/focus/active
- * - ✅ Accesibilidad completa
- * - ✅ Detección automática de URLs externas
+ * ✅ SISTEMA DE DISEÑO: Props estándar (size, variant, rounded, loading, disabled)
+ * ✅ HOOK ESPECIALIZADO: useLinkProps() para configuración óptima
+ * ✅ SISTEMA DE ICONOS: renderIcon automático con iconos Feather
+ * ✅ TOKENS AUTOMÁTICOS: Design tokens aplicados automáticamente
+ * ✅ BACKWARD COMPATIBILITY: Mapeo automático de variantes legacy
+ * ✅ ESTADOS AVANZADOS: loading, disabled con overlays visuales
+ * ✅ INTEGRACIÓN REACT ROUTER: Navegación interna SPA completa
+ * ✅ ENLACES EXTERNOS: Auto-detección y configuración segura
+ * ✅ ACCESIBILIDAD: ARIA completo, navegación teclado
  * 
  * @param {string} [to] - Ruta interna (React Router)
  * @param {string} [href] - URL externa o absoluta
  * @param {React.ReactNode} children - Contenido del enlace
  * @param {string} [text] - Alternativa a children para texto simple
- * @param {'xs'|'sm'|'md'|'lg'|'xl'} [size='md'] - Tamaño del enlace
- * @param {'primary'|'secondary'|'danger'|'muted'|'inherit'} [variant='primary'] - Variante visual
- * @param {string} [leftIcon] - Icono izquierdo (nombre de Feather Icon)
- * @param {string} [rightIcon] - Icono derecho (nombre de Feather Icon)
+ * @param {'xs'|'sm'|'md'|'lg'|'xl'} [size='md'] - Tamaño del componente
+ * @param {'primary'|'secondary'|'success'|'warning'|'danger'|'neutral'} [variant='primary'] - Variante semántica
+ * @param {'sm'|'md'|'lg'|'xl'|'full'} [rounded='sm'] - Radio de bordes
+ * @param {boolean} [loading=false] - Estado de carga con spinner
+ * @param {boolean} [disabled=false] - Si el enlace está deshabilitado
+ * @param {string|React.ReactNode} [leftIcon] - Icono izquierdo
+ * @param {string|React.ReactNode} [rightIcon] - Icono derecho
  * @param {boolean} [external=false] - Forzar comportamiento de enlace externo
  * @param {boolean} [underline=true] - Mostrar subrayado
- * @param {boolean} [disabled=false] - Estado deshabilitado
- * @param {string} [target] - Target del enlace (si no se proporciona, se auto-detecta)
- * @param {string} [rel] - Rel del enlace (si no se proporciona, se auto-detecta)
+ * @param {string} [target] - Target del enlace
+ * @param {string} [rel] - Rel del enlace
  * @param {string} [ariaLabel] - Label para accesibilidad
  * @param {string} [className=''] - Clases CSS adicionales
  */
-function Link({
-  to,
-  href,
-  children,
-  text,
-  size = 'md',
-  variant = 'primary',
-  leftIcon,
-  rightIcon,
-  external = false,
-  underline = true,
-  disabled = false,
-  target,
-  rel,
-  ariaLabel,
-  className = '',
-  ...restProps
-}) {
+function Link(props) {
+  // Destructurar props específicas del Link
+  const {
+    to,
+    href,
+    children,
+    text,
+    external = false,
+    underline = true,
+    target,
+    rel,
+    ...restProps
+  } = props;
+
+  // Hook especializado con props estándar
+  const {
+    size,
+    variant,
+    rounded,
+    disabled,
+    loading,
+    className,
+    leftIcon,
+    rightIcon,
+    tokens,
+    renderIcon,
+    hasLeftIcon,
+    hasRightIcon,
+    ariaLabel,
+    ...standardProps
+  } = useLinkProps(restProps);
+
+  // Mapeo de variantes legacy para backward compatibility
+  const mappedVariant = (() => {
+    const legacyMappings = {
+      'muted': 'neutral',  // muted → neutral
+      'inherit': 'neutral' // inherit → neutral (mantener behavior especial)
+    };
+    
+    return legacyMappings[variant] || variant;
+  })();
+
+  // Props DOM-safe
+  const domProps = extractDOMProps({
+    className,
+    ariaLabel,
+    ...standardProps
+  });
+  
+  // Evitar warning de unused vars
+  void tokens; // Design tokens disponibles para estilos dinámicos
   // Determinar contenido del enlace
   const linkContent = children || text;
 
@@ -65,22 +101,26 @@ function Link({
   const finalTarget = target || (isExternal ? '_blank' : undefined);
   const finalRel = rel || (isExternal && finalTarget === '_blank' ? 'noopener noreferrer' : undefined);
 
-  // Generar clases CSS
+  // Generar clases CSS con sistema estándar
   const linkClasses = [
     'link',
     `link--size-${size}`,
-    `link--variant-${variant}`,
+    `link--variant-${mappedVariant}`,
+    `link--rounded-${rounded}`,
     underline && 'link--underline',
     disabled && 'link--disabled',
-    (leftIcon || rightIcon) && 'link--with-icon',
+    loading && 'link--loading',
+    (hasLeftIcon || hasRightIcon) && 'link--with-icon',
+    (variant === 'inherit') && 'link--inherit', // Clase especial para variant inherit
     className
   ].filter(Boolean).join(' ');
 
-  // Props de accesibilidad
+  // Props de accesibilidad mejoradas
   const accessibilityProps = {
     'aria-label': ariaLabel,
-    'aria-disabled': disabled ? 'true' : undefined,
-    'tabIndex': disabled ? -1 : undefined
+    'aria-disabled': disabled || loading ? 'true' : undefined,
+    'aria-busy': loading ? 'true' : undefined,
+    'tabIndex': disabled || loading ? -1 : undefined
   };
 
   // Props comunes para ambos tipos de enlace
@@ -89,7 +129,7 @@ function Link({
     target: finalTarget,
     rel: finalRel,
     ...accessibilityProps,
-    ...restProps
+    ...domProps
   };
 
   // Función para renderizar el contenido con iconos

@@ -249,7 +249,7 @@ function MainPage() {
                             <Button
                                 variant="primary"
                                 size="md"
-                                leftIcon="⚙️"
+                                leftIcon="settings"
                                 onClick={handleGoToAdmin}
                             >
                                 Admin Panel
@@ -354,7 +354,7 @@ function MainPage() {
                         </Button>
                     ) : null
                 }
-                variant="default"
+                variant="neutral"
                 size="md"
                 gridColumns="repeat(auto-fit, minmax(200px, 1fr))"
                 gridGap="var(--space-md)"
