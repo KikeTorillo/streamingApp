@@ -1,4 +1,4 @@
-// ===== EPISODE EDIT PAGE - CON EPISODES CONTEXT =====
+// ===== EPISODE EDIT PAGE - HOMOLOGADA CON LAYOUT DE 2 COLUMNAS =====
 // src/Pages/Admin/Episodes/EpisodeEditPage/EpisodeEditPage.jsx
 
 import { useState, useEffect } from 'react';
@@ -6,22 +6,25 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
 import { Button } from '../../../../components/atoms/Button/Button';
-import { Card, CardHeader, CardBody, CardTitle } from '../../../../components/atoms/Card/Card';
+import { Container } from '../../../../components/atoms/Container/Container';
+import { Divider } from '../../../../components/atoms/Divider/Divider';
 import { Badge } from '../../../../components/atoms/Badge/Badge';
+import { ContentImage } from '../../../../components/atoms/ContentImage/ContentImage';
 import './EpisodeEditPage.css';
 
 // Context
 import { useEpisodes } from '../../../../app/context/EpisodesContext';
 
 /**
- * EpisodeEditPage - CON EPISODES CONTEXT
+ * EpisodeEditPage - HOMOLOGADA CON PATRÓN DE 2 COLUMNAS
  * 
- * ✅ CONTEXT CENTRALIZADO: Usa EpisodesContext para toda la lógica
- * ✅ CONSISTENCIA TOTAL: Mismo patrón que Movies/Series EditPage
- * ✅ CAMPOS EDITABLES: título, serie, temporada y número de episodio  
- * ✅ SISTEMA DE DISEÑO: Usa componentes con stories de Storybook
- * ✅ ESTADOS COMPARTIDOS: Loading, error, editing desde el contexto
- * ✅ FUNCIONES CENTRALIZADAS: loadEpisodeById, updateEpisode del contexto
+ * ✅ HOMOLOGACIÓN: Layout moderno de 2 columnas como MovieEditPage/UserEditPage
+ * ✅ CONSISTENCIA: Usa mismos componentes del sistema de diseño
+ * ✅ SIMPLIFICIDAD: Lógica centralizada en EpisodesContext
+ * ✅ SISTEMA DE DISEÑO: Solo componentes con stories de Storybook
+ * ✅ BACKEND: Homologado con campos reales del backend
+ * ✅ UX: Estados de loading, error y success consistentes
+ * ✅ VALIDACIONES: Según esquemas del backend
  */
 function EpisodeEditPage() {
   const navigate = useNavigate();
@@ -48,7 +51,8 @@ function EpisodeEditPage() {
     loadSeries,
     loadEpisodeById,
     updateEpisode,
-    clearCurrentEpisode
+    clearCurrentEpisode,
+    getEpisodeThumbnailUrl
   } = useEpisodes();
 
 
@@ -66,7 +70,7 @@ function EpisodeEditPage() {
         label: 'Título del Episodio',
         placeholder: 'Ej: El inicio de todo',
         required: true,
-        leftIcon: '📺',
+        leftIcon: 'tv',
         helperText: 'Título del episodio que aparecerá en el catálogo',
         width: 'full'
       },
@@ -75,7 +79,7 @@ function EpisodeEditPage() {
         type: 'select',
         label: 'Serie',
         required: true,
-        leftIcon: '📺',
+        leftIcon: 'tv',
         helperText: 'Serie a la que pertenece este episodio',
         options: seriesData.map(serie => ({
           value: serie.id,
@@ -89,7 +93,7 @@ function EpisodeEditPage() {
         label: 'Temporada',
         placeholder: 'Ej: 1',
         required: true,
-        leftIcon: '📺',
+        leftIcon: 'tv',
         helperText: 'Número de temporada (debe ser mayor a 0)',
         width: 'half',
         validation: (value) => {
@@ -105,7 +109,7 @@ function EpisodeEditPage() {
         label: 'Número de Episodio',
         placeholder: 'Ej: 1',
         required: true,
-        leftIcon: '#️⃣',
+        leftIcon: 'hash',
         helperText: 'Número del episodio en la temporada (debe ser mayor a 0)',
         width: 'half',
         validation: (value) => {
@@ -261,6 +265,7 @@ function EpisodeEditPage() {
 
   // ===== RENDER =====
   
+  // Usar estados del contexto y locales
   if (loadingEpisode) {
     return (
       <AdminLayout
@@ -279,7 +284,9 @@ function EpisodeEditPage() {
     );
   }
 
-  if ((contextError && !currentEpisode) || localError) {
+  // Usar estados del contexto y locales
+  const errorToShow = contextError || localError;
+  if (errorToShow && !currentEpisode) {
     return (
       <AdminLayout
         title="Error"
@@ -292,7 +299,7 @@ function EpisodeEditPage() {
         <div className="episode-edit__error">
           <div className="episode-edit__error-icon">❌</div>
           <h2>Error al cargar episodio</h2>
-          <p>{localError || contextError}</p>
+          <p>{errorToShow}</p>
           <Button onClick={() => navigate('/admin/episodes')} variant="primary">
             Volver a la lista
           </Button>
@@ -302,6 +309,7 @@ function EpisodeEditPage() {
   }
 
   const currentSeries = seriesData.find(s => s.id === currentEpisode?.serie_id);
+  const thumbnailUrl = currentEpisode?.thumbnail ? getEpisodeThumbnailUrl(currentEpisode.thumbnail) : null;
 
   return (
     <AdminLayout
@@ -311,133 +319,126 @@ function EpisodeEditPage() {
         { label: 'Episodios', to: '/admin/episodes' },
         { label: currentEpisode?.title || `T${currentEpisode?.season}E${currentEpisode?.episode_number}` }
       ]}
-      headerActions={
-        <div className="episode-edit__header-actions">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleCancel}
-            disabled={editing}
-          >
-            Cancelar
-          </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => document.getElementById('episode-edit-form')?.requestSubmit()}
-            loading={editing}
-            disabled={!hasChanges || editing}
-            leftIcon="💾"
-          >
-            {editing ? 'Guardando...' : 'Guardar Cambios'}
-          </Button>
-        </div>
-      }
     >
       <div className="episode-edit">
         
         {/* ===== NOTIFICACIONES ===== */}
         {success && (
-          <div className="episode-edit__success">
-            <div className="episode-edit__success-icon">✅</div>
-            <div className="episode-edit__success-content">
+          <Container variant="success" className="edit-notification">
+            <div className="edit-notification__icon">✅</div>
+            <div className="edit-notification__content">
               <h3>¡Episodio actualizado exitosamente!</h3>
               <p>Los cambios se han guardado correctamente. Redirigiendo...</p>
             </div>
-          </div>
+          </Container>
         )}
 
-        {(localError || contextError) && (
-          <div className="episode-edit__error-message">
-            <div className="episode-edit__error-icon">⚠️</div>
-            <div className="episode-edit__error-content">
+        {errorToShow && (
+          <Container variant="danger" className="edit-notification">
+            <div className="edit-notification__icon">⚠️</div>
+            <div className="edit-notification__content">
               <h4>Error al guardar</h4>
-              <p>{localError || contextError}</p>
+              <p>{errorToShow}</p>
             </div>
-          </div>
+          </Container>
         )}
 
-        {/* ===== INFORMACIÓN ACTUAL ===== */}
-        <div className="episode-edit__current-info">
-          <Card>
-            <CardHeader>
-              <CardTitle>📋 Información Actual del Episodio</CardTitle>
-            </CardHeader>
-            <CardBody>
-              <div className="episode-edit__info-grid">
-                <div className="episode-edit__current-info-item">
-                  <span className="episode-edit__current-info-label">ID:</span>
-                  <span className="episode-edit__current-info-value">{currentEpisode?.id || `Parámetro: ${id}`}</span>
+        {/* ===== LAYOUT PRINCIPAL DE 2 COLUMNAS ===== */}
+        <div className="episode-edit__layout">
+          
+          {/* ===== COLUMNA IZQUIERDA - INFORMACIÓN ACTUAL ===== */}
+          <div className="episode-edit__sidebar">
+            
+            {/* Panel de información */}
+            <Container variant="neutral" size="lg" className="info-panel">
+              <div className="info-panel__header">
+                <h3 className="info-panel__title">
+                  📋 Información Actual
+                </h3>
+                <Badge variant="primary" size="sm">
+                  ID: {currentEpisode?.id}
+                </Badge>
+              </div>
+
+              <Divider variant="neutral" size="sm" />
+
+              {/* Detalles actuales */}
+              <div className="info-panel__details">
+                <h4 className="info-panel__subtitle">Detalles</h4>
+                
+                <div className="info-detail">
+                  <span className="info-detail__label">Título:</span>
+                  <span className="info-detail__value">{currentEpisode?.title}</span>
                 </div>
-                <div className="episode-edit__current-info-item">
-                  <span className="episode-edit__current-info-label">Título:</span>
-                  <span className="episode-edit__current-info-value">{currentEpisode?.title || 'No cargado'}</span>
+                
+                <div className="info-detail">
+                  <span className="info-detail__label">Serie:</span>
+                  <span className="info-detail__value">{currentSeries?.title || 'Sin serie'}</span>
                 </div>
-                <div className="episode-edit__current-info-item">
-                  <span className="episode-edit__current-info-label">Serie:</span>
-                  <span className="episode-edit__current-info-value">
-                    {currentSeries?.title || 'Sin serie'}
-                  </span>
-                </div>
-                <div className="episode-edit__current-info-item">
-                  <span className="episode-edit__current-info-label">Temporada:</span>
-                  <span className="episode-edit__current-info-value">
+                
+                <div className="info-detail">
+                  <span className="info-detail__label">Temporada:</span>
+                  <span className="info-detail__value">
                     {currentEpisode?.season ? (
-                      <Badge variant="primary" size="sm" appearance="soft">
+                      <Badge variant="primary" size="sm">
                         T{currentEpisode.season}
                       </Badge>
                     ) : 'No cargado'}
                   </span>
                 </div>
-                <div className="episode-edit__current-info-item">
-                  <span className="episode-edit__current-info-label">Episodio:</span>
-                  <span className="episode-edit__current-info-value">
+                
+                <div className="info-detail">
+                  <span className="info-detail__label">Episodio:</span>
+                  <span className="info-detail__value">
                     {currentEpisode?.episode_number ? (
-                      <Badge variant="success" size="sm" appearance="soft">
+                      <Badge variant="success" size="sm">
                         E{currentEpisode.episode_number}
                       </Badge>
                     ) : 'No cargado'}
                   </span>
                 </div>
-                <div className="episode-edit__current-info-item">
-                  <span className="episode-edit__current-info-label">Duración:</span>
-                  <span className="episode-edit__current-info-value">
+                
+                <div className="info-detail">
+                  <span className="info-detail__label">Duración:</span>
+                  <span className="info-detail__value">
                     {currentEpisode?.duration ? `${currentEpisode.duration} min` : 'No disponible'}
                   </span>
                 </div>
+                
+                <div className="info-detail">
+                  <span className="info-detail__label">Fecha de Estreno:</span>
+                  <span className="info-detail__value">
+                    {currentEpisode?.release_date ? new Date(currentEpisode.release_date).toLocaleDateString('es-ES') : 'No disponible'}
+                  </span>
+                </div>
+                
+                <div className="info-detail">
+                  <span className="info-detail__label">Estado:</span>
+                  <span className="info-detail__value">{currentEpisode?.status || 'Desconocido'}</span>
+                </div>
               </div>
-            </CardBody>
-          </Card>
-        </div>
+            </Container>
 
-        {/* ===== FORMULARIO DE EDICIÓN ===== */}
-        <div className="episode-edit__form-container">
-          <Card>
-            <CardHeader>
-              <CardTitle>Editar Información</CardTitle>
-              <p>Modifica los campos que necesites. Solo se enviarán los campos que cambies.</p>
-            </CardHeader>
-            <CardBody>
-              {loadingEpisode ? (
-                <div className="episode-edit__loading-form">
-                  <div className="episode-edit__loading-spinner">⏳</div>
-                  <p>Cargando formulario de edición...</p>
-                </div>
-              ) : (localError || contextError) && !currentEpisode ? (
-                <div className="episode-edit__error-form">
-                  <div className="episode-edit__error-icon">❌</div>
-                  <h4>Error al cargar episodio</h4>
-                  <p>{localError || contextError}</p>
-                  <Button 
-                    onClick={() => loadEpisodeData()} 
-                    variant="outline"
-                    size="sm"
-                  >
-                    Reintentar
-                  </Button>
-                </div>
-              ) : (
-                <DynamicForm
+          </div>
+
+          {/* ===== COLUMNA DERECHA - FORMULARIO DE EDICIÓN ===== */}
+          <div className="episode-edit__main">
+            <Container variant="neutral" size="xl" className="edit-form-container">
+              <div className="edit-form-container__header">
+                <h3 className="edit-form-container__title">
+                  ✏️ Editar Información
+                </h3>
+                <p className="edit-form-container__subtitle">
+                  Modifica los campos que necesites. Solo se enviarán los campos que cambies.
+                </p>
+              </div>
+
+              <Divider variant="neutral" size="md" />
+
+              {/* Formulario principal */}
+              <div className="edit-form-container__form">
+                {currentEpisode && (
+                  <DynamicForm
                   id="episode-edit-form"
                   fields={getEditFormFields()}
                   initialData={{
@@ -458,7 +459,7 @@ function EpisodeEditPage() {
                   submitText={editing ? 'Guardando...' : 'Guardar Cambios'}
                   submitVariant="primary"
                   submitSize="md"
-                  submitIcon="💾"
+                  submitIcon="save"
                   validateOnBlur={true}
                   validateOnChange={false}
                   actions={[
@@ -477,14 +478,15 @@ function EpisodeEditPage() {
                       text: editing ? 'Guardando...' : 'Guardar Cambios',
                       loading: editing,
                       disabled: !hasChanges || editing,
-                      leftIcon: '💾'
+                      leftIcon: 'save'
                     }
                   ]}
-                  className={`episode-edit__form ${success ? 'episode-edit__form--success' : ''}`}
-                />
-              )}
-            </CardBody>
-          </Card>
+                    className={`episode-edit__form ${success ? 'episode-edit__form--success' : ''}`}
+                  />
+                )}
+              </div>
+            </Container>
+          </div>
         </div>
       </div>
     </AdminLayout>

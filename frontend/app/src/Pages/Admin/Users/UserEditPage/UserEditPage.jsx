@@ -6,6 +6,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
 import { Button } from '../../../../components/atoms/Button/Button';
+import { Container } from '../../../../components/atoms/Container/Container';
+import { Divider } from '../../../../components/atoms/Divider/Divider';
+import { Badge } from '../../../../components/atoms/Badge/Badge';
 import { useUsers } from '../../../../app/context/UserContext';
 import './UserEditPage.css';
 
@@ -308,69 +311,99 @@ function UserEditPage() {
           </div>
         )}
 
-        {/* ===== INFORMACIÓN ACTUAL (ANTES DEL FORMULARIO) ===== */}
-        <div className="user-edit__current-info">
-          <div className="user-edit__current-info-section">
-            <h3 className="user-edit__info-title">📋 Información Actual del Usuario</h3>
-            <div className="user-edit__current-info-grid">
-              <div className="user-edit__current-info-item">
-                <span className="user-edit__current-info-label">ID:</span>
-                <span className="user-edit__current-info-value">{userData?.id}</span>
-              </div>
-              <div className="user-edit__current-info-item">
-                <span className="user-edit__current-info-label">Usuario:</span>
-                <span className="user-edit__current-info-value">{userData?.username}</span>
-              </div>
-              <div className="user-edit__current-info-item">
-                <span className="user-edit__current-info-label">Email:</span>
-                <span className="user-edit__current-info-value">{userData?.email || 'Sin email'}</span>
-              </div>
-              <div className="user-edit__current-info-item">
-                <span className="user-edit__current-info-label">Rol:</span>
-                <span className="user-edit__current-info-value">{userData?.roleName}</span>
-              </div>
-              <div className="user-edit__current-info-item">
-                <span className="user-edit__current-info-label">Creado:</span>
-                <span className="user-edit__current-info-value">
-                  {userData?.createdAt ? new Date(userData.createdAt).toLocaleDateString('es-ES', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                  }) : 'N/A'}
-                </span>
-              </div>
-              <div className="user-edit__current-info-item">
-                <span className="user-edit__current-info-label">Actualizado:</span>
-                <span className="user-edit__current-info-value">
-                  {userData?.updatedAt ? new Date(userData.updatedAt).toLocaleDateString('es-ES', {
-                    year: 'numeric', 
-                    month: 'short',
-                    day: 'numeric'
-                  }) : 'Nunca'}
-                </span>
-              </div>
-            </div>
+        {/* ===== LAYOUT PRINCIPAL DE 2 COLUMNAS ===== */}
+        <div className="user-edit__layout">
+          
+          {/* ===== COLUMNA IZQUIERDA - INFORMACIÓN ACTUAL ===== */}
+          <div className="user-edit__sidebar">
             
-            {isEditingSelf() && (
-              <div className="user-edit__warning">
-                <span className="user-edit__warning-icon">⚠️</span>
-                <span>Estás editando tu propia cuenta. Ten cuidado con los cambios.</span>
+            {/* Panel de información */}
+            <Container variant="neutral" size="lg" className="info-panel">
+              <div className="info-panel__header">
+                <h3 className="info-panel__title">
+                  📋 Información Actual
+                </h3>
+                <Badge variant="primary" size="sm">
+                  ID: {userData?.id}
+                </Badge>
               </div>
-            )}
+              <Divider variant="neutral" size="sm" />
+              {/* Detalles actuales */}
+              <div className="info-panel__details">
+                <h4 className="info-panel__subtitle">Detalles</h4>
+                
+                <div className="info-detail">
+                  <span className="info-detail__label">Usuario:</span>
+                  <span className="info-detail__value">{userData?.username}</span>
+                </div>
+                
+                <div className="info-detail">
+                  <span className="info-detail__label">Email:</span>
+                  <span className="info-detail__value">{userData?.email || 'Sin email'}</span>
+                </div>
+                
+                <div className="info-detail">
+                  <span className="info-detail__label">Rol:</span>
+                  <span className="info-detail__value">{userData?.roleName}</span>
+                </div>
+                
+                <div className="info-detail">
+                  <span className="info-detail__label">Creado:</span>
+                  <span className="info-detail__value">
+                    {userData?.createdAt ? new Date(userData.createdAt).toLocaleDateString('es-ES', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    }) : 'N/A'}
+                  </span>
+                </div>
+                
+                <div className="info-detail">
+                  <span className="info-detail__label">Actualizado:</span>
+                  <span className="info-detail__value">
+                    {userData?.updatedAt ? new Date(userData.updatedAt).toLocaleDateString('es-ES', {
+                      year: 'numeric', 
+                      month: 'short',
+                      day: 'numeric'
+                    }) : 'Nunca'}
+                  </span>
+                </div>
+              </div>
+              
+              {/* Advertencia para auto-edición */}
+              {isEditingSelf() && (
+                <>
+                  <Divider variant="warning" size="sm" />
+                  <div className="info-panel__warning">
+                    <span className="info-panel__warning-icon">⚠️</span>
+                    <span className="info-panel__warning-text">
+                      Estás editando tu propia cuenta. Ten cuidado con los cambios.
+                    </span>
+                  </div>
+                </>
+              )}
+            </Container>
           </div>
-        </div>
 
-        {/* ===== FORMULARIO DE EDICIÓN (MISMO ESTILO QUE CREATE) ===== */}
-        <div className="user-edit__form-container">
-          <div className="user-edit__form-header">
-            <h2 className="user-edit__form-title">Información del Usuario</h2>
-            <p className="user-edit__form-description">
-              Modifica los campos necesarios. Solo se enviarán los campos que cambies y que existen en la base de datos.
-            </p>
-          </div>
+          {/* ===== COLUMNA DERECHA - FORMULARIO DE EDICIÓN ===== */}
+          <div className="user-edit__main">
+            <Container variant="neutral" size="xl" className="edit-form-container">
+              <div className="edit-form-container__header">
+                <h3 className="edit-form-container__title">
+                  ✏️ Editar Información
+                </h3>
+                <p className="edit-form-container__subtitle">
+                  Modifica los campos necesarios. Solo se enviarán los campos que cambies y que existen en la base de datos.
+                </p>
+              </div>
 
-          {userData && (
-            <DynamicForm
+              <Divider variant="neutral" size="md" />
+
+              {/* Formulario principal */}
+              <div className="edit-form-container__form">
+
+                {userData && (
+                  <DynamicForm
               id="user-edit-form"
               fields={getEditFormFields()}
               initialData={{
@@ -394,9 +427,12 @@ function UserEditPage() {
               validateOnBlur={true}
               validateOnChange={false}
               showSubmit={!success} // Ocultar botón cuando hay éxito
-              className={`user-edit__form ${success ? 'user-edit__form--success' : ''}`}
-            />
-          )}
+                    className={`user-edit__form ${success ? 'user-edit__form--success' : ''}`}
+                  />
+                )}
+              </div>
+            </Container>
+          </div>
         </div>
       </div>
     </AdminLayout>

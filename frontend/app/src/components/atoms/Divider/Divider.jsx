@@ -113,6 +113,10 @@ function Divider(props) {
   // Evitar warning de unused vars
   void tokens; // Design tokens disponibles para estilos dinámicos
 
+  // Determinar si hay iconos
+  const hasLeftIcon = Boolean(leftIcon);
+  const hasRightIcon = Boolean(rightIcon);
+
   // Generar clases CSS con sistema estándar
   const dividerClasses = [
     'divider',

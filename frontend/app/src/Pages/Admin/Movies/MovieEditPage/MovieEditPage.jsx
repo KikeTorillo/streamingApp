@@ -6,7 +6,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
 import { Button } from '../../../../components/atoms/Button/Button';
-import { Card, CardHeader, CardBody, CardTitle } from '../../../../components/atoms/Card/Card';
+import { Container } from '../../../../components/atoms/Container/Container';
+import { Divider } from '../../../../components/atoms/Divider/Divider';
+import { Badge } from '../../../../components/atoms/Badge/Badge';
 import { ContentImage } from '../../../../components/atoms/ContentImage/ContentImage';
 import './MovieEditPage.css';
 
@@ -330,73 +332,99 @@ function MovieEditPage() {
           </div>
         )}
 
-        {/* ===== INFORMACIÓN ACTUAL ===== */}
-        <div className="movie-edit__current-info">
-          <Card>
-            <CardHeader>
-              <CardTitle>📋 Información Actual de la Película</CardTitle>
-            </CardHeader>
-            <CardBody>
-              <div className="movie-edit__info-grid">
-                <div className="movie-edit__info-left">
-                  <div className="movie-edit__current-info-item">
-                    <span className="movie-edit__current-info-label">ID:</span>
-                    <span className="movie-edit__current-info-value">{currentMovie?.id}</span>
+        {/* ===== LAYOUT PRINCIPAL DE 2 COLUMNAS ===== */}
+        <div className="movie-edit__layout">
+          
+          {/* ===== COLUMNA IZQUIERDA - INFORMACIÓN ACTUAL ===== */}
+          <div className="movie-edit__sidebar">
+            
+            {/* Panel de información */}
+            <Container variant="neutral" size="lg" className="info-panel">
+              <div className="info-panel__header">
+                <h3 className="info-panel__title">
+                  📋 Información Actual
+                </h3>
+                <Badge variant="primary" size="sm">
+                  ID: {currentMovie?.id}
+                </Badge>
+              </div>
+              
+              <Divider variant="neutral" size="sm" />
+              
+              {/* Portada actual */}
+              <div className="info-panel__cover">
+                <h4 className="info-panel__subtitle">Portada</h4>
+                {imagePreview ? (
+                  <ContentImage
+                    src={imagePreview}
+                    alt={`Portada de ${currentMovie?.title}`}
+                    aspectRatio="2/3"
+                    contentType="movie"
+                    placeholder="🎬"
+                    rounded="md"
+                    showFallback={true}
+                    size="md"
+                  />
+                ) : (
+                  <div className="info-panel__no-image">
+                    <span className="info-panel__no-image-icon">🎬</span>
+                    <span className="info-panel__no-image-text">Sin portada</span>
                   </div>
-                  <div className="movie-edit__current-info-item">
-                    <span className="movie-edit__current-info-label">Título:</span>
-                    <span className="movie-edit__current-info-value">{currentMovie?.title}</span>
-                  </div>
-                  <div className="movie-edit__current-info-item">
-                    <span className="movie-edit__current-info-label">Categoría:</span>
-                    <span className="movie-edit__current-info-value">
-                      {categories.find(c => c.id === currentMovie?.category_id)?.name || 'Sin categoría'}
-                    </span>
-                  </div>
-                  <div className="movie-edit__current-info-item">
-                    <span className="movie-edit__current-info-label">Año:</span>
-                    <span className="movie-edit__current-info-value">{currentMovie?.release_year}</span>
-                  </div>
+                )}
+              </div>
+
+              <Divider variant="neutral" size="sm" />
+
+              {/* Detalles actuales */}
+              <div className="info-panel__details">
+                <h4 className="info-panel__subtitle">Detalles</h4>
+                
+                <div className="info-detail">
+                  <span className="info-detail__label">Título:</span>
+                  <span className="info-detail__value">{currentMovie?.title}</span>
                 </div>
                 
-                {/* Imagen actual */}
-                <div className="movie-edit__info-right">
-                  <div className="movie-edit__current-image">
-                    <span className="movie-edit__current-info-label">Portada Actual:</span>
-                    {imagePreview ? (
-                      <ContentImage
-                        src={imagePreview}
-                        alt={`Portada de ${currentMovie?.title}`}
-                        aspectRatio="2/3"
-                        contentType="movie"
-                        placeholder="🎬"
-                        rounded="md"
-                        showFallback={true}
-                        style={{ maxWidth: '120px' }}
-                      />
-                    ) : (
-                      <div className="movie-edit__no-image">
-                        <span>🎬</span>
-                        <p>Sin imagen</p>
-                      </div>
-                    )}
-                  </div>
+                <div className="info-detail">
+                  <span className="info-detail__label">Categoría:</span>
+                  <span className="info-detail__value">
+                    {categories.find(c => c.id === currentMovie?.category_id)?.name || 'Sin categoría'}
+                  </span>
+                </div>
+                
+                <div className="info-detail">
+                  <span className="info-detail__label">Año:</span>
+                  <span className="info-detail__value">{currentMovie?.release_year}</span>
+                </div>
+                
+                <div className="info-detail">
+                  <span className="info-detail__label">Duración:</span>
+                  <span className="info-detail__value">
+                    {currentMovie?.duration ? `${currentMovie.duration} min` : 'No disponible'}
+                  </span>
                 </div>
               </div>
-            </CardBody>
-          </Card>
-        </div>
+            </Container>
 
-        {/* ===== FORMULARIO DE EDICIÓN ===== */}
-        <div className="movie-edit__form-container">
-          <Card>
-            <CardHeader>
-              <CardTitle>Editar Información</CardTitle>
-              <p>Modifica los campos que necesites. Solo se enviarán los campos que cambies.</p>
-            </CardHeader>
-            <CardBody>
-              {currentMovie && (
-                <DynamicForm
+          </div>
+
+          {/* ===== COLUMNA DERECHA - FORMULARIO DE EDICIÓN ===== */}
+          <div className="movie-edit__main">
+            <Container variant="neutral" size="xl" className="edit-form-container">
+              <div className="edit-form-container__header">
+                <h3 className="edit-form-container__title">
+                  ✏️ Editar Información
+                </h3>
+                <p className="edit-form-container__subtitle">
+                  Modifica los campos que necesites. Solo se enviarán los campos que cambies.
+                </p>
+              </div>
+
+              <Divider variant="neutral" size="md" />
+
+              {/* Formulario principal */}
+              <div className="edit-form-container__form">
+                {currentMovie && (
+                  <DynamicForm
                   id="movie-edit-form"
                   fields={getEditFormFields()}
                   initialData={{
@@ -439,11 +467,12 @@ function MovieEditPage() {
                       leftIcon: 'save'
                     }
                   ]}
-                  className={`movie-edit__form ${success ? 'movie-edit__form--success' : ''}`}
-                />
-              )}
-            </CardBody>
-          </Card>
+                    className={`movie-edit__form ${success ? 'movie-edit__form--success' : ''}`}
+                  />
+                )}
+              </div>
+            </Container>
+          </div>
         </div>
       </div>
     </AdminLayout>

@@ -1,4 +1,4 @@
-// ===== SERIES EDIT PAGE - USANDO CONTEXTO =====
+// ===== SERIES EDIT PAGE - HOMOLOGADA CON LAYOUT DE 2 COLUMNAS =====
 // src/Pages/Admin/Series/SeriesEditPage/SeriesEditPage.jsx
 
 import { useState, useEffect, useCallback } from 'react';
@@ -6,25 +6,28 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
 import { Button } from '../../../../components/atoms/Button/Button';
-import { Card, CardHeader, CardBody, CardTitle } from '../../../../components/atoms/Card/Card';
+import { Container } from '../../../../components/atoms/Container/Container';
+import { Divider } from '../../../../components/atoms/Divider/Divider';
+import { Badge } from '../../../../components/atoms/Badge/Badge';
 import { ContentImage } from '../../../../components/atoms/ContentImage/ContentImage';
 import './SeriesEditPage.css';
 
 // Contexto
 import { useSeries } from '../../../../app/context/SeriesContext';
 
-// Servicios (solo para categorías)
-import { getCategoriesService } from '../../../../services/Categories/getCategoriesService';
+// Hooks
+import { useCategories } from '../../../../hooks/useCategories';
 
 /**
- * SeriesEditPage - Página de edición de series
+ * SeriesEditPage - HOMOLOGADA CON PATRÓN DE 2 COLUMNAS
  * 
- * ✅ CAMPOS EDITABLES: Solo portada, título, categoría y año
- * ✅ SISTEMA DE DISEÑO: Usa componentes con stories de Storybook
+ * ✅ HOMOLOGACIÓN: Layout moderno de 2 columnas como MovieEditPage/UserEditPage
+ * ✅ CONSISTENCIA: Usa mismos componentes del sistema de diseño
+ * ✅ SIMPLIFICIDAD: Lógica centralizada en SeriesContext
+ * ✅ SISTEMA DE DISEÑO: Solo componentes con stories de Storybook
  * ✅ BACKEND: Homologado con campos reales del backend
  * ✅ UX: Estados de loading, error y success consistentes
  * ✅ VALIDACIONES: Según esquemas del backend
- * ✅ CONTEXTO: Usa SeriesContext para toda la lógica
  */
 function SeriesEditPage() {
   const navigate = useNavigate();
@@ -42,12 +45,15 @@ function SeriesEditPage() {
     getSeriesCoverUrl
   } = useSeries();
 
+  // ===== HOOKS =====
+  const { categories, loading: categoriesLoading } = useCategories();
+
   // ===== ESTADOS LOCALES =====
   const [success, setSuccess] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [initialData, setInitialData] = useState(null);
-  const [categories, setCategories] = useState([]);
   const [imagePreview, setImagePreview] = useState(null);
+  const [localError, setLocalError] = useState(null);
 
   // ===== CONFIGURACIÓN DEL FORMULARIO =====
   
@@ -63,7 +69,7 @@ function SeriesEditPage() {
         label: 'Título de la Serie',
         placeholder: 'Ej: Breaking Bad',
         required: true,
-        leftIcon: '📺',
+        leftIcon: 'tv',
         helperText: 'Título principal que aparecerá en el catálogo',
         width: 'full'
       },
@@ -72,7 +78,7 @@ function SeriesEditPage() {
         type: 'select',
         label: 'Categoría',
         required: true,
-        leftIcon: '📂',
+        leftIcon: 'folder',
         helperText: 'Selecciona la categoría que mejor describa el contenido',
         options: categories.map(cat => ({
           value: cat.id,
@@ -86,7 +92,7 @@ function SeriesEditPage() {
         label: 'Año de Estreno',
         placeholder: 'Ej: 2008',
         required: true,
-        leftIcon: '📅',
+        leftIcon: 'calendar',
         helperText: 'Año en que se estrenó la serie',
         width: 'half'
       },
@@ -99,7 +105,7 @@ function SeriesEditPage() {
         showPreview: true,
         previewDimensions: { width: 120, height: 180 },
         helperText: 'Sube una imagen para recortar como portada (formato póster 2:3)'
-      }
+      },
     ];
   };
 
@@ -109,33 +115,41 @@ function SeriesEditPage() {
    * Cargar datos de la serie desde el contexto
    */
   const loadSeriesData = useCallback(async () => {
-    if (!id) return;
+    if (!id) {
+      setLocalError('ID de serie no proporcionado');
+      return;
+    }
 
     try {
-      // Cargar serie y categorías en paralelo
-      const [seriesResponse, categoriesResponse] = await Promise.all([
-        loadSeriesById(id),
-        getCategoriesService()
-      ]);
+      setLocalError(null);
 
-      if (!seriesResponse.success) {
-        throw new Error(seriesResponse.error || 'Error al cargar datos de la serie');
-      }
+      // Cargar serie usando el contexto
+      const result = await loadSeriesById(id);
+      
+      if (result.success) {
+        const seriesInfo = result.data;
 
-      // Manejar respuesta de categorías
-      let categoriesData = [];
-      if (Array.isArray(categoriesResponse)) {
-        categoriesData = categoriesResponse;
-      } else if (categoriesResponse.success && Array.isArray(categoriesResponse.data)) {
-        categoriesData = categoriesResponse.data;
+        // Configurar imagen preview actual usando función del contexto
+        if (seriesInfo.cover_image) {
+          const currentImageUrl = getSeriesCoverUrl(seriesInfo.cover_image);
+          setImagePreview(currentImageUrl);
+        }
+        
+        setInitialData({ 
+          title: seriesInfo.title || '',
+          categoryId: seriesInfo.category_id || '',
+          releaseYear: seriesInfo.release_year || new Date().getFullYear(),
+          // coverImage no se incluye en initialData porque es un archivo
+        });
+        
+      } else {
+        setLocalError(result.error || 'Error al cargar datos de la serie');
       }
       
-      setCategories(categoriesData);
-      
-    } catch {
-      // Error silencioso al procesar datos iniciales
+    } catch (error) {
+      setLocalError(error.message || 'Error al cargar datos de la serie');
     }
-  }, [id, loadSeriesById]);
+  }, [id, loadSeriesById, getSeriesCoverUrl]);
 
   // ===== FUNCIONES DE MANEJO =====
   
@@ -161,7 +175,7 @@ function SeriesEditPage() {
    */
   const handleSubmit = async (formData) => {
     try {
-      setSuccess(false);
+      setLocalError(null);
 
       // Preparar datos para el backend (solo campos que cambiaron)
       const updateData = {};
@@ -182,34 +196,37 @@ function SeriesEditPage() {
         updateData.coverImage = formData.coverImage;
       }
 
-      // Si no hay cambios reales, no enviar
-      if (Object.keys(updateData).length === 0) {
-        alert('No hay cambios para guardar');
-        return;
+      // Usar updateSeries del contexto
+      const result = await updateSeries(id, updateData);
+
+      if (result.success) {
+
+        // Éxito
+        setSuccess(true);
+        setHasChanges(false);
+
+        // Recargar datos actualizados
+        setTimeout(() => {
+          loadSeriesData();
+        }, 1000);
+
+        // Redirigir después de un delay
+        setTimeout(() => {
+          navigate('/admin/series');
+        }, 2500);
+        
+      } else {
+
+        if (result.error === 'No hay cambios para guardar') {
+          alert('No hay cambios para guardar');
+        } else {
+          setLocalError(result.error || 'Error al actualizar serie');
+        }
       }
 
-      const response = await updateSeries(id, updateData);
+    } catch (err) {
 
-      if (!response.success) {
-        throw new Error(response.error || 'Error al actualizar serie');
-      }
-
-      // Éxito
-      setSuccess(true);
-      setHasChanges(false);
-
-      // Recargar datos actualizados
-      setTimeout(() => {
-        loadSeriesData();
-      }, 1000);
-
-      // Redirigir después de un delay
-      setTimeout(() => {
-        navigate('/admin/series');
-      }, 2500);
-
-    } catch {
-      // Error manejado por el contexto
+      setLocalError(err.message || 'Error al actualizar serie');
     }
   };
 
@@ -238,26 +255,10 @@ function SeriesEditPage() {
     };
   }, [loadSeriesData, clearCurrentSeries]);
 
-  // Efecto para actualizar datos cuando se carga la serie desde el contexto
-  useEffect(() => {
-    if (currentSeries) {
-      // Configurar imagen preview actual usando función del contexto
-      if (currentSeries.cover_image) {
-        const currentImageUrl = getSeriesCoverUrl(currentSeries.cover_image);
-        setImagePreview(currentImageUrl);
-      }
-      
-      setInitialData({ 
-        title: currentSeries.title || '',
-        categoryId: currentSeries.category_id || '',
-        releaseYear: currentSeries.release_year || new Date().getFullYear(),
-      });
-    }
-  }, [currentSeries, getSeriesCoverUrl]);
-
   // ===== RENDER =====
   
-  if (loadingSeries) {
+  // Usar estados del contexto y locales
+  if (loadingSeries || categoriesLoading) {
     return (
       <AdminLayout
         title="Editar Serie"
@@ -275,7 +276,9 @@ function SeriesEditPage() {
     );
   }
 
-  if (contextError && !currentSeries) {
+  // Usar estados del contexto y locales
+  const errorToShow = contextError || localError;
+  if (errorToShow && !currentSeries) {
     return (
       <AdminLayout
         title="Error"
@@ -288,7 +291,7 @@ function SeriesEditPage() {
         <div className="series-edit__error">
           <div className="series-edit__error-icon">❌</div>
           <h2>Error al cargar serie</h2>
-          <p>{contextError}</p>
+          <p>{errorToShow}</p>
           <Button onClick={() => navigate('/admin/series')} variant="primary">
             Volver a la lista
           </Button>
@@ -310,92 +313,126 @@ function SeriesEditPage() {
         
         {/* ===== NOTIFICACIONES ===== */}
         {success && (
-          <div className="series-edit__success">
-            <div className="series-edit__success-icon">✅</div>
-            <div className="series-edit__success-content">
+          <Container variant="success" className="edit-notification">
+            <div className="edit-notification__icon">✅</div>
+            <div className="edit-notification__content">
               <h3>¡Serie actualizada exitosamente!</h3>
               <p>Los cambios se han guardado correctamente. Redirigiendo...</p>
             </div>
-          </div>
+          </Container>
         )}
 
-        {contextError && (
-          <div className="series-edit__error-message">
-            <div className="series-edit__error-icon">⚠️</div>
-            <div className="series-edit__error-content">
+        {errorToShow && (
+          <Container variant="danger" className="edit-notification">
+            <div className="edit-notification__icon">⚠️</div>
+            <div className="edit-notification__content">
               <h4>Error al guardar</h4>
-              <p>{contextError}</p>
+              <p>{errorToShow}</p>
             </div>
-          </div>
+          </Container>
         )}
 
-        {/* ===== INFORMACIÓN ACTUAL ===== */}
-        <div className="series-edit__current-info">
-          <Card>
-            <CardHeader>
-              <CardTitle>📋 Información Actual de la Serie</CardTitle>
-            </CardHeader>
-            <CardBody>
-              <div className="series-edit__info-grid">
-                <div className="series-edit__info-left">
-                  <div className="series-edit__current-info-item">
-                    <span className="series-edit__current-info-label">ID:</span>
-                    <span className="series-edit__current-info-value">{currentSeries?.id}</span>
+        {/* ===== LAYOUT PRINCIPAL DE 2 COLUMNAS ===== */}
+        <div className="series-edit__layout">
+          
+          {/* ===== COLUMNA IZQUIERDA - INFORMACIÓN ACTUAL ===== */}
+          <div className="series-edit__sidebar">
+            
+            {/* Panel de información */}
+            <Container variant="neutral" size="lg" className="info-panel">
+              <div className="info-panel__header">
+                <h3 className="info-panel__title">
+                  📋 Información Actual
+                </h3>
+                <Badge variant="primary" size="sm">
+                  ID: {currentSeries?.id}
+                </Badge>
+              </div>
+              
+              <Divider variant="neutral" size="sm" />
+              
+              {/* Portada actual */}
+              <div className="info-panel__cover">
+                <h4 className="info-panel__subtitle">Portada</h4>
+                {imagePreview ? (
+                  <ContentImage
+                    src={imagePreview}
+                    alt={`Portada de ${currentSeries?.title}`}
+                    aspectRatio="2/3"
+                    contentType="series"
+                    placeholder="📺"
+                    rounded="md"
+                    showFallback={true}
+                    size="md"
+                  />
+                ) : (
+                  <div className="info-panel__no-image">
+                    <span className="info-panel__no-image-icon">📺</span>
+                    <span className="info-panel__no-image-text">Sin portada</span>
                   </div>
-                  <div className="series-edit__current-info-item">
-                    <span className="series-edit__current-info-label">Título:</span>
-                    <span className="series-edit__current-info-value">{currentSeries?.title}</span>
-                  </div>
-                  <div className="series-edit__current-info-item">
-                    <span className="series-edit__current-info-label">Categoría:</span>
-                    <span className="series-edit__current-info-value">
-                      {categories.find(c => c.id === currentSeries?.category_id)?.name || 'Sin categoría'}
-                    </span>
-                  </div>
-                  <div className="series-edit__current-info-item">
-                    <span className="series-edit__current-info-label">Año:</span>
-                    <span className="series-edit__current-info-value">{currentSeries?.release_year}</span>
-                  </div>
+                )}
+              </div>
+
+              <Divider variant="neutral" size="sm" />
+
+              {/* Detalles actuales */}
+              <div className="info-panel__details">
+                <h4 className="info-panel__subtitle">Detalles</h4>
+                
+                <div className="info-detail">
+                  <span className="info-detail__label">Título:</span>
+                  <span className="info-detail__value">{currentSeries?.title}</span>
                 </div>
                 
-                {/* Imagen actual */}
-                <div className="series-edit__info-right">
-                  <div className="series-edit__current-image">
-                    <span className="series-edit__current-info-label">Portada Actual:</span>
-                    {imagePreview ? (
-                      <ContentImage
-                        src={imagePreview}
-                        alt={`Portada de ${currentSeries?.title}`}
-                        aspectRatio="2/3"
-                        contentType="series"
-                        placeholder="📺"
-                        rounded="md"
-                        showFallback={true}
-                        style={{ maxWidth: '120px' }}
-                      />
-                    ) : (
-                      <div className="series-edit__no-image">
-                        <span>📺</span>
-                        <p>Sin imagen</p>
-                      </div>
-                    )}
-                  </div>
+                <div className="info-detail">
+                  <span className="info-detail__label">Categoría:</span>
+                  <span className="info-detail__value">
+                    {categories.find(c => c.id === currentSeries?.category_id)?.name || 'Sin categoría'}
+                  </span>
+                </div>
+                
+                <div className="info-detail">
+                  <span className="info-detail__label">Año:</span>
+                  <span className="info-detail__value">{currentSeries?.release_year}</span>
+                </div>
+                
+                <div className="info-detail">
+                  <span className="info-detail__label">Temporadas:</span>
+                  <span className="info-detail__value">{currentSeries?.total_seasons || 0}</span>
+                </div>
+                
+                <div className="info-detail">
+                  <span className="info-detail__label">Episodios:</span>
+                  <span className="info-detail__value">{currentSeries?.total_episodes || 0}</span>
+                </div>
+                
+                <div className="info-detail">
+                  <span className="info-detail__label">Estado:</span>
+                  <span className="info-detail__value">{currentSeries?.status || 'Desconocido'}</span>
                 </div>
               </div>
-            </CardBody>
-          </Card>
-        </div>
+            </Container>
 
-        {/* ===== FORMULARIO DE EDICIÓN ===== */}
-        <div className="series-edit__form-container">
-          <Card>
-            <CardHeader>
-              <CardTitle>Editar Información</CardTitle>
-              <p>Modifica los campos que necesites. Solo se enviarán los campos que cambies.</p>
-            </CardHeader>
-            <CardBody>
-              {currentSeries && (
-                <DynamicForm
+          </div>
+
+          {/* ===== COLUMNA DERECHA - FORMULARIO DE EDICIÓN ===== */}
+          <div className="series-edit__main">
+            <Container variant="neutral" size="xl" className="edit-form-container">
+              <div className="edit-form-container__header">
+                <h3 className="edit-form-container__title">
+                  ✏️ Editar Información
+                </h3>
+                <p className="edit-form-container__subtitle">
+                  Modifica los campos que necesites. Solo se enviarán los campos que cambies.
+                </p>
+              </div>
+
+              <Divider variant="neutral" size="md" />
+
+              {/* Formulario principal */}
+              <div className="edit-form-container__form">
+                {currentSeries && (
+                  <DynamicForm
                   id="series-edit-form"
                   fields={getEditFormFields()}
                   initialData={{
@@ -416,7 +453,7 @@ function SeriesEditPage() {
                   submitText={editing ? 'Guardando...' : 'Guardar Cambios'}
                   submitVariant="primary"
                   submitSize="md"
-                  submitIcon="💾"
+                  submitIcon="save"
                   validateOnBlur={true}
                   validateOnChange={false}
                   actions={[
@@ -435,14 +472,15 @@ function SeriesEditPage() {
                       text: editing ? 'Guardando...' : 'Guardar Cambios',
                       loading: editing,
                       disabled: !hasChanges || editing,
-                      leftIcon: '💾'
+                      leftIcon: 'save'
                     }
                   ]}
-                  className={`series-edit__form ${success ? 'series-edit__form--success' : ''}`}
-                />
-              )}
-            </CardBody>
-          </Card>
+                    className={`series-edit__form ${success ? 'series-edit__form--success' : ''}`}
+                  />
+                )}
+              </div>
+            </Container>
+          </div>
         </div>
       </div>
     </AdminLayout>
