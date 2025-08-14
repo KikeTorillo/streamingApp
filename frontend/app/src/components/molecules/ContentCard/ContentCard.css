@@ -1,480 +1,256 @@
 /* ===== CONTENT CARD COMPONENT - MOLÉCULA DEL SISTEMA ESTÁNDAR ===== */
-/* ContentCard.css - Usando design tokens automáticos del sistema */
+/* ContentCard.css - Composición sobre Card adaptativa */
 
 /* ===== CONTENEDOR PRINCIPAL ===== */
 .content-card {
-  transition: all var(--transition-normal);
-  overflow: hidden;
-  cursor: pointer;
-  position: relative;
-  width: 100%;
+  /* Layout específico para contenido multimedia */
+  display: flex;
+  flex-direction: column;
   
-  /* 🔄 DESIGN TOKENS AUTOMÁTICOS */
-  background-color: var(--bg-secondary);
-  border: 0.1rem solid var(--border-light);
-  border-radius: var(--content-card-rounded, var(--radius-lg));
-  box-shadow: var(--shadow-sm);
+  /* Los tamaños específicos se definen en las clases .content-card--size-* */
+  /* No usar fit-content para evitar que el texto afecte el ancho de la imagen */
   
-  /* El aspect ratio se manejará en el container de imagen */
-}
-
-/* Estados de la card */
-.content-card:hover {
-  transform: translateY(-0.5rem) scale(1.02);
-  box-shadow: var(--shadow-xl);
-}
-
-.content-card:focus-visible {
-  outline: 0.2rem solid var(--border-focus);
-  outline-offset: 0.2rem;
-}
-
-.content-card:active {
-  transform: translateY(-0.2rem) scale(1.01);
-}
-
-/* ===== TAMAÑOS ESTÁNDAR DEL SISTEMA ===== */
-.content-card--size-xs {
-  max-width: 16rem; /* 160px */
-}
-
-.content-card--size-sm {
-  max-width: 20rem; /* 200px */
-}
-
-.content-card--size-md {
-  max-width: 28rem; /* 280px */
-}
-
-.content-card--size-lg {
-  max-width: 32rem; /* 320px */
-}
-
-.content-card--size-xl {
-  max-width: 36rem; /* 360px */
+  /* Transiciones heredadas de Card */
 }
 
 /* ===== CONTENEDOR DE IMAGEN ===== */
 .content-card__image-container {
   position: relative;
+  /* Dejar que ContentImage defina su propio ancho */
+  
+  /* Centrar contenido */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Aspect ratio se maneja en ContentImage */
   overflow: hidden;
-  background-color: var(--bg-muted);
+  
+  /* Border radius heredado del contenedor Card */
+  border-radius: inherit;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
-/* ContentImage hereda el aspect ratio, no necesitamos definirlo aquí */
+/* ===== IMAGEN ===== */
 .content-card__image {
-  width: 100%;
-  height: 100%;
-  /* ContentImage maneja su propio border radius, transition y object-fit */
-}
-
-/* Hover effect para la imagen - aplicado al ContentImage */
-.content-card:hover .content-card__image .content-image__img {
-  transform: scale(1.05);
-}
-
-/* ===== SKELETON LOADING ===== */
-.content-card__image-skeleton {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(
-    90deg,
-    var(--bg-muted) 25%,
-    var(--bg-secondary) 50%,
-    var(--bg-muted) 75%
-  );
-  background-size: 200% 100%;
-  animation: loading 2s infinite;
-}
-
-.content-card__loading-spinner {
-  font-size: var(--font-size-2xl);
-  animation: spin 2s linear infinite;
-}
-
-@keyframes loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* ===== OVERLAY DE CONTROLES ===== */
-.content-card__overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0.1) 30%,
-    rgba(0, 0, 0, 0.4) 70%,
-    rgba(0, 0, 0, 0.8) 100%
-  );
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity var(--transition-normal);
-  pointer-events: none;
-}
-
-.content-card:hover .content-card__overlay {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.content-card__controls {
-  display: flex;
-  gap: var(--space-sm);
-  align-items: center;
-  transform: translateY(2rem);
-  transition: transform var(--transition-normal);
-}
-
-.content-card:hover .content-card__controls {
-  transform: translateY(0);
-}
-
-.content-card__play-button {
-  /* El botón hereda los estilos del átomo Button */
-  box-shadow: var(--shadow-md);
-}
-
-.content-card__favorite-button {
-  background-color: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(0.8rem);
-  border: 0.1rem solid rgba(255, 255, 255, 0.3);
+  /* ContentImage maneja sus propios tamaños */
+  display: block;
 }
 
 /* ===== BADGE DE TIPO ===== */
 .content-card__type-badge {
   position: absolute;
-  top: var(--space-sm);
-  left: var(--space-sm);
+  top: var(--space-xs);
+  left: var(--space-xs);
   z-index: 2;
 }
 
-/* ===== INFORMACIÓN DE LA CARD ===== */
-.content-card__info {
-  padding: var(--content-card-padding, var(--space-md));
-  flex: 1;
+/* ===== CONTENIDO DE TEXTO ===== */
+.content-card__content {
+  padding: var(--space-sm);
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
 }
 
+/* ===== TÍTULO ===== */
 .content-card__title {
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-semibold);
   color: var(--text-primary);
-  margin: 0 0 var(--space-xs) 0;
   line-height: var(--line-height-tight);
+  margin: 0;
   
   /* Truncar texto largo */
-  overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.content-card__subtitle {
+/* ===== META INFORMACIÓN ===== */
+.content-card__meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+}
+
+.content-card__category {
   font-size: var(--font-size-sm);
-  color: var(--text-muted);
-  margin: 0 0 var(--space-sm) 0;
-  line-height: var(--line-height-normal);
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-medium);
 }
 
 .content-card__details {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-sm);
-  margin-top: var(--space-sm);
-}
-
-.content-card__meta {
-  flex: 1;
-}
-
-.content-card__duration {
-  font-size: var(--font-size-xs);
+  gap: var(--space-xs);
+  font-size: var(--font-size-sm);
   color: var(--text-muted);
+}
+
+.content-card__year {
   font-weight: var(--font-weight-medium);
 }
 
 .content-card__rating {
   display: flex;
   align-items: center;
+  gap: var(--space-2xs);
 }
 
-/* ===== ESTADOS ESPECIALES ===== */
+.content-card__rating-star {
+  color: var(--color-warning);
+  font-size: var(--font-size-xs);
+}
 
-/* Estado de carga */
-.content-card--loading {
-  pointer-events: none;
+.content-card__duration,
+.content-card__episodes {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+}
+
+/* ===== VARIANTES SEMÁNTICAS ===== */
+/* Las variantes de Card manejan colores, ContentCard solo layout */
+
+/* ===== ESTADOS INTERACTIVOS ===== */
+/* Card maneja hover, focus, active. ContentCard solo refinamientos */
+
+.content-card .card--hoverable:hover .content-card__image {
+  transform: scale(1.05);
+  transition: transform var(--transition-normal);
+}
+
+/* ===== ESTADOS DEL SISTEMA ===== */
+
+/* Estado de loading - Card maneja el shimmer, ContentCard el layout */
+.content-card .card--loading .content-card__image {
   opacity: 0.7;
+  filter: blur(0.5px);
 }
 
-.content-card--loading:hover {
-  transform: none;
-  box-shadow: var(--shadow-md);
-}
-
-/* Estado deshabilitado */
-.content-card--disabled {
+.content-card .card--loading .content-card__title,
+.content-card .card--loading .content-card__meta {
   opacity: 0.5;
-  pointer-events: none;
-  cursor: not-allowed;
 }
 
-.content-card--disabled:hover {
-  transform: none;
-  box-shadow: var(--shadow-md);
+/* Estado deshabilitado - Card maneja opacity, ContentCard refinamientos */
+.content-card .card--disabled .content-card__image {
+  filter: grayscale(100%);
+}
+
+/* ===== TAMAÑOS DE CONTENTCARD COORDINADOS CON CONTENTIMAGE ===== */
+/* ContentCard incluye espacio para imagen + texto + padding */
+
+/* ===== ANCHOS FIJOS PARA CONTENTCARD POR TAMAÑO ===== */
+/* Sobrescribir el fit-content de Card para anchos consistentes */
+
+/* ===== ANCHOS FIJOS CON ESPECIFICIDAD ALTA ===== */
+/* Usar .card.content-card para mayor especificidad que Card.css */
+
+/* Tamaño por defecto cuando no se especifica clase de tamaño */
+.card.content-card:not([class*="content-card--size"]) {
+  width: 16rem; /* md por defecto - igual que ContentImage md */
+}
+
+/* Tamaño compacto */
+.card.content-card.content-card--size-xs {
+  width: 16rem;
+}
+
+.content-card--size-xs .content-card__title {
+  font-size: var(--font-size-sm);
+  -webkit-line-clamp: 1;
+}
+
+.content-card--size-xs .content-card__meta {
+  font-size: var(--font-size-xs);
+}
+
+/* Tamaño pequeño */
+.card.content-card.content-card--size-sm {
+  width: 20rem;
+}
+
+/* Tamaño medio */
+.card.content-card.content-card--size-md {
+  width: 24rem;
+}
+
+/* Tamaño grande */
+.card.content-card.content-card--size-lg {
+  width: 28rem;
+}
+
+.content-card--size-lg .content-card__title {
+  font-size: var(--font-size-lg);
+  -webkit-line-clamp: 3;
+}
+
+/* Tamaño extra grande */
+.card.content-card.content-card--size-xl {
+  width: 32rem;
+}
+
+.content-card--size-xl .content-card__title {
+  font-size: var(--font-size-xl);
+  -webkit-line-clamp: 3;
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
 
-/* Tablets */
 @media (max-width: 768px) {
-  .content-card__type-badge {
-    top: var(--space-xs);
-    left: var(--space-xs);
+  .content-card {
+    min-width: 6rem;
+    max-width: 16rem;
   }
   
-  .content-card__info {
-    padding: var(--space-sm);
+  .content-card__title {
+    -webkit-line-clamp: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .content-card {
+    min-width: 5rem;
+    max-width: 14rem;
+  }
+  
+  .content-card__content {
+    padding: var(--space-xs);
   }
   
   .content-card__title {
     font-size: var(--font-size-sm);
   }
   
-  .content-card__controls {
-    gap: var(--space-xs);
-  }
-  
-  /* Ajustar tamaños en móviles */
-  .content-card--size-lg {
-    max-width: 24rem;
-  }
-  
-  .content-card--size-xl {
-    max-width: 28rem;
-  }
-}
-
-/* Móviles */
-@media (max-width: 480px) {
-  /* Deshabilitar hover effects en móviles */
-  .content-card:hover {
-    transform: none;
-    box-shadow: var(--shadow-md);
-  }
-  
-  .content-card:hover .content-card__image .content-image__img {
-    transform: none;
-  }
-  
-  .content-card__overlay {
-    /* En móviles, el overlay siempre visible pero más sutil */
-    opacity: 0.3;
-    pointer-events: auto;
-    background: linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0) 0%,
-      rgba(0, 0, 0, 0.6) 100%
-    );
-  }
-  
-  .content-card__controls {
-    transform: translateY(0);
-    justify-content: center;
-    align-items: flex-end;
-    height: 100%;
-    padding-bottom: var(--space-md);
-  }
-  
-  .content-card__favorite-button {
-    /* Hacer más visible en móviles */
-    background-color: rgba(255, 255, 255, 0.9);
-    color: var(--text-primary);
-  }
-  
-  /* Tamaños más pequeños en móviles */
-  .content-card--size-md {
-    max-width: 18rem;
-  }
-  
-  .content-card--size-lg {
-    max-width: 20rem;
-  }
-  
-  .content-card--size-xl {
-    max-width: 22rem;
-  }
-}
-
-/* Pantallas muy pequeñas */
-@media (max-width: 320px) {
-  .content-card__info {
-    padding: var(--space-xs);
-  }
-  
-  .content-card__title {
+  .content-card__meta {
     font-size: var(--font-size-xs);
-    -webkit-line-clamp: 1; /* Solo una línea en pantallas muy pequeñas */
   }
-  
-  .content-card__details {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-xs);
+}
+
+/* ===== ACCESIBILIDAD ===== */
+
+@media (prefers-reduced-motion: reduce) {
+  .content-card .card--hoverable:hover .content-card__image {
+    transform: none;
   }
 }
 
 /* ===== MODO OSCURO ===== */
-.dark .content-card__image-container {
-  background-color: var(--bg-muted);
+
+.dark .content-card__title {
+  color: var(--text-primary);
 }
 
-.dark .content-card__image-skeleton {
-  background: linear-gradient(
-    90deg,
-    var(--bg-muted) 25%,
-    var(--bg-secondary) 50%,
-    var(--bg-muted) 75%
-  );
+.dark .content-card__category {
+  color: var(--text-secondary);
 }
 
-.dark .content-card__favorite-button {
-  background-color: rgba(0, 0, 0, 0.3);
-  border-color: rgba(255, 255, 255, 0.2);
-  color: var(--text-white);
-}
-
-/* ===== ACCESIBILIDAD ===== */
-@media (prefers-reduced-motion: reduce) {
-  .content-card,
-  .content-card__image,
-  .content-card__overlay,
-  .content-card__controls,
-  .content-card__loading-spinner {
-    transition: none;
-    animation: none;
-  }
-  
-  .content-card:hover {
-    transform: none;
-  }
-  
-  .content-card:hover .content-card__image .content-image__img {
-    transform: none;
-  }
-}
-
-/* High contrast mode */
-@media (prefers-contrast: high) {
-  .content-card__overlay {
-    background: linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0) 0%,
-      rgba(0, 0, 0, 0.9) 100%
-    );
-  }
-  
-  .content-card__favorite-button {
-    background-color: var(--bg-primary);
-    border: 0.2rem solid var(--text-primary);
-    color: var(--text-primary);
-  }
-}
-
-/* ===== VARIANTES SEMÁNTICAS ESTÁNDAR ===== */
-.content-card--variant-primary {
-  border-color: var(--color-primary-500);
-}
-
-.content-card--variant-secondary {
-  border-color: var(--color-secondary-500);
-}
-
-.content-card--variant-success {
-  border-color: var(--color-success-500);
-}
-
-.content-card--variant-danger {
-  border-color: var(--color-danger-500);
-}
-
-.content-card--variant-warning {
-  border-color: var(--color-warning-500);
-}
-
-.content-card--variant-neutral {
-  border-color: var(--border-light);
-}
-
-/* ===== VARIANTES FUNCIONALES ===== */
-.content-card--card-variant-elevated {
-  box-shadow: var(--shadow-md);
-}
-
-.content-card--card-variant-outlined {
-  border: 0.2rem solid var(--border-light);
-  box-shadow: none;
-}
-
-.content-card--card-variant-default {
-  border: 0.1rem solid var(--border-light);
-  box-shadow: var(--shadow-sm);
-}
-
-/* ===== ASPECTOS ESPECÍFICOS POR TAMAÑO ===== */
-
-/* Ajustes de padding por tamaño */
-.content-card--size-xs .content-card__info {
-  padding: var(--space-xs);
-}
-
-.content-card--size-sm .content-card__info {
-  padding: var(--space-sm);
-}
-
-.content-card--size-lg .content-card__info {
-  padding: var(--space-lg);
-}
-
-.content-card--size-xl .content-card__info {
-  padding: var(--space-lg);
-}
-
-/* Ajustes de tipografía por tamaño */
-.content-card--size-xs .content-card__title {
-  font-size: var(--font-size-xs);
-}
-
-.content-card--size-sm .content-card__title {
-  font-size: var(--font-size-sm);
-}
-
-.content-card--size-lg .content-card__title {
-  font-size: var(--font-size-lg);
-}
-
-.content-card--size-xl .content-card__title {
-  font-size: var(--font-size-xl);
+.dark .content-card__details {
+  color: var(--text-muted);
 }

@@ -50,7 +50,6 @@ const Card = (props) => {
     shadow = 'md',
     role,
     tabIndex,
-    // Props legacy para backward compatibility
     padding,
     variant: originalVariant,
     ...rawProps
@@ -67,7 +66,6 @@ const Card = (props) => {
       'md': 'md',    // padding md → size md
       'lg': 'lg',    // padding lg → size lg
       'xl': 'xl',    // padding xl → size xl
-      '2xl': 'xl'    // padding 2xl → size xl (máximo del sistema)
     };
     
     processedProps.size = paddingToSizeMap[padding] || 'md';
@@ -101,30 +99,30 @@ const Card = (props) => {
   // Determinar si la card es interactiva
   const isInteractive = !!(onClick || clickable);
   
-  // ✅ MIGRACIÓN: Construir clases CSS con sistema estándar
+  // ✅ NUEVO: Construir clases CSS con sistema adaptativo como Modal
   const cardClasses = [
     'card',
-    // Variante: usar appearance si está disponible, sino variant estándar
-    processedProps.appearance ? `card--${processedProps.appearance}` : `card--${variant}`,
-    // SIZE → PADDING mapping: usar size del sistema estándar
-    `card--padding-${size}`,
-    // Shadow y rounded mantienen lógica actual
-    shadow !== 'none' && `card--shadow-${shadow}`,
+    // Tamaño del sistema: define max-width y padding automáticamente
+    `card--size-${size}`,
+    // Variante semántica estándar o appearance legacy
+    processedProps.appearance ? `card--${processedProps.appearance}` : `card--variant-${variant}`,
+    // Border radius del sistema
     `card--rounded-${rounded}`,
+    // Shadow
+    shadow !== 'none' && `card--shadow-${shadow}`,
     // Estados interactivos
     (hoverable || isInteractive) && 'card--hoverable',
     isInteractive && 'card--clickable',
-    // Estados estándar del sistema
+    // Estados del sistema
     disabled && 'card--disabled',
     loading && 'card--loading',
-    // Layout
-    fullWidth && 'card--full-width',
     // Clases personalizadas
     className
   ].filter(Boolean).join(' ');
 
-  // Estilos inline dinámicos
+  // Estilos inline solo cuando sea necesario
   const cardStyles = {
+    // Solo override si se especifica manualmente
     maxWidth: maxWidth || undefined,
     width: fullWidth ? '100%' : undefined
   };
@@ -181,37 +179,37 @@ const Card = (props) => {
 
 // Componentes auxiliares para estructura de la card
 const CardHeader = ({ children, className = '', ...props }) => (
-  <div className={`card__header ${className}`} {...props}>
+  <div {...props} className={`card__header ${className}`}>
     {children}
   </div>
 );
 
 const CardBody = ({ children, className = '', ...props }) => (
-  <div className={`card__body ${className}`} {...props}>
+  <div {...props} className={`card__body ${className}`}>
     {children}
   </div>
 );
 
 const CardFooter = ({ children, className = '', ...props }) => (
-  <div className={`card__footer ${className}`} {...props}>
+  <div {...props} className={`card__footer ${className}`}>
     {children}
   </div>
 );
 
 const CardTitle = ({ children, className = '', as: Component = 'h3', ...props }) => (
-  <Component className={`card__title ${className}`} {...props}>
+  <Component {...props} className={`card__title ${className}`}>
     {children}
   </Component>
 );
 
 const CardSubtitle = ({ children, className = '', as: Component = 'p', ...props }) => (
-  <Component className={`card__subtitle ${className}`} {...props}>
+  <Component {...props} className={`card__subtitle ${className}`}>
     {children}
   </Component>
 );
 
 const CardDescription = ({ children, className = '', as: Component = 'p', ...props }) => (
-  <Component className={`card__description ${className}`} {...props}>
+  <Component {...props} className={`card__description ${className}`}>
     {children}
   </Component>
 );

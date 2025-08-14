@@ -227,7 +227,7 @@ function MainPage() {
         <PageLayout
             header={
                 <AppHeader
-                    appTitle="🎬 StreamApp"
+                    appTitle="StreamApp"
                     userName={user.userName || user.username || user.name || user.email || 'Usuario'}
                     searchValue={searchTerm}
                     onSearchChange={handleSearchChange}
@@ -304,8 +304,8 @@ function MainPage() {
                     ) : null
                 }
                 variant="primary"
-                size="md"
-                gridColumns="repeat(auto-fit, minmax(200px, 1fr))"
+                size="lg"
+                gridColumns="repeat(auto-fit, minmax(400px, 1fr))"
                 gridGap="var(--space-md)"
             >
                 {filteredMovies.map(movie => (
@@ -313,7 +313,7 @@ function MainPage() {
                         key={`movie-${movie.id}`}
                         content={movie}
                         onClick={() => handleMovieClick(movie)}
-                        size="md"
+                        size="lg"
                         showRating={true}
                         variant="elevated"
                     />
@@ -356,7 +356,7 @@ function MainPage() {
                 }
                 variant="neutral"
                 size="md"
-                gridColumns="repeat(auto-fit, minmax(200px, 1fr))"
+                gridColumns="repeat(auto-fit, minmax(280px, 1fr))"
                 gridGap="var(--space-md)"
             >
                 {filteredSeries.map(serie => (
@@ -364,7 +364,7 @@ function MainPage() {
                         key={`series-${serie.id}`}
                         content={serie}
                         onClick={() => handleSeriesClick(serie)}
-                        size="md"
+                        size="lg"
                         showRating={true}
                         variant="elevated"
                     />

@@ -29,33 +29,27 @@ function FilterBar(props) {
     className,
     tokens,
     // renderIcon, // No se usa directamente en FilterBar, los botones internos manejan sus iconos
-    
+
     // Props específicas de FilterBar
     categories = [],
     selectedCategory = 'all',
-    onCategoryChange = () => {},
+    onCategoryChange = () => { },
     actions = null,
     error,
-    
+
     // Props restantes para DOM
     ...restProps
   } = useFilterBarProps(props);
-  
+
   // ✅ EXTRAER PROPS DOM-SAFE: Filtrar automáticamente props del sistema
-  const domProps = extractDOMProps({ 
-    ...restProps, 
-    className, 
+  const domProps = extractDOMProps({
+    ...restProps,
+    className,
     disabled,
-    style: tokens ? {
-      // ✅ APLICAR TOKENS DINÁMICOS: Variables CSS accesibles desde JavaScript
-      padding: tokens.size?.padding,
-      fontSize: tokens.size?.fontSize,
-      borderRadius: tokens.rounded,
-      // CSS classes manejan colores, aquí solo overrides específicos si es necesario
-      ...restProps.style
-    } : restProps.style
+    // Las clases CSS manejan todos los estilos del sistema de diseño
+    style: restProps.style
   });
-  
+
   // ✅ CLASES CSS DEL SISTEMA: Usar variantes estándar + estados
   const filterBarClasses = [
     'filter-bar',
@@ -68,10 +62,12 @@ function FilterBar(props) {
     className
   ].filter(Boolean).join(' ');
 
+  console.log(domProps);
+
   return (
-    <div 
-      className={filterBarClasses} 
+    <div
       {...domProps} // ✅ Solo props válidas del DOM
+      className={filterBarClasses}
     >
       {/* Estados de loading */}
       {loading && (
@@ -79,14 +75,14 @@ function FilterBar(props) {
           <span>Cargando filtros...</span>
         </div>
       )}
-      
+
       {/* Estados de error */}
       {error && (
         <div className="filter-bar__error">
           <span>Error: {error}</span>
         </div>
       )}
-      
+
       {/* Contenido normal cuando no hay loading ni error */}
       {!loading && !error && (
         <>
@@ -125,7 +121,7 @@ function FilterBar(props) {
 FilterBar.propTypes = {
   // ✅ PROPS ESTÁNDAR DEL SISTEMA: Heredadas automáticamente
   ...STANDARD_PROP_TYPES,
-  
+
   // Props específicas de FilterBar
   categories: PropTypes.arrayOf(PropTypes.shape({
     value: PropTypes.string.isRequired,

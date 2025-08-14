@@ -54,7 +54,7 @@ function AppHeader({
   void showBackButton; void onBackClick;
 
   return (
-    <header className={headerClasses} {...validDOMProps}>
+    <header {...validDOMProps} className={headerClasses}>
       {/* Brand/Logo */}
       <div className="app-header__brand">
         <h1 

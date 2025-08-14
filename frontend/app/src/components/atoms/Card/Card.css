@@ -1,139 +1,95 @@
 /* ===== CARD COMPONENT - ÁTOMO PARA SISTEMA DE DISEÑO ===== */
-/* Card.css */
+/* Card.css - Implementación que se adapta al contenido como Modal */
 
-/* Clase base de la card - Usando variables del sistema */
+/* ===== CONTENEDOR BASE ===== */
 .card {
-  /* Layout */
+  /* Layout adaptativo como Modal */
   display: flex;
   flex-direction: column;
   position: relative;
   
-  /* Tipografía - Usando variables del sistema */
+  /* ===== SIZING AUTO-ADAPTATIVO ===== */
+  /* Tamaño inteligente basado en contenido como Modal */
+  width: fit-content;
+  width: -moz-fit-content;
+  min-width: 0;
+  max-width: var(--card-max-width, 100%);
+  
+  /* Background del sistema de diseño */
+  background: var(--bg-primary);
+  
+  /* Tipografía del sistema */
   font-family: var(--font-family-base);
   color: var(--text-primary);
   
-  /* Fondo - Usando variables del sistema */
-  background-color: var(--bg-primary);
-  
-  /* Transiciones - Usando variables del sistema */
+  /* Transiciones suaves */
   transition: all var(--transition-normal);
   
-  /* Box sizing */
+  /* Box model */
   box-sizing: border-box;
-  
-  /* Overflow control */
   overflow: hidden;
 }
 
-/* ===== VARIANTES ESTÁNDAR DEL SISTEMA ===== */
-.card--primary {
-  border: none;
-  background-color: var(--bg-primary);
+/* ===== TAMAÑOS ESTÁNDAR DEL SISTEMA (AUTO-ADAPTATIVOS) ===== */
+/* Los tamaños actúan como máximos sugeridos y padding, no fijos */
+
+.card--size-xs {
+  --card-max-width: 16rem; /* 256px - Pequeñas */
+  padding: var(--space-xs); /* 4px */
 }
 
-.card--secondary {
-  border: none;
-  background-color: var(--bg-secondary);
-}
-
-.card--success {
-  border: none;
-  background-color: var(--bg-success-light);
-}
-
-.card--warning {
-  border: none;
-  background-color: var(--bg-warning-light);
-}
-
-.card--danger {
-  border: none;
-  background-color: var(--bg-danger-light);
-}
-
-.card--neutral {
-  border: none;
-  background-color: var(--bg-primary);
-}
-
-/* ===== VARIANTES LEGACY (APPEARANCE) - Backward compatibility ===== */
-.card--default {
-  border: none;
-}
-
-.card--elevated {
-  border: none;
-}
-
-.card--outlined {
-  border: 0.1rem solid var(--border-default);
-  background-color: var(--bg-primary);
-}
-
-/* PADDING - Usando variables del sistema */
-.card--padding-xs {
+.card--size-sm {
+  --card-max-width: 20rem; /* 320px - Compactas */
   padding: var(--space-sm); /* 8px */
 }
 
-.card--padding-sm {
+.card--size-md {
+  --card-max-width: 24rem; /* 384px - Estándar */
   padding: var(--space-md); /* 16px */
 }
 
-.card--padding-md {
+.card--size-lg {
+  --card-max-width: 32rem; /* 512px - Grandes */
   padding: var(--space-lg); /* 24px */
 }
 
-.card--padding-lg {
+.card--size-xl {
+  --card-max-width: 40rem; /* 640px - Muy grandes */
   padding: var(--space-xl); /* 32px */
 }
 
-.card--padding-xl {
-  padding: var(--space-2xl); /* 48px */
+/* ===== VARIANTES SEMÁNTICAS DEL SISTEMA ===== */
+.card--variant-primary {
+  background: var(--bg-primary);
+  border: 0.1rem solid var(--color-primary-subtle, transparent);
 }
 
-.card--padding-2xl {
-  padding: var(--space-3xl); /* 64px */
+.card--variant-secondary {
+  background: var(--bg-secondary);
+  border: 0.1rem solid var(--color-secondary-subtle, transparent);
 }
 
-/* SOMBRAS - Usando variables del sistema */
-.card--shadow-sm {
-  box-shadow: var(--shadow-sm);
+.card--variant-success {
+  background: var(--bg-success-light, var(--bg-primary));
+  border: 0.1rem solid var(--color-success-subtle, transparent);
 }
 
-.card--shadow-md {
-  box-shadow: var(--shadow-md);
+.card--variant-warning {
+  background: var(--bg-warning-light, var(--bg-primary));
+  border: 0.1rem solid var(--color-warning-subtle, transparent);
 }
 
-.card--shadow-lg {
-  box-shadow: var(--shadow-lg);
+.card--variant-danger {
+  background: var(--bg-danger-light, var(--bg-primary));
+  border: 0.1rem solid var(--color-danger-subtle, transparent);
 }
 
-.card--shadow-xl {
-  box-shadow: var(--shadow-xl);
+.card--variant-neutral {
+  background: var(--bg-primary);
+  border: 0.1rem solid var(--border-default, transparent);
 }
 
-.card--shadow-none {
-  box-shadow: none;
-}
-
-/* Sombras elevadas para variante elevated */
-.card--elevated.card--shadow-sm {
-  box-shadow: var(--shadow-sm);
-}
-
-.card--elevated.card--shadow-md {
-  box-shadow: var(--shadow-md);
-}
-
-.card--elevated.card--shadow-lg {
-  box-shadow: var(--shadow-lg);
-}
-
-.card--elevated.card--shadow-xl {
-  box-shadow: var(--shadow-xl);
-}
-
-/* BORDER RADIUS - Usando variables del sistema */
+/* ===== BORDES REDONDEADOS ===== */
 .card--rounded-sm {
   border-radius: var(--radius-sm);
 }
@@ -154,186 +110,37 @@
   border-radius: var(--radius-full);
 }
 
-/* ESTADOS INTERACTIVOS */
-.card--clickable {
-  cursor: pointer;
+/* ===== SOMBRAS ===== */
+.card--shadow-none {
+  box-shadow: none;
 }
 
-.card--hoverable,
-.card--clickable {
-  transition: all var(--transition-normal);
-}
-
-.card--hoverable:hover,
-.card--clickable:hover {
-  transform: translateY(-0.2rem);
-}
-
-/* Estados hover específicos por variante */
-.card--default:hover,
-.card--elevated:hover {
-  box-shadow: var(--shadow-lg);
-}
-
-.card--outlined:hover {
-  border-color: var(--border-focus);
-  box-shadow: 0 0 0 0.1rem var(--shadow-focus);
-}
-
-/* Focus states para accesibilidad */
-.card--clickable:focus {
-  outline: 0.2rem solid var(--border-focus);
-  outline-offset: 0.2rem;
-}
-
-.card--clickable:focus:not(:focus-visible) {
-  outline: none;
-}
-
-.card--clickable:focus-visible {
-  outline: 0.2rem solid var(--border-focus);
-  outline-offset: 0.2rem;
-}
-
-/* Active state */
-.card--clickable:active {
-  transform: translateY(-0.1rem);
-}
-
-/* ANCHO COMPLETO */
-.card--full-width {
-  width: 100%;
-}
-
-/* ===== ESTADOS ESTÁNDAR DEL SISTEMA ===== */
-.card--disabled {
-  opacity: 0.6;
-  pointer-events: none;
-  cursor: not-allowed;
-}
-
-.card--disabled.card--clickable {
-  cursor: not-allowed;
-}
-
-.card--loading.card--disabled {
-  pointer-events: none;
-}
-
-/* ELEMENTOS INTERNOS DE LA CARD */
-.card__header {
-  margin-bottom: var(--space-lg);
-}
-
-.card__body {
-  flex: 1;
-}
-
-.card__footer {
-  margin-top: var(--space-lg);
-  padding-top: var(--space-md);
-  border-top: 0.1rem solid var(--border-default);
-}
-
-.card__title {
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-semibold);
-  color: var(--text-primary);
-  margin: 0 0 var(--space-sm) 0;
-  line-height: var(--line-height-tight);
-}
-
-.card__subtitle {
-  font-size: var(--font-size-base);
-  color: var(--text-muted);
-  margin: 0 0 var(--space-md) 0;
-  line-height: var(--line-height-normal);
-}
-
-.card__description {
-  font-size: var(--font-size-sm);
-  color: var(--text-secondary);
-  margin: 0;
-  line-height: var(--line-height-relaxed);
-}
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  /* Reducir padding en móviles para cards muy padded */
-  .card--padding-xl {
-    padding: var(--space-xl);
-  }
-  
-  .card--padding-2xl {
-    padding: var(--space-2xl);
-  }
-  
-  /* Ajustar hover en móviles (deshabilitar transform) */
-  .card--hoverable:hover,
-  .card--clickable:hover {
-    transform: none;
-  }
-  
-  /* Mejorar área táctil para cards clickeables */
-  .card--clickable {
-    min-height: 4.4rem; /* Área táctil mínima */
-  }
-  
-  /* Ajustar título en móviles */
-  .card__title {
-    font-size: var(--font-size-lg);
-  }
-}
-
-/* MODO OSCURO */
-.dark .card {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-}
-
-.dark .card--outlined {
-  border-color: var(--border-default);
-  background-color: var(--bg-primary);
-}
-
-.dark .card--outlined:hover {
-  border-color: var(--border-focus);
-}
-
-.dark .card__footer {
-  border-top-color: var(--border-default);
-}
-
-.dark .card__title {
-  color: var(--text-primary);
-}
-
-.dark .card__subtitle {
-  color: var(--text-muted);
-}
-
-.dark .card__description {
-  color: var(--text-secondary);
-}
-
-/* Ajustar sombras en modo oscuro */
-.dark .card--shadow-sm {
+.card--shadow-sm {
   box-shadow: var(--shadow-sm);
 }
 
-.dark .card--shadow-md {
+.card--shadow-md {
   box-shadow: var(--shadow-md);
 }
 
-.dark .card--shadow-lg {
+.card--shadow-lg {
   box-shadow: var(--shadow-lg);
 }
 
-.dark .card--shadow-xl {
+.card--shadow-xl {
   box-shadow: var(--shadow-xl);
 }
 
-/* UTILIDADES ADICIONALES */
+/* ===== ESTADOS DEL SISTEMA ===== */
+
+/* Estado deshabilitado */
+.card--disabled {
+  opacity: var(--opacity-disabled, 0.5);
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* Estado de loading */
 .card--loading {
   position: relative;
   overflow: hidden;
@@ -349,28 +156,134 @@
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 255, 255, 0.1),
+    var(--color-primary-subtle, rgba(255, 255, 255, 0.2)),
     transparent
   );
-  animation: loading-shimmer 1.5s infinite;
+  animation: cardShimmer 1.5s infinite;
 }
 
-@keyframes loading-shimmer {
-  0% {
-    left: -100%;
+@keyframes cardShimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* ===== INTERACCIONES ===== */
+
+/* Efecto hoverable */
+.card--hoverable:hover:not(.card--disabled) {
+  transform: translateY(-0.2rem);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Efecto clickeable */
+.card--clickable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.card--clickable:active:not(.card--disabled) {
+  transform: translateY(0);
+  transition: transform var(--transition-fast);
+}
+
+/* Focus visible para accesibilidad */
+.card--clickable:focus-visible {
+  outline: 0.2rem solid var(--color-primary);
+  outline-offset: 0.2rem;
+}
+
+/* ===== APARIENCIAS LEGACY (Backward Compatibility) ===== */
+.card--elevated {
+  box-shadow: var(--shadow-lg);
+  border: none;
+}
+
+.card--outlined {
+  border: 0.1rem solid var(--border-default);
+  box-shadow: none;
+}
+
+.card--default {
+  border: none;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* En móviles, reducir máximos para mejor UX */
+@media (max-width: 480px) {
+  .card--size-md {
+    --card-max-width: 20rem;
   }
-  100% {
-    left: 100%;
+  
+  .card--size-lg {
+    --card-max-width: 24rem;
+  }
+  
+  .card--size-xl {
+    --card-max-width: 28rem;
+  }
+  
+  /* Desactivar hover effects en touch */
+  .card--hoverable:hover {
+    transform: none;
+    box-shadow: var(--shadow-md);
   }
 }
 
-/* Performance optimization */
-.card--hoverable:hover,
-.card--clickable:hover {
-  will-change: transform, box-shadow;
+/* ===== CONTENIDO ESPECIALIZADO ===== */
+
+/* Para ContentCard que tiene imagen */
+.content-card .card {
+  padding: var(--space-xs); /* Padding mínimo para imágenes */
+  width: auto;
+  min-width: 8rem; /* Mínimo razonable para carátulas */
 }
 
-.card--hoverable:not(:hover),
-.card--clickable:not(:hover) {
-  will-change: auto;
+/* ===== ACCESIBILIDAD ===== */
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card--hoverable:hover,
+  .card--clickable:active {
+    transition: none;
+    transform: none;
+    animation: none;
+  }
+  
+  .card--loading::after {
+    animation: none;
+  }
+}
+
+/* High contrast */
+@media (prefers-contrast: high) {
+  .card {
+    border: 0.2rem solid var(--text-primary);
+  }
+  
+  .card--variant-primary,
+  .card--variant-secondary,
+  .card--variant-success,
+  .card--variant-warning,
+  .card--variant-danger,
+  .card--variant-neutral {
+    border-width: 0.2rem;
+  }
+}
+
+/* ===== MODO OSCURO ===== */
+.dark .card {
+  background: var(--bg-primary);
+  border-color: var(--border-default);
+}
+
+.dark .card--loading::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-primary-subtle, rgba(255, 255, 255, 0.1)),
+    transparent
+  );
 }

@@ -67,7 +67,7 @@ function StatsCard({
     onClick: cardOnClick,
     href: cardHref,
     className: cardClassName,
-    ...domProps // ✅ Solo props válidas para el DOM
+    ...domProps
   } = { 
     title, value, icon, change, changeLabel, changeDirection, 
     color, variant, size, loading, error, onClick, href, className,

@@ -38,7 +38,7 @@ function PageLayout({
   const validDOMProps = extractDOMProps(restProps);
 
   return (
-    <div className={layoutClasses} {...validDOMProps}>
+    <div {...validDOMProps} className={layoutClasses}>
       {/* Header */}
       {header && (
         <div className="page-layout__header">

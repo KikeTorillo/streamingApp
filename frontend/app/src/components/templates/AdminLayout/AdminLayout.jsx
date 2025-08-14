@@ -223,7 +223,7 @@ function AdminLayout({
 
   // ===== RENDER PRINCIPAL =====
   return (
-    <div className={layoutClasses} {...validDOMProps}>
+    <div {...validDOMProps} className={layoutClasses}>
 
       {/* ===== SIDEBAR ===== */}
       <AdminSidebar

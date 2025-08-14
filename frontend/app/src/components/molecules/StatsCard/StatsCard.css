@@ -17,6 +17,8 @@
   
   /* Posición relativa para elementos absolutos */
   position: relative;
+
+  min-width: 23rem;
 }
 
 /* ===== VARIANTES DE COLOR ===== */

@@ -71,6 +71,7 @@ function SeriesListPage() {
             placeholder="video"
             rounded="md"
             showFallback={true}
+            size='xs'
           />
         );
       }

@@ -125,7 +125,7 @@ function Spinner({
   // Si es overlay, usar estructura específica
   if (overlay) {
     return (
-      <div className={`spinner-overlay ${spinnerClasses}`} {...restProps}>
+      <div {...restProps} className={`spinner-overlay ${spinnerClasses}`}>
         <div className={`spinner-overlay__container spinner-overlay__container--variant-${finalVariant}`}>
           <div className="spinner-overlay__spinner">
             {renderSpinnerVariant()}
@@ -140,7 +140,7 @@ function Spinner({
 
   // Modo inline normal
   return (
-    <div className={`spinner-inline ${spinnerClasses}`} {...restProps}>
+    <div {...restProps} className={`spinner-inline ${spinnerClasses}`}>
       {renderSpinnerVariant()}
       {message && (
         <div className={`spinner-inline__message spinner__message--size-${size}`}>

@@ -79,6 +79,7 @@ function MoviesListPage() {
             placeholder="film"
             rounded="md"
             showFallback={true}
+            size='xs'
           />
         );
       }

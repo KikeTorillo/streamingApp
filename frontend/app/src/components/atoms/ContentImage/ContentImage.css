@@ -5,7 +5,7 @@
 .content-image {
   position: relative;
   display: block;
-  width: 100%;
+  width: 100%; /* Por defecto, usar todo el ancho disponible */
   overflow: hidden;
   background-color: var(--bg-muted);
   
@@ -24,6 +24,70 @@
   
   /* Border radius por defecto */
   border-radius: var(--radius-md);
+}
+
+/* ===== TAMAÑOS ESPECÍFICOS PARA IMÁGENES DE CONTENIDO ===== */
+/* Tamaños apropiados para carátulas de películas/series con aspect ratio 2/3 */
+
+.content-image--size-xs {
+  width: 8rem;   /* 128px - Muy compacto */
+  max-width: 8rem;
+  flex-shrink: 0;
+}
+
+.content-image--size-sm {
+  width: 12rem;  /* 192px - Pequeño */
+  max-width: 12rem;
+  flex-shrink: 0;
+}
+
+.content-image--size-md {
+  width: 16rem;  /* 256px - Estándar, buen balance */
+  max-width: 16rem;
+  flex-shrink: 0;
+}
+
+.content-image--size-lg {
+  width: 20rem;  /* 320px - Grande, para destacar */
+  max-width: 20rem;
+  flex-shrink: 0;
+}
+
+.content-image--size-xl {
+  width: 24rem;  /* 384px - Extra grande, para héroes */
+  max-width: 24rem;
+  flex-shrink: 0;
+}
+
+/* Cuando no se especifica size, usar 100% del contenedor */
+.content-image:not([class*="content-image--size"]) {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* ===== VARIANTES DEL SISTEMA DE DISEÑO ===== */
+.content-image--variant-primary {
+  border: 0.1rem solid var(--color-primary-subtle, transparent);
+}
+
+.content-image--variant-secondary {
+  border: 0.1rem solid var(--color-secondary-subtle, transparent);
+}
+
+.content-image--variant-success {
+  border: 0.1rem solid var(--color-success-subtle, transparent);
+}
+
+.content-image--variant-warning {
+  border: 0.1rem solid var(--color-warning-subtle, transparent);
+}
+
+.content-image--variant-danger {
+  border: 0.1rem solid var(--color-danger-subtle, transparent);
+}
+
+.content-image--variant-neutral {
+  border: 0.1rem solid var(--color-neutral-subtle, transparent);
 }
 
 /* ===== ASPECT RATIOS ===== */
@@ -190,19 +254,24 @@
 
 /* ===== ESTADOS ESPECIALES ===== */
 
-/* Estado de carga - skeleton visible */
+/* Por defecto, las imágenes son visibles */
+.content-image__img {
+  opacity: 1;
+  transition: opacity var(--transition-normal);
+}
+
+/* Solo cuando está en estado de carga, ocultar imagen y mostrar skeleton */
 .content-image--loading .content-image__img {
   opacity: 0;
 }
 
-/* Estado cargado - skeleton oculto */
 .content-image--loading .content-image__skeleton {
   opacity: 1;
 }
 
-/* Imagen cargada exitosamente */
-.content-image__img[src]:not([src=""]) {
-  opacity: 1;
+/* Por defecto, skeleton está oculto */
+.content-image__skeleton {
+  opacity: 0;
 }
 
 /* Blur effect (para loading progresivo) */
@@ -213,6 +282,44 @@
 
 .content-image--blur.content-image--loaded .content-image__img {
   filter: blur(0);
+}
+
+/* ===== ESTADOS DEL SISTEMA DE DISEÑO ===== */
+
+/* Estado deshabilitado */
+.content-image--disabled {
+  opacity: var(--opacity-disabled, 0.5);
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.content-image--disabled .content-image__img {
+  filter: grayscale(100%) opacity(0.7);
+}
+
+/* Estado de loading del sistema */
+.content-image--system-loading {
+  position: relative;
+}
+
+.content-image--system-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2rem;
+  height: 2rem;
+  margin: -1rem 0 0 -1rem;
+  border: 0.2rem solid var(--color-primary-subtle);
+  border-top: 0.2rem solid var(--color-primary);
+  border-radius: 50%;
+  animation: contentImageSpinner 1s linear infinite;
+  z-index: 3;
+}
+
+@keyframes contentImageSpinner {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* ===== HOVER EFFECTS ===== */

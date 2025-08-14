@@ -106,6 +106,20 @@ Componente especializado para imágenes de contenido multimedia con fallbacks in
       control: 'select',
       options: ['eager', 'lazy'],
       description: 'Estrategia de carga de la imagen'
+    },
+    
+    // Props del sistema de diseño
+    className: {
+      control: 'text',
+      description: 'Clases CSS adicionales'
+    },
+    testId: {
+      control: 'text',
+      description: 'ID para testing automatizado'
+    },
+    ariaLabel: {
+      control: 'text',
+      description: 'Label para accesibilidad'
     }
   },
   args: {
@@ -119,7 +133,12 @@ Componente especializado para imágenes de contenido multimedia con fallbacks in
     rounded: 'md',
     contentType: 'movie',
     showFallback: true,
-    imageLoading: 'lazy'
+    imageLoading: 'lazy',
+    disabled: false,
+    loading: false,
+    className: '',
+    testId: 'content-image',
+    ariaLabel: ''
   }
 };
 

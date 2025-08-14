@@ -49,7 +49,10 @@ function ContentCard(props) {
     }
   }
 
-  // Extraer props y aplicar sistema estándar
+  // Aplicar sistema estándar PRIMERO con todas las props
+  const standardProps = useContentCardProps(restProps);
+  
+  // Extraer props procesadas por el hook
   const {
     // Configuración básica
     content,
@@ -58,7 +61,7 @@ function ContentCard(props) {
     showMeta = true,
     showCategory = true,
     
-    // Props estándar del sistema
+    // Props estándar del sistema (ya procesadas por el hook)
     size, variant, rounded, disabled, loading, className,
     leftIcon, rightIcon,
     
@@ -70,10 +73,11 @@ function ContentCard(props) {
     
     // Props DOM
     ...domProps
-  } = useContentCardProps(restProps);
+  } = standardProps;
   
-  // Extraer solo props válidas para DOM
+  // Extraer solo props válidas para DOM (sin className para evitar conflictos)
   const validDOMProps = extractDOMProps(domProps);
+  delete validDOMProps.className; // Evitar que sobrescriba nuestras clases
   
   // Validación de datos requeridos
   if (!content) {
@@ -95,12 +99,13 @@ function ContentCard(props) {
   // Construir clases CSS con sistema estándar y tokens
   const cardClasses = [
     'content-card',
+    // Tamaño específico de ContentCard
+    `content-card--size-${size}`,
     // Variante semántica estándar (para bordes y hover effects)
     `content-card--variant-${variant}`,
     // Variante funcional separada (para estilo visual de la card)
     `content-card--card-variant-${cardVariant}`,
-    `content-card--size-${size}`,
-    rounded && `content-card--rounded-${rounded}`,
+    // Estados
     disabled && 'content-card--disabled',
     loading && 'content-card--loading',
     className
@@ -136,7 +141,7 @@ function ContentCard(props) {
     <Card
       // Usar cardVariant para la variante visual de la Card
       variant={cardVariant === 'elevated' ? 'neutral' : cardVariant}
-      size={size}
+      size={size} // Usar el tamaño que se pasa desde el padre
       rounded={rounded}
       disabled={disabled}
       loading={loading}
@@ -165,7 +170,9 @@ function ContentCard(props) {
           alt={`Carátula de ${title}`}
           aspectRatio="2/3"
           contentType={type}
-          loading={loading ? "eager" : "lazy"}
+          imageLoading={loading ? "eager" : "lazy"}
+          loading={loading}
+          size={size} // Coordinar tamaño con ContentCard
           onError={handleImageError}
           rounded="none" // El contenedor ya maneja el border radius
           className="content-card__image"

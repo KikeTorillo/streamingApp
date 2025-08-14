@@ -314,7 +314,7 @@ function Tabs(props) {
   }
   
   return (
-    <div className={tabsClasses} {...domProps}>
+    <div {...domProps} className={tabsClasses}>
       <div className="tabs__header">
         {/* Scroll button left */}
         {scrollable && orientation === 'horizontal' && (

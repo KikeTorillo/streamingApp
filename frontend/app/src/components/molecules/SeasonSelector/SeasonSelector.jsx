@@ -78,7 +78,7 @@ const SeasonSelector = ({
   };
 
   return (
-    <div className={selectorClasses} {...restProps}>
+    <div {...restProps} className={selectorClasses}>
       {/* Título del selector */}
       <div className="season-selector__header">
         <h3 className="season-selector__title">

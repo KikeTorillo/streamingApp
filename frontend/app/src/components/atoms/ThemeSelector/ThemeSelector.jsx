@@ -33,7 +33,7 @@ function ThemeSelector({
   ].filter(Boolean).join(' ');
 
   return (
-    <div className={selectorClasses} {...restProps}>
+    <div {...restProps} className={selectorClasses}>
       {showLabels && <label className="theme-selector__label">Tema</label>}
       
       <div className="theme-selector__controls">

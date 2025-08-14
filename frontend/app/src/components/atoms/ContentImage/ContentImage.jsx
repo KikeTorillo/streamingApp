@@ -1,19 +1,34 @@
 // atoms/ContentImage/ContentImage.jsx
 import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
+import { useStandardProps } from '../../../hooks/useStandardProps.jsx';
+import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens/standardProps.js';
 import './ContentImage.css';
 
 /**
- * Componente ContentImage - Átomo para imágenes de contenido multimedia
- * Especializado en carátulas de películas/series con aspect ratios y fallbacks
+ * ContentImage - Átomo del Sistema de Diseño
  * 
- * @param {Object} props - Propiedades del componente
+ * Componente especializado para imágenes de contenido multimedia con fallbacks inteligentes,
+ * estados de loading y optimizaciones de performance.
+ * 
+ * ✅ CARACTERÍSTICAS DEL SISTEMA:
+ * - Props estándar: size, variant, rounded, disabled, loading
+ * - Tokens CSS del sistema de diseño
+ * - Sistema de iconos integrado
+ * - Accesibilidad completa (ARIA, navegación por teclado)
+ * - Performance optimizada (lazy loading, memoización)
+ * 
+ * @param {Object} props - Props del componente
  * @param {string} props.src - URL de la imagen
  * @param {string} props.alt - Texto alternativo para accesibilidad
+ * @param {'xs'|'sm'|'md'|'lg'|'xl'} [props.size='md'] - Tamaño según sistema de diseño
+ * @param {'primary'|'secondary'|'success'|'warning'|'danger'|'neutral'} [props.variant='primary'] - Variante semántica
+ * @param {'sm'|'md'|'lg'|'xl'|'full'} [props.rounded='md'] - Border radius del sistema
+ * @param {boolean} [props.disabled=false] - Estado deshabilitado
+ * @param {boolean} [props.loading=false] - Estado de carga del sistema
  * @param {'1/1'|'4/3'|'3/2'|'16/9'|'2/3'|'3/4'|'auto'} [props.aspectRatio='2/3'] - Proporción de aspecto
  * @param {'cover'|'contain'|'fill'|'scale-down'|'none'} [props.objectFit='cover'] - Comportamiento de ajuste
- * @param {'sm'|'md'|'lg'|'xl'|'full'} [props.rounded='md'] - Border radius
- * @param {'eager'|'lazy'} [props.loading='lazy'] - Estrategia de carga
+ * @param {'eager'|'lazy'} [props.imageLoading='lazy'] - Estrategia de carga
  * @param {'high'|'low'|'auto'} [props.fetchPriority='auto'] - Prioridad de descarga
  * @param {function} [props.onLoad] - Callback cuando la imagen carga
  * @param {function} [props.onError] - Callback cuando la imagen falla
@@ -21,28 +36,43 @@ import './ContentImage.css';
  * @param {'movie'|'series'|'generic'} [props.contentType='generic'] - Tipo de contenido para fallback
  * @param {boolean} [props.showFallback=true] - Si mostrar fallback en error
  * @param {boolean} [props.blur=false] - Si aplicar blur (para loading progresivo)
- * @param {string} [props.className=''] - Clases CSS adicionales
- * @param {React.CSSProperties} [props.style] - Estilos inline
+ * @param {string} [props.className=''] - Clases CSS adicionales del sistema
+ * @param {string} [props.testId] - ID para testing
+ * @param {string} [props.ariaLabel] - Label para accesibilidad
  */
-const ContentImage = ({
-  src,
-  alt,
-  aspectRatio = '2/3',
-  objectFit = 'cover',
-  rounded = 'md',
-  loading = 'lazy',
-  fetchPriority = 'auto',
-  onLoad,
-  onError,
-  placeholder,
-  contentType = 'generic',
-  showFallback = true,
-  blur = false,
-  className = '',
-  style,
-  ...restProps
-}) => {
-  const [imageState, setImageState] = useState('loading'); // 'loading' | 'loaded' | 'error'
+const ContentImage = (props) => {
+  const {
+    src,
+    alt,
+    // Props específicas de ContentImage
+    aspectRatio = '2/3',
+    objectFit = 'cover', 
+    imageLoading = 'lazy',
+    fetchPriority = 'auto',
+    onLoad,
+    onError,
+    placeholder,
+    contentType = 'generic',
+    showFallback = true,
+    blur = false,
+    // Props del sistema de diseño (manejadas por useStandardProps)
+    size,
+    variant,
+    rounded,
+    disabled,
+    loading,
+    className,
+    testId,
+    ariaLabel,
+    // Props restantes
+    ...restProps
+  } = useStandardProps(props, {
+    componentType: 'content-image',
+    defaultSize: 'md', // Restaurar defaultSize para consistencia
+    defaultVariant: 'primary',
+    defaultRounded: 'md'
+  });
+  const [imageState, setImageState] = useState(src ? 'loading' : 'error'); // 'loading' | 'loaded' | 'error'
   const [imageSrc, setImageSrc] = useState(src);
   const [hasErrored, setHasErrored] = useState(false);
   const prevSrcRef = useRef(src);
@@ -90,23 +120,36 @@ const ContentImage = ({
     onError?.(e);
   };
 
-  // Construir clases CSS
+  // Construir clases CSS con sistema de diseño
   const imageClasses = [
     'content-image',
+    // Siempre aplicar tamaño (ya sea especificado o por defecto)
+    `content-image--size-${size}`,
+    `content-image--variant-${variant}`,
     `content-image--aspect-${aspectRatio.replace('/', '-')}`,
     `content-image--fit-${objectFit}`,
     rounded !== 'md' && `content-image--rounded-${rounded}`,
     blur && 'content-image--blur',
     imageState === 'loading' && 'content-image--loading',
     imageState === 'error' && 'content-image--error',
+    (disabled || loading) && 'content-image--disabled',
+    loading && 'content-image--system-loading',
     className
-  ].filter(Boolean).join(' ');
+  ].filter(Boolean).join(' ');  
+  
+  // Extraer props seguras para DOM (sin className)
+  const domProps = extractDOMProps({
+    ...restProps,
+    'aria-label': ariaLabel,
+    'data-testid': testId
+  });
 
   return (
-    <div 
+    <div
+      {...domProps}
       className={imageClasses}
-      style={style}
-      {...restProps}
+      aria-disabled={disabled}
+      role="img"
     >
       {/* Skeleton de carga */}
       {imageState === 'loading' && (
@@ -122,11 +165,12 @@ const ContentImage = ({
         src={imageSrc}
         alt={alt}
         className="content-image__img"
-        loading={loading}
+        loading={imageLoading}
         fetchPriority={fetchPriority}
         onLoad={handleImageLoad}
         onError={handleImageError}
         draggable={false}
+        aria-hidden={disabled}
       />
 
       {/* Indicador de error (opcional) */}
@@ -141,21 +185,40 @@ const ContentImage = ({
 };
 
 ContentImage.propTypes = {
+  // Props requeridas
   src: PropTypes.string.isRequired,
   alt: PropTypes.string.isRequired,
+  
+  // Props estándar del sistema de diseño
+  ...STANDARD_PROP_TYPES,
+  
+  // Props específicas de ContentImage
   aspectRatio: PropTypes.oneOf(['1/1', '4/3', '3/2', '16/9', '2/3', '3/4', 'auto']),
   objectFit: PropTypes.oneOf(['cover', 'contain', 'fill', 'scale-down', 'none']),
-  rounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'full']),
-  loading: PropTypes.oneOf(['eager', 'lazy']),
+  imageLoading: PropTypes.oneOf(['eager', 'lazy']),
   fetchPriority: PropTypes.oneOf(['high', 'low', 'auto']),
   onLoad: PropTypes.func,
   onError: PropTypes.func,
   placeholder: PropTypes.string,
   contentType: PropTypes.oneOf(['movie', 'series', 'generic']),
   showFallback: PropTypes.bool,
-  blur: PropTypes.bool,
-  className: PropTypes.string,
-  style: PropTypes.object
+  blur: PropTypes.bool
+};
+
+ContentImage.defaultProps = {
+  size: 'md', // Tamaño estándar: 256px para carátulas
+  variant: 'primary', 
+  rounded: 'md',
+  disabled: false,
+  loading: false,
+  aspectRatio: '2/3',
+  objectFit: 'cover',
+  imageLoading: 'lazy',
+  fetchPriority: 'auto',
+  contentType: 'generic',
+  showFallback: true,
+  blur: false,
+  className: ''
 };
 
 export { ContentImage };
