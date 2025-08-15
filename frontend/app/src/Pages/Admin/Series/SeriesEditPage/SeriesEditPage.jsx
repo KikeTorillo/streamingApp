@@ -69,7 +69,7 @@ function SeriesEditPage() {
         label: 'Título de la Serie',
         placeholder: 'Ej: Breaking Bad',
         required: true,
-        leftIcon: 'tv',
+        leftIcon: 'film',
         helperText: 'Título principal que aparecerá en el catálogo',
         width: 'full'
       },

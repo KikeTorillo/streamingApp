@@ -89,20 +89,6 @@ function CategoryCreatePage() {
   };
 
   /**
-   * Navegar de vuelta
-   */
-  const handleGoBack = () => {
-    if (hasChanges) {
-      const confirmed = window.confirm(
-        '¿Estás seguro de que quieres salir? Los cambios no guardados se perderán.'
-      );
-      if (!confirmed) return;
-    }
-    
-    navigate('/admin/categories');
-  };
-
-  /**
    * Detectar cambios en el formulario
    */
   const handleFormChange = (formData) => {
@@ -189,18 +175,6 @@ function CategoryCreatePage() {
         size="lg" 
         variant="primary"
       >
-        
-        {/* Header Actions */}
-          <Button
-            variant="outline"
-            size="sm"
-            leftIcon="arrow-left"
-            onClick={handleGoBack}
-            disabled={loading}
-          >
-            Volver a Categorías
-          </Button>
-
         {/* Mensaje de Error */}
         {(error || contextError) && (
           <div className="status-message status-message--error">
@@ -246,30 +220,6 @@ function CategoryCreatePage() {
           validateOnChange={false}
           className="category-form"
         />
-
-        {/* Información adicional sobre categorías */}
-        <div className="form-footer">
-          <div className="info-card">
-            <h4>💡 Consejos para crear categorías</h4>
-            <ul>
-              <li><strong>Nombres claros:</strong> Usa términos conocidos como &quot;Acción&quot;, &quot;Drama&quot;, &quot;Comedia&quot;</li>
-              <li><strong>Evita duplicados:</strong> Revisa las categorías existentes antes de crear nuevas</li>
-              <li><strong>Sé específico:</strong> &quot;Documentales de Naturaleza&quot; es mejor que solo &quot;Documentales&quot;</li>
-              <li><strong>Mantén consistencia:</strong> Usa un criterio similar al nombrar categorías relacionadas</li>
-            </ul>
-          </div>
-          
-          <div className="info-card">
-            <h4>📊 Datos técnicos</h4>
-            <ul>
-              <li>Longitud mínima: 2 caracteres</li>
-              <li>Longitud máxima: 100 caracteres</li>
-              <li>Caracteres permitidos: letras, espacios, guiones, & y paréntesis</li>
-              <li>Los nombres deben ser únicos en el sistema</li>
-            </ul>
-          </div>
-        </div>
-
       </Container>
     </AdminLayout>
   );

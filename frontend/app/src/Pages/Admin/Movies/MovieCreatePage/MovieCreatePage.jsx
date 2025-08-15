@@ -85,7 +85,7 @@ function MovieCreatePage() {
       {
         name: 'title',
         type: 'text',
-        label: 'Título *',
+        label: 'Título',
         placeholder: 'Ej: Avatar: El Camino del Agua',
         required: true,
         leftIcon: 'film',
@@ -94,36 +94,36 @@ function MovieCreatePage() {
       {
         name: 'description',
         type: 'textarea',
-        label: 'Descripción *',
+        label: 'Descripción',
         placeholder: 'Escribe una descripción atractiva del contenido...',
         required: true,
         rows: 4,
-        leftIcon: '📝',
+        leftIcon: 'edit',
         helperText: 'Descripción que aparecerá en la página de detalles'
       },
       {
         name: 'releaseYear',
         type: 'number',
-        label: 'Año de Estreno *',
+        label: 'Año de Estreno',
         placeholder: new Date().getFullYear().toString(),
         required: true,
         min: 1900,
         max: new Date().getFullYear() + 5,
-        leftIcon: '📅',
+        leftIcon: 'date',
         helperText: 'Año de estreno original'
       },
       {
         name: 'categoryId',
         type: 'select',
         label: (() => {
-          if (categoriesLoading) return '⏳ Cargando categorías...';
-          if (categoriesError) return '❌ Error al cargar categorías';
-          if (categories.length === 0) return '📋 Sin categorías disponibles - Ve a Administrar > Categorías para crear una.';
-          return `📋 Selecciona la categoría principal (${categories.length} disponibles)`;
+          if (categoriesLoading) return 'Cargando categorías...';
+          if (categoriesError) return 'Error al cargar categorías';
+          if (categories.length === 0) return 'Sin categorías disponibles - Ve a Administrar > Categorías para crear una.';
+          return `Selecciona la categoría principal (${categories.length} disponibles)`;
         })(),
         placeholder: categoriesLoading ? 'Cargando categorías...' : 'Selecciona una categoría',
         required: true,
-        leftIcon: '🏷️',
+        leftIcon: 'star',
         options: categories.map(cat => ({
           value: cat.id,
           label: cat.name
@@ -136,7 +136,7 @@ function MovieCreatePage() {
         type: 'text',
         label: 'URL de Portada',
         placeholder: 'https://ejemplo.com/imagen.jpg',
-        leftIcon: '🔗',
+        leftIcon: 'external-link',
         helperText: 'URL de la imagen de portada (opcional si subes archivo)'
       },
       {
@@ -152,10 +152,10 @@ function MovieCreatePage() {
       {
         name: 'video',
         type: 'file',
-        label: 'Archivo de Video *',
+        label: 'Archivo de Video',
         accept: 'video/*,.mkv,.avi,.mp4,.webm,.mov,.wmv,.flv,.m4v',
         required: true,
-        leftIcon: '🎥',
+        leftIcon: 'video',
         helperText: 'Archivo de video a subir (formatos: mp4, avi, mkv, webm, mov, wmv, flv, m4v)'
       }
     ];
@@ -251,23 +251,13 @@ function MovieCreatePage() {
     >
       <Container size='lg'>
         <div className="movie-create-page">
-          {/* Botón volver a películas */}
-            <Button
-              variant="outline"
-              size="md"
-              leftIcon="arrow-left"
-              onClick={() => navigate('/admin/movies')}
-            >
-              Volver a Películas
-            </Button>
-
           {/* Contenido principal */}
           {currentView === 'search' && (
             <TMDBSearchView
               onSelectItem={handleSelectFromTMDBWithReset}
               onManualCreate={handleManualCreateWithReset}
               contentType="movie"
-              title="🎬 Buscar Películas en TMDB"
+              title="Buscar Películas en TMDB"
               description="Busca películas en The Movie Database para agregar a tu catálogo"
               placeholder="Ej: Avatar, Inception, Avengers..."
               helperText="Busca películas por título, año o palabras clave"
@@ -277,6 +267,11 @@ function MovieCreatePage() {
 
           {currentView === 'form' && (
             <MovieFormView
+              title={selectedItem ? `${selectedItem.title || selectedItem.name} (desde TMDB)` : "Crear Película Manualmente"}
+              description={selectedItem ? 
+                "Completa la información adicional para la película seleccionada de TMDB" : 
+                "Completa toda la información para crear una nueva película desde cero"
+              }
               fields={generateFormFields()}
               initialData={generateInitialFormData(selectedItem)}
               onSubmit={handleFormSubmit}

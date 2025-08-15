@@ -307,7 +307,7 @@ function MoviesDetailPage() {
                                 <Button
                                     variant="primary"
                                     size="lg"
-                                    leftIcon="▶️"
+                                    leftIcon="play"
                                     onClick={handlePlayMovie}
                                     disabled={!movie.file_hash}
                                 >
@@ -316,7 +316,7 @@ function MoviesDetailPage() {
                                 <Button
                                     variant="outline"
                                     size="lg"
-                                    leftIcon="📋"
+                                    leftIcon="arrow-left"
                                     onClick={handleBackToMain}
                                 >
                                     Volver a Películas

@@ -1,135 +1,203 @@
-/* ===== FILEINPUTFIELD COMPONENT - OPTIMIZADO SIN REDUNDANCIAS ===== */
-/* FileInputField.css - Solo estilos específicos de la molécula */
-/* Aprovecha COMPLETAMENTE el átomo FileInput actualizado con variables centralizadas */
+/* ===== FILEINPUTFIELD COMPONENT - SISTEMA DE DISE�O 100% ===== */
+/* Siguiendo exactamente el patr�n de TextInput.css del sistema */
 
 /* ===== WRAPPER BASE ===== */
 .file-input-field-wrapper {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    font-family: var(--font-family-base);
-    gap: var(--space-xs);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  font-family: var(--font-family-base);
+  gap: var(--space-xs);
+  width: 100%;
 }
 
 .file-input-field-wrapper--full-width {
-    width: 100%;
+  width: 100%;
 }
 
 .file-input-field-wrapper--disabled {
-    opacity: 0.6;
-    pointer-events: none;
+  opacity: 0.6;
+  pointer-events: none;
 }
 
-/* ===== LABEL (IDÉNTICO A TEXTINPUT Y TEXTSELECT) ===== */
+.file-input-field-wrapper--loading {
+  pointer-events: none;
+}
+
+.file-input-field-wrapper--loading .file-input-field__label {
+  opacity: 0.7;
+}
+
+.file-input-field-wrapper--compact {
+  gap: calc(var(--space-xs) / 2);
+}
+
+/* ===== LABEL - SISTEMA EST�NDAR ===== */
 .file-input-field__label {
-     display: block;
-    font-weight: var(--font-weight-medium);
-    color: var(--text-primary);
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-tight);
-    margin: 0;
-    transition: color var(--transition-normal);
+  display: block;
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-tight);
+  margin: 0;
+  transition: color var(--transition-normal);
 }
 
 .file-input-field__label--required::after {
-    content: ' *';
-    color: var(--color-danger);
-    font-weight: var(--font-weight-bold);
+  content: ' *';
+  color: var(--color-danger);
+  font-weight: var(--font-weight-bold);
 }
 
-/* Estados del label */
+/* ===== ESTADOS DEL LABEL ===== */
 .file-input-field-wrapper--focused .file-input-field__label {
-    color: var(--border-focus);
+  color: var(--border-focus);
 }
 
 .file-input-field-wrapper--error .file-input-field__label {
-    color: var(--color-danger);
+  color: var(--color-danger);
 }
 
 .file-input-field-wrapper--success .file-input-field__label {
-    color: var(--color-success);
+  color: var(--color-success);
 }
 
 .file-input-field-wrapper--warning .file-input-field__label {
-    color: var(--color-warning);
+  color: var(--color-warning);
 }
 
+.file-input-field-wrapper--primary .file-input-field__label {
+  color: var(--color-primary);
+}
 
+.file-input-field-wrapper--secondary .file-input-field__label {
+  color: var(--color-secondary);
+}
 
-/* ===== FOOTER (IDÉNTICO A TEXTINPUT Y TEXTSELECT) ===== */
+.file-input-field-wrapper--danger .file-input-field__label {
+  color: var(--color-danger);
+}
+
+.file-input-field-wrapper--neutral .file-input-field__label {
+  color: var(--text-primary);
+}
+
+/* ===== FOOTER CON MENSAJES ===== */
 .file-input-field__footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: var(--space-md);
-    min-height: 2rem;
-}
-
-/* ===== MENSAJES ===== */
-.file-input-field__helper-text {
-    display: block;
-    font-size: var(--font-size-sm);
-    color: var(--text-secondary);
-    line-height: var(--line-height-normal);
-    margin: 0;
-    transition: color var(--transition-normal);
-}
-
-.file-input-field__error-text {
-    display: block;
-    font-size: var(--font-size-sm);
-    color: var(--color-danger);
-    line-height: var(--line-height-normal);
-    font-weight: var(--font-weight-medium);
-    margin: 0;
-    animation: slideInError 0.2s ease-out;
-}
-
-/* Animación sutil para errores (igual que TextInput) */
-@keyframes slideInError {
-    from {
-        opacity: 0;
-        transform: translateY(-0.4rem);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* ===== VERSIÓN COMPACTA (ESPECÍFICA DE FILEINPUTFIELD) ===== */
-.file-input-field-wrapper--compact {
-    gap: calc(var(--space-xs) / 2);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-md);
+  min-height: 2rem;
 }
 
 .file-input-field-wrapper--compact .file-input-field__footer {
-    min-height: 1.6rem;
-    gap: var(--space-sm);
+  min-height: 1.6rem;
+  gap: var(--space-sm);
 }
 
-.file-input-field-wrapper--compact .file-input-field__helper-text,
+/* ===== MENSAJES DE AYUDA ===== */
+.file-input-field__helper-text {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: var(--line-height-normal);
+  margin: 0;
+  transition: color var(--transition-normal);
+}
+
+.file-input-field-wrapper--compact .file-input-field__helper-text {
+  font-size: var(--font-size-xs);
+}
+
+/* ===== MENSAJES DE ERROR ===== */
+.file-input-field__error-text {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--color-danger);
+  line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-medium);
+  margin: 0;
+  animation: slideInError 0.2s ease-out;
+}
+
 .file-input-field-wrapper--compact .file-input-field__error-text {
-    font-size: var(--font-size-xs);
+  font-size: var(--font-size-xs);
 }
 
-/* ===== RESPONSIVE ESPECÍFICO SOLO PARA MENSAJES ===== */
+@keyframes slideInError {
+  from {
+    opacity: 0;
+    transform: translateY(-0.4rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-    /* Solo ajustes específicos del footer en móviles */
-    .file-input-field__footer {
-        flex-direction: column;
-        align-items: stretch;
-        gap: var(--space-xs);
-    }
+  .file-input-field__footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-xs);
+  }
 }
 
-/* Accesibilidad específica solo para animaciones de la molécula */
+/* ===== ACCESIBILIDAD ===== */
 @media (prefers-reduced-motion: reduce) {
-    .file-input-field__error-text {
-        animation: none;
-    }
-    
-    .file-input-field__label,
-    .file-input-field__helper-text {
-        transition: none;
-    }
+  .file-input-field__error-text {
+    animation: none;
+  }
+  
+  .file-input-field__label,
+  .file-input-field__helper-text {
+    transition: none;
+  }
+}
+
+/* ===== TEMA OSCURO ===== */
+.dark .file-input-field__label {
+  color: var(--text-primary);
+}
+
+.dark .file-input-field__helper-text {
+  color: var(--text-secondary);
+}
+
+.dark .file-input-field__error-text {
+  color: var(--color-danger);
+}
+
+.dark .file-input-field-wrapper--focused .file-input-field__label {
+  color: var(--border-focus);
+}
+
+.dark .file-input-field-wrapper--error .file-input-field__label {
+  color: var(--color-danger);
+}
+
+.dark .file-input-field-wrapper--success .file-input-field__label {
+  color: var(--color-success);
+}
+
+.dark .file-input-field-wrapper--warning .file-input-field__label {
+  color: var(--color-warning);
+}
+
+.dark .file-input-field-wrapper--primary .file-input-field__label {
+  color: var(--color-primary);
+}
+
+.dark .file-input-field-wrapper--secondary .file-input-field__label {
+  color: var(--color-secondary);
+}
+
+.dark .file-input-field-wrapper--danger .file-input-field__label {
+  color: var(--color-danger);
+}
+
+.dark .file-input-field-wrapper--neutral .file-input-field__label {
+  color: var(--text-primary);
 }

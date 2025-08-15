@@ -62,8 +62,6 @@ function FilterBar(props) {
     className
   ].filter(Boolean).join(' ');
 
-  console.log(domProps);
-
   return (
     <div
       {...domProps} // ✅ Solo props válidas del DOM

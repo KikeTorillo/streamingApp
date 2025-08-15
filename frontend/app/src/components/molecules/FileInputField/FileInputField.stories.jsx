@@ -12,45 +12,57 @@ export default {
     docs: {
       description: {
         component: `
-# FileInputField - Molécula del Sistema de Diseño
+# FileInputField - Molécula del Sistema de Diseño Estándar
 
-**FileInputField** es la molécula que extiende el átomo FileInput, siguiendo exactamente el mismo patrón arquitectural que TextInput.
+**FileInputField** migrado al sistema de diseño estándar, extiende el átomo FileInput siguiendo el patrón arquitectural de TextInput.
 
-## 🏗️ Arquitectura Atomic Design
+## ✅ MIGRADO AL SISTEMA ESTÁNDAR - Enero 2025
+
+### 🏗️ Arquitectura Atomic Design
 
 \`\`\`
 FileInputField (Molécula) 🧬
-├── Label (elemento)
-├── FileInput (Átomo) ⚛️ ← Reutiliza todas las funcionalidades
+├── Label (elemento) + validateStandardProps
+├── FileInput (Átomo) ⚛️ ← Sistema de diseño estándar completo
 └── Footer
     └── Messages (helper/error con live regions)
 \`\`\`
 
-## 🎯 Características principales
+### 🎯 Sistema de Diseño Estándar
 
-- **Basado en FileInput**: Hereda todas las funcionalidades del átomo
-- **Estructura consistente**: Label + Campo + Footer (igual que TextInput)
-- **Estados semánticos**: Default, Success, Warning, Danger
-- **Tamaños responsive**: XS, SM, MD, LG, XL
-- **Accesibilidad completa**: ARIA, labels asociados, live regions
-- **Theming automático**: Variables CSS del sistema
-- **Mobile-first**: Optimizado para dispositivos móviles
+- **Props estándar**: size, variant, rounded, disabled, loading, leftIcon, rightIcon
+- **6 variantes semánticas**: primary, secondary, success, warning, danger, neutral
+- **Backward compatibility**: Mapeo automático default → primary, error → danger
+- **validateStandardProps**: Validación unificada con deprecation warnings
+- **STANDARD_PROP_TYPES**: PropTypes del sistema integrados
+- **Hook especializado**: useFileInputProps automático del átomo
 
-## 🎨 Consistencia visual
+### 🎨 Consistencia 100% con TextInput
 
-Usa exactamente las mismas variables CSS que TextInput:
-- Spacing, tipografía, colores idénticos
-- Estados focus/hover/disabled coherentes
-- Mensajes de error y ayuda uniformes
-- Responsive design consistente
+\`\`\`jsx
+// Misma API que TextInput
+<FileInputField
+  size="md"                    // xs, sm, md, lg, xl
+  variant="primary"            // primary, secondary, success, warning, danger, neutral  
+  loading={true}               // Estado loading con spinner
+  leftIcon="upload"            // Sistema de iconos Feather
+  label="Subir archivo"
+  helperText="Formatos permitidos"
+  errorText="Archivo requerido"
+/>
+\`\`\`
 
-## 📱 Casos de uso
+### 📱 Migración Automática
 
-Perfecto para formularios donde necesitas:
-- Subida de archivos con labels descriptivos
-- Validación visual con mensajes de error
-- Consistencia con otros campos del formulario
-- Integración con DynamicForm
+\`\`\`jsx
+// ANTES (legacy) - sigue funcionando
+<FileInputField variant="default" />
+
+// DESPUÉS (estándar) - recomendado
+<FileInputField variant="primary" />
+
+// Auto-mapping: 'default' → 'primary', 'error' → 'danger'
+\`\`\`
         `
       }
     }
@@ -101,12 +113,55 @@ Perfecto para formularios donde necesitas:
     },
     variant: {
       name: 'Variante',
-      description: 'Variante visual semántica',
+      description: 'Variante semántica del sistema de diseño estándar',
       control: 'select',
-      options: ['default', 'success', 'warning', 'danger'],
+      options: ['primary', 'secondary', 'success', 'warning', 'danger', 'neutral', 'default', 'error'],
       table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: "'default'" }
+        type: { summary: "'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'neutral'" },
+        defaultValue: { summary: "'primary'" }
+      }
+    },
+    loading: {
+      name: 'Loading',
+      description: 'Estado de carga con spinner',
+      control: 'boolean',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' }
+      }
+    },
+    leftIcon: {
+      name: 'Icono izquierdo',
+      description: 'Icono del sistema Feather o componente React',
+      control: 'text',
+      table: {
+        type: { summary: 'string | ReactNode' }
+      }
+    },
+    rightIcon: {
+      name: 'Icono derecho',
+      description: 'Icono del sistema Feather o componente React',
+      control: 'text',
+      table: {
+        type: { summary: 'string | ReactNode' }
+      }
+    },
+    fullWidth: {
+      name: 'Ancho completo',
+      description: 'Ocupa todo el ancho disponible',
+      control: 'boolean',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' }
+      }
+    },
+    compact: {
+      name: 'Compacto',
+      description: 'Versión compacta con spacing reducido',
+      control: 'boolean',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' }
       }
     },
     accept: {
@@ -159,13 +214,21 @@ const Template = (args) => (
 
 // ===== STORIES PRINCIPALES =====
 
-export const Playground = Template.bind({});
-Playground.args = {
+export const Default = Template.bind({});
+Default.args = {
   label: 'Subir archivo',
   helperText: 'Selecciona un archivo de tu dispositivo',
   text: 'Seleccionar archivo',
   size: 'md',
-  variant: 'default'
+  variant: 'primary'
+};
+
+Default.parameters = {
+  docs: {
+    description: {
+      story: 'Configuración por defecto de FileInputField con sistema de diseño estándar. Variante primary, tamaño medium, estructura consistente con TextInput.'
+    }
+  }
 };
 
 // ===== COMPARACIÓN CON TEXTINPUT =====
@@ -242,9 +305,76 @@ export const VisualConsistency = () => {
   );
 };
 
-// ===== ESTADOS Y VARIANTES =====
+// ===== SISTEMA DE DISEÑO ESTÁNDAR - VARIANTES =====
 
-export const StatesAndVariants = () => (
+export const SystemStandardVariants = () => (
+  <div style={{ 
+    display: 'grid', 
+    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+    gap: 'var(--space-lg)',
+    maxWidth: '900px'
+  }}>
+    <FileInputField
+      label="Primary (Principal)"
+      helperText="Acción principal del formulario"
+      text="Seleccionar archivo"
+      variant="primary"
+      leftIcon="upload"
+    />
+    
+    <FileInputField
+      label="Secondary (Secundaria)"
+      helperText="Acción secundaria opcional"
+      text="Archivo opcional"
+      variant="secondary"
+      leftIcon="file"
+    />
+    
+    <FileInputField
+      label="Success (Éxito)"
+      helperText="Archivo validado correctamente"
+      text="Archivo válido"
+      variant="success"
+      leftIcon="check-circle"
+    />
+    
+    <FileInputField
+      label="Warning (Advertencia)"
+      helperText="Revisa el tipo de archivo"
+      text="Revisar archivo"
+      variant="warning"
+      leftIcon="alert-triangle"
+    />
+    
+    <FileInputField
+      label="Danger (Error)"
+      errorText="Tipo de archivo no permitido"
+      text="Archivo inválido"
+      variant="danger"
+      leftIcon="alert-circle"
+    />
+    
+    <FileInputField
+      label="Neutral (Neutro)"
+      helperText="Campo neutro sin semántica"
+      text="Seleccionar archivo"
+      variant="neutral"
+      leftIcon="folder"
+    />
+  </div>
+);
+
+SystemStandardVariants.parameters = {
+  docs: {
+    description: {
+      story: '6 variantes semánticas del sistema de diseño estándar con iconos automáticos. Cada variante tiene colores y semántica específica.'
+    }
+  }
+};
+
+// ===== ESTADOS ESTÁNDAR =====
+
+export const SystemStandardStates = () => (
   <div style={{ 
     display: 'grid', 
     gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
@@ -253,36 +383,25 @@ export const StatesAndVariants = () => (
   }}>
     <FileInputField
       label="Estado normal"
-      helperText="Campo en estado por defecto"
+      helperText="Campo en estado normal"
       text="Seleccionar archivo"
+      size="lg"
     />
     
     <FileInputField
       label="Campo requerido"
       helperText="Este campo es obligatorio"
-      text="Seleccionar archivo"
+      text="Archivo requerido"
       required
+      size="lg"
     />
     
     <FileInputField
-      label="Estado de éxito"
-      helperText="Archivo validado correctamente"
-      text="Archivo válido"
-      variant="success"
-    />
-    
-    <FileInputField
-      label="Estado de advertencia"
-      helperText="Revisa el tipo de archivo"
-      text="Revisar archivo"
-      variant="warning"
-    />
-    
-    <FileInputField
-      label="Estado de error"
-      errorText="Tipo de archivo no permitido"
-      text="Seleccionar otro archivo"
-      variant="danger"
+      label="Estado loading"
+      helperText="Procesando archivo..."
+      text="Cargando..."
+      loading
+      size="lg"
     />
     
     <FileInputField
@@ -290,9 +409,33 @@ export const StatesAndVariants = () => (
       helperText="No se puede modificar"
       text="Archivo bloqueado"
       disabled
+      size="lg"
+    />
+    
+    <FileInputField
+      label="Con error"
+      errorText="Este campo es obligatorio"
+      text="Seleccionar archivo"
+      size="lg"
+    />
+    
+    <FileInputField
+      label="Ancho completo"
+      helperText="Ocupa todo el ancho disponible"
+      text="Archivo completo"
+      fullWidth
+      size="lg"
     />
   </div>
 );
+
+SystemStandardStates.parameters = {
+  docs: {
+    description: {
+      story: 'Estados estándar del sistema: Normal, Required, Loading (con spinner), Disabled, Error, FullWidth. Todos con iconos automáticos.'
+    }
+  }
+};
 
 // ===== TAMAÑOS =====
 
@@ -339,6 +482,85 @@ export const Sizes = () => (
     />
   </div>
 );
+
+// ===== BACKWARD COMPATIBILITY DEMO =====
+
+export const BackwardCompatibilityDemo = () => (
+  <div style={{ 
+    display: 'grid', 
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: 'var(--space-lg)',
+    maxWidth: '900px'
+  }}>
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>
+        Legacy: variant="default"
+      </h4>
+      <FileInputField 
+        label="Archivo legacy" 
+        variant="default" 
+        text="Auto-mapping a primary" 
+        helperText="Mapeo automático legacy → estándar"
+      />
+      <small style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
+        (Auto-mapped to primary)
+      </small>
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>
+        New: variant="primary"
+      </h4>
+      <FileInputField 
+        label="Archivo estándar" 
+        variant="primary" 
+        text="Estándar primary" 
+        helperText="Sistema de diseño estándar"
+      />
+      <small style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
+        (Standard primary)
+      </small>
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>
+        Legacy: variant="error"
+      </h4>
+      <FileInputField 
+        label="Error legacy" 
+        variant="error" 
+        text="Auto-mapping a danger" 
+        helperText="Mapeo automático error → danger"
+      />
+      <small style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
+        (Auto-mapped to danger)
+      </small>
+    </div>
+    
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>
+        New: variant="danger"
+      </h4>
+      <FileInputField 
+        label="Error estándar" 
+        variant="danger" 
+        text="Estándar danger" 
+        helperText="Sistema de diseño estándar"
+      />
+      <small style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
+        (Standard danger)
+      </small>
+    </div>
+  </div>
+);
+
+BackwardCompatibilityDemo.parameters = {
+  docs: {
+    description: {
+      story: 'Demostración de backward compatibility. Las variantes legacy se mapean automáticamente: "default" → "primary", "error" → "danger". Sin breaking changes en el código existente.'
+    }
+  }
+};
 
 // ===== TIPOS DE ARCHIVO =====
 
@@ -459,7 +681,7 @@ export const CompleteExample = () => {
           text="Subir foto"
           helperText="JPG, PNG (máx. 2MB)"
           errorText={errors.profilePhoto}
-          variant={errors.profilePhoto ? 'danger' : formData.profilePhoto ? 'success' : 'default'}
+          variant={errors.profilePhoto ? 'danger' : formData.profilePhoto ? 'success' : 'primary'}
           onChange={handleFileChange('profilePhoto')}
         />
         
@@ -479,7 +701,7 @@ export const CompleteExample = () => {
           text="Subir CV"
           helperText="Solo archivos PDF"
           errorText={errors.resume}
-          variant={errors.resume ? 'danger' : formData.resume ? 'success' : 'default'}
+          variant={errors.resume ? 'danger' : formData.resume ? 'success' : 'primary'}
           onChange={handleFileChange('resume')}
         />
         

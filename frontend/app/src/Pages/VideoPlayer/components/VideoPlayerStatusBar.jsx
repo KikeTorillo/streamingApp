@@ -13,7 +13,7 @@ export const VideoPlayerStatusBar = ({
     <div className="video-status-indicators">
       {currentQuality && (
         <span className="quality-indicator">
-          📺 {currentQuality}
+          {currentQuality}
         </span>
       )}
       {bufferPercentage > 0 && (

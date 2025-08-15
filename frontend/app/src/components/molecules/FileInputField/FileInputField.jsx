@@ -3,15 +3,18 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import './FileInputField.css';
 import { FileInput } from '../../atoms/FileInput/FileInput';
+import { validateStandardProps, STANDARD_PROP_TYPES } from '../../../tokens';
 
 /**
  * FileInputField - MOLÉCULA QUE EXTIENDE EL ÁTOMO FILEINPUT
  * Siguiendo exactamente el mismo patrón que TextInput
  * 
+ * ✅ MIGRADO AL SISTEMA ESTÁNDAR - Enero 2025
  * ✅ ATOMIC DESIGN: Molécula que usa el átomo FileInput
  * ✅ CONSISTENCIA: Misma estructura que TextInput (label + campo + footer)
- * ✅ SISTEMA DE DISEÑO: Variables CSS del sistema
+ * ✅ SISTEMA DE DISEÑO: Variables CSS del sistema + validateStandardProps
  * ✅ ACCESIBILIDAD: ARIA completo, labels asociados
+ * ✅ BACKWARD COMPATIBILITY: Mapeo automático de variantes legacy
  * 
  * @param {Object} props - Propiedades del componente
  * @param {string} [props.label] - Etiqueta del campo
@@ -29,49 +32,71 @@ import { FileInput } from '../../atoms/FileInput/FileInput';
  * @param {boolean} [props.multiple=false] - Permite múltiples archivos
  * @param {boolean} [props.disabled=false] - Si está deshabilitado
  * @param {'xs'|'sm'|'md'|'lg'|'xl'} [props.size='md'] - Tamaño del componente
- * @param {'default'|'success'|'warning'|'danger'} [props.variant='default'] - Variante visual
+ * @param {'primary'|'secondary'|'success'|'warning'|'danger'|'neutral'} [props.variant='primary'] - Variante estándar del sistema
  * @param {'sm'|'md'|'lg'|'xl'|'full'} [props.rounded='md'] - Radio de bordes
  * @param {string} [props.text='Seleccionar archivo'] - Texto del botón
  * @param {function} [props.onChange] - Handler cuando se selecciona archivo
  * @param {function} [props.onFocus] - Handler cuando obtiene foco
  * @param {function} [props.onBlur] - Handler cuando pierde foco
  */
-function FileInputField({
-  // Props específicas de la molécula
-  label,
-  helperText,
-  errorText,
-  required = false,
-  fullWidth = false,
-  compact = false,
-  className = '',
+function FileInputField(props) {
+  // ✅ VALIDAR PROPS ESTÁNDAR - Sistema unificado con deprecation warnings
+  const validatedProps = validateStandardProps(props, 'FileInputField');
   
-  // Props heredadas del átomo FileInput
-  id,
-  name,
-  accept,
-  multiple = false,
-  disabled = false,
-  size = 'md',
-  variant = 'default',
-  rounded = 'md',
-  text = 'Seleccionar archivo',
-  onChange = () => {},
-  onFocus = () => {},
-  onBlur = () => {},
-  ariaLabel,
-  ariaDescribedBy,
-  ...rest
-}) {
+  const {
+    // ✅ PROPS ESTÁNDAR DEL SISTEMA
+    size = 'md',
+    variant = 'primary',
+    rounded = 'md',
+    disabled = false,
+    loading = false,
+    className = '',
+    leftIcon,
+    rightIcon,
+    
+    // ✅ PROPS ESPECÍFICAS DE FILEINPUTFIELD
+    label,
+    helperText,
+    errorText,
+    required = false,
+    fullWidth = false,
+    compact = false,
+    
+    // Props heredadas del átomo FileInput
+    id,
+    name,
+    accept,
+    multiple = false,
+    text = 'Seleccionar archivo',
+    onChange = () => {},
+    onFocus = () => {},
+    onBlur = () => {},
+    ariaLabel,
+    ariaDescribedBy,
+    ...rest
+  } = validatedProps;
+  // ⚠️ BACKWARD COMPATIBILITY WARNING
+  if (props.variant === 'default' || props.variant === 'error') {
+    console.warn(
+      `FileInputField: Las variantes "default" y "error" están deprecadas.
+      Migración sugerida:
+      - variant="default" → variant="primary"  
+      - variant="error" → variant="danger"
+      
+      Variantes estándar disponibles: primary, secondary, success, warning, danger, neutral`
+    );
+  }
+
   // Estados internos para manejo de focus (igual que TextInput)
   const [focused, setFocused] = useState(false);
 
-  // Determinar el estado actual
+  // Determinar el estado actual con mapeo de variantes legacy
   const hasError = Boolean(errorText);
-  const currentVariant = hasError ? 'danger' : variant;
+  const mappedVariant = hasError ? 'danger' : (variant === 'default' ? 'primary' : variant === 'error' ? 'danger' : variant);
+  const currentVariant = mappedVariant;
 
   // Generar IDs únicos si no se proporcionan
-  const inputId = id || `file-input-field-${Math.random().toString(36).substr(2, 9)}`;
+  const inputId = id || `file-input-field-${Math.random().toString(36).substring(2, 9)}`;
   const helperId = helperText ? `${inputId}-helper` : undefined;
   const errorId = errorText ? `${inputId}-error` : undefined;
   const describedBy = [helperId, errorId, ariaDescribedBy].filter(Boolean).join(' ') || undefined;
@@ -99,6 +124,7 @@ function FileInputField({
     `file-input-field-wrapper--${currentVariant}`,
     focused && 'file-input-field-wrapper--focused',
     disabled && 'file-input-field-wrapper--disabled',
+    loading && 'file-input-field-wrapper--loading',
     hasError && 'file-input-field-wrapper--error',
     fullWidth && 'file-input-field-wrapper--full-width',
     compact && 'file-input-field-wrapper--compact',
@@ -107,7 +133,7 @@ function FileInputField({
 
   return (
     <div className={wrapperClasses}>
-      {/* Label (igual estructura que TextInput) */}
+      {/* Label simple (sin icono, para evitar duplicación visual) */}
       {label && (
         <label 
           htmlFor={inputId} 
@@ -117,23 +143,29 @@ function FileInputField({
         </label>
       )}
 
-      {/* FileInput átomo */}
+      {/* FileInput átomo - sin mensajes propios (los maneja la molécula) */}
       <FileInput
         id={inputId}
         name={name}
         accept={accept}
         multiple={multiple}
         disabled={disabled}
+        loading={loading}
         required={required}
         size={size}
         variant={currentVariant}
         rounded={rounded}
+        leftIcon={leftIcon}
+        rightIcon={rightIcon}
         text={text}
         onChange={onChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
         ariaLabel={ariaLabel || label}
         ariaDescribedBy={describedBy}
+        // Sin helperText ni errorText para evitar duplicación
+        helperText=""
+        errorText=""
         {...rest}
       />
 
@@ -158,27 +190,36 @@ function FileInputField({
 }
 
 FileInputField.propTypes = {
+  // Props específicas de la molécula
   label: PropTypes.string,
   helperText: PropTypes.string,
   errorText: PropTypes.string,
   required: PropTypes.bool,
   fullWidth: PropTypes.bool,
   compact: PropTypes.bool,
-  className: PropTypes.string,
+  
+  // Props heredadas del átomo FileInput
   id: PropTypes.string,
   name: PropTypes.string,
   accept: PropTypes.string,
   multiple: PropTypes.bool,
-  disabled: PropTypes.bool,
-  size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
-  variant: PropTypes.oneOf(['default', 'success', 'warning', 'danger']),
-  rounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'full']),
   text: PropTypes.string,
   onChange: PropTypes.func,
   onFocus: PropTypes.func,
   onBlur: PropTypes.func,
   ariaLabel: PropTypes.string,
-  ariaDescribedBy: PropTypes.string
+  ariaDescribedBy: PropTypes.string,
+  
+  // Props estándar del sistema de diseño
+  ...STANDARD_PROP_TYPES,
+  
+  // Backward compatibility - variantes legacy (con deprecation warnings)
+  variant: PropTypes.oneOf([
+    // Nuevas variantes estándar
+    'primary', 'secondary', 'success', 'warning', 'danger', 'neutral',
+    // Variantes legacy (deprecadas)
+    'default', 'error'
+  ])
 };
 
 export { FileInputField };

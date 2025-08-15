@@ -79,7 +79,7 @@ import { FileInput } from './atoms/FileInput';
       options: ['primary', 'secondary', 'success', 'warning', 'danger', 'neutral', 'default', 'error'],
       table: {
         type: { summary: "'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'neutral'" },
-        defaultValue: { summary: 'neutral' }
+        defaultValue: { summary: 'primary' }
       }
     },
     rounded: {
@@ -192,7 +192,7 @@ export const Default = {
   args: {
     text: 'Seleccionar archivo',
     size: 'md',
-    variant: 'neutral',
+    variant: 'primary',
     rounded: 'md'
   }
 };
@@ -200,7 +200,7 @@ export const Default = {
 Default.parameters = {
   docs: {
     description: {
-      story: 'Configuración por defecto del FileInput con sistema de diseño estándar. Variante neutral, tamaño medium, con iconos automáticos del sistema.'
+      story: 'Configuración por defecto del FileInput con sistema de diseño estándar. Variante primary, tamaño medium, con iconos automáticos del sistema.'
     }
   }
 };

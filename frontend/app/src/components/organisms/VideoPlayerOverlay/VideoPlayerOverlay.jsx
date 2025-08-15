@@ -1,5 +1,6 @@
 import { useState, useCallback, forwardRef, useImperativeHandle } from 'react';
 import PropTypes from 'prop-types';
+import { Icon } from '../../atoms/Icon/Icon';
 import './VideoPlayerOverlay.css';
 
 const VideoPlayerOverlay = forwardRef(({ 
@@ -50,7 +51,7 @@ const VideoPlayerOverlay = forwardRef(({
           type="button"
           aria-label={`Retroceder ${skipSeconds} segundos`}
         >
-          ⏪
+          <Icon name="skip-back" size="lg" />
         </button>
         
         <button 
@@ -59,7 +60,7 @@ const VideoPlayerOverlay = forwardRef(({
           type="button"
           aria-label={isPlaying ? 'Pausar' : 'Reproducir'}
         >
-          {isPlaying ? '⏸️' : '▶️'}
+          <Icon name={isPlaying ? 'pause' : 'play'} size="xl" />
         </button>
         
         <button 
@@ -68,7 +69,7 @@ const VideoPlayerOverlay = forwardRef(({
           type="button"
           aria-label={`Avanzar ${skipSeconds} segundos`}
         >
-          ⏩
+          <Icon name="skip-forward" size="lg" />
         </button>
       </div>
     </div>

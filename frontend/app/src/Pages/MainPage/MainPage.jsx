@@ -258,7 +258,7 @@ function MainPage() {
                             <Button
                                 variant="outline"
                                 size="md"
-                                leftIcon="📤"
+                                leftIcon="upload"
                                 onClick={() => showPermissionError('Solo los administradores pueden subir contenido')}
                             >
                                 Solicitar Acceso
@@ -272,7 +272,7 @@ function MainPage() {
             {/* ===== SECCIÓN DE PELÍCULAS ===== */}
             <ContentSection
                 title={`Películas ${searchTerm ? `- "${searchTerm}"` : selectedCategory !== 'all' ? '- Filtradas' : 'Populares'}`}
-                icon="🎬"
+                icon="film"
                 loading={loadingMovies || searching}
                 error={moviesError}
                 empty={filteredMovies.length === 0 && !loadingMovies}
@@ -323,7 +323,7 @@ function MainPage() {
             {/* ===== SECCIÓN DE SERIES ===== */}
             <ContentSection
                 title={`Series ${searchTerm ? `- "${searchTerm}"` : selectedCategory !== 'all' ? '- Filtradas' : 'Populares'}`}
-                icon="📺"
+                icon="video"
                 loading={loadingSeries || searching}
                 error={seriesError}
                 empty={filteredSeries.length === 0 && !loadingSeries}

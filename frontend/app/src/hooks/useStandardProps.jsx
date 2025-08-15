@@ -266,9 +266,10 @@ export const useAvatarProps = (props) => useStandardProps(props, {
 /**
  * Hook especializado para componentes tipo FileInput
  * Configuración optimizada para inputs de archivo con iconos upload
+ * Usa el contexto 'input' para tamaños consistentes con otros inputs
  */
 export const useFileInputProps = (props) => useStandardProps(props, {
-  componentType: 'file-input',
+  componentType: 'input', // Consistente con otros inputs del sistema
   defaultSize: 'md',
   defaultVariant: 'neutral',
   defaultRounded: 'md'

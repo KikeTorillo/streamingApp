@@ -1,6 +1,7 @@
 // ContentSection.jsx
 import PropTypes from 'prop-types';
 import { Card } from '../../atoms/Card/Card';
+import { Icon } from '../../atoms/Icon/Icon';
 import { EmptyState } from '../EmptyState/EmptyState';
 import { useStandardProps } from '../../../hooks/useStandardProps';
 import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens/standardProps';
@@ -15,7 +16,7 @@ import './ContentSection.css';
  * 
  * @param {Object} props - Props del componente
  * @param {string} props.title - Título de la sección
- * @param {string|React.ReactNode} props.icon - Icono de la sección (emoji o componente)
+ * @param {string|React.ReactNode} props.icon - Icono de la sección (nombre del sistema de iconos o componente)
  * @param {React.ReactNode} props.children - Contenido de la sección
  * @param {boolean} props.error - Mensaje de error si falla la carga
  * @param {boolean} props.empty - Si la sección no tiene contenido
@@ -32,7 +33,7 @@ function ContentSection(props) {
   const {
     // Contenido de la sección
     title = 'Sección de contenido',
-    icon = '📺',
+    icon = 'grid',
     children,
     
     // Estados específicos (error se maneja por el sistema estándar)
@@ -128,7 +129,11 @@ function ContentSection(props) {
       <div className="content-section__header">
         <div className="content-section__title-container">
           <div className="content-section__icon">
-            {typeof icon === 'string' ? icon : renderIcon ? renderIcon(icon) : icon}
+            {typeof icon === 'string' ? (
+              <Icon name={icon} size="md" />
+            ) : (
+              icon
+            )}
           </div>
           <h2 className="content-section__title">
             {title}
@@ -148,7 +153,9 @@ function ContentSection(props) {
           <div className="content-section__error">
             <Card variant="danger" size={size} rounded={rounded}>
               <div className="error-content">
-                <span className="error-icon">⚠️</span>
+                <span className="error-icon">
+                  <Icon name="alert" size="md" variant="danger" />
+                </span>
                 <div className="error-text">
                   <strong>Error al cargar contenido</strong>
                   <p>{error}</p>

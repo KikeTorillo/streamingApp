@@ -3,7 +3,8 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '../../atoms/Button/Button';
-import { Card, CardHeader, CardBody, CardTitle } from '../../atoms/Card/Card';
+import { Container } from '../../atoms/Container/Container';
+import { Divider } from '../../atoms/Divider/Divider';
 import { DynamicForm } from '../../molecules/DynamicForm/DynamicForm';
 import { ContentCard } from '../../molecules/ContentCard/ContentCard';
 import { EmptyState } from '../../molecules/EmptyState/EmptyState';
@@ -128,7 +129,7 @@ function TMDBSearchView({
     {
       name: 'searchQuery',
       type: 'text',
-      label: title,
+      label: 'Buscar por titulo',
       placeholder: placeholder,
       helperText: isApiKeyValid ? helperText : '⚠️ Configura VITE_TMDB_API_KEY para habilitar búsqueda',
       leftIcon: 'search',
@@ -223,17 +224,6 @@ function TMDBSearchView({
       icon="film"
       title="Buscar en The Movie Database"
       description="Ingresa el nombre de una película o serie para buscar en la base de datos más completa del mundo."
-      action={(
-        <div className="tmdb-search-view__welcome-tips">
-          <h4>💡 Consejos para mejores resultados:</h4>
-          <ul>
-            <li>Usa el título original en inglés para mejores resultados</li>
-            <li>Incluye el año si hay múltiples versiones</li>
-            <li>Busca por palabras clave si no recuerdas el título exacto</li>
-            <li>Prueba con títulos alternativos o abreviaciones</li>
-          </ul>
-        </div>
-      )}
     />
   );
 
@@ -255,7 +245,7 @@ function TMDBSearchView({
           <Button
             variant="outline"
             size="sm"
-            leftIcon="🔄"
+            leftIcon="refresh"
             onClick={performSearch}
             disabled={!isApiKeyValid}
           >
@@ -285,7 +275,7 @@ function TMDBSearchView({
           <Button
             variant="outline"
             size="sm"
-            leftIcon="🔄"
+            leftIcon="refresh"
             onClick={handleClearResults}
           >
             Nueva búsqueda
@@ -309,17 +299,17 @@ function TMDBSearchView({
   return (
     <div className="tmdb-search-view">
       {/* Formulario de búsqueda */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{title}</CardTitle>
+      <Container variant="neutral" size="xl" className="tmdb-search-view__container">
+        <div className="tmdb-search-view__header">
+          <h3 className="tmdb-search-view__title">{title}</h3>
           {description && (
             <p className="tmdb-search-view__description">
               {description}
             </p>
           )}
-        </CardHeader>
+        </div>
         
-        <CardBody>
+        <Divider variant="neutral" size="md" />
           <DynamicForm
             fields={searchFields}
             onSubmit={handleSearchSubmit}
@@ -359,24 +349,25 @@ function TMDBSearchView({
               }
             ]}
           />
-        </CardBody>
-      </Card>
+          
+          <Divider variant="neutral" size="sm" />
 
-      {/* Estados de contenido */}
-      {loading && renderLoadingState()}
-      
-      {error && !loading && renderErrorState()}
-      
-      {!loading && !error && !hasSearched && renderWelcomeState()}
-      
-      {!loading && !error && hasSearched && safeResults.length === 0 && renderEmptyState()}
-      
-      {/* Resultados */}
-      {!loading && !error && safeResults.length > 0 && (
-        <div className="tmdb-search-view__results-grid">
-          {safeResults.map(renderResultItem)}
-        </div>
-      )}
+          {/* Estados de contenido */}
+          {loading && renderLoadingState()}
+          
+          {error && !loading && renderErrorState()}
+          
+          {!loading && !error && !hasSearched && renderWelcomeState()}
+          
+          {!loading && !error && hasSearched && safeResults.length === 0 && renderEmptyState()}
+          
+          {/* Resultados */}
+          {!loading && !error && safeResults.length > 0 && (
+            <div className="tmdb-search-view__results-grid">
+              {safeResults.map(renderResultItem)}
+            </div>
+          )}
+      </Container>
     </div>
   );
 }

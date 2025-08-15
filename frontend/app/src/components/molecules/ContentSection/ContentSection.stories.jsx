@@ -35,7 +35,7 @@ import { ContentSection } from './molecules/ContentSection';
 import { ContentCard } from './molecules/ContentCard';
 
 // Básico con contenido
-<ContentSection title="Películas Populares" icon="🎬">
+<ContentSection title="Películas Populares" icon="film">
   {movies.map(movie => 
     <ContentCard key={movie.id} content={movie} />
   )}
@@ -44,7 +44,7 @@ import { ContentCard } from './molecules/ContentCard';
 // Con estados
 <ContentSection 
   title="Series en Tendencia" 
-  icon="📺"
+  icon="video"
   loading={isLoading}
   error={errorMessage}
   empty={series.length === 0}
@@ -201,7 +201,7 @@ const SAMPLE_MOVIES = [
 export const Default = {
   args: {
     title: 'Películas Populares',
-    icon: '🎬',
+    icon: 'film',
     loading: false,
     error: null,
     empty: false,

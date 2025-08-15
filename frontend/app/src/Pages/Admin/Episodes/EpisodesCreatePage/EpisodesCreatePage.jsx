@@ -77,11 +77,11 @@ function EpisodesCreatePage() {
         if (seriesLoading) return '⏳ Cargando series...';
         if (seriesError) return '❌ Error al cargar series';
         if (seriesData.length === 0) return '📺 Sin series disponibles - Ve a Administrar > Series para crear una.';
-        return `📺 Serie * (${seriesData.length} disponibles)`;
+        return `Serie * (${seriesData.length} disponibles)`;
       })(),
       placeholder: seriesLoading ? 'Cargando series...' : 'Selecciona la serie',
       required: true,
-      leftIcon: '📺',
+      leftIcon: 'video',
       options: seriesData.map(serie => ({
         value: serie.id,
         label: `${serie.title} (${serie.release_year || 'Sin año'})`
@@ -116,7 +116,7 @@ function EpisodesCreatePage() {
       required: true,
       min: 1,
       max: 999,
-      leftIcon: '🎭',
+      leftIcon: 'list',
       helperText: 'Número del episodio dentro de la temporada',
       validation: {
         required: { value: true, message: 'El número de episodio es obligatorio' },
@@ -129,7 +129,7 @@ function EpisodesCreatePage() {
       type: 'text',
       label: 'Título del Episodio',
       placeholder: 'Ej: Piloto, El comienzo, La venganza...',
-      leftIcon: '🏷️',
+      leftIcon: 'edit',
       helperText: 'Título específico del episodio (opcional)',
       maxLength: 255,
       validation: {
@@ -142,7 +142,6 @@ function EpisodesCreatePage() {
       label: 'Descripción',
       placeholder: 'Describe brevemente lo que sucede en este episodio...',
       rows: 4,
-      leftIcon: '📝',
       helperText: 'Descripción opcional del episodio',
       validation: {
         maxLength: { value: 1000, message: 'Máximo 1000 caracteres' }
@@ -151,10 +150,10 @@ function EpisodesCreatePage() {
     {
       name: 'video',
       type: 'file',
-      label: 'Archivo de Video *',
+      label: 'Archivo de Video',
       accept: 'video/*',
       required: true,
-      leftIcon: '🎥',
+      leftIcon: 'video',
       helperText: 'Archivo de video del episodio (formatos: MP4, AVI, MKV, etc.)',
       validation: {
         required: { value: true, message: 'El archivo de video es obligatorio' }
@@ -175,21 +174,6 @@ function EpisodesCreatePage() {
   };
 
   // ===== FUNCIONES =====
-
-  /**
-   * Navegar de vuelta con confirmación si hay cambios
-   */
-  const handleGoBack = () => {
-    if (hasChanges) {
-      const confirmed = window.confirm(
-        '¿Estás seguro de que quieres salir? Los cambios no guardados se perderán.'
-      );
-      if (!confirmed) return;
-    }
-    
-    navigate('/admin/episodes');
-  };
-
   /**
    * Detectar cambios en el formulario
    */
@@ -284,18 +268,6 @@ function EpisodesCreatePage() {
         variant="primary"
         className={`${uploadStatus !== 'idle' ? 'episodes-create--loading' : ''}`}
       >
-        
-        {/* Header Actions */}
-          <Button
-            variant="outline"
-            size="sm"
-            leftIcon="←"
-            onClick={handleGoBack}
-            disabled={creating || processing || uploadStatus !== 'idle'}
-          >
-            Volver a Episodios
-          </Button>
-
         {/* Mensaje de Error */}
         {error && (
           <div className="status-message status-message--error">
@@ -310,7 +282,7 @@ function EpisodesCreatePage() {
         {/* Header del Formulario */}
         <div className="form-header">
           <h2 className="form-title">
-            🎬 Nuevo Episodio
+            Nuevo Episodio
           </h2>
           <p className="form-description">
             Los episodios deben estar asociados a una serie existente. 
@@ -347,31 +319,6 @@ function EpisodesCreatePage() {
           showSubmit={uploadStatus !== 'completed'}
           className="episode-form"
         />
-
-        {/* Información adicional sobre episodios */}
-        <div className="form-footer">
-          <div className="info-card">
-            <h4>💡 Consejos para crear episodios</h4>
-            <ul>
-              <li><strong>Orden correcto:</strong> Asegúrate de que la temporada y número de episodio sean correctos</li>
-              <li><strong>Títulos descriptivos:</strong> Usa títulos únicos para cada episodio cuando sea posible</li>
-              <li><strong>Archivos de calidad:</strong> Usa archivos de video en buena calidad (HD recomendado)</li>
-              <li><strong>Formatos compatibles:</strong> MP4, AVI, MKV, MOV son los más recomendados</li>
-            </ul>
-          </div>
-          
-          <div className="info-card">
-            <h4>📊 Datos técnicos</h4>
-            <ul>
-              <li><strong>Serie:</strong> Debe existir una serie antes de crear episodios</li>
-              <li><strong>Temporada:</strong> Número entero positivo (1-99)</li>
-              <li><strong>Episodio:</strong> Número entero positivo (1-999)</li>
-              <li><strong>Título:</strong> Opcional, máximo 255 caracteres</li>
-              <li><strong>Video:</strong> Archivo requerido, se procesará automáticamente</li>
-            </ul>
-          </div>
-        </div>
-
       </Container>
 
       <ProgressModal

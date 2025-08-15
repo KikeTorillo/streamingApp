@@ -4,7 +4,8 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { DynamicForm } from '../../../../../components/molecules/DynamicForm/DynamicForm';
-import { Card, CardBody } from '../../../../../components/atoms/Card/Card';
+import { Container } from '../../../../../components/atoms/Container/Container';
+import { Divider } from '../../../../../components/atoms/Divider/Divider';
 import { Button } from '../../../../../components/atoms/Button/Button';
 import { ContentImage } from '../../../../../components/atoms/ContentImage/ContentImage';
 import { filterEmptyFields } from '../../../../../utils/formUtils';
@@ -12,13 +13,20 @@ import { getImageTypeInfo, selectFinalImage } from '../../../../../utils/imageUt
 import './MovieFormView.css';
 
 /**
- * MovieFormView - VERSIÓN SIMPLIFICADA CON IMAGECROPFIELD
+ * MovieFormView - VERSIÓN REFACTORIZADA CON SISTEMA DE DISEÑO
+ * ✅ SISTEMA DE DISEÑO: Usa Container, Divider, Badge según patrón de EditPage
+ * ✅ CONSISTENCIA: Sigue misma estructura que MovieEditPage
  * ✅ FILTRO AUTOMÁTICO: Solo envía campos con valores válidos al backend
  * ✅ VALIDACIÓN: Verifica que campos requeridos tengan valores
  * ✅ IMAGECROPFIELD: Usa el nuevo componente para manejo de imágenes
  * ✅ UX MEJORADA: Información clara sobre campos opcionales
  */
 function MovieFormView({
+  // Propiedades homologadas con TMDBSearchView
+  title = "🎬 Información de la Película",
+  description = "Completa la información para agregar la película al catálogo",
+  
+  // Propiedades específicas del formulario
   fields = [],
   initialData = {},
   onSubmit,
@@ -176,9 +184,15 @@ function MovieFormView({
   // ===== RENDER =====
   return (
     <div className="movie-form-view">
-      <Card variant="elevated" className="movie-form-view__container">
-        <CardBody size="lg">
-          {/* ===== BOTÓN DE VOLVER ===== */}
+      <Container variant="neutral" size="xl" className="movie-form-view__container">
+        {/* ===== HEADER DEL FORMULARIO ===== */}
+        <div className="movie-form-view__header">
+          <h3 className="movie-form-view__title">
+            {title}
+          </h3>
+          <p className="movie-form-view__subtitle">
+            {description}
+          </p>
           {showBackButton && (
             <div className="movie-form-view__back-section">
               <Button
@@ -191,58 +205,112 @@ function MovieFormView({
               </Button>
             </div>
           )}
+        </div>
 
-          {/* ===== PREVIEW DE IMAGEN (URLs y archivos) ===== */}
-          {imagePreview && imageType && (
-            <div className="movie-form-view__external-preview">
+        <Divider variant="neutral" size="md" />
+
+        {/* ===== PREVIEW DE IMAGEN (URLs y archivos) ===== */}
+        {imagePreview && imageType && (
+          <div className="movie-form-view__preview-section">
+            <div className="movie-form-view__preview-header">
+              <h4 className="movie-form-view__preview-title">📸 Vista Previa de Portada</h4>
               {renderImageInfo()}
-              <div className="movie-form-view__image-preview">
-                <ContentImage
-                  src={imagePreview}
-                  alt="Vista previa de la portada"
-                  placeholder="🎬"
-                  className="movie-form-view__preview-image"
-                />
-              </div>
             </div>
-          )}
-
-          {/* ===== FORMULARIO DINÁMICO ===== */}
-          <div className="movie-form-view__form">
-            <DynamicForm
-              fields={resolvedFields}
-              onSubmit={handleFormSubmit}
-              onChange={handleFormChange}
-              initialData={currentFormData}
-              columnsPerRow={2}
-              submitText={success ? "✅ Guardado Exitosamente" : "💾 Guardar Contenido"}
-              submitVariant={success ? "success" : "primary"}
-              submitSize="lg"
-              loading={formLoading}
-              disabled={formLoading || success}
-              fieldSize="md"
-              validateOnChange={true}
-            />
+            
+            <div className="movie-form-view__image-preview">
+              <ContentImage
+                src={imagePreview}
+                alt="Vista previa de la portada"
+                aspectRatio="2/3"
+                contentType="movie"
+                placeholder="🎬"
+                rounded="md"
+                showFallback={true}
+                size="md"
+                className="movie-form-view__preview-image"
+              />
+            </div>
+            
+            <Divider variant="neutral" size="sm" />
           </div>
+        )}
+
+        {/* ===== FORMULARIO DINÁMICO ===== */}
+        <div className="movie-form-view__form">
+          <DynamicForm
+            id="movie-create-form"
+            fields={resolvedFields}
+            onSubmit={handleFormSubmit}
+            onChange={handleFormChange}
+            initialData={currentFormData}
+            loading={formLoading}
+            disabled={formLoading || success}
+            columnsPerRow={2}
+            tabletColumns={1}
+            mobileColumns={1}
+            fieldSize="md"
+            fieldRounded="md"
+            submitText={success ? "✅ Guardado Exitosamente" : "Crear Película"}
+            submitVariant={success ? "success" : "primary"}
+            submitSize="md"
+            submitIcon={success ? "check" : "plus"}
+            validateOnBlur={true}
+            validateOnChange={false}
+            actions={[
+              {
+                key: 'cancel',
+                type: 'button',
+                variant: 'outline',
+                text: 'Cancelar',
+                onClick: () => window.history.back(),
+                disabled: formLoading
+              },
+              {
+                key: 'submit',
+                type: 'submit',
+                variant: success ? 'success' : 'primary',
+                text: success ? 'Guardado Exitosamente' : 'Crear Película',
+                loading: formLoading,
+                disabled: formLoading || success,
+                leftIcon: success ? 'check' : 'plus'
+              }
+            ]}
+            className={`movie-form-view__form ${success ? 'movie-form-view__form--success' : ''}`}
+          />
+        </div>
 
 
-          {/* ===== MENSAJE DE ERROR ===== */}
-          {error && (
-            <div className="movie-form-view__error">
-              <div className="movie-form-view__error-icon">❌</div>
-              <h4 className="movie-form-view__error-title">Error al guardar</h4>
-              <p className="movie-form-view__error-message">
-                {typeof error === 'string' ? error : error.message || 'Ha ocurrido un error inesperado'}
-              </p>
+        {/* ===== NOTIFICACIONES ===== */}
+        {success && (
+          <div className="movie-form-view__success">
+            <div className="movie-form-view__success-icon">✅</div>
+            <div className="movie-form-view__success-content">
+              <h3>¡Película creada exitosamente!</h3>
+              <p>La película se ha agregado al catálogo correctamente.</p>
             </div>
-          )}
-        </CardBody>
-      </Card>
+          </div>
+        )}
+
+        {error && (
+          <div className="movie-form-view__error-message">
+            <div className="movie-form-view__error-icon">⚠️</div>
+            <div className="movie-form-view__error-content">
+              <h4>Error al crear película</h4>
+              <p>{typeof error === 'string' ? error : error.message || 'Ha ocurrido un error inesperado'}</p>
+            </div>
+          </div>
+        )}
+      </Container>
     </div>
   );
 }
 
 MovieFormView.propTypes = {
+  // Propiedades homologadas con TMDBSearchView
+  title: PropTypes.string,
+  description: PropTypes.string,
+  
+  // Propiedades específicas del formulario
   fields: PropTypes.array,
   initialData: PropTypes.object,
   onSubmit: PropTypes.func.isRequired,

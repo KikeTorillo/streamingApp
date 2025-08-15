@@ -139,7 +139,7 @@ function SeriesListPage() {
         
         return (
           <Badge 
-            variant={count > 0 ? 'success' : 'neutral'}
+            variant={count > 0 ? 'success' : 'secondary'}
             size="sm"
             appearance="soft"
             leftIcon="film"
@@ -166,7 +166,7 @@ function SeriesListPage() {
         const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
         
         let timeDisplay;
-        let badgeVariant = 'neutral';
+        let badgeVariant = 'secondary';
         
         if (diffDays === 0) {
           // Mismo día = HOY
@@ -179,11 +179,11 @@ function SeriesListPage() {
         } else if (diffDays === -1) {
           // Fecha futura (edge case)
           timeDisplay = 'Mañana';
-          badgeVariant = 'info';
+          badgeVariant = 'primary';
         } else if (diffDays > 1 && diffDays <= 7) {
           // Entre 2-7 días
           timeDisplay = `${diffDays} días`;
-          badgeVariant = 'info';
+          badgeVariant = 'primary';
         } else if (diffDays > 7 && diffDays <= 30) {
           // Entre 1-4 semanas
           const weeks = Math.floor(diffDays / 7);

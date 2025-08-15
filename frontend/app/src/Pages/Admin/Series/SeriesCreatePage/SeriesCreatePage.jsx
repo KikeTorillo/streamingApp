@@ -81,7 +81,7 @@ function SeriesCreatePage() {
       {
         name: 'title',
         type: 'text',
-        label: 'Título *',
+        label: 'Título',
         placeholder: 'Ej: Breaking Bad, Game of Thrones...',
         required: true,
         leftIcon: 'video',
@@ -90,7 +90,7 @@ function SeriesCreatePage() {
       {
         name: 'description',
         type: 'textarea',
-        label: 'Descripción *',
+        label: 'Descripción',
         placeholder: 'Escribe una descripción atractiva del contenido...',
         required: true,
         rows: 4,
@@ -100,7 +100,7 @@ function SeriesCreatePage() {
       {
         name: 'releaseYear',
         type: 'number',
-        label: 'Año de Estreno *',
+        label: 'Año de Estreno',
         placeholder: new Date().getFullYear().toString(),
         required: true,
         min: 1900,
@@ -210,16 +210,6 @@ function SeriesCreatePage() {
     >
       <Container size='lg'>
         <div className="series-create-page">
-          {/* Botón volver a series */}
-            <Button
-              variant="outline"
-              size="md"
-              leftIcon="arrow-left"
-              onClick={() => navigate('/admin/series')}
-            >
-              Volver a Series
-            </Button>
-
           {/* Contenido principal */}
           {currentView === 'search' && (
             <TMDBSearchView
@@ -236,6 +226,11 @@ function SeriesCreatePage() {
 
           {currentView === 'form' && (
             <SeriesFormView
+              title={selectedItem ? `${selectedItem.title || selectedItem.name} (desde TMDB)` : "Crear Serie Manualmente"}
+              description={selectedItem ? 
+                "Completa la información adicional para la serie seleccionada de TMDB" : 
+                "Completa toda la información para crear una nueva serie desde cero"
+              }
               fields={generateFormFields()}
               initialData={generateInitialFormData(selectedItem)}
               onSubmit={handleFormSubmit}

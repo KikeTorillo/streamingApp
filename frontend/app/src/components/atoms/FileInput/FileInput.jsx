@@ -2,7 +2,7 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import { useFileInputProps } from '../../../hooks/useStandardProps.jsx';
-import { extractDOMProps, STANDARD_PROP_TYPES } from '../../../tokens/standardProps.js';
+import { STANDARD_PROP_TYPES } from '../../../tokens/standardProps.js';
 import "./FileInput.css";
 
 /**
@@ -91,18 +91,6 @@ function FileInput(props) {
     return legacyMappings[variant] || variant;
   })();
 
-  // Props DOM-safe (utilizadas en el input hidden)
-  const domProps = extractDOMProps({
-    id,
-    name,
-    accept,
-    multiple,
-    required,
-    disabled,
-    className,
-    ariaLabel,
-    ...standardProps
-  });
   
   // Evitar warning de unused vars con void
   void tokens; // Design tokens disponibles para estilos dinámicos si se necesitan
@@ -116,7 +104,7 @@ function FileInput(props) {
   const currentVariant = mappedVariant;
 
   // Generar IDs únicos si no se proporcionan
-  const inputId = id || `file-input-${Math.random().toString(36).substring(2, 11)}`;  // Fix deprecated substr
+  const inputId = id || `file-input-${Math.random().toString(36).substring(2, 11)}`;
   const helperId = helperText ? `${inputId}-helper` : undefined;
   const errorId = errorText ? `${inputId}-error` : undefined;
   const describedBy = [helperId, errorId, ariaDescribedBy].filter(Boolean).join(' ') || undefined;
@@ -160,9 +148,9 @@ function FileInput(props) {
 
   return (
     <div className={wrapperClasses}>
-      {/* Input file container */}
+      {/* Input file que actúa como botón visualmente */}
       <div className={inputClasses}>
-        {/* Input file oculto */}
+        {/* Input file oculto completamente */}
         <input
           ref={(input) => {
             if (input) {
@@ -180,15 +168,14 @@ function FileInput(props) {
           multiple={multiple}
           disabled={disabled}
           required={required}
-          className="file-input__input"
+          className="file-input__native-input"
           onChange={handleChange}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          {...domProps}
         />
 
-        {/* Label que actúa como botón */}
-        <label htmlFor={inputId} className="file-input__button">
+        {/* Label que actúa como botón visual */}
+        <label htmlFor={inputId} className="file-input__button-overlay">
           {/* Icono izquierdo - sistema unificado */}
           {(hasLeftIcon || !hasFiles) && (
             <div className="file-input__icon">

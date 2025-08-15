@@ -4,7 +4,8 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { DynamicForm } from '../../../../../components/molecules/DynamicForm/DynamicForm';
-import { Card, CardBody } from '../../../../../components/atoms/Card/Card';
+import { Container } from '../../../../../components/atoms/Container/Container';
+import { Divider } from '../../../../../components/atoms/Divider/Divider';
 import { Button } from '../../../../../components/atoms/Button/Button';
 import { ContentImage } from '../../../../../components/atoms/ContentImage/ContentImage';
 import { filterEmptyFields } from '../../../../../utils/formUtils';
@@ -12,13 +13,20 @@ import { getImageTypeInfo, selectFinalImage } from '../../../../../utils/imageUt
 import './SeriesFormView.css';
 
 /**
- * SeriesFormView - VERSIÓN ACTUALIZADA CON FILTRO DE CAMPOS VACÍOS
+ * SeriesFormView - VERSIÓN REFACTORIZADA CON SISTEMA DE DISEÑO
+ * ✅ SISTEMA DE DISEÑO: Usa Container, Divider según patrón de EditPage
+ * ✅ CONSISTENCIA: Sigue misma estructura que SeriesEditPage y MovieFormView
  * ✅ FILTRO AUTOMÁTICO: Solo envía campos con valores válidos al backend
  * ✅ VALIDACIÓN: Verifica que campos requeridos tengan valores
  * ✅ OPTIMIZACIÓN: Elimina campos vacíos, null o undefined de la petición
  * ✅ UX MEJORADA: Información clara sobre campos opcionales
  */
 function SeriesFormView({
+  // Propiedades homologadas con TMDBSearchView
+  title = "📺 Información de la Serie",
+  description = "Completa la información para agregar la serie al catálogo",
+  
+  // Propiedades específicas del formulario
   fields = [],
   initialData = {},
   onSubmit,
@@ -175,76 +183,133 @@ function SeriesFormView({
   // ===== RENDER =====
   return (
     <div className="series-form-view">
-
-      {/* ===== FORMULARIO PRINCIPAL ===== */}
-      <Card>
-        <CardBody>
-          {/* ===== BOTÓN DE VOLVER ===== */}
+      <Container variant="neutral" size="xl" className="series-form-view__container">
+        {/* ===== HEADER DEL FORMULARIO ===== */}
+        <div className="series-form-view__header">
+          <h3 className="series-form-view__title">
+            {title}
+          </h3>
+          <p className="series-form-view__subtitle">
+            {description}
+          </p>
           {showBackButton && (
             <div className="series-form-view__back-section">
               <Button
                 onClick={onBackToSearch}
                 variant="outline"
                 size="sm"
-                leftIcon="←"
+                leftIcon="arrow-left"
               >
                 Volver a búsqueda
               </Button>
             </div>
           )}
+        </div>
 
-          {/* ===== PREVIEW DE IMAGEN (URLs y archivos) ===== */}
-          {imagePreview && imageType && (
-            <div className="series-form-view__external-preview">
+        <Divider variant="neutral" size="md" />
+
+        {/* ===== PREVIEW DE IMAGEN (URLs y archivos) ===== */}
+        {imagePreview && imageType && (
+          <div className="series-form-view__preview-section">
+            <div className="series-form-view__preview-header">
+              <h4 className="series-form-view__preview-title">Vista Previa de Portada</h4>
               {renderImageInfo()}
-              <div className="series-form-view__image-preview">
-                <ContentImage
-                  src={imagePreview}
-                  alt="Vista previa de la portada"
-                  placeholder="🎬"
-                  className="series-form-view__preview-image"
-                />
-              </div>
             </div>
-          )}
-
-          {/* ===== FORMULARIO DINÁMICO ===== */}
-          <div className="series-form-view__form">
-            <DynamicForm
-              fields={resolvedFields}
-              onSubmit={handleFormSubmit}
-              onChange={handleFormChange}
-              initialData={currentFormData}
-              columnsPerRow={2}
-              submitText={success ? "✅ Guardado Exitosamente" : "💾 Guardar Contenido"}
-              submitVariant={success ? "success" : "primary"}
-              submitSize="lg"
-              loading={formLoading}
-              disabled={formLoading || success}
-              fieldSize="md"
-              validateOnChange={true}
-            />
+            
+            <div className="series-form-view__image-preview">
+              <ContentImage
+                src={imagePreview}
+                alt="Vista previa de la portada"
+                aspectRatio="2/3"
+                contentType="series"
+                placeholder="📺"
+                rounded="md"
+                showFallback={true}
+                size="md"
+                className="series-form-view__preview-image"
+              />
+            </div>
+            
+            <Divider variant="neutral" size="sm" />
           </div>
+        )}
+
+        {/* ===== FORMULARIO DINÁMICO ===== */}
+        <div className="series-form-view__form">
+          <DynamicForm
+            id="series-create-form"
+            fields={resolvedFields}
+            onSubmit={handleFormSubmit}
+            onChange={handleFormChange}
+            initialData={currentFormData}
+            loading={formLoading}
+            disabled={formLoading || success}
+            columnsPerRow={2}
+            tabletColumns={1}
+            mobileColumns={1}
+            fieldSize="md"
+            fieldRounded="md"
+            submitText={success ? "Guardado Exitosamente" : "Crear Serie"}
+            submitVariant={success ? "success" : "primary"}
+            submitSize="md"
+            submitIcon={success ? "check" : "plus"}
+            validateOnBlur={true}
+            validateOnChange={false}
+            actions={[
+              {
+                key: 'cancel',
+                type: 'button',
+                variant: 'outline',
+                text: 'Cancelar',
+                onClick: () => window.history.back(),
+                disabled: formLoading
+              },
+              {
+                key: 'submit',
+                type: 'submit',
+                variant: success ? 'success' : 'primary',
+                text: success ? 'Guardado Exitosamente' : 'Crear Serie',
+                loading: formLoading,
+                disabled: formLoading || success,
+                leftIcon: success ? 'check' : 'plus'
+              }
+            ]}
+            className={`series-form-view__form ${success ? 'series-form-view__form--success' : ''}`}
+          />
+        </div>
 
 
-          {/* ===== MENSAJE DE ERROR ===== */}
-          {error && (
-            <div className="series-form-view__error">
-              <div className="series-form-view__error-icon">❌</div>
-              <h4 className="series-form-view__error-title">Error al guardar</h4>
-              <p className="series-form-view__error-message">
-                {typeof error === 'string' ? error : error.message || 'Ha ocurrido un error inesperado'}
-              </p>
+        {/* ===== NOTIFICACIONES ===== */}
+        {success && (
+          <div className="series-form-view__success">
+            <div className="series-form-view__success-icon">✅</div>
+            <div className="series-form-view__success-content">
+              <h3>¡Serie creada exitosamente!</h3>
+              <p>La serie se ha agregado al catálogo correctamente.</p>
             </div>
-          )}
+          </div>
+        )}
 
-        </CardBody>
-      </Card>
+        {error && (
+          <div className="series-form-view__error-message">
+            <div className="series-form-view__error-icon">⚠️</div>
+            <div className="series-form-view__error-content">
+              <h4>Error al crear serie</h4>
+              <p>{typeof error === 'string' ? error : error.message || 'Ha ocurrido un error inesperado'}</p>
+            </div>
+          </div>
+        )}
+      </Container>
     </div>
   );
 }
 
 SeriesFormView.propTypes = {
+  // Propiedades homologadas con TMDBSearchView
+  title: PropTypes.string,
+  description: PropTypes.string,
+  
+  // Propiedades específicas del formulario
   fields: PropTypes.array,
   initialData: PropTypes.object,
   onSubmit: PropTypes.func.isRequired,

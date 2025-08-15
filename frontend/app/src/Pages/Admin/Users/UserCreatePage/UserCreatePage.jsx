@@ -137,19 +137,6 @@ function UserCreatePage() {
   };
 
   /**
-   * Navegar de vuelta
-   */
-  const handleGoBack = () => {
-    if (hasChanges) {
-      const confirmed = window.confirm(
-        '¿Estás seguro de que quieres salir? Los cambios no guardados se perderán.'
-      );
-      if (!confirmed) return;
-    }
-    navigate('/admin/users');
-  };
-
-  /**
    * Limpiar error del contexto
    */
   const handleClearError = () => {
@@ -171,18 +158,7 @@ function UserCreatePage() {
         size="lg"
         className={`${loading ? 'user-create--loading' : ''}`}
       >
-
-        <Button
-          variant="outline"
-          size="md"
-          leftIcon="arrow-left"
-          onClick={handleGoBack}
-          disabled={loading}
-        >
-          Volver a Usuarios
-        </Button>
-
-        {/* ❌ MENSAJE DE ERROR - SISTEMA DE DISEÑO */}
+        {/*MENSAJE DE ERROR - SISTEMA DE DISEÑO */}
         {error && (
           <div className="status-message status-message--error">
             <span className="status-message__icon">⚠️</span>
@@ -226,26 +202,6 @@ function UserCreatePage() {
           validateOnBlur={true}
           className=""
         />
-
-        {/* Información adicional */}
-        <div className="form-footer">
-          <div className="info-card">
-            <h4>💡 Información sobre Roles</h4>
-            <ul>
-              <li><strong>Administrador:</strong> Acceso completo a todas las funciones</li>
-              <li><strong>Usuario Regular:</strong> Acceso limitado a contenido y perfil</li>
-            </ul>
-          </div>
-
-          <div className="info-card">
-            <h4>🔐 Seguridad</h4>
-            <ul>
-              <li>Las contraseñas deben tener mínimo 6 caracteres</li>
-              <li>El email es opcional pero recomendado para recuperación</li>
-              <li>Los nombres de usuario deben ser únicos en el sistema</li>
-            </ul>
-          </div>
-        </div>
       </Container>
     </AdminLayout>
   );

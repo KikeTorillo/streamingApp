@@ -383,7 +383,7 @@ const userColumns = [
     size: 120,
     cell: ({ getValue }) => {
       const role = getValue();
-      const variant = role === 'Administrador' ? 'info' : 
+      const variant = role === 'Administrador' ? 'primary' : 
                     role === 'Editor' ? 'warning' : 'success';
       return (
         <span className={`data-table__badge data-table__badge--${variant}`}>

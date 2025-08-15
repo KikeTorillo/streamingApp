@@ -70,7 +70,7 @@ function EpisodeEditPage() {
         label: 'Título del Episodio',
         placeholder: 'Ej: El inicio de todo',
         required: true,
-        leftIcon: 'tv',
+        leftIcon: 'film',
         helperText: 'Título del episodio que aparecerá en el catálogo',
         width: 'full'
       },
@@ -79,7 +79,7 @@ function EpisodeEditPage() {
         type: 'select',
         label: 'Serie',
         required: true,
-        leftIcon: 'tv',
+        leftIcon: 'film',
         helperText: 'Serie a la que pertenece este episodio',
         options: seriesData.map(serie => ({
           value: serie.id,
@@ -93,7 +93,7 @@ function EpisodeEditPage() {
         label: 'Temporada',
         placeholder: 'Ej: 1',
         required: true,
-        leftIcon: 'tv',
+        leftIcon: 'film',
         helperText: 'Número de temporada (debe ser mayor a 0)',
         width: 'half',
         validation: (value) => {
@@ -109,7 +109,7 @@ function EpisodeEditPage() {
         label: 'Número de Episodio',
         placeholder: 'Ej: 1',
         required: true,
-        leftIcon: 'hash',
+        leftIcon: 'list',
         helperText: 'Número del episodio en la temporada (debe ser mayor a 0)',
         width: 'half',
         validation: (value) => {

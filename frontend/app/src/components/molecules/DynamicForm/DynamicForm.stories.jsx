@@ -374,7 +374,7 @@ export const ContactForm = () => {
       name: 'name',
       label: 'Nombre completo',
       placeholder: 'Tu nombre',
-      leftIcon: '👤',
+      leftIcon: 'user',
       required: true
     },
     {
@@ -382,7 +382,7 @@ export const ContactForm = () => {
       type: 'email',
       label: 'Email',
       placeholder: 'correo@ejemplo.com',
-      leftIcon: '📧',
+      leftIcon: 'mail',
       required: true
     },
     {
@@ -390,14 +390,14 @@ export const ContactForm = () => {
       type: 'tel',
       label: 'Teléfono',
       placeholder: '+52 555 123 4567',
-      leftIcon: '📞'
+      leftIcon: 'info'
     },
     {
       name: 'subject',
       type: 'select',
       label: 'Asunto',
       placeholder: 'Selecciona un tema',
-      leftIcon: '📋',
+      leftIcon: 'file',
       required: true,
       options: [
         { value: 'support', label: 'Soporte técnico' },
@@ -410,7 +410,7 @@ export const ContactForm = () => {
       name: 'priority',
       type: 'select',
       label: 'Prioridad',
-      leftIcon: '⚡',
+      leftIcon: 'zap',
       options: ['Baja', 'Media', 'Alta', 'Urgente']
     },
     {
@@ -474,14 +474,14 @@ export const RegistrationForm = () => {
       name: 'firstName',
       label: 'Nombre',
       placeholder: 'Tu nombre',
-      leftIcon: '👤',
+      leftIcon: 'user',
       required: true
     },
     {
       name: 'lastName',
       label: 'Apellido',
       placeholder: 'Tu apellido',
-      leftIcon: '👤',
+      leftIcon: 'user',
       required: true
     },
     {
@@ -489,7 +489,7 @@ export const RegistrationForm = () => {
       type: 'email',
       label: 'Correo electrónico',
       placeholder: 'tu@ejemplo.com',
-      leftIcon: '📧',
+      leftIcon: 'mail',
       helperText: 'Será tu usuario de acceso',
       required: true
     },
@@ -498,7 +498,7 @@ export const RegistrationForm = () => {
       type: 'password',
       label: 'Contraseña',
       placeholder: 'Mínimo 8 caracteres',
-      leftIcon: '🔒',
+      leftIcon: 'lock',
       helperText: 'Debe contener mayúsculas, minúsculas y números',
       maxLength: 50,
       showCharCount: true,
@@ -515,7 +515,7 @@ export const RegistrationForm = () => {
       name: 'birthdate',
       type: 'date',
       label: 'Fecha de nacimiento',
-      leftIcon: '📅',
+      leftIcon: 'date',
       required: true
     },
     {
@@ -523,7 +523,7 @@ export const RegistrationForm = () => {
       type: 'select',
       label: 'País',
       placeholder: 'Selecciona tu país',
-      leftIcon: '🌍',
+      leftIcon: 'globe',
       required: true,
       options: [
         { value: 'mx', label: 'México' },
@@ -538,7 +538,7 @@ export const RegistrationForm = () => {
       type: 'select',
       label: 'Profesión',
       placeholder: 'Tu área profesional',
-      leftIcon: '💼',
+      leftIcon: 'file',
       options: [
         { value: 'developer', label: 'Desarrollador' },
         { value: 'designer', label: 'Diseñador' },
@@ -551,7 +551,7 @@ export const RegistrationForm = () => {
       name: 'experience',
       type: 'select',
       label: 'Experiencia',
-      leftIcon: '📈',
+      leftIcon: 'trending',
       options: ['Sin experiencia', '1-2 años', '3-5 años', '5+ años']
     },
     {
@@ -620,13 +620,13 @@ export const SimpleForm = () => (
           name: 'search',
           label: 'Buscar',
           placeholder: 'Escribe para buscar...',
-          leftIcon: '🔍'
+          leftIcon: 'search'
         },
         {
           name: 'category',
           type: 'select',
           label: 'Categoría',
-          leftIcon: '📂',
+          leftIcon: 'folder',
           options: ['Todos', 'Documentos', 'Imágenes', 'Videos']
         }
       ]}
@@ -659,7 +659,7 @@ export const AdvancedConfiguration = () => {
       name: 'projectName',
       label: 'Nombre del proyecto',
       placeholder: 'Mi proyecto increíble',
-      leftIcon: '📝',
+      leftIcon: 'edit',
       rightIcon: '✅',
       helperText: 'Será visible para todo el equipo',
       maxLength: 100,
@@ -671,7 +671,7 @@ export const AdvancedConfiguration = () => {
       name: 'priority',
       type: 'select',
       label: 'Prioridad',
-      leftIcon: '⚡',
+      leftIcon: 'zap',
       helperText: 'Nivel de urgencia del proyecto',
       required: true,
       options: [
@@ -685,7 +685,7 @@ export const AdvancedConfiguration = () => {
       name: 'assignee',
       type: 'select',
       label: 'Asignado a',
-      leftIcon: '👥',
+      leftIcon: 'users',
       options: [
         { value: 'juan', label: 'Juan Pérez' },
         { value: 'maria', label: 'María García' },
@@ -696,7 +696,7 @@ export const AdvancedConfiguration = () => {
       name: 'dueDate',
       type: 'date',
       label: 'Fecha límite',
-      leftIcon: '📅',
+      leftIcon: 'date',
       helperText: 'Fecha de entrega esperada'
     },
     {
@@ -704,7 +704,7 @@ export const AdvancedConfiguration = () => {
       type: 'number',
       label: 'Presupuesto',
       placeholder: '10000',
-      leftIcon: '💰',
+      leftIcon: 'star',
       helperText: 'Presupuesto en pesos mexicanos'
     },
     {
@@ -789,7 +789,7 @@ export const FormWithFileInputs = () => {
       label: 'Título de la película',
       placeholder: 'Ej: Avatar, Inception, etc.',
       required: true,
-      leftIcon: '🎬',
+      leftIcon: 'film',
       helperText: 'Título original o traducido'
     },
     {
@@ -798,7 +798,7 @@ export const FormWithFileInputs = () => {
       label: 'Año de estreno',
       placeholder: '2024',
       required: true,
-      leftIcon: '📅',
+      leftIcon: 'date',
       helperText: 'Año de lanzamiento original'
     },
     {
@@ -847,7 +847,7 @@ export const FormWithFileInputs = () => {
       type: 'select',
       label: 'Categoría',
       required: true,
-      leftIcon: '📂',
+      leftIcon: 'folder',
       options: [
         { value: 'action', label: 'Acción' },
         { value: 'comedy', label: 'Comedia' },
@@ -862,7 +862,7 @@ export const FormWithFileInputs = () => {
       type: 'select',
       label: 'Clasificación',
       required: true,
-      leftIcon: '🔞',
+      leftIcon: 'shield',
       options: [
         { value: 'G', label: 'G - Audiencia General' },
         { value: 'PG', label: 'PG - Guía Parental' },
@@ -957,7 +957,7 @@ export const FormWithFileInputs = () => {
         mobileColumns={1}
         fieldSize="lg"
         fieldRounded="md"
-        submitText="🎬 Crear Película"
+        submitText="Crear Película"
         submitVariant="primary"
         submitSize="lg"
         validateOnBlur={true}
