@@ -50,11 +50,27 @@
 .admin-dashboard__stats-grid {
   /* Grid responsivo */
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(25rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
   gap: var(--space-lg);
   
   /* Alineación */
   align-items: stretch;
+  
+  /* Asegurar que los items ocupen todo el ancho */
+  justify-items: stretch;
+}
+
+/* Forzar que las StatsCard ocupen todo el ancho en el dashboard */
+.admin-dashboard__stats-grid .card {
+  min-width: unset !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
+/* Targeting más específico para StatsCard */
+.admin-dashboard__stats-grid .stats-card {
+  min-width: unset !important;
+  width: 100% !important;
 }
 
 /* ===== ACCIONES RÁPIDAS ===== */

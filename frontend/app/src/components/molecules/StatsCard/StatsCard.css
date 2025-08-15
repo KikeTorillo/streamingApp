@@ -21,42 +21,58 @@
   min-width: 23rem;
 }
 
-/* ===== VARIANTES DE COLOR ===== */
-.stats-card--blue {
-  --stats-card-color: var(--color-info);
-  --stats-card-color-light: var(--color-info-light);
-  --stats-card-color-dark: var(--color-info-dark);
+/* ===== FULL WIDTH OVERRIDE ===== */
+/* Cuando fullWidth es true, sobrescribir min-width para ocupar todo el ancho */
+.stats-card--full-width {
+  min-width: unset !important;
+  width: 100% !important;
 }
 
-.stats-card--green {
-  --stats-card-color: var(--color-success);
-  --stats-card-color-light: var(--color-success-light);
-  --stats-card-color-dark: var(--color-success-dark);
-}
-
-.stats-card--red {
-  --stats-card-color: var(--color-danger);
-  --stats-card-color-light: var(--color-danger-light);
-  --stats-card-color-dark: var(--color-danger-dark);
-}
-
-.stats-card--yellow {
-  --stats-card-color: var(--color-warning);
-  --stats-card-color-light: var(--color-warning-light);
-  --stats-card-color-dark: var(--color-warning-dark);
-}
-
-.stats-card--purple {
+/* ===== VARIANTES ESTÁNDAR DEL SISTEMA ===== */
+.stats-card--variant-primary {
   --stats-card-color: var(--color-primary);
   --stats-card-color-light: var(--color-primary-light);
   --stats-card-color-dark: var(--color-primary-dark);
 }
 
-.stats-card--gray {
+.stats-card--variant-secondary {
+  --stats-card-color: var(--color-secondary);
+  --stats-card-color-light: var(--color-secondary-light);
+  --stats-card-color-dark: var(--color-secondary-dark);
+}
+
+.stats-card--variant-success {
+  --stats-card-color: var(--color-success);
+  --stats-card-color-light: var(--color-success-light);
+  --stats-card-color-dark: var(--color-success-dark);
+}
+
+.stats-card--variant-warning {
+  --stats-card-color: var(--color-warning);
+  --stats-card-color-light: var(--color-warning-light);
+  --stats-card-color-dark: var(--color-warning-dark);
+}
+
+.stats-card--variant-danger {
+  --stats-card-color: var(--color-danger);
+  --stats-card-color-light: var(--color-danger-light);
+  --stats-card-color-dark: var(--color-danger-dark);
+}
+
+.stats-card--variant-neutral {
   --stats-card-color: var(--color-neutral);
   --stats-card-color-light: var(--color-neutral-light);
   --stats-card-color-dark: var(--color-neutral-dark);
 }
+
+/* ===== BACKWARD COMPATIBILITY - DEPRECATED ===== */
+/* Mantener colores legacy para compatibilidad temporal */
+.stats-card--blue { --stats-card-color: var(--color-primary); --stats-card-color-light: var(--color-primary-light); --stats-card-color-dark: var(--color-primary-dark); }
+.stats-card--green { --stats-card-color: var(--color-success); --stats-card-color-light: var(--color-success-light); --stats-card-color-dark: var(--color-success-dark); }
+.stats-card--red { --stats-card-color: var(--color-danger); --stats-card-color-light: var(--color-danger-light); --stats-card-color-dark: var(--color-danger-dark); }
+.stats-card--yellow { --stats-card-color: var(--color-warning); --stats-card-color-light: var(--color-warning-light); --stats-card-color-dark: var(--color-warning-dark); }
+.stats-card--purple { --stats-card-color: var(--color-secondary); --stats-card-color-light: var(--color-secondary-light); --stats-card-color-dark: var(--color-secondary-dark); }
+.stats-card--gray { --stats-card-color: var(--color-neutral); --stats-card-color-light: var(--color-neutral-light); --stats-card-color-dark: var(--color-neutral-dark); }
 
 /* ===== VARIANTES DE ESTILO ===== */
 .stats-card--minimal {
@@ -73,49 +89,95 @@
   background: linear-gradient(135deg, var(--stats-card-color-light) 0%, var(--bg-secondary) 100%);
 }
 
-/* ===== TAMAÑOS ===== */
-.stats-card--sm {
+/* ===== TAMAÑOS ESTÁNDAR DEL SISTEMA ===== */
+.stats-card--size-xs {
+  min-height: 8rem;
+  gap: var(--space-xs);
+}
+
+.stats-card--size-xs .stats-card__title {
+  font-size: var(--font-size-xs);
+}
+
+.stats-card--size-xs .stats-card__value {
+  font-size: var(--font-size-lg);
+}
+
+.stats-card--size-xs .stats-card__icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+.stats-card--size-sm {
   min-height: 10rem;
   gap: var(--space-sm);
 }
 
-.stats-card--sm .stats-card__title {
+.stats-card--size-sm .stats-card__title {
   font-size: var(--font-size-sm);
 }
 
-.stats-card--sm .stats-card__value {
+.stats-card--size-sm .stats-card__value {
   font-size: var(--font-size-xl);
 }
 
-.stats-card--sm .stats-card__icon {
+.stats-card--size-sm .stats-card__icon {
   width: 2.5rem;
   height: 2.5rem;
-  font-size: var(--font-size-base);
 }
 
-.stats-card--md {
+.stats-card--size-md {
   min-height: 12rem;
   gap: var(--space-md);
 }
 
-.stats-card--lg {
+.stats-card--size-lg {
   min-height: 14rem;
   gap: var(--space-lg);
 }
 
-.stats-card--lg .stats-card__title {
+.stats-card--size-lg .stats-card__title {
   font-size: var(--font-size-lg);
 }
 
-.stats-card--lg .stats-card__value {
+.stats-card--size-lg .stats-card__value {
   font-size: var(--font-size-3xl);
 }
 
-.stats-card--lg .stats-card__icon {
+.stats-card--size-lg .stats-card__icon {
   width: 3.5rem;
   height: 3.5rem;
+}
+
+.stats-card--size-xl {
+  min-height: 16rem;
+  gap: var(--space-xl);
+}
+
+.stats-card--size-xl .stats-card__title {
   font-size: var(--font-size-xl);
 }
+
+.stats-card--size-xl .stats-card__value {
+  font-size: var(--font-size-4xl);
+}
+
+.stats-card--size-xl .stats-card__icon {
+  width: 4rem;
+  height: 4rem;
+}
+
+/* ===== BACKWARD COMPATIBILITY - DEPRECATED ===== */
+/* Mantener clases legacy para compatibilidad temporal */
+.stats-card--sm { min-height: 10rem; gap: var(--space-sm); }
+.stats-card--sm .stats-card__title { font-size: var(--font-size-sm); }
+.stats-card--sm .stats-card__value { font-size: var(--font-size-xl); }
+.stats-card--sm .stats-card__icon { width: 2.5rem; height: 2.5rem; }
+.stats-card--md { min-height: 12rem; gap: var(--space-md); }
+.stats-card--lg { min-height: 14rem; gap: var(--space-lg); }
+.stats-card--lg .stats-card__title { font-size: var(--font-size-lg); }
+.stats-card--lg .stats-card__value { font-size: var(--font-size-3xl); }
+.stats-card--lg .stats-card__icon { width: 3.5rem; height: 3.5rem; }
 
 /* ===== ESTADOS INTERACTIVOS ===== */
 .stats-card--interactive {
@@ -268,9 +330,15 @@
   font-weight: var(--font-weight-normal);
 }
 
-/* ===== ESTADOS DE LOADING ===== */
+/* ===== ESTADOS DEL SISTEMA ===== */
 .stats-card--loading {
   pointer-events: none;
+}
+
+.stats-card--disabled {
+  opacity: 0.6;
+  pointer-events: none;
+  cursor: not-allowed;
 }
 
 .stats-card__skeleton {

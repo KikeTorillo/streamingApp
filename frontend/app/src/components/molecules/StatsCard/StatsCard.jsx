@@ -2,89 +2,122 @@
 // src/components/molecules/StatsCard/StatsCard.jsx
 import PropTypes from 'prop-types';
 import { Card } from '../../atoms/Card/Card';
-import { createStandardIconRenderer } from '../../../utils/iconHelpers';
+import { Icon } from '../../atoms/Icon/Icon';
+import { useStandardProps } from '../../../hooks/useStandardProps';
+import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens/standardProps';
 import './StatsCard.css';
 
 /**
  * StatsCard - Molécula para tarjetas de estadísticas
+ * 🎯 MIGRADO AL SISTEMA DE DISEÑO ESTÁNDAR
  * 
- * Características implementadas:
- * - ✅ Usa Card como base (átomo del sistema)
- * - ✅ Iconos centralizados con createIconRenderer
- * - ✅ Valores, cambios porcentuales
- * - ✅ Variantes de color para diferentes tipos de datos
- * - ✅ Estados loading, error, skeleton
- * - ✅ Responsive design
- * - ✅ Accesibilidad completa
- * - ✅ Animaciones sutiles
- * - ✅ Variables CSS del sistema
+ * ✅ NUEVAS CARACTERÍSTICAS:
+ * - Hook useStandardProps() integrado para consistencia
+ * - Props estándar (size, variant, rounded) con tokens automáticos
+ * - Variantes semánticas estándar (success, warning, danger, etc.)
+ * - Sistema de iconos unificado con Icon component
+ * - FullWidth heredado de Card (sin prop custom)
+ * - STANDARD_PROP_TYPES para validación consistente
+ * 
+ * @param {Object} props - Propiedades del componente
+ * @param {string} props.title - Título de la estadística
+ * @param {string|number} props.value - Valor principal a mostrar
+ * @param {string} props.icon - Nombre del icono del sistema de diseño
+ * @param {'xs'|'sm'|'md'|'lg'|'xl'} [props.size='md'] - Tamaño estándar
+ * @param {'primary'|'secondary'|'success'|'warning'|'danger'|'neutral'} [props.variant='neutral'] - Variante semántica estándar
+ * @param {'sm'|'md'|'lg'|'xl'|'full'} [props.rounded='lg'] - Radio de bordes estándar
+ * @param {boolean} [props.disabled=false] - Estado deshabilitado
+ * @param {boolean} [props.loading=false] - Estado de carga con skeleton
+ * @param {boolean} [props.fullWidth=false] - Si ocupa todo el ancho disponible (heredado de Card)
+ * @param {function} [props.onClick] - Función a ejecutar al hacer clic
+ * @param {string} [props.href] - URL para convertir en enlace
+ * @param {string} [props.className=''] - Clases CSS adicionales
+ * 
+ * DEPRECATED PROPS (mantenidas por compatibilidad):
+ * @param {string|number} [props.change] - Cambio porcentual (no usado actualmente)
+ * @param {string} [props.changeLabel] - Label del cambio (no usado actualmente)
+ * @param {string} [props.changeDirection] - Dirección del cambio (no usado actualmente)
+ * @param {string} [props.color] - DEPRECADO: Usar variant estándar
  */
-function StatsCard({
-  // Contenido principal
-  title,
-  value,
-  icon,
-  
-  // Cambio porcentual (props no utilizadas pero enviadas desde AdminDashboard)
-  change, // ← PROP NO UTILIZADA (filtrar para evitar error DOM)
-  changeLabel, // ← PROP NO UTILIZADA (filtrar para evitar error DOM)
-  changeDirection, // ← PROP NO UTILIZADA (filtrar para evitar error DOM)
-  
-  // Configuración visual
-  color = 'blue', // 'blue' | 'green' | 'red' | 'yellow' | 'purple' | 'gray'
-  variant = 'default', // 'default' | 'minimal' | 'bordered' | 'gradient'
-  size = 'md', // 'sm' | 'md' | 'lg'
-  
-  // Estados
-  loading = false,
-  error = null,
-  
-  // Interactividad
-  onClick,
-  href,
-  
-  // Customización
-  className = '',
-  
-  // Props adicionales
-  ...restProps
-}) {
-
-  // ===== FILTRAR PROPS PERSONALIZADAS PARA DOM =====
+function StatsCard(props) {
+  // Extraer props específicas del componente
   const {
-    // Props específicas de StatsCard (filtrar para evitar errores DOM)
-    title: cardTitle,
-    value: cardValue,
-    icon: cardIcon,
-    change: cardChange,
-    changeLabel: cardChangeLabel,
-    changeDirection: cardChangeDirection,
-    color: cardColor,
-    variant: cardVariant,
-    size: cardSize,
-    loading: cardLoading,
-    error: cardError,
-    onClick: cardOnClick,
-    href: cardHref,
-    className: cardClassName,
-    ...domProps
-  } = { 
-    title, value, icon, change, changeLabel, changeDirection, 
-    color, variant, size, loading, error, onClick, href, className,
-    ...restProps 
-  };
+    // Contenido principal
+    title = 'Estadística',
+    value,
+    icon = 'activity',
+    
+    // Props deprecadas (mantener compatibilidad)
+    change,
+    changeLabel,
+    changeDirection,
+    color, // DEPRECADO: mapear a variant
+    
+    // Interactividad
+    onClick,
+    href,
+    
+    // Props adicionales
+    id,
+    ...restProps
+  } = props;
 
-  // Evitar warnings de variables no usadas (necesarias para filtrar del DOM)
-  void cardTitle; void cardValue; void cardIcon; void cardChange; void cardChangeLabel;
-  void cardChangeDirection; void cardColor; void cardVariant; void cardSize; void cardLoading;
-  void cardError; void cardOnClick; void cardHref; void cardClassName;
+  // Hook estándar - StatsCard es tipo card/container
+  const {
+    size,
+    variant: standardVariant,
+    rounded,
+    disabled,
+    loading,
+    fullWidth,
+    className,
+    tokens,
+    renderIcon,
+    ...standardProps
+  } = useStandardProps(restProps, {
+    componentType: 'card',
+    defaultSize: 'md',
+    defaultVariant: 'neutral',
+    defaultRounded: 'lg'
+  });
+
+  // ===== MANEJO DE BACKWARD COMPATIBILITY =====
+  // Mapear color deprecado a variant estándar
+  const finalVariant = (() => {
+    if (color && !restProps.variant) {
+      // Mapeo de colores legacy a variantes estándar
+      switch (color) {
+        case 'blue': return 'primary';
+        case 'green': return 'success';
+        case 'red': return 'danger';
+        case 'yellow': return 'warning';
+        case 'purple': return 'secondary';
+        case 'gray': return 'neutral';
+        default: return standardVariant;
+      }
+    }
+    return standardVariant;
+  })();
+
+  // Warning de deprecación en desarrollo
+  if (color && typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
+    console.warn(`⚠️ StatsCard: prop "color" está deprecada. Usar "variant" estándar en su lugar.
+    Mapeo automático: color="${color}" → variant="${finalVariant}"`);
+  }
+
+  // Props seguros para DOM
+  const domProps = extractDOMProps({
+    ...standardProps,
+    id,
+    disabled,
+    className
+  });
 
   /**
    * Formatea el valor para mostrar
    */
   const formatValue = (val) => {
     if (loading) return '---';
-    if (error) return 'Error';
     if (val === null || val === undefined) return '0';
     
     // Si es un número, formatear con comas
@@ -97,17 +130,14 @@ function StatsCard({
 
   const formattedValue = formatValue(value);
 
-  // ===== FUNCIÓN DE RENDERIZADO DE ICONOS =====
-  const renderIcon = createStandardIconRenderer('statsCard', size);
-
   // ===== CLASES CSS =====
   const statsCardClasses = [
     'stats-card',
-    `stats-card--${color}`,
-    `stats-card--${variant}`,
-    `stats-card--${size}`,
+    `stats-card--variant-${finalVariant}`,
+    `stats-card--size-${size}`,
+    fullWidth && 'stats-card--full-width',
     loading && 'stats-card--loading',
-    error && 'stats-card--error',
+    disabled && 'stats-card--disabled',
     (onClick || href) && 'stats-card--interactive',
     className
   ].filter(Boolean).join(' ');
@@ -142,7 +172,7 @@ function StatsCard({
       <div className="stats-card__header">
         {icon && (
           <div className="stats-card__icon" aria-hidden="true">
-            {renderIcon(icon)}
+            <Icon name={icon} size={size === 'sm' ? 'sm' : size === 'lg' ? 'lg' : 'md'} />
           </div>
         )}
         <h3 className="stats-card__title">
@@ -162,32 +192,34 @@ function StatsCard({
           </div>
         )}
       </div>
-
-      {/* Estado de error */}
-      {error && (
-        <div className="stats-card__error-message" role="alert">
-          <span className="stats-card__error-icon" aria-hidden="true">
-            {renderIcon('alert', 'sm', 'danger')}
-          </span>
-          <span className="stats-card__error-text">{error}</span>
-        </div>
-      )}
     </>
   );
 
   // ===== PROPS PARA LA CARD BASE =====
   const cardProps = {
+    // Props estándar del sistema
+    size,
+    variant: finalVariant,
+    rounded,
+    disabled,
+    loading,
+    fullWidth,
     className: statsCardClasses,
-    variant: 'elevated',
-    padding: size === 'sm' ? 'md' : size === 'lg' ? 'xl' : 'lg',
-    hoverable: !!(onClick || href) && !loading && !error,
+    
+    // Props específicas de Card
+    hoverable: !!(onClick || href) && !loading && !disabled,
+    clickable: !!(onClick || href),
     onClick: (onClick || href) ? handleClick : undefined,
     onKeyDown: (onClick || href) ? handleKeyDown : undefined,
+    
+    // Accesibilidad
     role: (onClick || href) ? 'button' : undefined,
     tabIndex: (onClick || href) ? 0 : undefined,
     'aria-label': (onClick || href) ? `${title}: ${formattedValue}` : undefined,
     'aria-busy': loading,
-    'aria-invalid': !!error,
+    'aria-disabled': disabled,
+    
+    // Props DOM seguros
     ...domProps
   };
 
@@ -218,20 +250,27 @@ function StatsCard({
 }
 
 StatsCard.propTypes = {
+  // Props estándar del sistema de diseño
+  ...STANDARD_PROP_TYPES,
+  
+  // Props específicas del componente
   title: PropTypes.string,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]), // string: nombre del icono del sistema de diseño | node: componente React custom
+  icon: PropTypes.string, // Nombre del icono del sistema de diseño
+  
+  // Interactividad
+  onClick: PropTypes.func,
+  href: PropTypes.string,
+  
+  // Props adicionales
+  id: PropTypes.string,
+  
+  // DEPRECATED PROPS (mantener por compatibilidad)
   change: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   changeLabel: PropTypes.string,
   changeDirection: PropTypes.oneOf(['up', 'down', 'neutral']),
-  color: PropTypes.oneOf(['blue', 'green', 'red', 'yellow', 'purple', 'gray']),
-  variant: PropTypes.oneOf(['default', 'minimal', 'bordered', 'gradient']),
-  size: PropTypes.oneOf(['sm', 'md', 'lg']),
-  loading: PropTypes.bool,
-  error: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-  onClick: PropTypes.func,
-  href: PropTypes.string,
-  className: PropTypes.string
+  color: PropTypes.oneOf(['blue', 'green', 'red', 'yellow', 'purple', 'gray']), // DEPRECADO: usar variant
+  error: PropTypes.oneOfType([PropTypes.string, PropTypes.object]) // DEPRECADO: error state se maneja por loading
 };
 
 export { StatsCard };

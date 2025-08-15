@@ -123,36 +123,40 @@ function AdminDashboard() {
       title: 'Usuarios',
       value: stats.users.count,
       icon: 'users',
+      variant: 'primary', // Anteriormente 'blue'
       change: `${stats.users.change > 0 ? '+' : ''}${stats.users.change}%`,
       changeLabel: 'último mes',
-      color: 'blue',
+      color: 'blue', // DEPRECATED: mantener por compatibilidad
       onClick: () => navigate('/admin/users')
     },
     {
       title: 'Películas',
       value: stats.movies.count,
       icon: 'film',
+      variant: 'success', // Anteriormente 'green'
       change: `${stats.movies.change > 0 ? '+' : ''}${stats.movies.change}%`,
       changeLabel: 'esta semana',
-      color: 'green',
+      color: 'green', // DEPRECATED: mantener por compatibilidad
       onClick: () => navigate('/admin/movies')
     },
     {
       title: 'Series',
       value: stats.series.count,
       icon: 'video',
+      variant: 'primary', // Cambiado a primary para consistencia con otras cards
       change: `${stats.series.change > 0 ? '+' : ''}${stats.series.change}%`,
       changeLabel: 'último mes',
-      color: 'purple',
+      color: 'purple', // DEPRECATED: mantener por compatibilidad
       onClick: () => navigate('/admin/series')
     },
     {
       title: 'Categorías',
       value: stats.categories.count,
       icon: 'folder',
+      variant: 'warning', // Anteriormente 'yellow'
       change: `${stats.categories.change > 0 ? '+' : ''}${stats.categories.change}%`,
       changeLabel: 'este año',
-      color: 'yellow',
+      color: 'yellow', // DEPRECATED: mantener por compatibilidad
       onClick: () => navigate('/admin/categories')
     }
   ];
@@ -217,12 +221,15 @@ function AdminDashboard() {
                   title={card.title}
                   value={card.value}
                   icon={card.icon}
-                  change={card.change}
-                  changeLabel={card.changeLabel}
-                  color={card.color}
+                  variant={card.variant || 'neutral'} // Usar variantes estándar
                   onClick={card.onClick}
                   loading={loading}
                   size="md"
+                  fullWidth={true}
+                  // DEPRECATED: mantener por compatibilidad
+                  change={card.change}
+                  changeLabel={card.changeLabel}
+                  color={card.color}
                 />
               ))}
             </div>

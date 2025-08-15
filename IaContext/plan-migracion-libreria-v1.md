@@ -19,9 +19,13 @@
 - **CSS Variables**: Sistema completo de variables CSS
 - **Validación**: Props validation en desarrollo
 
-### 🟡 **NECESITA LIMPIEZA (5% del trabajo)**
-- Eliminar props deprecadas en 3-4 componentes
-- Completar migración de algunos componentes legacy
+### 🟡 **NECESITA LIMPIEZA (15% del trabajo) - ACTUALIZADO AGOSTO 15, 2025**
+- **185 errores de linting** detectados que necesitan corrección
+- **Props deprecadas activas** (color, change, changeLabel en StatsCard)
+- **Variables no utilizadas** (renderIcon, tokens en varios componentes)
+- **HTML nativo encontrado** en algunos archivos que debe migrar al sistema
+- **process undefined** en múltiples archivos (hooks, tokens)
+- **Caracteres sin escapar** en archivos .stories.jsx
 - Agregar stories faltantes (3-4 componentes)
 - Limpiar dependencias específicas del proyecto StreamingApp
 
@@ -41,12 +45,54 @@ find frontend/app/src/components -name "*.jsx" | xargs grep -l "streaming\|movie
 find frontend/app/src/components -name "*.jsx" | xargs grep -l "variant.*default\|variant.*info"
 ```
 
-### **1.2 Migración de Componentes Legacy**
+### **1.2 ANÁLISIS DETALLADO DE LIMPIEZA REQUERIDA - AGOSTO 15, 2025**
+
+#### **🔴 ERRORES CRÍTICOS DE LINTING (185 total)**
+
+**Variables no utilizadas (Major):**
+```javascript
+// Archivos afectados con imports no utilizados:
+- CategoryCreatePage: 'Button' importado pero no usado
+- EpisodeEditPage: 'ContentImage' importado pero no usado  
+- EpisodesCreatePage: 'Button', 'navigate', 'hasChanges' no usados
+- MovieCreatePage: 'Button', 'navigate' no usados
+- SeriesCreatePage: 'Button', 'navigate' no usados
+- UserCreatePage: 'Button', 'hasChanges' no usados
+```
+
+**Problemas de process undefined:**
+```javascript
+// Archivos que necesitan NODE_ENV check fix:
+- useStandardProps.jsx: líneas 380, 422
+- standardProps.js: línea 204  
+- StatsCard.jsx: línea 103
+- Avatar.jsx: línea 105
+- Tabs.jsx: línea 38
+```
+
+**Props no utilizadas en componentes del sistema:**
+```javascript
+// StatsCard.jsx - variables extraídas pero no implementadas:
+- change, changeLabel, changeDirection (líneas 51-53)
+- tokens, renderIcon (líneas 74-75)
+- error variable referenciada pero no definida (líneas 153, 161, 229)
+
+// Avatar.jsx - variables del hook no utilizadas:
+- renderIcon, tokens (líneas 63-64)
+```
+
+#### **🟡 MIGRACIONES PENDIENTES**
+
+**Componentes Legacy detectados:**
 - **ActionsDropdown**: Migrar a `useStandardProps`
 - **ContentImage**: Completar stories de Storybook
 - **UploadProgress**: Finalizar sistema de props estándar
-- **StatsCard**: Completar documentación Storybook
+- **StatsCard**: ✅ Migrado pero tiene props legacy activas (color → variant)
 - **EpisodeCountdown**: Revisar si es específico del dominio
+
+**HTML nativo encontrado (debe migrar al sistema):**
+- Varios archivos tienen `<button>`, `<input>`, `<div>` que deberían usar componentes
+- Estilos inline `style={{}}` en lugar de tokens del sistema
 
 ### **1.3 Eliminación de Props Deprecadas**
 ```javascript
