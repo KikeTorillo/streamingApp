@@ -44,7 +44,7 @@ function EmptyState({
   const {
     size: finalSize,
     variant: finalVariant,
-    rounded: finalRounded,
+    // rounded: finalRounded, // del hook pero no utilizada
     disabled: isDisabled,
     loading: isLoading,
     tokens,
@@ -74,7 +74,7 @@ function EmptyState({
     const mappedVariant = variantMapping[finalVariant] || finalVariant;
     
     // Warning para variantes deprecated
-    if (variantMapping[finalVariant] && process.env.NODE_ENV === 'development') {
+    if (variantMapping[finalVariant] && import.meta.env?.DEV) {
       console.warn(`⚠️ EmptyState: variant="${finalVariant}" is deprecated. Use variant="${mappedVariant}" instead.`);
     }
     

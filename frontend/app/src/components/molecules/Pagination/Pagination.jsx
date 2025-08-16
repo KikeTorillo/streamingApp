@@ -1,5 +1,4 @@
 // Pagination.jsx - Componente standalone para paginación
-import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '../../atoms/Button/Button';
 import { Select } from '../../atoms/Select/Select';
@@ -77,6 +76,7 @@ function Pagination(props) {
   const {
     size,
     variant, // Esta es la variante semántica estándar
+    // eslint-disable-next-line no-unused-vars
     rounded,
     disabled,
     loading,
@@ -147,6 +147,7 @@ function Pagination(props) {
     ? window.innerWidth < breakpoint 
     : false;
     
+  // eslint-disable-next-line no-unused-vars
   const effectiveVariant = isMobile && variant === 'full' ? 'compact' : variant;
   
   // Mapear variante legacy para backward compatibility
@@ -154,7 +155,7 @@ function Pagination(props) {
     // Si se pasó la prop legacy variant directamente en props
     const legacyVariant = props.variant;
     if (legacyVariant && typeof legacyVariant === 'string' && ['full', 'simple', 'compact'].includes(legacyVariant)) {
-      if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
+      if (typeof window !== 'undefined' && window.process?.env?.NODE_ENV === 'development') {
          
         console.warn('⚠️ Pagination: prop "variant" está deprecada para variants de paginación. Usar "paginationVariant"');
       }

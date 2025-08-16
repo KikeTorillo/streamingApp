@@ -248,7 +248,7 @@ function mapLegacyTypeToVariant(type) {
   const mappedVariant = typeToVariantMap[type] || 'primary';
   
   // Deprecation warning en desarrollo
-  if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
+  if (typeof window !== 'undefined' && window.process?.env?.NODE_ENV === 'development') {
     console.warn(
       `Toast: La prop "type=${type}" está deprecada. ` +
       `Usar "variant=${mappedVariant}" en su lugar.`

@@ -620,13 +620,13 @@ export const BackwardCompatibilityColors = () => (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
           <div>
             <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)' }}>
-              Legacy: color="{color}"
+              Legacy: color=&quot;{color}&quot;
             </span>
             <Divider color={color} thickness="normal" />
           </div>
           <div>
             <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-success)' }}>
-              Nuevo: variant="{newVariant}"
+              Nuevo: variant=&quot;{newVariant}&quot;
             </span>
             <Divider variant={newVariant} size="md" />
           </div>

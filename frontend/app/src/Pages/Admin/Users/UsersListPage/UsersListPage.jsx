@@ -31,7 +31,6 @@ function UsersListPage() {
     error,
     deleting,
     loadUsers,
-    refreshUsers,
     deleteUser,
     formatUserDate
   } = useUsers();
@@ -88,9 +87,6 @@ function UsersListPage() {
   /**
    * Refrescar lista - Usa función del contexto
    */
-  const handleRefresh = () => {
-    refreshUsers();
-  };
 
   // ===== CONFIGURACIÓN DE COLUMNAS (SOLO CAMPOS REALES) =====
   const userColumns = [

@@ -18,8 +18,8 @@
  * });
  */
 
-import React, { forwardRef, useMemo } from 'react';
-import { DESIGN_TOKENS, getSizeTokens, getVariantTokens, getRoundedToken } from '../tokens/designTokens.js';
+import { forwardRef, useMemo } from 'react';
+import { getSizeTokens, getVariantTokens, getRoundedToken } from '../tokens/designTokens.js';
 import { createStandardIconRenderer } from '../utils/iconHelpers.js';
 import { validateStandardProps } from '../tokens/standardProps.js';
 
@@ -75,12 +75,12 @@ export const withStandardProps = (WrappedComponent, options = {}) => {
         rounded: roundedToken,
         componentType
       };
-    }, [size, variant, rounded, componentType]);
+    }, [size, variant, rounded]);
 
     // Crear renderizador de iconos específico para este componente
     const renderIcon = useMemo(() => {
       return createStandardIconRenderer(componentType, size);
-    }, [componentType, size]);
+    }, [size]);
 
     // Props computadas que se pasan al componente envuelto
     const enhancedProps = useMemo(() => ({

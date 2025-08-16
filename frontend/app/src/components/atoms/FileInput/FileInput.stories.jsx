@@ -469,7 +469,7 @@ export const BackwardCompatibilityDemo = () => (
   }}>
     <div style={{ textAlign: 'center' }}>
       <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>
-        Legacy: variant="default"
+        Legacy: variant=&quot;default&quot;
       </h4>
       <FileInput variant="default" text="Auto-mapping a neutral" />
       <small style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
@@ -479,7 +479,7 @@ export const BackwardCompatibilityDemo = () => (
     
     <div style={{ textAlign: 'center' }}>
       <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>
-        New: variant="neutral"
+        New: variant=&quot;neutral&quot;
       </h4>
       <FileInput variant="neutral" text="Estándar neutro" />
       <small style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
@@ -489,7 +489,7 @@ export const BackwardCompatibilityDemo = () => (
     
     <div style={{ textAlign: 'center' }}>
       <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>
-        Legacy: variant="error"
+        Legacy: variant=&quot;error&quot;
       </h4>
       <FileInput variant="error" text="Auto-mapping a danger" />
       <small style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
@@ -499,7 +499,7 @@ export const BackwardCompatibilityDemo = () => (
     
     <div style={{ textAlign: 'center' }}>
       <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>
-        New: variant="danger"
+        New: variant=&quot;danger&quot;
       </h4>
       <FileInput variant="danger" text="Estándar danger" />
       <small style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
@@ -585,7 +585,7 @@ export const Accessibility = () => (
         <li>✅ Estados aria-required y aria-invalid</li>
         <li>✅ Navegación por teclado (Tab, Enter, Space)</li>
         <li>✅ Focus visible con outline</li>
-        <li>✅ Mensajes de error con role="alert"</li>
+        <li>✅ Mensajes de error con role=&quot;alert&quot;</li>
         <li>✅ Área táctil mínima de 44px</li>
         <li>✅ Iconos automáticos con semántica clara</li>
       </ul>

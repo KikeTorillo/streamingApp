@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
 import { useLinkProps } from '../../../hooks/useStandardProps.jsx';
-import { extractDOMProps, STANDARD_PROP_TYPES } from '../../../tokens/standardProps.js';
+import { extractDOMProps } from '../../../tokens/standardProps.js';
+import { Icon } from '../Icon/Icon';
 import './Link.css';
 
 /**
@@ -60,6 +61,7 @@ function Link(props) {
     leftIcon,
     rightIcon,
     tokens,
+    // eslint-disable-next-line no-unused-vars
     renderIcon,
     hasLeftIcon,
     hasRightIcon,

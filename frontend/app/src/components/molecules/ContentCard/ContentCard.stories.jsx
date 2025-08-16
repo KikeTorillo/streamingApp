@@ -630,7 +630,7 @@ export const BackwardCompatibilityDemo = {
           Nueva API
         </p>
         <code style={{ fontSize: '1rem', color: 'var(--text-success)' }}>
-          cardVariant="elevated"
+          cardVariant=&quot;elevated&quot;
         </code>
       </div>
       
@@ -644,7 +644,7 @@ export const BackwardCompatibilityDemo = {
           Variante outlined
         </p>
         <code style={{ fontSize: '1rem', color: 'var(--text-success)' }}>
-          cardVariant="outlined"
+          cardVariant=&quot;outlined&quot;
         </code>
       </div>
     </div>

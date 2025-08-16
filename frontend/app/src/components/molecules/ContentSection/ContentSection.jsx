@@ -67,7 +67,7 @@ function ContentSection(props) {
     loading,
     className,
     tokens,
-    renderIcon,
+    // renderIcon, // del hook pero no implementada actualmente
     ...standardProps
   } = useStandardProps(restProps, {
     componentType: 'section',
@@ -88,7 +88,7 @@ function ContentSection(props) {
   const normalizedVariant = (() => {
     switch (variant) {
       case 'default':
-        if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
+        if (import.meta.env?.DEV) {
            
           console.warn('⚠️ ContentSection: variant="default" está deprecada. Usar variant="neutral"');
         }

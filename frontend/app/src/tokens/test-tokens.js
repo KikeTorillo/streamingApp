@@ -5,7 +5,6 @@ import {
   STANDARD_VARIANTS,
   STANDARD_ROUNDED,
   validateStandardProps,
-  extractStandardProps,
   DEFAULT_PROPS
 } from './standardProps.js';
 
@@ -32,6 +31,7 @@ const testProps = {
 };
 
 console.log('\n🧪 Testing validation...');
+// eslint-disable-next-line no-unused-vars
 const validatedProps = validateStandardProps(testProps, 'TestComponent');
 
 console.log('\n📋 Test successful! Standard Props System is working correctly.');

@@ -51,7 +51,6 @@ function EpisodeEditPage() {
     loadEpisodeById,
     updateEpisode,
     clearCurrentEpisode,
-    getEpisodeThumbnailUrl
   } = useEpisodes();
 
 
@@ -308,7 +307,6 @@ function EpisodeEditPage() {
   }
 
   const currentSeries = seriesData.find(s => s.id === currentEpisode?.serie_id);
-  const thumbnailUrl = currentEpisode?.thumbnail ? getEpisodeThumbnailUrl(currentEpisode.thumbnail) : null;
 
   return (
     <AdminLayout

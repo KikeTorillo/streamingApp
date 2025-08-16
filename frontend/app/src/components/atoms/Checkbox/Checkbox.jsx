@@ -54,7 +54,7 @@ function Checkbox(props) {
     rightIcon,
     className,
     renderIcon,
-    tokens,
+    // tokens, // del hook pero no implementado actualmente
     // Props específicas de Checkbox
     checked = false,
     indeterminate = false,

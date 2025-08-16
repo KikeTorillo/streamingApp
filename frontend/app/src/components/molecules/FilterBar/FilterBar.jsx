@@ -27,6 +27,7 @@ function FilterBar(props) {
     disabled,
     loading,
     className,
+    // eslint-disable-next-line no-unused-vars
     tokens,
     // renderIcon, // No se usa directamente en FilterBar, los botones internos manejan sus iconos
 

@@ -318,7 +318,7 @@ export const StandardVariants = () => (
     
     <Card variant="neutral">
       <CardTitle>Neutral</CardTitle>
-      <CardDescription>Variante neutra por defecto. Reemplaza la antigua "default".</CardDescription>
+      <CardDescription>Variante neutra por defecto. Reemplaza la antigua &quot;default&quot;.</CardDescription>
     </Card>
   </div>
 );
@@ -340,17 +340,17 @@ export const AllVariants = () => (
   }}>
     <Card variant="default">
       <CardTitle>Default (Legacy)</CardTitle>
-      <CardDescription>⚠️ DEPRECADO: Variante legacy que mapea a "neutral".</CardDescription>
+      <CardDescription>⚠️ DEPRECADO: Variante legacy que mapea a &quot;neutral&quot;.</CardDescription>
     </Card>
     
     <Card variant="elevated">
       <CardTitle>Elevated (Legacy)</CardTitle>
-      <CardDescription>Variante legacy mantenida como "appearance", no semántica.</CardDescription>
+      <CardDescription>Variante legacy mantenida como &quot;appearance&quot;, no semántica.</CardDescription>
     </Card>
     
     <Card variant="outlined">
       <CardTitle>Outlined (Legacy)</CardTitle>
-      <CardDescription>Variante legacy con borde, mantenida como "appearance".</CardDescription>
+      <CardDescription>Variante legacy con borde, mantenida como &quot;appearance&quot;.</CardDescription>
     </Card>
   </div>
 );
@@ -374,27 +374,27 @@ export const StandardSizes = () => (
   }}>
     <Card size="xs" shadow="sm">
       <CardTitle as="h4">XS</CardTitle>
-      <CardDescription>✅ size="xs" - Tamaño extra pequeño del sistema</CardDescription>
+      <CardDescription>✅ size=&quot;xs&quot; - Tamaño extra pequeño del sistema</CardDescription>
     </Card>
     
     <Card size="sm" shadow="sm">
       <CardTitle as="h4">SM</CardTitle>
-      <CardDescription>✅ size="sm" - Tamaño pequeño del sistema</CardDescription>
+      <CardDescription>✅ size=&quot;sm&quot; - Tamaño pequeño del sistema</CardDescription>
     </Card>
     
     <Card size="md" shadow="sm">
       <CardTitle as="h4">MD</CardTitle>
-      <CardDescription>✅ size="md" - Tamaño mediano (por defecto)</CardDescription>
+      <CardDescription>✅ size=&quot;md&quot; - Tamaño mediano (por defecto)</CardDescription>
     </Card>
     
     <Card size="lg" shadow="sm">
       <CardTitle as="h4">LG</CardTitle>
-      <CardDescription>✅ size="lg" - Tamaño grande del sistema</CardDescription>
+      <CardDescription>✅ size=&quot;lg&quot; - Tamaño grande del sistema</CardDescription>
     </Card>
     
     <Card size="xl" shadow="sm">
       <CardTitle as="h4">XL</CardTitle>
-      <CardDescription>✅ size="xl" - Tamaño extra grande del sistema</CardDescription>
+      <CardDescription>✅ size=&quot;xl&quot; - Tamaño extra grande del sistema</CardDescription>
     </Card>
   </div>
 );
@@ -416,32 +416,32 @@ export const PaddingSizes = () => (
   }}>
     <Card padding="xs" shadow="sm">
       <CardTitle as="h4">XS (Legacy)</CardTitle>
-      <CardDescription>⚠️ padding="xs" - DEPRECADO, usar size="xs"</CardDescription>
+      <CardDescription>⚠️ padding=&quot;xs&quot; - DEPRECADO, usar size=&quot;xs&quot;</CardDescription>
     </Card>
     
     <Card padding="sm" shadow="sm">
       <CardTitle as="h4">SM (Legacy)</CardTitle>
-      <CardDescription>⚠️ padding="sm" - DEPRECADO, usar size="sm"</CardDescription>
+      <CardDescription>⚠️ padding=&quot;sm&quot; - DEPRECADO, usar size=&quot;sm&quot;</CardDescription>
     </Card>
     
     <Card padding="md" shadow="sm">
       <CardTitle as="h4">MD (Legacy)</CardTitle>
-      <CardDescription>⚠️ padding="md" - DEPRECADO, usar size="md"</CardDescription>
+      <CardDescription>⚠️ padding=&quot;md&quot; - DEPRECADO, usar size=&quot;md&quot;</CardDescription>
     </Card>
     
     <Card padding="lg" shadow="sm">
       <CardTitle as="h4">LG (Legacy)</CardTitle>
-      <CardDescription>⚠️ padding="lg" - DEPRECADO, usar size="lg"</CardDescription>
+      <CardDescription>⚠️ padding=&quot;lg&quot; - DEPRECADO, usar size=&quot;lg&quot;</CardDescription>
     </Card>
     
     <Card padding="xl" shadow="sm">
       <CardTitle as="h4">XL (Legacy)</CardTitle>
-      <CardDescription>⚠️ padding="xl" - DEPRECADO, usar size="xl"</CardDescription>
+      <CardDescription>⚠️ padding=&quot;xl&quot; - DEPRECADO, usar size=&quot;xl&quot;</CardDescription>
     </Card>
     
     <Card padding="2xl" shadow="sm">
       <CardTitle as="h4">2XL (Legacy)</CardTitle>
-      <CardDescription>⚠️ padding="2xl" - DEPRECADO, mapea a size="xl"</CardDescription>
+      <CardDescription>⚠️ padding=&quot;2xl&quot; - DEPRECADO, mapea a size=&quot;xl&quot;</CardDescription>
     </Card>
   </div>
 );

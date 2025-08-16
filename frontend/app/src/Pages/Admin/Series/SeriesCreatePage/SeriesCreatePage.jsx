@@ -2,7 +2,6 @@
 // src/Pages/Admin/Series/SeriesCreatePage/SeriesCreatePage.jsx
 
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 // ===== LAYOUTS Y COMPONENTES =====
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
@@ -34,7 +33,6 @@ import './SeriesCreatePage.css';
  * ✅ CONTEXTO: Usa SeriesContext para toda la lógica de creación
  */
 function SeriesCreatePage() {
-  const navigate = useNavigate();
 
   // ===== CONTEXTO DE SERIES =====
   const {

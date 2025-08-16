@@ -35,7 +35,7 @@ function Breadcrumb(props) {
     
     // Props estándar del sistema
     size, variant, rounded, disabled, loading, className,
-    leftIcon, rightIcon,
+    // leftIcon, rightIcon, // del hook pero no implementadas actualmente
     
     // Props específicos de Breadcrumb
     breadcrumbVariant = 'default', // Separar de variant semántica

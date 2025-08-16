@@ -41,6 +41,7 @@ function AlertModal(props) {
 
   const {
     // Props estándar del sistema (size ignorado para auto-adaptación)
+    // eslint-disable-next-line no-unused-vars
     size, // ← No usar size por defecto, sera ignorado
     variant,
     rounded = 'xl',

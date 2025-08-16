@@ -31,7 +31,6 @@ function MoviesListPage() {
     error,
     deleting,
     loadMovies,
-    refreshMovies,
     deleteMovie,
     formatMovieDate,
     getMovieCoverUrl
@@ -210,9 +209,6 @@ function MoviesListPage() {
     deleteMovie(movie);
   };
 
-  const handleRefresh = () => {
-    refreshMovies();
-  };
 
   // ===== EFECTOS =====
   useEffect(() => {

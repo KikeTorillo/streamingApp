@@ -34,7 +34,7 @@ function ContentCard(props) {
   } = props;
 
   // Warnings para desarrollo en props deprecadas
-  if (process.env.NODE_ENV === 'development') {
+  if (import.meta.env?.DEV) {
     if (onPlay) {
       console.warn(
         '⚠️ ContentCard: "onPlay" prop está DEPRECADA. ' +
@@ -63,13 +63,13 @@ function ContentCard(props) {
     
     // Props estándar del sistema (ya procesadas por el hook)
     size, variant, rounded, disabled, loading, className,
-    leftIcon, rightIcon,
+    // leftIcon, rightIcon, // del hook pero no implementadas actualmente
     
     // Props específicos para backward compatibility
     cardVariant = 'elevated', // Separar de variant semántica
     
     // Tokens y sistema integrado
-    tokens, renderIcon,
+    tokens, // renderIcon, // del hook pero no implementadas actualmente
     
     // Props DOM
     ...domProps

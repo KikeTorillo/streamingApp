@@ -2,7 +2,6 @@
 // src/Pages/Admin/Episodes/EpisodesCreatePage/EpisodesCreatePage.jsx
 
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { Container } from '../../../../components/atoms/Container/Container';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
@@ -24,7 +23,6 @@ import { useEpisodes } from '../../../../app/context/EpisodesContext';
  * ✅ MANTENIBILIDAD: Lógica centralizada y reutilizable
  */
 function EpisodesCreatePage() {
-  const navigate = useNavigate();
 
   // ===== ESTADOS LOCALES =====
 
@@ -50,7 +48,7 @@ function EpisodesCreatePage() {
   } = useEpisodes();
   
   // ===== HOOKS =====
-  const { hasChanges, markAsChanged, resetNavigation } = useFormNavigation();
+  const { markAsChanged, resetNavigation } = useFormNavigation();
 
   // ===== HOOK DE ÉXITO HOMOLOGADO =====
   const { triggerSuccess } = useSuccessRedirect('/admin/episodes');

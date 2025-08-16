@@ -34,7 +34,6 @@ function CategoryCreatePage() {
 
   // ===== ESTADOS LOCALES =====
   const [error, setError] = useState(null);
-  const [hasChanges, setHasChanges] = useState(false);
 
   // ===== HOOK DE ÉXITO HOMOLOGADO =====
   const { triggerSuccess } = useSuccessRedirect('/admin/categories');
@@ -90,12 +89,7 @@ function CategoryCreatePage() {
   /**
    * Detectar cambios en el formulario
    */
-  const handleFormChange = (formData) => {
-    const hasData = Object.values(formData).some(value => 
-      value && value.toString().trim() !== ''
-    );
-    setHasChanges(hasData);
-    
+  const handleFormChange = () => {
     // Limpiar errores cuando el usuario empiece a escribir
     if (error) {
       clearError();
@@ -120,7 +114,6 @@ function CategoryCreatePage() {
 
         // Usar hook homologado de éxito
         triggerSuccess('¡Categoría creada exitosamente!');
-        setHasChanges(false);
 
       } else if (result.error === 'SESSION_EXPIRED') {
 

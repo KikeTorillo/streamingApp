@@ -93,7 +93,7 @@ const Card = (props) => {
   // ✅ MIGRACIÓN: Usar hook estándar del sistema
   const standardProps = useCardProps(processedProps);
   const { 
-    size, variant, rounded, disabled, loading, className, tokens 
+    size, variant, rounded, disabled, loading, className 
   } = standardProps;
 
   // Determinar si la card es interactiva

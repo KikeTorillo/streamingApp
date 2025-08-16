@@ -231,7 +231,7 @@ export const SeriesDetailUseCase = {
                   </div>
                   <div>
                     <h4 style={{ color: 'var(--color-text-primary)', marginBottom: '0.5rem' }}>
-                      Episodio {index + 1}: "Pilot"
+                      Episodio {index + 1}: &quot;Pilot&quot;
                     </h4>
                     <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-sm)' }}>
                       Un profesor de química se convierte en fabricante de drogas...
@@ -1400,7 +1400,7 @@ export const BackwardCompatibilityDemo = {
 />`}
           </pre>
           <p style={{ color: 'var(--color-warning-600)', fontSize: 'var(--font-size-sm)', marginTop: '0.5rem' }}>
-            💡 <strong>Console Warning:</strong> "variant='pills' está deprecado. Usar tabsVariant='pills'"
+            💡 <strong>Console Warning:</strong> &quot;variant=&apos;pills&apos; está deprecado. Usar tabsVariant=&apos;pills&apos;&quot;
           </p>
         </div>
       </div>

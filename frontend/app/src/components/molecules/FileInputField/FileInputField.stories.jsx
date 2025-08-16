@@ -494,7 +494,7 @@ export const BackwardCompatibilityDemo = () => (
   }}>
     <div style={{ textAlign: 'center' }}>
       <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>
-        Legacy: variant="default"
+        Legacy: variant=&quot;default&quot;
       </h4>
       <FileInputField 
         label="Archivo legacy" 
@@ -509,7 +509,7 @@ export const BackwardCompatibilityDemo = () => (
     
     <div style={{ textAlign: 'center' }}>
       <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>
-        New: variant="primary"
+        New: variant=&quot;primary&quot;
       </h4>
       <FileInputField 
         label="Archivo estándar" 
@@ -524,7 +524,7 @@ export const BackwardCompatibilityDemo = () => (
     
     <div style={{ textAlign: 'center' }}>
       <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>
-        Legacy: variant="error"
+        Legacy: variant=&quot;error&quot;
       </h4>
       <FileInputField 
         label="Error legacy" 
@@ -539,7 +539,7 @@ export const BackwardCompatibilityDemo = () => (
     
     <div style={{ textAlign: 'center' }}>
       <h4 style={{ marginBottom: 'var(--space-sm)', color: 'var(--text-secondary)' }}>
-        New: variant="danger"
+        New: variant=&quot;danger&quot;
       </h4>
       <FileInputField 
         label="Error estándar" 

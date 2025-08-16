@@ -2,7 +2,6 @@
 // src/Pages/Admin/Movies/MovieCreatePage/MovieCreatePage.jsx
 
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 // ===== LAYOUTS Y COMPONENTES =====
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
@@ -35,7 +34,6 @@ import './MovieCreatePage.css';
  * ✅ UX MEJORADA: Estados de carga, confirmaciones, navegación fluida
  */
 function MovieCreatePage() {
-  const navigate = useNavigate();
 
   // ===== ESTADOS PRINCIPALES =====
   const [submitError, setSubmitError] = useState(null);

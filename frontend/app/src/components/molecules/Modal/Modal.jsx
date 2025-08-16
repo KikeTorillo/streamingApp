@@ -4,6 +4,7 @@
 import { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '../../atoms/Button/Button';
+import { Icon } from '../../atoms/Icon/Icon';
 import { validateStandardProps, STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens';
 import './Modal.css';
 
@@ -201,7 +202,7 @@ function Modal(props) {
         {loading && (
           <div className="modal__loading" aria-hidden="true">
             <div className="modal__loading-spinner">
-              {renderIcon('loader')}
+              <Icon name="loader" spinning />
             </div>
             <div className="modal__loading-overlay" />
           </div>

@@ -1,7 +1,7 @@
 // ===== USER CREATE PAGE - MIGRADO A CONTAINER COMPONENT =====
 // src/Pages/Admin/Users/UserCreatePage/UserCreatePage.jsx
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { Container } from '../../../../components/atoms/Container/Container';
@@ -30,7 +30,6 @@ function UserCreatePage() {
   } = useUsers();
 
   // ===== ESTADOS LOCALES =====
-  const [hasChanges, setHasChanges] = useState(false);
 
   // ===== HOOK DE ÉXITO HOMOLOGADO =====
   const { triggerSuccess } = useSuccessRedirect('/admin/users');
@@ -117,7 +116,6 @@ function UserCreatePage() {
       if (result.success) {
 
         triggerSuccess('¡Usuario creado exitosamente!');
-        setHasChanges(false);
       } else {
 
         // El error ya se maneja en el contexto
@@ -131,7 +129,6 @@ function UserCreatePage() {
    * Manejar cambios en el formulario
    */
   const handleFormChange = () => {
-    setHasChanges(true);
     if (error) setError(null);
   };
 

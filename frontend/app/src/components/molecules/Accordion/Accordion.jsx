@@ -221,12 +221,15 @@ function Accordion(props) {
 
   // Efecto para animaciones de altura
   useEffect(() => {
+    // Capturar la referencia al inicio del efecto
+    const timeouts = animationTimeouts.current;
+    
     Object.entries(contentRefs.current).forEach(([itemId, contentRef]) => {
       if (!contentRef) return;
       
       // Limpiar timeout previo si existe
-      if (animationTimeouts.current[itemId]) {
-        clearTimeout(animationTimeouts.current[itemId]);
+      if (timeouts[itemId]) {
+        clearTimeout(timeouts[itemId]);
       }
       
       const isOpen = openItems.includes(itemId);
@@ -244,7 +247,7 @@ function Accordion(props) {
           }
           
           // Animar a la altura completa
-          animationTimeouts.current[itemId] = requestAnimationFrame(() => {
+          timeouts[itemId] = requestAnimationFrame(() => {
             animateHeight(contentRef, `${scrollHeight}px`, () => {
               // Reset a auto después de la animación para permitir contenido dinámico
               if (openItems.includes(itemId)) {
@@ -265,7 +268,7 @@ function Accordion(props) {
           }
           
           // Animar a 0
-          animationTimeouts.current[itemId] = requestAnimationFrame(() => {
+          timeouts[itemId] = requestAnimationFrame(() => {
             animateHeight(contentRef, '0px');
           });
         }
@@ -274,7 +277,7 @@ function Accordion(props) {
     
     // Cleanup function
     return () => {
-      Object.values(animationTimeouts.current).forEach(timeout => {
+      Object.values(timeouts).forEach(timeout => {
         if (typeof timeout === 'number') {
           clearTimeout(timeout);
         } else {

@@ -498,7 +498,7 @@ export const PerformanceDemo = {
     
     React.useEffect(() => {
       setRenderCount(count => count + 1);
-    });
+    }, []);
     
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>

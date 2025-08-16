@@ -262,7 +262,7 @@ export const SearchResultsUseCase = {
     return (
       <div style={{ padding: '2rem', background: 'var(--color-surface-primary)' }}>
         <h3 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>
-          🔍 Resultados para "{searchTerm}"
+          🔍 Resultados para &quot;{searchTerm}&quot;
         </h3>
         
         {/* Simulación de lista de resultados */}
@@ -616,7 +616,7 @@ export const ResponsiveExample = {
       <div>
         <p style={{ marginBottom: '2rem', color: 'var(--color-text-secondary)' }}>
           💡 <strong>Tip:</strong> Cambia el tamaño de la ventana para ver cómo se adapta automáticamente.
-          En mobile (&lt;768px), variant="full" se convierte en "compact".
+          En mobile (&lt;768px), variant=&quot;full&quot; se convierte en &quot;compact&quot;.
         </p>
         
         <Pagination
@@ -818,7 +818,7 @@ export const EdgeCaseSinglePage = {
     return (
       <div>
         <p style={{ marginBottom: '1rem', color: 'var(--color-text-secondary)' }}>
-          Cuando solo hay 1 página, el componente se oculta automáticamente (excepto variant="full").
+          Cuando solo hay 1 página, el componente se oculta automáticamente (excepto variant=&quot;full&quot;).
         </p>
         
         <div style={{ marginBottom: '2rem' }}>
@@ -959,7 +959,7 @@ export const BackwardCompatibilityVariants = {
             size="md"
           />
           <p style={{ color: 'var(--color-warning)', fontSize: 'var(--font-size-sm)', fontStyle: 'italic', marginTop: '0.5rem' }}>
-            ↑ Genera warning en console: usar 'paginationVariant' en lugar de 'variant' para layout
+            ↑ Genera warning en console: usar &apos;paginationVariant&apos; en lugar de &apos;variant&apos; para layout
           </p>
         </div>
       </div>

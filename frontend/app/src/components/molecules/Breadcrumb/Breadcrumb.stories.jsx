@@ -225,7 +225,7 @@ export const AdminPanelUseCase = {
         <p style={{ color: 'var(--color-text-secondary)' }}>
           El usuario sabe exactamente dónde está: <strong>Admin → Usuarios → Crear Usuario</strong>
           <br />
-          Puede hacer click en "Admin" o "Usuarios" para navegar hacia atrás.
+          Puede hacer click en &quot;Admin&quot; o &quot;Usuarios&quot; para navegar hacia atrás.
         </p>
       </div>
     </div>

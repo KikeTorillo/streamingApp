@@ -68,12 +68,10 @@ function FileInput(props) {
     className,
     leftIcon,
     rightIcon,
-    tokens,
     renderIcon,
     hasLeftIcon,
     hasRightIcon,
-    ariaLabel,
-    ...standardProps
+    ariaLabel
   } = useFileInputProps(restProps);
 
   // Mapeo de variantes legacy para backward compatibility
@@ -92,8 +90,7 @@ function FileInput(props) {
   })();
 
   
-  // Evitar warning de unused vars con void
-  void tokens; // Design tokens disponibles para estilos dinámicos si se necesitan
+  // Design tokens disponibles para estilos dinámicos si se necesitan
   // Estado interno para controlar archivos seleccionados
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [focused, setFocused] = useState(false);
