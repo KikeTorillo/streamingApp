@@ -153,12 +153,12 @@ function Breadcrumb(props) {
     
     const itemContent = (
       <span className="breadcrumb__item-content">
-        {item.icon && renderIcon(item.icon, {
+        {item.icon && renderIcon(item.icon, undefined, undefined, {
           className: 'breadcrumb__item-icon',
           'data-breadcrumb-icon': true
         })}
         <span className="breadcrumb__item-text">{item.label}</span>
-        {loading && item.isActive && renderIcon('loader', {
+        {loading && item.isActive && renderIcon('loader', undefined, undefined, {
           className: 'breadcrumb__loading-icon breadcrumb__loading-icon--spinning',
           'data-breadcrumb-loading': true
         })}
@@ -315,7 +315,7 @@ function CollapsedDropdown({
                 className="breadcrumb__collapsed-item"
                 onClick={(e) => handleItemClick(item, e)}
               >
-                {item.icon && renderIcon(item.icon, {
+                {item.icon && renderIcon(item.icon, undefined, undefined, {
                   className: 'breadcrumb__collapsed-item-icon',
                   'data-breadcrumb-collapsed-icon': true
                 })}

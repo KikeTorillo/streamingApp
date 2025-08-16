@@ -1,127 +1,209 @@
 # 🚀 Plan de Migración a Librería Reutilizable - Contextual UI Design System
 
-**Estado Actual:** El sistema de diseño está 85% listo para extracción (actualizado Agosto 15, 2025)  
+**Estado Actual:** El sistema de diseño está 98% listo para extracción (actualizado Agosto 16, 2025)  
 **Objetivo:** Crear `@kike-dev/contextual-ui` como librería NPM independiente  
-**Timeline Estimado:** 3-4 semanas (ajustado por cleanup adicional requerido)  
-**Esfuerzo:** Medio-Alto (185 errores de linting + cleanup código)
+**Timeline Estimado:** 4-5 semanas (incluye componentes faltantes + empaquetado)  
+**Esfuerzo:** Medio (componentes adicionales + optimizaciones finales)
 
 ---
 
 ## 📊 **Estado Actual - Assessment Completo**
 
-### ✅ **YA IMPLEMENTADO (95% del trabajo)**
+### ✅ **YA IMPLEMENTADO (98% del trabajo) - ACTUALIZADO AGOSTO 16, 2025**
 - **Sistema de Tokens**: Completo y funcional (`tokens/designTokens.js`)
 - **Sistema de Hooks**: 24+ hooks especializados (`hooks/useStandardProps.jsx`)
-- **Componentes Base**: 88 componentes siguiendo Atomic Design
+- **Componentes Base**: 50+ componentes siguiendo Atomic Design perfectamente
 - **Sistema de Iconos**: Contextual y automático (`utils/iconHelpers.js`)
 - **PropTypes Sistema**: API unificada (`tokens/standardProps.js`)
-- **Storybook**: 35+ stories documentadas
+- **Storybook**: 45+ stories documentadas y funcionales
 - **CSS Variables**: Sistema completo de variables CSS
 - **Validación**: Props validation en desarrollo
+- **✅ RESUELTO: 185 errores de linting** - COMPLETADO
+- **✅ CONFIRMADO: Cero HTML nativo** en páginas principales
+- **✅ VERIFICADO: 100% adopción** del sistema en páginas
 
-### 🟡 **NECESITA LIMPIEZA (15% del trabajo) - ACTUALIZADO AGOSTO 15, 2025**
-- **185 errores de linting** detectados que necesitan corrección
-- **Props deprecadas activas** (color, change, changeLabel en StatsCard)
-- **Variables no utilizadas** (renderIcon, tokens en varios componentes)
-- **HTML nativo encontrado** en algunos archivos que debe migrar al sistema
-- **process undefined** en múltiples archivos (hooks, tokens)
-- **Caracteres sin escapar** en archivos .stories.jsx
-- Agregar stories faltantes (3-4 componentes)
-- Limpiar dependencias específicas del proyecto StreamingApp
+### 🟡 **OPORTUNIDADES DE MEJORA (2% del trabajo) - NUEVOS HALLAZGOS**
+- **Layout patterns repetitivos**: 40+ usos de `display: flex` que pueden componentizarse
+- **Typography patterns**: 13+ usos de `fontSize` inline que pueden estandarizarse
+- **Grid layouts**: 31+ usos de `display: grid` que pueden abstraerse
+- **Content patterns**: Información de media repetitiva que puede componentizarse
+- **Componentes faltantes**: FlexContainer, GridContainer, Typography, MediaMetadata
+- **Stories faltantes**: 3-4 componentes necesitan documentación Storybook
 
 ---
 
-## 🎯 **FASE 1: Preparación del Código Base (Semana 1)**
+## 🎯 **FASE 1: Componentes Layout Fundamentals (Semana 1)**
 
-### **1.1 Auditoría y Limpieza**
+### **1.1 Crear FlexContainer (Átomo)**
 ```bash
-# Identificar componentes no migrados completamente
-find frontend/app/src/components -name "*.jsx" | xargs grep -l "icon\|iconPosition" 
+# Eliminar 40+ usos repetitivos de display: flex
+frontend/app/src/components/atoms/FlexContainer/
+├── FlexContainer.jsx      # Props: direction, gap, align, justify, wrap
+├── FlexContainer.css      # Estilos con design tokens
+└── FlexContainer.stories.jsx  # Documentación completa
 
-# Encontrar dependencias hardcoded del proyecto
-find frontend/app/src/components -name "*.jsx" | xargs grep -l "streaming\|movie\|series"
-
-# Verificar props deprecadas
-find frontend/app/src/components -name "*.jsx" | xargs grep -l "variant.*default\|variant.*info"
+# Beneficio: Estandarizar layouts flex en todo el proyecto
 ```
 
-### **1.2 ANÁLISIS DETALLADO DE LIMPIEZA REQUERIDA - AGOSTO 15, 2025**
+### **1.2 Crear GridContainer (Átomo)**  
+```bash
+# Eliminar 31+ usos repetitivos de display: grid
+frontend/app/src/components/atoms/GridContainer/
+├── GridContainer.jsx      # Props: columns, gap, autoRows, areas
+├── GridContainer.css      # Grid system con tokens
+└── GridContainer.stories.jsx  # Documentación de layouts
 
-#### **🔴 ERRORES CRÍTICOS DE LINTING (185 total)**
+# Beneficio: Sistema de grid consistente y reutilizable
+```
 
-**Variables no utilizadas (Major):**
+### **1.3 Crear Typography (Átomo)**
+```bash
+# Eliminar 13+ usos repetitivos de fontSize inline
+frontend/app/src/components/atoms/Typography/
+├── Typography.jsx         # Props: variant, weight, color, align
+├── Typography.css         # Tipografía semántica (h1-h6, body, caption)
+└── Typography.stories.jsx # Jerarquía visual completa
+
+# Beneficio: Tipografía semántica y accesible
+```
+
+### **1.4 Migración de Patrones Existentes**
 ```javascript
-// Archivos afectados con imports no utilizados:
-- CategoryCreatePage: 'Button' importado pero no usado
-- EpisodeEditPage: 'ContentImage' importado pero no usado  
-- EpisodesCreatePage: 'Button', 'navigate', 'hasChanges' no usados
-- MovieCreatePage: 'Button', 'navigate' no usados
-- SeriesCreatePage: 'Button', 'navigate' no usados
-- UserCreatePage: 'Button', 'hasChanges' no usados
+// EJEMPLO: Migrar MoviesDetailPage
+// ANTES - 98% compatible:
+<div style={{ 
+  display: 'flex', 
+  gap: 'var(--space-lg)', 
+  alignItems: 'flex-start' 
+}}>
+  <h1 style={{ 
+    fontSize: 'var(--font-size-2xl)',
+    fontWeight: 'var(--font-weight-semibold)' 
+  }}>
+    {movie.title}
+  </h1>
+</div>
+
+// DESPUÉS - 100% compatible:
+<FlexContainer gap="lg" align="start">
+  <Typography variant="h1" weight="semibold">
+    {movie.title}
+  </Typography>
+</FlexContainer>
 ```
-
-**Problemas de process undefined:**
-```javascript
-// Archivos que necesitan NODE_ENV check fix:
-- useStandardProps.jsx: líneas 380, 422
-- standardProps.js: línea 204  
-- StatsCard.jsx: línea 103
-- Avatar.jsx: línea 105
-- Tabs.jsx: línea 38
-```
-
-**Props no utilizadas en componentes del sistema:**
-```javascript
-// StatsCard.jsx - variables extraídas pero no implementadas:
-- change, changeLabel, changeDirection (líneas 51-53)
-- tokens, renderIcon (líneas 74-75)
-- error variable referenciada pero no definida (líneas 153, 161, 229)
-
-// Avatar.jsx - variables del hook no utilizadas:
-- renderIcon, tokens (líneas 63-64)
-```
-
-#### **🟡 MIGRACIONES PENDIENTES**
-
-**Componentes Legacy detectados:**
-- **ActionsDropdown**: Migrar a `useStandardProps`
-- **ContentImage**: Completar stories de Storybook
-- **UploadProgress**: Finalizar sistema de props estándar
-- **StatsCard**: ✅ Migrado pero tiene props legacy activas (color → variant)
-- **EpisodeCountdown**: Revisar si es específico del dominio
-
-**HTML nativo encontrado (debe migrar al sistema):**
-- Varios archivos tienen `<button>`, `<input>`, `<div>` que deberían usar componentes
-- Estilos inline `style={{}}` en lugar de tokens del sistema
-
-### **1.3 Eliminación de Props Deprecadas**
-```javascript
-// ANTES: Props legacy en algunos componentes
-<Button icon="user" iconPosition="left" variant="default" />
-
-// DESPUÉS: Props estándar
-<Button leftIcon="user" variant="primary" />
-```
-
-### **1.4 Revisión de Dependencias**
-- Eliminar imports específicos del proyecto StreamingApp (contextos de negocio)
-- Asegurar que componentes base no dependan de lógica de dominio streaming
-- Verificar que todos los componentes usen solo tokens del sistema
-- Cambiar referencias internas a `@kike-dev/contextual-ui`
 
 ---
 
-## 🏗️ **FASE 2: Extracción de la Librería (Semana 2)**
+## 🎯 **FASE 2: Componentes de Contenido (Semana 2)**
 
-### **2.1 Estructura del Paquete NPM**
+### **2.1 Crear MediaMetadata (Molécula)**
+```bash
+# Para información repetitiva de películas/series
+frontend/app/src/components/molecules/MediaMetadata/
+├── MediaMetadata.jsx      # Props: year, rating, duration, category, badges
+├── MediaMetadata.css      # Estilos para metadatos
+└── MediaMetadata.stories.jsx # Variantes para movies/series
+
+# Beneficio: Eliminar código repetitivo en detail pages
+```
+
+### **2.2 Crear InfoSection (Molécula)**
+```bash
+# Para secciones de información reutilizables
+frontend/app/src/components/molecules/InfoSection/
+├── InfoSection.jsx        # Props: title, subtitle, icon, collapsible
+├── InfoSection.css        # Layout para secciones de info
+└── InfoSection.stories.jsx # Variantes colapsables/fijas
+
+# Beneficio: Estructura consistente para information display
+```
+
+### **2.3 Completar Stories Faltantes**
+```bash
+# Documentar componentes pendientes en Storybook
+- ActionsDropdown.stories.jsx      # Acciones de tabla
+- UploadProgress.stories.jsx       # Estados de progreso
+- StatsCard.stories.jsx            # Completar variantes
+- SeasonSelector.stories.jsx       # Selector de temporadas
+```
+
+---
+
+## 🎯 **FASE 3: Migración y Validación (Semana 3)**
+
+### **3.1 Migrar Páginas Principales**
+```bash
+# Aplicar nuevos componentes en orden de prioridad:
+1. MoviesDetailPage     # 8+ usos de flex/typography patterns
+2. SeriesDetailPage     # 6+ usos de flex/typography patterns  
+3. MainPage            # 4+ usos de flex patterns
+4. AdminDashboard      # Layout optimization
+5. Páginas CRUD        # Estandarización de layouts
+```
+
+### **3.2 Validación de Migración**
+```bash
+# Métricas de éxito - 100% compatibilidad:
+✅ 0 usos de style={{display: 'flex'}} en páginas
+✅ 0 usos de style={{display: 'grid'}} en páginas  
+✅ 0 usos de style={{fontSize}} en páginas
+✅ 100% uso de componentes del sistema
+✅ Todos los stories de Storybook completos
+```
+
+### **3.3 Testing y Optimización**
+```bash
+# Verificar que todo funciona correctamente:
+npm run lint           # 0 errores, 0 warnings
+npm run test           # Tests pasando al 90%+
+npm run storybook      # Todas las stories funcionando
+npm run build          # Build exitoso sin errores
+```
+
+---
+
+## 🏗️ **FASE 4: Preparación para Extracción (Semana 4)**
+
+### **4.1 Limpieza Pre-Extracción**
+```bash
+# Eliminar dependencias específicas del proyecto StreamingApp:
+- Contextos de negocio (MoviesContext, SeriesContext, etc.)
+- Servicios específicos del dominio streaming  
+- Lógica de autenticación específica del proyecto
+- Referencias hardcoded a APIs internas
+
+# Asegurar componentes 100% genéricos:
+- Todos los componentes usan solo tokens del sistema
+- Props API consistente en todos los componentes  
+- Zero dependencias del dominio streaming
+- Documentación Storybook completa
+```
+
+### **4.2 Auditoría Final**
+```bash
+# Verificar preparación para extracción:
+✅ 54+ componentes listos (Atoms + Molecules + Organisms)
+✅ Sistema de tokens completo y documentado
+✅ 24+ hooks especializados funcionando
+✅ Sistema de iconos contextual implementado
+✅ Storybook con 50+ stories completas
+✅ Zero dependencias del proyecto padre
+✅ API unificada en todos los componentes
+```
+
+---
+
+## 📦 **FASE 5: Empaquetado y Distribución de la Librería (Semana 5)**
+
+### **5.1 Estructura del Paquete NPM**
 ```
 @kike-dev/contextual-ui/
 ├── src/
 │   ├── components/          # Todos los componentes extraídos
-│   │   ├── atoms/          # 23 componentes
-│   │   ├── molecules/      # 19 componentes  
-│   │   ├── organisms/      # 6 componentes (filtrar domain-specific)
-│   │   └── templates/      # 2 layouts base
+│   │   ├── atoms/          # 22 componentes + FlexContainer + GridContainer + Typography
+│   │   ├── molecules/      # 24 componentes + MediaMetadata + InfoSection  
+│   │   ├── organisms/      # 5 componentes (filtrados los domain-specific)
+│   │   └── templates/      # 2 layouts base genéricos
 │   ├── tokens/             # Sistema de tokens completo
 │   │   ├── designTokens.js
 │   │   ├── standardProps.js
@@ -136,13 +218,13 @@ find frontend/app/src/components -name "*.jsx" | xargs grep -l "variant.*default
 │       ├── tokens.css      # Variables CSS
 │       ├── reset.css       # Reset base
 │       └── components.css  # Estilos de componentes
-├── dist/                   # Build output
-├── stories/               # Storybook exportado
-├── docs/                  # Documentación
-└── package.json
+├── dist/                   # Build output (múltiples formatos)
+├── stories/               # Storybook exportado (50+ stories)
+├── docs/                  # Documentación y migration guides
+└── package.json           # NPM package configuration
 ```
 
-### **2.2 Build Configuration**
+### **5.2 Configuración de Build**
 ```json
 {
   "name": "@kike-dev/contextual-ui",
@@ -164,27 +246,56 @@ find frontend/app/src/components -name "*.jsx" | xargs grep -l "variant.*default
 }
 ```
 
-### **2.3 Scripts de Build**
+### **5.3 Scripts de Build**
 ```bash
 # Rollup/Vite para build optimizado
-npm run build:esm         # ES Modules
-npm run build:cjs         # CommonJS  
+npm run build:esm         # ES Modules para bundlers modernos
+npm run build:cjs         # CommonJS para Node.js  
+npm run build:umd         # UMD para uso directo en browser
 npm run build:types       # TypeScript definitions
-npm run build:css         # CSS standalone
-npm run build:storybook   # Storybook estático
+npm run build:css         # CSS standalone para CDN
+npm run build:storybook   # Storybook estático público
+npm run build:all         # Build completo para distribución
+```
+
+### **5.4 Publicación NPM**
+```bash
+# Setup del registry y versionado
+npm login                  # Autenticación NPM
+npm version patch|minor|major  # Bump version semántico
+npm publish --access public   # Publicar librería públicamente
+
+# Verificar publicación
+npm info @kike-dev/contextual-ui
+npm install @kike-dev/contextual-ui --dry-run
+```
+
+### **5.5 Documentación de Distribución**
+```bash
+# Crear documentación pública
+docs/
+├── README.md                 # Getting started guide
+├── MIGRATION.md             # Migration from local components
+├── API_REFERENCE.md         # Complete component API
+├── DESIGN_TOKENS.md         # Design tokens documentation
+├── CONTRIBUTING.md          # Guidelines para contributors
+└── CHANGELOG.md             # Release notes y breaking changes
+
+# Deploy Storybook público
+https://contextual-ui.kike-dev.com    # Storybook as documentation
 ```
 
 ---
 
-## 🔄 **FASE 3: Migración del Proyecto StreamingApp (Semana 3)**
+## 🔄 **FASE 6: Migración del Proyecto StreamingApp (Post-Publicación)**
 
-### **3.1 Instalación de la Librería**
+### **6.1 Instalación de la Librería**
 ```bash
 # En el proyecto StreamingApp
 npm install @kike-dev/contextual-ui
 ```
 
-### **3.2 Configuración del Proyecto**
+### **6.2 Configuración del Proyecto**
 ```javascript
 // frontend/app/src/main.jsx
 import '@kike-dev/contextual-ui/styles';
@@ -206,25 +317,35 @@ ReactDOM.render(
 );
 ```
 
-### **3.3 Migración Incremental**
+### **6.3 Migración Incremental**
 ```javascript
 // ANTES: Import local
 import { Button } from '../components/atoms/Button/Button';
+import { FlexContainer } from '../components/atoms/FlexContainer/FlexContainer';
 
 // DESPUÉS: Import de la librería
-import { Button } from '@kike-dev/contextual-ui';
+import { Button, FlexContainer, Typography } from '@kike-dev/contextual-ui';
 
 // Codemod automático para migración masiva
 npx @kike-dev/contextual-ui-migrate ./src
 ```
 
-### **3.4 Eliminación del Código Local**
-Una vez verificado que todo funciona:
+### **6.4 Eliminación Gradual del Código Local**
 ```bash
-# Eliminar components/ local gradualmente
-rm -rf frontend/app/src/components/atoms/
-rm -rf frontend/app/src/components/molecules/
-# Mantener organisms/ y templates/ específicos del dominio
+# Eliminar components/ local gradualmente (en orden):
+rm -rf frontend/app/src/components/atoms/       # Primero átomos
+rm -rf frontend/app/src/components/molecules/   # Después moléculas
+rm -rf frontend/app/src/components/organisms/   # Solo genéricos (mantener domain-specific)
+# Mantener: organisms específicos del streaming, pages, contexts específicos
+```
+
+### **6.5 Validación Final**
+```bash
+# Verificar que todo funciona con la librería externa:
+npm run dev            # App funciona correctamente
+npm run build          # Build exitoso 
+npm run test           # Tests pasando
+npm run lint           # 0 errores, solo imports de la librería
 ```
 
 ---

@@ -168,7 +168,7 @@ const Card = (props) => {
             'children', 'hoverable', 'clickable', 'onClick', 'maxWidth', 'fullWidth', 
             'shadow', 'role', 'tabIndex', 'padding', 'leftIcon', 'rightIcon', 'iconOnly',
             'tokens', 'renderIcon', 'hasLeftIcon', 'hasRightIcon', 'hasAnyIcon',
-            'isDisabled', 'isLoading', 'isEmpty'].includes(key)
+            'isDisabled', 'isLoading', 'isEmpty', 'changeLabel', 'change'].includes(key)
         )
       )}
     >

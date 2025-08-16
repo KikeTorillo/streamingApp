@@ -242,7 +242,7 @@ function AdminSidebar({
 
         {/* Toggle Button */}
         <Button
-          variant="ghost"
+          variant="neutral"
           size="sm"
           onClick={handleSidebarToggle}
           className="admin-sidebar__toggle"
@@ -395,7 +395,7 @@ function AdminSidebar({
           </div>
 
           <Button
-            variant="outline"
+            variant="secondary"
             size="sm"
             onClick={handleBackToHome}
             className="admin-sidebar__back-button"

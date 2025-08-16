@@ -332,7 +332,7 @@ function TMDBSearchView({
               {
                 key: 'clear',
                 text: 'Limpiar',
-                variant: 'ghost',
+                variant: 'neutral',
                 leftIcon: 'trash',
                 onClick: handleClearResults,
                 disabled: loading,

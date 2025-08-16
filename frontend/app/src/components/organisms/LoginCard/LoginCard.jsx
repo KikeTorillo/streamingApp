@@ -113,7 +113,7 @@ const LoginCard = ({
 
   return (
     <Card
-      padding="xl"
+      size="xl"
       shadow="lg"
       rounded={rounded}
       className="login-card"
@@ -193,7 +193,7 @@ const LoginCard = ({
           {/* Enlace de contraseña olvidada */}
           {onForgotPassword && (
             <Button
-              variant="ghost"
+              variant="neutral"
               size="sm"
               onClick={handleForgotPassword}
               disabled={loading}
@@ -209,7 +209,7 @@ const LoginCard = ({
                 ¿No tienes cuenta?
               </span>
               <Button
-                variant="ghost"
+                variant="neutral"
                 size="sm"
                 onClick={onRegisterClick}
                 disabled={loading}

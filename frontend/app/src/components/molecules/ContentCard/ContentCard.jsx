@@ -174,7 +174,7 @@ function ContentCard(props) {
           loading={loading}
           size={size} // Coordinar tamaño con ContentCard
           onError={handleImageError}
-          rounded="none" // El contenedor ya maneja el border radius
+          rounded="sm" // El contenedor ya maneja el border radius
           className="content-card__image"
         />
 

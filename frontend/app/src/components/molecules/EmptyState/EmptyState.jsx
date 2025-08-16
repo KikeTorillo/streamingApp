@@ -94,7 +94,7 @@ function EmptyState({
   // ===== RENDER =====
   return (
     <Card 
-      variant="outline"
+      variant="neutral"
       size={finalSize}
       className={emptyStateClasses}
       disabled={isDisabled}

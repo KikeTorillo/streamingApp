@@ -314,7 +314,7 @@ function MoviesDetailPage() {
                                     {movie.file_hash ? 'Reproducir Película' : 'No disponible'}
                                 </Button>
                                 <Button
-                                    variant="outline"
+                                    variant="secondary"
                                     size="lg"
                                     leftIcon="arrow-left"
                                     onClick={handleBackToMain}

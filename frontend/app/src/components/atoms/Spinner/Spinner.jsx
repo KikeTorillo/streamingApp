@@ -125,14 +125,16 @@ function Spinner({
   // Si es overlay, usar estructura específica
   if (overlay) {
     return (
-      <div {...restProps} className={`spinner-overlay ${spinnerClasses}`}>
+      <div {...restProps} className={`spinner-overlay`}>
         <div className={`spinner-overlay__container spinner-overlay__container--variant-${finalVariant}`}>
           <div className="spinner-overlay__spinner">
             {renderSpinnerVariant()}
           </div>
-          <div className={`spinner-overlay__message spinner__message--size-${size}`}>
-            {message}
-          </div>
+          {message && (
+            <div className={`spinner-overlay__message spinner__message--size-${size}`}>
+              {message}
+            </div>
+          )}
         </div>
       </div>
     );

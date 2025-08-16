@@ -174,8 +174,7 @@ function Toast({
       <div className="toast__content">
         {/* Icono usando sistema estándar */}
         <div className={`toast__icon ${config.iconClass}`}>
-          {renderIcon(config.icon, {
-            size: getIconSize(size),
+          {renderIcon(config.icon, getIconSize(size), undefined, {
             'aria-label': finalVariant
           })}
         </div>
@@ -196,7 +195,7 @@ function Toast({
         <div className="toast__actions">
           {action && (
             <Button
-              variant="ghost"
+              variant="neutral"
               size="xs"
               onClick={handleAction}
               className="toast__action-button"
@@ -207,7 +206,7 @@ function Toast({
           
           {showCloseButton && (
             <Button
-              variant="ghost"
+              variant="neutral"
               size="xs"
               onClick={handleClose}
               className="toast__close-button"
@@ -263,13 +262,13 @@ function mapLegacyTypeToVariant(type) {
  */
 function getIconSize(size) {
   const sizeMap = {
-    'xs': 14,
-    'sm': 16, 
-    'md': 18,
-    'lg': 20,
-    'xl': 22
+    'xs': 'xs',
+    'sm': 'xs', 
+    'md': 'sm',
+    'lg': 'md',
+    'xl': 'lg'
   };
-  return sizeMap[size] || 18;
+  return sizeMap[size] || 'sm';
 }
 
 Toast.propTypes = {

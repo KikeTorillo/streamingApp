@@ -315,7 +315,7 @@ function MainPage() {
                         onClick={() => handleMovieClick(movie)}
                         size="lg"
                         showRating={true}
-                        variant="elevated"
+                        variant="primary"
                     />
                 ))}
             </ContentSection>
@@ -366,7 +366,7 @@ function MainPage() {
                         onClick={() => handleSeriesClick(serie)}
                         size="lg"
                         showRating={true}
-                        variant="elevated"
+                        variant="primary"
                     />
                 ))}
             </ContentSection>

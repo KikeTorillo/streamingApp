@@ -196,7 +196,7 @@ function SeriesFormView({
             <div className="series-form-view__back-section">
               <Button
                 onClick={onBackToSearch}
-                variant="outline"
+                variant="secondary"
                 size="sm"
                 leftIcon="arrow-left"
               >
@@ -243,7 +243,7 @@ function SeriesFormView({
             onChange={handleFormChange}
             initialData={currentFormData}
             loading={formLoading}
-            disabled={formLoading || success}
+            disabled={success}
             columnsPerRow={2}
             tabletColumns={1}
             mobileColumns={1}
@@ -259,7 +259,7 @@ function SeriesFormView({
               {
                 key: 'cancel',
                 type: 'button',
-                variant: 'outline',
+                variant: 'secondary',
                 text: 'Cancelar',
                 onClick: () => window.history.back(),
                 disabled: formLoading
@@ -270,7 +270,7 @@ function SeriesFormView({
                 variant: success ? 'success' : 'primary',
                 text: success ? 'Guardado Exitosamente' : 'Crear Serie',
                 loading: formLoading,
-                disabled: formLoading || success,
+                disabled: success,
                 leftIcon: success ? 'check' : 'plus'
               }
             ]}

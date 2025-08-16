@@ -1,41 +1,15 @@
-/* src/components/atoms/Spinner/Spinner.css */
-/* ✅ MIGRADO AL SISTEMA ESTÁNDAR DE DISEÑO */
+/* ===== SPINNER ATOM - SISTEMA DE DISEÑO 100% COMPATIBLE ===== */
+/* Recreado desde cero siguiendo @kike-dev/contextual-ui specs */
 
 /* ===== COMPONENTE BASE ===== */
 .spinner {
-  /* Base para todos los spinners */
   display: inline-block;
   position: relative;
 }
 
-/* ===== VARIANTES DE COLOR DEL SISTEMA ESTÁNDAR ===== */
-.spinner--variant-primary {
-  /* Colores primary por defecto */
-}
-
-.spinner--variant-secondary {
-  /* Usar tokens secondary */
-}
-
-.spinner--variant-success {
-  /* Usar tokens success */
-}
-
-.spinner--variant-warning {
-  /* Usar tokens warning */
-}
-
-.spinner--variant-danger {
-  /* Usar tokens danger */
-}
-
-.spinner--variant-neutral {
-  /* Usar tokens neutral */
-}
-
-/* ===== ESTADOS DEL SISTEMA ESTÁNDAR ===== */
+/* ===== ESTADOS ESTÁNDAR DEL SISTEMA ===== */
 .spinner--loading {
-  /* Activo por defecto */
+  opacity: 1;
 }
 
 .spinner--disabled {
@@ -43,13 +17,65 @@
   pointer-events: none;
 }
 
-/* ===== BORDES REDONDEADOS (PARA PULSE) ===== */
+/* ===== TAMAÑOS ESTÁNDAR DEL SISTEMA ===== */
+.spinner--size-xs {
+  width: 2.4rem;  /* 24px - según COMPONENT_SIZES.xs */
+  height: 2.4rem;
+}
+
+.spinner--size-sm {
+  width: 3.2rem;  /* 32px - según COMPONENT_SIZES.sm */
+  height: 3.2rem;
+}
+
+.spinner--size-md {
+  width: 4.0rem;  /* 40px - según COMPONENT_SIZES.md - ESTÁNDAR */
+  height: 4.0rem;
+}
+
+.spinner--size-lg {
+  width: 5.6rem;  /* 56px - según COMPONENT_SIZES.lg */
+  height: 5.6rem;
+}
+
+.spinner--size-xl {
+  width: 5.6rem;  /* 56px - según COMPONENT_SIZES.xl */
+  height: 5.6rem;
+}
+
+/* ===== MENSAJES POR TAMAÑO ===== */
+.spinner__message--size-xs {
+  font-size: var(--font-size-xs);      /* Sistema tipografía */
+  font-weight: var(--font-weight-normal);
+}
+
+.spinner__message--size-sm {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-normal);
+}
+
+.spinner__message--size-md {
+  font-size: var(--font-size-base);    /* ESTÁNDAR */
+  font-weight: var(--font-weight-normal);
+}
+
+.spinner__message--size-lg {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+}
+
+.spinner__message--size-xl {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ===== BORDES REDONDEADOS PARA PULSE MODE ===== */
 .spinner-pulse--rounded-sm {
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-sm);     /* Sistema border radius */
 }
 
 .spinner-pulse--rounded-md {
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-md);     /* ESTÁNDAR */
 }
 
 .spinner-pulse--rounded-lg {
@@ -61,66 +87,86 @@
 }
 
 .spinner-pulse--rounded-full {
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-full);   /* Círculo perfecto */
 }
 
-/* ===== OVERLAY MODE ===== */
+/* ===== OVERLAY MODE - SISTEMA Z-INDEX ===== */
 .spinner-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5); /* Mantener para overlay universal */
+  background-color: rgba(0, 0, 0, 0.2);  /* Fondo mucho más sutil */
+  backdrop-filter: blur(0.5px);          /* Blur muy ligero */
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
+  z-index: var(--z-modal);               /* Sistema z-index */
+  width: 100vw;
+  height: 100vh;
 }
 
 .spinner-overlay__container {
-  background-color: var(--bg-primary);
-  padding: var(--space-xl);
-  border-radius: var(--radius-md);
+  background-color: var(--bg-primary);  /* Sistema colores semánticos */
+  padding: var(--space-xl);             /* Sistema espaciado */
+  border-radius: var(--radius-lg);      /* Sistema border radius */
   text-align: center;
-  box-shadow: var(--shadow-strong);
+  box-shadow: var(--shadow-xl);         /* Sombra más suave */
+  border: 1px solid var(--border-light); /* Sistema bordes */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  min-width: 220px;
+  max-width: 380px;
+  position: relative;
+  /* Hacer el contenedor más elegante */
+  backdrop-filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.9); /* Fondo más transparente */
 }
 
-/* Variantes de overlay container */
+/* ===== VARIANTES DE OVERLAY CONTAINER ===== */
 .spinner-overlay__container--variant-primary {
-  /* Por defecto */
+  background-color: var(--bg-primary);
+  border-color: var(--color-primary);
 }
 
 .spinner-overlay__container--variant-secondary {
   background-color: var(--bg-secondary);
+  border-color: var(--color-secondary);
 }
 
 .spinner-overlay__container--variant-success {
-  background-color: var(--bg-success-subtle);
+  background-color: var(--color-success-light);
+  border-color: var(--color-success);
 }
 
 .spinner-overlay__container--variant-warning {
-  background-color: var(--bg-warning-subtle);
+  background-color: var(--color-warning-light);
+  border-color: var(--color-warning);
 }
 
 .spinner-overlay__container--variant-danger {
-  background-color: var(--bg-danger-subtle);
+  background-color: var(--color-danger-light);
+  border-color: var(--color-danger);
 }
 
 .spinner-overlay__container--variant-neutral {
-  background-color: var(--bg-neutral);
+  background-color: var(--bg-muted);
+  border-color: var(--border-default);
 }
 
 .spinner-overlay__spinner {
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-lg);       /* Sistema espaciado */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .spinner-overlay__message {
-  color: var(--text-primary);
+  color: var(--text-primary);          /* Sistema colores texto */
+  font-weight: var(--font-weight-medium);
 }
 
 /* ===== INLINE MODE ===== */
@@ -128,107 +174,83 @@
   display: inline-flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-sm);                 /* Sistema espaciado */
 }
 
 .spinner-inline__message {
-  color: var(--text-secondary);
+  color: var(--text-secondary);        /* Sistema colores texto */
   text-align: center;
+  font-weight: var(--font-weight-normal);
 }
 
-/* ===== TAMAÑOS DEL SISTEMA ESTÁNDAR ===== */
-.spinner--size-xs {
-  width: 2.4rem;  /* 24px */
-  height: 2.4rem;
-}
+/* ===== VARIANTES DE SPINNER ===== */
 
-.spinner--size-sm {
-  width: 3.2rem;  /* 32px */
-  height: 3.2rem;
-}
-
-.spinner--size-md {
-  width: 4.8rem;  /* 48px */
-  height: 4.8rem;
-}
-
-.spinner--size-lg {
-  width: 6.4rem;  /* 64px */
-  height: 6.4rem;
-}
-
-.spinner--size-xl {
-  width: 8.0rem;  /* 80px */
-  height: 8.0rem;
-}
-
-.spinner__message--size-xs {
-  font-size: var(--font-size-xs);
-}
-
-.spinner__message--size-sm {
-  font-size: var(--font-size-sm);
-}
-
-.spinner__message--size-md {
-  font-size: var(--font-size-base);
-}
-
-.spinner__message--size-lg {
-  font-size: var(--font-size-lg);
-}
-
-.spinner__message--size-xl {
-  font-size: var(--font-size-xl);
-}
-
-/* ===== VARIANTES ===== */
-
-/* Circle Spinner */
+/* ===== CIRCLE SPINNER ===== */
 .spinner-circle {
-  border: 0.4rem solid var(--border-light);
-  border-radius: 50%;
+  display: block;
+  margin: 0 auto;
+  border-radius: var(--radius-full);
+  /* Círculo base gris FIJO - no gira */
+  border: 0.3rem solid var(--border-light);
+  position: relative;
+}
+
+.spinner-circle::after {
+  content: '';
+  position: absolute;
+  top: -0.3rem;
+  left: -0.3rem;
+  right: -0.3rem;
+  bottom: -0.3rem;
+  border-radius: var(--radius-full);
+  /* Solo un pequeño arco de color que gira */
+  border: 0.3rem solid transparent;
+  border-top: 0.3rem solid var(--color-primary);
   animation: spin 1s linear infinite;
 }
 
-.spinner-circle--primary {
-  border-top: 0.4rem solid var(--color-primary);
+/* Variantes de color para circle */
+.spinner-circle--primary::after {
+  border-top-color: var(--color-primary);
 }
 
-.spinner-circle--secondary {
-  border-top: 0.4rem solid var(--color-secondary);
+.spinner-circle--secondary::after {
+  border-top-color: var(--color-secondary);
 }
 
-.spinner-circle--success {
-  border-top: 0.4rem solid var(--color-success);
+.spinner-circle--success::after {
+  border-top-color: var(--color-success);
 }
 
-.spinner-circle--warning {
-  border-top: 0.4rem solid var(--color-warning);
+.spinner-circle--warning::after {
+  border-top-color: var(--color-warning);
 }
 
-.spinner-circle--danger {
-  border-top: 0.4rem solid var(--color-danger);
+.spinner-circle--danger::after {
+  border-top-color: var(--color-danger);
 }
 
-.spinner-circle--neutral {
-  border-top: 0.4rem solid var(--color-neutral);
+.spinner-circle--neutral::after {
+  border-top-color: var(--text-muted);
 }
 
-/* Dots Spinner */
+/* ===== DOTS SPINNER ===== */
 .spinner-dots {
   display: flex;
   gap: 0.4rem;
   align-items: center;
+  justify-content: center;
+  margin: 0 auto;
 }
 
 .spinner-dot {
   width: 0.8rem;
   height: 0.8rem;
-  border-radius: 50%;
+  border-radius: var(--radius-full);         /* Círculo perfecto */
   animation: spinnerDots 1.4s ease-in-out infinite;
 }
 
+/* Variantes de color para dots */
 .spinner-dot--primary {
   background-color: var(--color-primary);
 }
@@ -250,9 +272,10 @@
 }
 
 .spinner-dot--neutral {
-  background-color: var(--color-neutral);
+  background-color: var(--text-muted);
 }
 
+/* Delays para animación secuencial */
 .spinner-dot:nth-child(1) {
   animation-delay: 0s;
 }
@@ -265,12 +288,15 @@
   animation-delay: 0.32s;
 }
 
-/* Pulse Spinner */
+/* ===== PULSE SPINNER ===== */
 .spinner-pulse {
-  border-radius: 50%;
+  border-radius: var(--radius-full);         /* Círculo por defecto */
   animation: spinnerPulse 1.5s ease-in-out infinite;
+  display: block;
+  margin: 0 auto;
 }
 
+/* Variantes de color para pulse */
 .spinner-pulse--primary {
   background-color: var(--color-primary);
 }
@@ -292,23 +318,26 @@
 }
 
 .spinner-pulse--neutral {
-  background-color: var(--color-neutral);
+  background-color: var(--text-muted);
 }
 
-/* Bars Spinner */
+/* ===== BARS SPINNER ===== */
 .spinner-bars {
   display: flex;
   gap: 0.2rem;
   align-items: center;
+  justify-content: center;
+  margin: 0 auto;
 }
 
 .spinner-bar {
   width: 0.4rem;
   height: 100%;
-  border-radius: 0.2rem;
+  border-radius: var(--radius-sm);           /* Sistema border radius */
   animation: spinnerBars 1.2s ease-in-out infinite;
 }
 
+/* Variantes de color para bars */
 .spinner-bar--primary {
   background-color: var(--color-primary);
 }
@@ -330,9 +359,10 @@
 }
 
 .spinner-bar--neutral {
-  background-color: var(--color-neutral);
+  background-color: var(--text-muted);
 }
 
+/* Delays para animación secuencial */
 .spinner-bar:nth-child(1) {
   animation-delay: 0s;
 }
@@ -349,12 +379,19 @@
   animation-delay: 0.45s;
 }
 
-/* ===== ANIMACIONES ===== */
+/* ===== ANIMACIONES OPTIMIZADAS ===== */
+
+/* Rotación suave para circle */
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% { 
+    transform: rotate(0deg); 
+  }
+  100% { 
+    transform: rotate(360deg); 
+  }
 }
 
+/* Escala secuencial para dots */
 @keyframes spinnerDots {
   0%, 80%, 100% {
     transform: scale(0.8);
@@ -366,6 +403,7 @@
   }
 }
 
+/* Pulso expandiendo para pulse */
 @keyframes spinnerPulse {
   0% {
     transform: scale(0);
@@ -377,6 +415,7 @@
   }
 }
 
+/* Barras oscillantes para bars */
 @keyframes spinnerBars {
   0%, 40%, 100% {
     transform: scaleY(0.4);
@@ -386,4 +425,58 @@
     transform: scaleY(1);
     opacity: 1;
   }
+}
+
+/* ===== RESPONSIVE DESIGN - MOBILE FIRST ===== */
+@media (max-width: 768px) {
+  .spinner-overlay__container {
+    min-width: 280px;
+    max-width: 90vw;
+    padding: var(--space-lg);            /* Reducir padding en móvil */
+    margin: var(--space-md);             /* Margen para no tocar bordes */
+  }
+  
+  .spinner__message--size-lg,
+  .spinner__message--size-xl {
+    font-size: var(--font-size-base);    /* Reducir tamaño texto en móvil */
+  }
+}
+
+/* ===== ACCESSIBILITY FEATURES ===== */
+@media (prefers-reduced-motion: reduce) {
+  /* Respetar preferencias de movimiento reducido */
+  .spinner-circle,
+  .spinner-dot,
+  .spinner-pulse,
+  .spinner-bar {
+    animation-duration: 2s;               /* Animaciones más lentas */
+  }
+}
+
+/* ===== DARK MODE SUPPORT ===== */
+[data-theme="dark"] .spinner-overlay {
+  background-color: rgba(0, 0, 0, 0.3);  /* Overlay más sutil en dark mode */
+}
+
+[data-theme="dark"] .spinner-overlay__container {
+  background-color: rgba(30, 30, 30, 0.85);  /* Fondo oscuro más transparente */
+  border-color: var(--border-dark);
+}
+
+[data-theme="dark"] .spinner-circle {
+  border-color: var(--border-dark);       /* Bordes adaptados a dark mode */
+}
+
+/* ===== FOCUS MANAGEMENT PARA OVERLAYS ===== */
+.spinner-overlay {
+  pointer-events: auto;
+}
+
+.spinner-overlay__container {
+  outline: none;
+}
+
+.spinner-overlay__container:focus-visible {
+  outline: 2px solid var(--border-focus);  /* Sistema focus */
+  outline-offset: 2px;
 }

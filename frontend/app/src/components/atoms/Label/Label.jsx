@@ -135,7 +135,7 @@ function Label({
   return (
     <label {...labelProps}>
       {/* Icono izquierdo con sistema estándar */}
-      {hasLeftIcon && renderIcon(leftIcon, {
+      {hasLeftIcon && renderIcon(leftIcon, undefined, undefined, {
         className: 'label__icon label__icon--left'
       })}
 
@@ -159,7 +159,7 @@ function Label({
       </span>
 
       {/* Icono derecho con sistema estándar */}
-      {hasRightIcon && renderIcon(rightIcon, {
+      {hasRightIcon && renderIcon(rightIcon, undefined, undefined, {
         className: 'label__icon label__icon--right'
       })}
 

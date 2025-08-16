@@ -460,7 +460,7 @@ function SeriesEditPage() {
                     {
                       key: 'cancel',
                       type: 'button',
-                      variant: 'outline',
+                      variant: 'secondary',
                       text: 'Cancelar',
                       onClick: handleCancel,
                       disabled: editing

@@ -241,7 +241,7 @@ function AdminLayout({
         <header className="admin-layout__header">
           {/* Botón de menú móvil */}
           <Button
-            variant="ghost"
+            variant="neutral"
             size="sm"
             onClick={handleSidebarToggle}
             className="admin-layout__mobile-menu-button"
@@ -292,7 +292,7 @@ function AdminLayout({
         <main className="admin-layout__content">
           <Container 
             size={size}
-            variant="simple" // Neutral para no interferir con contenido
+            variant="neutral" // Neutral para no interferir con contenido
             className="admin-layout__content-wrapper"
             disabled={disabled}
             loading={loadingCounts && !user}

@@ -245,10 +245,9 @@ function SeriesCreatePage() {
       {/* Spinner overlay para procesos de subida */}
       {(creating || processing) && (
         <Spinner
-          variant="circle"
+          variant="primary"
           size="lg"
-          color="primary"
-          message={progressMessage || `Progreso: ${uploadProgress}%`}
+          message={'Iniciando creación de la serie...' || progressMessage || `Progreso: ${uploadProgress}%`}
           overlay={true}
         />
       )}

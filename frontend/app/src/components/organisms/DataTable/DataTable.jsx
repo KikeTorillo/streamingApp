@@ -183,7 +183,7 @@ function DataTable(props) {
           <div className="data-table__actions">
             <ActionsDropdown
               actions={actions}
-              variant="outline"
+              variant="secondary"
               size={size}
               disabled={loading || disabled}
               data={rowData}
@@ -330,7 +330,7 @@ function DataTable(props) {
                     {header.isPlaceholder ? null : (
                       header.column.getCanSort() ? (
                         <Button
-                          variant="ghost"
+                          variant="neutral"
                           size={size}
                           onClick={header.column.getToggleSortingHandler()}
                           className="data-table__sort-button"
@@ -343,6 +343,8 @@ function DataTable(props) {
                                 asc: 'chevron-up',
                                 desc: 'chevron-down',
                               }[header.column.getIsSorted()] ?? 'chevron-up',
+                              undefined,
+                              undefined,
                               { style: header.column.getIsSorted() ? {} : { opacity: 0.5 } }
                             )}
                           </span>
@@ -385,7 +387,7 @@ function DataTable(props) {
                     </Label>
                     {onRefresh && (
                       <Button
-                        variant="outline"
+                        variant="secondary"
                         size={size}
                         onClick={onRefresh}
                         className="data-table__retry-button"
@@ -449,7 +451,7 @@ function DataTable(props) {
 
           <div className="data-table__pagination-controls">
             <Button
-              variant="outline"
+              variant="secondary"
               size={size}
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage() || loading || disabled}
@@ -460,7 +462,7 @@ function DataTable(props) {
             </Button>
 
             <Button
-              variant="outline"
+              variant="secondary"
               size={size}
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage() || loading || disabled}
@@ -476,7 +478,7 @@ function DataTable(props) {
             </span>
 
             <Button
-              variant="outline"
+              variant="secondary"
               size={size}
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage() || loading || disabled}
@@ -487,7 +489,7 @@ function DataTable(props) {
             </Button>
 
             <Button
-              variant="outline"
+              variant="secondary"
               size={size}
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage() || loading || disabled}

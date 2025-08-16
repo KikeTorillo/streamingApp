@@ -126,7 +126,6 @@ function AdminDashboard() {
       variant: 'primary', // Anteriormente 'blue'
       change: `${stats.users.change > 0 ? '+' : ''}${stats.users.change}%`,
       changeLabel: 'último mes',
-      color: 'blue', // DEPRECATED: mantener por compatibilidad
       onClick: () => navigate('/admin/users')
     },
     {
@@ -136,7 +135,6 @@ function AdminDashboard() {
       variant: 'success', // Anteriormente 'green'
       change: `${stats.movies.change > 0 ? '+' : ''}${stats.movies.change}%`,
       changeLabel: 'esta semana',
-      color: 'green', // DEPRECATED: mantener por compatibilidad
       onClick: () => navigate('/admin/movies')
     },
     {
@@ -146,7 +144,6 @@ function AdminDashboard() {
       variant: 'primary', // Cambiado a primary para consistencia con otras cards
       change: `${stats.series.change > 0 ? '+' : ''}${stats.series.change}%`,
       changeLabel: 'último mes',
-      color: 'purple', // DEPRECATED: mantener por compatibilidad
       onClick: () => navigate('/admin/series')
     },
     {
@@ -156,7 +153,6 @@ function AdminDashboard() {
       variant: 'warning', // Anteriormente 'yellow'
       change: `${stats.categories.change > 0 ? '+' : ''}${stats.categories.change}%`,
       changeLabel: 'este año',
-      color: 'yellow', // DEPRECATED: mantener por compatibilidad
       onClick: () => navigate('/admin/categories')
     }
   ];
@@ -244,7 +240,7 @@ function AdminDashboard() {
           
           <div className="admin-dashboard__actions-grid">
             <Button
-              variant="outline"
+              variant="secondary"
               size="md"
               rounded="md"
               leftIcon="users"
@@ -255,7 +251,7 @@ function AdminDashboard() {
             </Button>
             
             <Button
-              variant="outline"
+              variant="secondary"
               size="md"
               rounded="md"
               leftIcon="film"
@@ -266,7 +262,7 @@ function AdminDashboard() {
             </Button>
             
             <Button
-              variant="outline"
+              variant="secondary"
               size="md"
               rounded="md"
               leftIcon="video"
@@ -277,7 +273,7 @@ function AdminDashboard() {
             </Button>
             
             <Button
-              variant="outline"
+              variant="secondary"
               size="md"
               rounded="md"
               leftIcon="folder"

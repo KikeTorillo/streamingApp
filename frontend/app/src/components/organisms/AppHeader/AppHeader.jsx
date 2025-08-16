@@ -89,14 +89,14 @@ function AppHeader({
           </span>
         )}
         <Button
-          variant="outline"
+          variant="secondary"
           size={size === 'lg' ? 'md' : 'sm'}
           onClick={onLogout}
           className="logout-button"
         >
           Cerrar Sesión
         </Button>
-        <ThemeSelector variant="compact" size='md' />
+        <ThemeSelector variant="neutral" size='md' />
       </div>
     </header>
   );
