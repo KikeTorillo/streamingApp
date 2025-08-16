@@ -201,7 +201,7 @@ export const DEPRECATED_PROPS = {
  * @returns {Object} Props validadas con warnings
  */
 export const validateStandardProps = (props, componentName = 'Component') => {
-  if (typeof process === 'undefined' || process.env?.NODE_ENV !== 'development') {
+  if (!import.meta.env?.DEV) {
     return props; // Solo validar en desarrollo
   }
 

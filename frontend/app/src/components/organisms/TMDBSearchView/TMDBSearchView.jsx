@@ -147,7 +147,7 @@ function TMDBSearchView({
       options: sortOptions,
       disabled: !isApiKeyValid
     }
-  ], [title, placeholder, helperText, searchQuery, sortBy, sortOptions, isApiKeyValid]);
+  ], [placeholder, helperText, searchQuery, sortBy, sortOptions, isApiKeyValid]);
 
   // ===== HANDLERS =====
   const handleSearchFormChange = useCallback((formData) => {

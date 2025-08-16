@@ -9,7 +9,6 @@ import { Button } from '../../../../components/atoms/Button/Button';
 import { Container } from '../../../../components/atoms/Container/Container';
 import { Divider } from '../../../../components/atoms/Divider/Divider';
 import { Badge } from '../../../../components/atoms/Badge/Badge';
-import { ContentImage } from '../../../../components/atoms/ContentImage/ContentImage';
 import './EpisodeEditPage.css';
 
 // Context

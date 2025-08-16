@@ -60,8 +60,7 @@ function Avatar(props) {
     disabled,
     loading,
     className,
-    renderIcon,
-    tokens,
+    // renderIcon, tokens - del hook pero no implementadas actualmente
     ...restProps
   } = avatarProps;
   
@@ -102,7 +101,7 @@ function Avatar(props) {
   };
 
   // Deprecation warnings en desarrollo
-  if (process.env.NODE_ENV === 'development') {
+  if (import.meta.env?.DEV) {
     if (legacyVariant === 'default') {
       console.warn('Avatar: variant="default" is deprecated. Use variant="neutral" instead.');
     }

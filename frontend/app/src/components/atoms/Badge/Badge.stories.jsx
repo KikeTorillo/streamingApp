@@ -704,7 +704,7 @@ export const StandardPropsSystem = () => (
         </Badge>
         
         <Badge icon="info" variant="info" size="lg">
-          Variante "info" deprecada
+          Variante &quot;info&quot; deprecada
         </Badge>
         
         <Badge icon="settings" size="lg">

@@ -70,7 +70,7 @@ const Card = (props) => {
     
     processedProps.size = paddingToSizeMap[padding] || 'md';
     
-    if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
+    if (import.meta.env?.DEV) {
       console.warn(`Card: prop "padding" está deprecada. Usar size="${processedProps.size}" en su lugar.`);
     }
   }
@@ -79,7 +79,7 @@ const Card = (props) => {
   if (originalVariant === 'default') {
     processedProps.variant = 'neutral';
     
-    if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
+    if (import.meta.env?.DEV) {
       console.warn(`Card: variant="default" está deprecado. Usar variant="neutral" en su lugar.`);
     }
   } else if (originalVariant === 'elevated' || originalVariant === 'outlined') {

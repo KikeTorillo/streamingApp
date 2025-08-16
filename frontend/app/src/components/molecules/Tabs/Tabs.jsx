@@ -35,7 +35,7 @@ function Tabs(props) {
   
   // Si variant es legacy (line, pills, card), usarlo como tabsVariant y advertir
   if (props.variant && ['line', 'pills', 'card'].includes(props.variant)) {
-    if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
+    if (import.meta.env?.DEV) {
       console.warn(
         `Tabs: prop "variant='${props.variant}'" está deprecado. ` +
         `Usar "tabsVariant='${props.variant}'" para funcionalidad de tabs. ` +
@@ -208,7 +208,7 @@ function Tabs(props) {
   };
   
   // Renderizar tab individual
-  const renderTab = (tab, index) => {
+  const renderTab = (tab) => {
     const isActive = tab.id === currentActiveTab;
     const isDisabled = disabled || tab.disabled;
     

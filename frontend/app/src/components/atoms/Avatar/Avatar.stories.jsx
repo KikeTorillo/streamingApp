@@ -263,20 +263,20 @@ export const BackwardCompatibilityVariants = () => (
     backgroundColor: 'var(--color-warning-light)'
   }}>
     <div style={{ textAlign: 'center' }}>
-      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Legacy: variant="default"</h4>
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Legacy: variant=&quot;default&quot;</h4>
       <Avatar variant="default" name="Default" size="lg" />
       <small style={{ color: 'var(--color-warning)', fontSize: 'var(--text-xs)' }}>⚠️ Deprecated</small>
     </div>
     
     <div style={{ textAlign: 'center' }}>
-      <h4 style={{ marginBottom: 'var(--space-sm)' }}>New: variant="neutral"</h4>
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>New: variant=&quot;neutral&quot;</h4>
       <Avatar variant="neutral" name="Neutral" size="lg" />
       <small style={{ color: 'var(--color-success)', fontSize: 'var(--text-xs)' }}>✅ Standard</small>
     </div>
     
     <div style={{ textAlign: 'center', gridColumn: '1 / -1' }}>
       <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: 'var(--text-sm)' }}>
-        💡 <strong>Backward Compatibility:</strong> variant="default" automáticamente mapea a "neutral" con deprecation warning.
+        💡 <strong>Backward Compatibility:</strong> variant=&quot;default&quot; automáticamente mapea a &quot;neutral&quot; con deprecation warning.
       </p>
     </div>
   </div>
@@ -397,7 +397,7 @@ export const SystemIconsIntegration = () => (
       <h4 style={{ marginBottom: 'var(--space-sm)' }}>Default Icon</h4>
       <Avatar size="lg" fallbackIcon="user" />
       <small style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
-        fallbackIcon="user"
+        fallbackIcon=&quot;user&quot;
       </small>
     </div>
     
@@ -405,7 +405,7 @@ export const SystemIconsIntegration = () => (
       <h4 style={{ marginBottom: 'var(--space-sm)' }}>Admin Icon</h4>
       <Avatar size="lg" fallbackIcon="shield" variant="primary" />
       <small style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
-        fallbackIcon="shield"
+        fallbackIcon=&quot;shield&quot;
       </small>
     </div>
     
@@ -413,7 +413,7 @@ export const SystemIconsIntegration = () => (
       <h4 style={{ marginBottom: 'var(--space-sm)' }}>Star Icon</h4>
       <Avatar size="lg" fallbackIcon="star" variant="warning" />
       <small style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
-        fallbackIcon="star"
+        fallbackIcon=&quot;star&quot;
       </small>
     </div>
     
@@ -421,7 +421,7 @@ export const SystemIconsIntegration = () => (
       <h4 style={{ marginBottom: 'var(--space-sm)' }}>Settings Icon</h4>
       <Avatar size="lg" fallbackIcon="settings" variant="neutral" />
       <small style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
-        fallbackIcon="settings"
+        fallbackIcon=&quot;settings&quot;
       </small>
     </div>
     
@@ -429,7 +429,7 @@ export const SystemIconsIntegration = () => (
       <h4 style={{ marginBottom: 'var(--space-sm)' }}>Legacy Emoji</h4>
       <Avatar size="lg" fallbackIcon="👤" variant="secondary" />
       <small style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
-        fallbackIcon="👤" (emoji)
+        fallbackIcon=&quot;👤&quot; (emoji)
       </small>
     </div>
   </div>

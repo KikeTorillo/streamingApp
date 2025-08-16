@@ -460,9 +460,9 @@ export const BackwardCompatibility = {
     subtitle: 'Muestra deprecation warning en consola',
     children: (
       <div style={{ padding: '1rem', backgroundColor: 'var(--bg-warning-subtle)', borderRadius: '4px' }}>
-        <p>⚠️ Esta story usa <code>variant="default"</code> que está deprecado.</p>
+        <p>⚠️ Esta story usa <code>variant=&quot;default&quot;</code> que está deprecado.</p>
         <p>Verifica la consola para ver el deprecation warning.</p>
-        <p>Se mapea automáticamente a <code>variant="primary"</code>.</p>
+        <p>Se mapea automáticamente a <code>variant=&quot;primary&quot;</code>.</p>
       </div>
     )
   }

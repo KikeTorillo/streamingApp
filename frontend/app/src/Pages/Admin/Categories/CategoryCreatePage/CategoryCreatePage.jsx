@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { Container } from '../../../../components/atoms/Container/Container';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
-import { Button } from '../../../../components/atoms/Button/Button';
 import { useSuccessRedirect } from '../../../../hooks/useSuccessRedirect';
 import './CategoryCreatePage.css';
 

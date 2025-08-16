@@ -377,7 +377,7 @@ export const createStandardHook = (config = {}) => {
 export const useStandardPropsDebug = (props, options, componentName = 'Component') => {
   const standardProps = useStandardProps(props, options);
   
-  if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
+  if (import.meta.env?.DEV) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useMemo(() => {
       console.group(`🔍 ${componentName} - Standard Props Debug`);
@@ -419,7 +419,7 @@ export const useBreadcrumbProps = (props) => {
     // Mapear variant funcional legacy a breadcrumbVariant
     if (mapped.variant && ['default', 'simple', 'compact'].includes(mapped.variant)) {
       // Deprecation warning para variants funcionales
-      if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
+      if (import.meta.env?.DEV) {
         console.warn(
           `[Breadcrumb] DEPRECATION WARNING: prop "variant='${mapped.variant}'" está obsoleta. ` +
           `Usa "breadcrumbVariant='${mapped.variant}'" y "variant" para variantes semánticas (primary, secondary, success, etc.). ` +

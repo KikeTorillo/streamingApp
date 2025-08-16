@@ -48,9 +48,7 @@ function StatsCard(props) {
     icon = 'activity',
     
     // Props deprecadas (mantener compatibilidad)
-    change,
-    changeLabel,
-    changeDirection,
+    // change, changeLabel, changeDirection - NO IMPLEMENTADAS ACTUALMENTE
     color, // DEPRECADO: mapear a variant
     
     // Interactividad
@@ -71,8 +69,7 @@ function StatsCard(props) {
     loading,
     fullWidth,
     className,
-    tokens,
-    renderIcon,
+    // tokens, renderIcon - del hook pero no implementadas actualmente
     ...standardProps
   } = useStandardProps(restProps, {
     componentType: 'card',
@@ -100,7 +97,7 @@ function StatsCard(props) {
   })();
 
   // Warning de deprecación en desarrollo
-  if (color && typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
+  if (color && import.meta.env?.DEV) {
     console.warn(`⚠️ StatsCard: prop "color" está deprecada. Usar "variant" estándar en su lugar.
     Mapeo automático: color="${color}" → variant="${finalVariant}"`);
   }
@@ -150,7 +147,7 @@ function StatsCard(props) {
 
   // ===== HANDLERS =====
   const handleClick = (e) => {
-    if (loading || error) {
+    if (loading) {
       e.preventDefault();
       return;
     }
@@ -158,7 +155,7 @@ function StatsCard(props) {
   };
 
   const handleKeyDown = (e) => {
-    if (loading || error) return;
+    if (loading) return;
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       handleClick(e);
@@ -226,7 +223,7 @@ function StatsCard(props) {
   // ===== RENDER =====
   
   // Si es un enlace, usar un wrapper
-  if (href && !loading && !error) {
+  if (href && !loading) {
     return (
       <a 
         href={href} 

@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 // ===== LAYOUTS Y COMPONENTES =====
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { Container } from '../../../../components/atoms/Container/Container';
-import { Button } from '../../../../components/atoms/Button/Button';
 
 // ===== COMPONENTES ESPECÍFICOS =====
 import { TMDBSearchView } from '../../../../components/organisms/TMDBSearchView/TMDBSearchView';
