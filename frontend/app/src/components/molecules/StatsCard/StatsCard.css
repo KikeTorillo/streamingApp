@@ -22,10 +22,11 @@
 }
 
 /* ===== FULL WIDTH OVERRIDE ===== */
-/* Cuando fullWidth es true, sobrescribir min-width para ocupar todo el ancho */
+/* Cuando fullWidth es true, ocupar todo el espacio disponible en flexbox */
 .stats-card--full-width {
   min-width: unset !important;
   width: 100% !important;
+  flex: 1 !important; /* Clave: distribuir equitativamente en flexbox */
 }
 
 /* ===== VARIANTES ESTÁNDAR DEL SISTEMA ===== */

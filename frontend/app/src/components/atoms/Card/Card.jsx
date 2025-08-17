@@ -116,6 +116,8 @@ const Card = (props) => {
     // Estados del sistema
     disabled && 'card--disabled',
     loading && 'card--loading',
+    // Full width para flexbox
+    fullWidth && 'card--full-width',
     // Clases personalizadas
     className
   ].filter(Boolean).join(' ');

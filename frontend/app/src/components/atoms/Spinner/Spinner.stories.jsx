@@ -51,9 +51,8 @@ import { Spinner } from './atoms/Spinner';
   message="Procesando..."
 />
 
-// Overlay para bloquear interfaz
+// Spinner siempre en overlay (modo único)
 <Spinner 
-  overlay={true}
   variant="primary"
   size="lg"
   message="Creando serie..."
@@ -163,15 +162,6 @@ Usado autom�ticamente en:
         defaultValue: { summary: 'Cargando...' }
       }
     },
-    overlay: {
-      name: 'Overlay',
-      description: 'Si debe mostrar overlay de fondo',
-      control: 'boolean',
-      table: {
-        type: { summary: 'boolean' },
-        defaultValue: { summary: 'false' }
-      }
-    }
   }
 };
 
@@ -186,7 +176,8 @@ export const Default = {
     size: 'md',
     spinnerVariant: 'circle',
     message: 'Cargando...',
-    loading: true
+    loading: true,
+    storybookPreview: true
   }
 };
 
@@ -217,6 +208,7 @@ export const AllVariants = {
             variant={variant} 
             size="md"
             spinnerVariant="circle"
+            storybookPreview={true}
             message={
               variant === 'primary' ? 'Cargando...' :
               variant === 'secondary' ? 'Procesando...' :
@@ -258,6 +250,7 @@ export const AllSizes = {
             size={size} 
             variant="primary" 
             spinnerVariant="circle"
+            storybookPreview={true}
             message={`Tama�o ${size}`}
           />
           <p style={{ 
@@ -317,6 +310,7 @@ export const SpinnerTypes = {
             spinnerVariant={type} 
             variant={variant} 
             size="lg"
+            storybookPreview={true}
             message={`Animaci�n ${type}`}
           />
         </div>
@@ -352,6 +346,7 @@ export const RoundedVariants = {
             variant="primary" 
             rounded={rounded} 
             size="lg"
+            storybookPreview={true}
             message={`Border ${rounded}`}
           />
         </div>
@@ -426,6 +421,7 @@ export const SystemStates = {
               variant="primary" 
               loading={loading}
               size="md"
+              storybookPreview={true}
               message={loading ? 'Cargando datos...' : 'Detenido'}
             />
           </div>
@@ -447,6 +443,7 @@ export const SystemStates = {
               variant="secondary" 
               disabled={disabled}
               size="md"
+              storybookPreview={true}
               message={disabled ? 'Deshabilitado' : 'Habilitado'}
             />
           </div>
@@ -511,7 +508,6 @@ export const OverlayMode = {
             
             {showOverlay && (
               <Spinner 
-                overlay={true}
                 variant="primary"
                 spinnerVariant="circle"
                 message="Procesando solicitud..."
@@ -561,7 +557,6 @@ export const OverlayVariants = {
           <p style={{ color: 'var(--text-secondary)' }}>Contenido de fondo</p>
           
           <Spinner 
-            overlay={true}
             variant={variant}
             spinnerVariant="circle"
             message={message}
@@ -653,6 +648,7 @@ export const UseCases = {
               variant={variant} 
               spinnerVariant={spinnerVariant}
               size={size}
+              storybookPreview={true}
               message={message}
             />
             {inline && <span style={{ color: 'var(--text-primary)' }}>Cargando usuarios...</span>}
@@ -714,6 +710,7 @@ export const ButtonIntegration = {
             loading={loading}
             size="md"
             spinnerVariant="circle"
+            storybookPreview={true}
             message={loading ? 'Guardando cambios...' : 'Listo para guardar'}
           />
         </div>
@@ -731,7 +728,8 @@ export const WithoutMessage = {
     variant: 'primary',
     spinnerVariant: 'dots',
     message: '',
-    size: 'lg'
+    size: 'lg',
+    storybookPreview: true
   }
 };
 

@@ -247,8 +247,9 @@ function SeriesCreatePage() {
         <Spinner
           variant="primary"
           size="lg"
-          message={'Iniciando creación de la serie...' || progressMessage || `Progreso: ${uploadProgress}%`}
+          message={progressMessage || `Progreso: ${uploadProgress}%` || 'Iniciando creación de la serie...'}
           overlay={true}
+          spinnerVariant="circle"
         />
       )}
     </AdminLayout>

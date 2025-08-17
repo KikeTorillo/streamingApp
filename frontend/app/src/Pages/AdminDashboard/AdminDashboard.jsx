@@ -4,13 +4,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../components/templates/AdminLayout/AdminLayout';
-import { Container } from '../../components/atoms/Container/Container';
+import { FlexContainer } from '../../components/atoms/FlexContainer/FlexContainer';
+import { Typography } from '../../components/atoms/Typography/Typography';
 import { StatsCard } from '../../components/molecules/StatsCard/StatsCard';
 import { Button } from '../../components/atoms/Button/Button';
 import { Skeleton } from '../../components/atoms/Skeleton/Skeleton';
 import { EmptyState } from '../../components/molecules/EmptyState/EmptyState';
-import { createIconRenderer } from '../../utils/iconHelpers';
-import './AdminDashboard.css';
+import { Icon } from '../../components/atoms/Icon/Icon';
 
 // Importar servicios para datos reales
 import { getUsersService } from '../../services/Users/getUsersService';
@@ -32,9 +32,8 @@ import { getCategoriesService } from '../../services/Categories/getCategoriesSer
  */
 function AdminDashboard() {
   const navigate = useNavigate();
-  
-  // ===== SISTEMA DE ICONOS CENTRALIZADO =====
-  const renderIcon = createIconRenderer('sm'); // Tamaño por defecto más pequeño para títulos
+
+  // Sistema de iconos manejado por los componentes
 
   // ===== ESTADOS =====
   const [stats, setStats] = useState({
@@ -47,7 +46,7 @@ function AdminDashboard() {
   const [error, setError] = useState(null);
 
   // ===== EFECTOS =====
-  
+
   /**
    * Cargar estadísticas desde servicios
    */
@@ -103,7 +102,7 @@ function AdminDashboard() {
   }, []);
 
   // ===== FUNCIONES AUXILIARES =====
-  
+
   /**
    * Extraer longitud de arrays de respuestas de Promise.allSettled
    */
@@ -160,8 +159,8 @@ function AdminDashboard() {
   // ===== MANEJO DE ERRORES CON SISTEMA DE DISEÑO =====
   if (error) {
     return (
-      <AdminLayout>
-        <Container size="lg" className="admin-dashboard admin-dashboard--error">
+      <AdminLayout title="Dashboard - Error">
+        <Container size="lg">
           <EmptyState
             icon="alert-triangle"
             title="Error al cargar el dashboard"
@@ -184,108 +183,90 @@ function AdminDashboard() {
     );
   }
 
-  // ===== RENDER =====
+  // ===== RENDER - SOLO COMPONENTES DEL SISTEMA =====
   return (
-    <AdminLayout
-    title="Dashboard"
-    >
-      <Container size="lg" className="admin-dashboard">
-        
-        {/* ===== ESTADÍSTICAS PRINCIPALES ===== */}
-        <section className="admin-dashboard__stats">
-          <h2 className="admin-dashboard__section-title">
-            {renderIcon('trending')} Resumen General
-          </h2>
-          
-          {loading ? (
-            <div className="admin-dashboard__stats-grid">
-              {[...Array(4)].map((_, index) => (
-                <Skeleton.Card
-                  key={index}
-                  size="lg"
-                  height={120}
-                  loading={true}
-                  className="stats-card-skeleton"
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="admin-dashboard__stats-grid">
-              {statsCards.map((card, index) => (
-                <StatsCard
-                  key={index}
-                  title={card.title}
-                  value={card.value}
-                  icon={card.icon}
-                  variant={card.variant || 'neutral'} // Usar variantes estándar
-                  onClick={card.onClick}
-                  loading={loading}
-                  size="md"
-                  fullWidth={true}
-                  // DEPRECATED: mantener por compatibilidad
-                  change={card.change}
-                  changeLabel={card.changeLabel}
-                  color={card.color}
-                />
-              ))}
-            </div>
-          )}
-        </section>
+    <AdminLayout title="Dashboard">
+      <FlexContainer direction="row" gap="md">
+        <Icon name="trending" size="md" />
+        <Typography size="lg" weight="semibold">
+          Resumen General
+        </Typography>
+      </FlexContainer>
 
-        {/* ===== ACCIONES RÁPIDAS ===== */}
-        <section className="admin-dashboard__quick-actions">
-          <h2 className="admin-dashboard__section-title">
-            {renderIcon('zap')} Acciones Rápidas
-          </h2>
-          
-          <div className="admin-dashboard__actions-grid">
-            <Button
-              variant="secondary"
-              size="md"
-              rounded="md"
-              leftIcon="users"
-              onClick={() => navigate('/admin/users/create')}
-              className="admin-dashboard__action-button"
-            >
-              Crear Usuario
-            </Button>
-            
-            <Button
-              variant="secondary"
-              size="md"
-              rounded="md"
-              leftIcon="film"
-              onClick={() => navigate('/admin/movies/create')}
-              className="admin-dashboard__action-button"
-            >
-              Agregar Película
-            </Button>
-            
-            <Button
-              variant="secondary"
-              size="md"
-              rounded="md"
-              leftIcon="video"
-              onClick={() => navigate('/admin/series/create')}
-              className="admin-dashboard__action-button"
-            >
-              Crear Serie
-            </Button>
-            
-            <Button
-              variant="secondary"
-              size="md"
-              rounded="md"
-              leftIcon="folder"
-              onClick={() => navigate('/admin/categories/create')}
-              className="admin-dashboard__action-button"
-            >
-              Nueva Categoría
-            </Button>
-          </div>
-        </section>
+      {loading ? (
+        <FlexContainer justify="center">
+          {[...Array(4)].map((_, index) => (
+            <Skeleton.Card
+              key={index}
+              size="lg"
+              height={120}
+              loading={true}
+            />
+          ))}
+        </FlexContainer>
+      ) : (
+        <FlexContainer direction="row" gap="lg">
+          {statsCards.map((card, index) => (
+            <StatsCard
+              key={index}
+              title={card.title}
+              value={card.value}
+              icon={card.icon}
+              variant={card.variant || 'neutral'}
+              onClick={card.onClick}
+              loading={loading}
+              fullWidth={true}
+            />
+          ))}
+        </FlexContainer>
+      )}
 
-      </Container>
+      {/* ===== ACCIONES RÁPIDAS ===== */}
+      <FlexContainer gap="md">
+        <Icon name="zap" size="md" />
+        <Typography size="lg" weight="semibold">
+          Acciones Rápidas
+        </Typography>
+      </FlexContainer>
+
+
+      <FlexContainer direction="row" gap="lg" wrap="wrap">
+        <Button
+          variant="secondary"
+          size="md"
+          leftIcon="users"
+          onClick={() => navigate('/admin/users/create')}
+        >
+          Crear Usuario
+        </Button>
+
+        <Button
+          variant="secondary"
+          size="md"
+          leftIcon="film"
+          onClick={() => navigate('/admin/movies/create')}
+        >
+          Agregar Película
+        </Button>
+
+        <Button
+          variant="secondary"
+          size="md"
+          leftIcon="video"
+          onClick={() => navigate('/admin/series/create')}
+        >
+          Crear Serie
+        </Button>
+
+        <Button
+          variant="secondary"
+          size="md"
+          leftIcon="folder"
+          onClick={() => navigate('/admin/categories/create')}
+        >
+          Nueva Categoría
+        </Button>
+      </FlexContainer>
     </AdminLayout>
   );
 }

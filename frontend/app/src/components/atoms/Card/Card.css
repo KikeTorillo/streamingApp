@@ -89,6 +89,13 @@
   border: 0.1rem solid var(--border-default, transparent);
 }
 
+/* ===== FULL WIDTH PARA FLEXBOX ===== */
+.card--full-width {
+  width: 100% !important;
+  max-width: none !important;
+  flex: 1 !important; /* Distribuir equitativamente en contenedores flex */
+}
+
 /* ===== BORDES REDONDEADOS ===== */
 .card--rounded-sm {
   border-radius: var(--radius-sm);

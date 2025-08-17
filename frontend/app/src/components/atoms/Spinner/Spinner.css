@@ -169,25 +169,14 @@
   font-weight: var(--font-weight-medium);
 }
 
-/* ===== INLINE MODE ===== */
-.spinner-inline {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-sm);                 /* Sistema espaciado */
-}
-
-.spinner-inline__message {
-  color: var(--text-secondary);        /* Sistema colores texto */
-  text-align: center;
-  font-weight: var(--font-weight-normal);
-}
+/* ===== MODO INLINE ELIMINADO - SOLO OVERLAY ===== */
+/* Spinner ahora solo funciona en modo overlay para simplificar */
 
 /* ===== VARIANTES DE SPINNER ===== */
 
 /* ===== CIRCLE SPINNER ===== */
 .spinner-circle {
-  display: block;
+  display: block !important; /* Forzar block sobre inline-flex del contenedor */
   margin: 0 auto;
   border-radius: var(--radius-full);
   /* Círculo base gris FIJO - no gira */

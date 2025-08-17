@@ -1,0 +1,299 @@
+/* ===== FLEXCONTAINER - ÁTOMO PARA LAYOUTS FLEXBOX ===== */
+/* ✅ OBJETIVO: Eliminar 40+ usos repetitivos de display: flex */
+/* ✅ TOKENS AUTOMÁTICOS: Gap, spacing y alignment del sistema */
+/* ✅ RESPONSIVE: Adaptación automática por breakpoints */
+
+/* ===== BASE FLEX CONTAINER ===== */
+.flex-container {
+  display: flex;
+  box-sizing: border-box;
+  font-family: var(--font-family-base);
+  transition: var(--transition-base);
+}
+
+.flex-container--inline {
+  display: inline-flex;
+}
+
+/* ===== FLEX DIRECTION ===== */
+.flex-container--direction-row {
+  flex-direction: row;
+}
+
+.flex-container--direction-column {
+  flex-direction: column;
+}
+
+.flex-container--direction-row-reverse {
+  flex-direction: row-reverse;
+}
+
+.flex-container--direction-column-reverse {
+  flex-direction: column-reverse;
+}
+
+/* ===== ALIGN ITEMS (Eje transversal) ===== */
+.flex-container--align-flex-start {
+  align-items: flex-start;
+}
+
+.flex-container--align-flex-end {
+  align-items: flex-end;
+}
+
+.flex-container--align-center {
+  align-items: center;
+}
+
+.flex-container--align-stretch {
+  align-items: stretch;
+}
+
+.flex-container--align-baseline {
+  align-items: baseline;
+}
+
+/* ===== JUSTIFY CONTENT (Eje principal) ===== */
+.flex-container--justify-flex-start {
+  justify-content: flex-start;
+}
+
+.flex-container--justify-flex-end {
+  justify-content: flex-end;
+}
+
+.flex-container--justify-center {
+  justify-content: center;
+}
+
+.flex-container--justify-space-between {
+  justify-content: space-between;
+}
+
+.flex-container--justify-space-around {
+  justify-content: space-around;
+}
+
+.flex-container--justify-space-evenly {
+  justify-content: space-evenly;
+}
+
+/* ===== FLEX WRAP ===== */
+.flex-container--wrap-nowrap {
+  flex-wrap: nowrap;
+}
+
+.flex-container--wrap-wrap {
+  flex-wrap: wrap;
+}
+
+.flex-container--wrap-wrap-reverse {
+  flex-wrap: wrap-reverse;
+}
+
+/* ===== GAP USANDO TOKENS DEL SISTEMA ===== */
+.flex-container--gap-xs {
+  gap: var(--space-xs);
+}
+
+.flex-container--gap-sm {
+  gap: var(--space-sm);
+}
+
+.flex-container--gap-md {
+  gap: var(--space-md);
+}
+
+.flex-container--gap-lg {
+  gap: var(--space-lg);
+}
+
+.flex-container--gap-xl {
+  gap: var(--space-xl);
+}
+
+.flex-container--gap-2xl {
+  gap: var(--space-2xl);
+}
+
+.flex-container--gap-3xl {
+  gap: var(--space-3xl);
+}
+
+/* ===== TAMAÑOS USANDO SISTEMA ESTÁNDAR ===== */
+.flex-container--size-xs {
+  min-height: var(--component-height-xs);
+  padding: var(--space-xs);
+}
+
+.flex-container--size-sm {
+  min-height: var(--component-height-sm);
+  padding: var(--space-sm);
+}
+
+.flex-container--size-md {
+  min-height: var(--component-height-md);
+  padding: var(--space-md);
+}
+
+.flex-container--size-lg {
+  min-height: var(--component-height-lg);
+  padding: var(--space-lg);
+}
+
+.flex-container--size-xl {
+  min-height: var(--component-height-xl);
+  padding: var(--space-xl);
+}
+
+/* ===== FLEX GROW/SHRINK ===== */
+.flex-container--grow {
+  flex-grow: 1;
+}
+
+.flex-container--shrink {
+  flex-shrink: 1;
+}
+
+/* ===== VARIANTES SEMÁNTICAS OPCIONALES ===== */
+.flex-container--variant-primary {
+  background-color: var(--color-primary-light);
+  border: 0.1rem solid var(--color-primary);
+  border-radius: var(--radius-md);
+}
+
+.flex-container--variant-secondary {
+  background-color: var(--color-secondary-light);
+  border: 0.1rem solid var(--color-secondary);
+  border-radius: var(--radius-md);
+}
+
+.flex-container--variant-success {
+  background-color: var(--color-success-light);
+  border: 0.1rem solid var(--color-success);
+  border-radius: var(--radius-md);
+}
+
+.flex-container--variant-warning {
+  background-color: var(--color-warning-light);
+  border: 0.1rem solid var(--color-warning);
+  border-radius: var(--radius-md);
+}
+
+.flex-container--variant-danger {
+  background-color: var(--color-danger-light);
+  border: 0.1rem solid var(--color-danger);
+  border-radius: var(--radius-md);
+}
+
+/* ===== ESTADOS ===== */
+.flex-container--loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.flex-container__loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-primary-alpha);
+  backdrop-filter: blur(0.2rem);
+  z-index: var(--z-loading);
+}
+
+.flex-container__spinner {
+  width: 2.4rem;
+  height: 2.4rem;
+  border: 0.2rem solid var(--color-primary-light);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: flex-container-spin 1s linear infinite;
+}
+
+.flex-container--disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+@keyframes flex-container-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== RESPONSIVE ADAPTATIONS ===== */
+/* En móvil, hacer más compacto automáticamente */
+@media (max-width: 48rem) {
+  .flex-container--size-lg,
+  .flex-container--size-xl {
+    padding: var(--space-md);
+    min-height: var(--component-height-md);
+  }
+  
+  .flex-container--gap-xl,
+  .flex-container--gap-2xl,
+  .flex-container--gap-3xl {
+    gap: var(--space-lg);
+  }
+  
+  /* Wrapping automático en móvil para contenedores row */
+  .flex-container--direction-row.flex-container--wrap-nowrap {
+    flex-wrap: wrap;
+  }
+}
+
+/* ===== UTILIDADES COMUNES ===== */
+/* Para casos específicos que necesiten override */
+.flex-container--full-width {
+  width: 100%;
+}
+
+.flex-container--full-height {
+  height: 100%;
+}
+
+.flex-container--center-all {
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-container--space-between-center {
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ===== COMBINACIONES COMUNES ===== */
+/* Header pattern */
+.flex-container--header {
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  padding: var(--space-md) var(--space-lg);
+}
+
+/* Navigation pattern */
+.flex-container--nav {
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+/* Form row pattern */
+.flex-container--form-row {
+  align-items: flex-end;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+/* Card actions pattern */
+.flex-container--card-actions {
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}

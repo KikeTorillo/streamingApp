@@ -290,15 +290,7 @@ function AdminLayout({
         
         {/* ===== CONTENIDO PRINCIPAL CON CONTAINER DEL SISTEMA ===== */}
         <main className="admin-layout__content">
-          <Container 
-            size={size}
-            variant="neutral" // Neutral para no interferir con contenido
-            className="admin-layout__content-wrapper"
-            disabled={disabled}
-            loading={loadingCounts && !user}
-          >
             {children}
-          </Container>
         </main>
       </div>
     </div>

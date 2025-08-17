@@ -90,6 +90,7 @@ function Container(props) {
   // ✅ CREAR ELEMENTO DINÁMICO
   const Element = as;
 
+  console.log(containerClasses);
   return (
     <Element 
       className={containerClasses}

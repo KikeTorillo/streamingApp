@@ -339,24 +339,6 @@
   color: var(--text-on-danger);
 }
 
-/* ===== ÁREA DE CONTENIDO ===== */
-.admin-layout__content {
-  /* Layout */
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  
-  /* Espaciado */
-  padding: var(--space-xl);
-  
-  /* Fondo */
-  background-color: var(--bg-primary);
-  
-  /* CRÍTICO: Permitir overflow horizontal para DataTable */
-  min-width: 0; /* Permitir que el contenido se encoja */
-  overflow-x: auto; /* Permitir scroll horizontal cuando sea necesario */
-}
-
 .admin-layout__content-wrapper {
   /* Layout */
   flex: 1;

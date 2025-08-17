@@ -1,0 +1,405 @@
+/* ===== GRIDCONTAINER - ÁTOMO PARA LAYOUTS CSS GRID ===== */
+/* ✅ OBJETIVO: Eliminar 31+ usos repetitivos de display: grid */
+/* ✅ TOKENS AUTOMÁTICOS: Gap, spacing y columnas del sistema */
+/* ✅ RESPONSIVE: Adaptación automática por breakpoints */
+
+/* ===== BASE GRID CONTAINER ===== */
+.grid-container {
+  display: grid;
+  box-sizing: border-box;
+  font-family: var(--font-family-base);
+  transition: var(--transition-base);
+}
+
+.grid-container--inline {
+  display: inline-grid;
+}
+
+.grid-container--dense {
+  grid-auto-flow: dense;
+}
+
+/* ===== GAP USANDO TOKENS DEL SISTEMA ===== */
+.grid-container--gap-xs {
+  gap: var(--space-xs);
+}
+
+.grid-container--gap-sm {
+  gap: var(--space-sm);
+}
+
+.grid-container--gap-md {
+  gap: var(--space-md);
+}
+
+.grid-container--gap-lg {
+  gap: var(--space-lg);
+}
+
+.grid-container--gap-xl {
+  gap: var(--space-xl);
+}
+
+.grid-container--gap-2xl {
+  gap: var(--space-2xl);
+}
+
+.grid-container--gap-3xl {
+  gap: var(--space-3xl);
+}
+
+/* ===== COLUMN GAP ESPECÍFICO ===== */
+.grid-container--column-gap-xs {
+  column-gap: var(--space-xs);
+}
+
+.grid-container--column-gap-sm {
+  column-gap: var(--space-sm);
+}
+
+.grid-container--column-gap-md {
+  column-gap: var(--space-md);
+}
+
+.grid-container--column-gap-lg {
+  column-gap: var(--space-lg);
+}
+
+.grid-container--column-gap-xl {
+  column-gap: var(--space-xl);
+}
+
+.grid-container--column-gap-2xl {
+  column-gap: var(--space-2xl);
+}
+
+.grid-container--column-gap-3xl {
+  column-gap: var(--space-3xl);
+}
+
+/* ===== ROW GAP ESPECÍFICO ===== */
+.grid-container--row-gap-xs {
+  row-gap: var(--space-xs);
+}
+
+.grid-container--row-gap-sm {
+  row-gap: var(--space-sm);
+}
+
+.grid-container--row-gap-md {
+  row-gap: var(--space-md);
+}
+
+.grid-container--row-gap-lg {
+  row-gap: var(--space-lg);
+}
+
+.grid-container--row-gap-xl {
+  row-gap: var(--space-xl);
+}
+
+.grid-container--row-gap-2xl {
+  row-gap: var(--space-2xl);
+}
+
+.grid-container--row-gap-3xl {
+  row-gap: var(--space-3xl);
+}
+
+/* ===== ALIGN ITEMS ===== */
+.grid-container--align-start {
+  align-items: start;
+}
+
+.grid-container--align-end {
+  align-items: end;
+}
+
+.grid-container--align-center {
+  align-items: center;
+}
+
+.grid-container--align-stretch {
+  align-items: stretch;
+}
+
+/* ===== JUSTIFY ITEMS ===== */
+.grid-container--justify-start {
+  justify-items: start;
+}
+
+.grid-container--justify-end {
+  justify-items: end;
+}
+
+.grid-container--justify-center {
+  justify-items: center;
+}
+
+.grid-container--justify-stretch {
+  justify-items: stretch;
+}
+
+/* ===== TAMAÑOS USANDO SISTEMA ESTÁNDAR ===== */
+.grid-container--size-xs {
+  padding: var(--space-xs);
+}
+
+.grid-container--size-sm {
+  padding: var(--space-sm);
+}
+
+.grid-container--size-md {
+  padding: var(--space-md);
+}
+
+.grid-container--size-lg {
+  padding: var(--space-lg);
+}
+
+.grid-container--size-xl {
+  padding: var(--space-xl);
+}
+
+/* ===== VARIANTES SEMÁNTICAS OPCIONALES ===== */
+.grid-container--variant-primary {
+  background-color: var(--color-primary-light);
+  border: 0.1rem solid var(--color-primary);
+  border-radius: var(--radius-md);
+}
+
+.grid-container--variant-secondary {
+  background-color: var(--color-secondary-light);
+  border: 0.1rem solid var(--color-secondary);
+  border-radius: var(--radius-md);
+}
+
+.grid-container--variant-success {
+  background-color: var(--color-success-light);
+  border: 0.1rem solid var(--color-success);
+  border-radius: var(--radius-md);
+}
+
+.grid-container--variant-warning {
+  background-color: var(--color-warning-light);
+  border: 0.1rem solid var(--color-warning);
+  border-radius: var(--radius-md);
+}
+
+.grid-container--variant-danger {
+  background-color: var(--color-danger-light);
+  border: 0.1rem solid var(--color-danger);
+  border-radius: var(--radius-md);
+}
+
+/* ===== ESTADOS ===== */
+.grid-container--loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.grid-container__loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  place-items: center;
+  background-color: var(--bg-primary-alpha);
+  backdrop-filter: blur(0.2rem);
+  z-index: var(--z-loading);
+}
+
+.grid-container__spinner {
+  width: 2.4rem;
+  height: 2.4rem;
+  border: 0.2rem solid var(--color-primary-light);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: grid-container-spin 1s linear infinite;
+}
+
+.grid-container--disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+@keyframes grid-container-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== RESPONSIVE ADAPTATIONS ===== */
+/* Breakpoints para auto-fit responsivo */
+
+/* Large Desktop (1200px+) - Mantener grid completo */
+@media (min-width: 120rem) {
+  .grid-container {
+    /* Configuración por defecto, no override necesario */
+  }
+}
+
+/* Desktop (768px - 1199px) - Reducir min-width ligeramente */
+@media (max-width: 119.9rem) and (min-width: 76.8rem) {
+  .grid-container {
+    /* Los grids auto-fit se adaptarán automáticamente */
+  }
+}
+
+/* Tablet (481px - 767px) - Forzar menos columnas */
+@media (max-width: 76.7rem) and (min-width: 48.1rem) {
+  .grid-container {
+    /* En tablet, reducir gaps grandes automáticamente */
+  }
+  
+  .grid-container--gap-xl,
+  .grid-container--gap-2xl,
+  .grid-container--gap-3xl {
+    gap: var(--space-lg);
+  }
+  
+  .grid-container--column-gap-xl,
+  .grid-container--column-gap-2xl,
+  .grid-container--column-gap-3xl {
+    column-gap: var(--space-lg);
+  }
+  
+  .grid-container--row-gap-xl,
+  .grid-container--row-gap-2xl,
+  .grid-container--row-gap-3xl {
+    row-gap: var(--space-lg);
+  }
+}
+
+/* Mobile (320px - 480px) - Grid a 1-2 columnas máximo */
+@media (max-width: 48rem) {
+  .grid-container {
+    /* Los auto-fit con min-width de 20rem se adaptarán a móvil automáticamente */
+  }
+  
+  /* Reducir gaps en móvil */
+  .grid-container--gap-lg,
+  .grid-container--gap-xl,
+  .grid-container--gap-2xl,
+  .grid-container--gap-3xl {
+    gap: var(--space-md);
+  }
+  
+  .grid-container--column-gap-lg,
+  .grid-container--column-gap-xl,
+  .grid-container--column-gap-2xl,
+  .grid-container--column-gap-3xl {
+    column-gap: var(--space-md);
+  }
+  
+  .grid-container--row-gap-lg,
+  .grid-container--row-gap-xl,
+  .grid-container--row-gap-2xl,
+  .grid-container--row-gap-3xl {
+    row-gap: var(--space-md);
+  }
+  
+  /* Reducir padding en mobile */
+  .grid-container--size-lg,
+  .grid-container--size-xl {
+    padding: var(--space-md);
+  }
+}
+
+/* ===== UTILIDADES COMUNES PARA GRID ===== */
+
+/* Dashboard pattern - 3-4 columnas en desktop, 1-2 en mobile */
+.grid-container--dashboard {
+  grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+  gap: var(--space-lg);
+}
+
+@media (max-width: 76.7rem) {
+  .grid-container--dashboard {
+    grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+  }
+}
+
+@media (max-width: 48rem) {
+  .grid-container--dashboard {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Gallery pattern - Muchas columnas pequeñas */
+.grid-container--gallery {
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: var(--space-md);
+}
+
+@media (max-width: 48rem) {
+  .grid-container--gallery {
+    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+    gap: var(--space-sm);
+  }
+}
+
+/* Cards pattern - 2-3 columnas */
+.grid-container--cards {
+  grid-template-columns: repeat(auto-fit, minmax(25rem, 1fr));
+  gap: var(--space-xl);
+}
+
+@media (max-width: 76.7rem) {
+  .grid-container--cards {
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    gap: var(--space-lg);
+  }
+}
+
+@media (max-width: 48rem) {
+  .grid-container--cards {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+}
+
+/* Form grid pattern - 2 columnas en desktop, 1 en mobile */
+.grid-container--form {
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  gap: var(--space-lg);
+  align-items: start;
+}
+
+@media (max-width: 48rem) {
+  .grid-container--form {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+}
+
+/* Stats grid - 4 columnas que se adaptan */
+.grid-container--stats {
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--space-md);
+}
+
+@media (max-width: 48rem) {
+  .grid-container--stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm);
+  }
+}
+
+/* Sidebar layout - Columnas fijas con área principal */
+.grid-container--sidebar {
+  grid-template-columns: minmax(20rem, 25rem) 1fr;
+  gap: var(--space-xl);
+  min-height: 100vh;
+}
+
+@media (max-width: 76.7rem) {
+  .grid-container--sidebar {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    gap: var(--space-lg);
+    min-height: auto;
+  }
+}

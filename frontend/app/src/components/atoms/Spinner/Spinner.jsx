@@ -34,7 +34,8 @@ function Spinner({
   // ===== PROPS ESPECÍFICOS DEL SPINNER =====
   spinnerVariant = 'circle', // 'circle', 'dots', 'pulse', 'bars' - Tipo de animación
   message = 'Cargando...', // Texto del mensaje
-  overlay = false,       // Si debe mostrar overlay de fondo
+  overlay = true,        // Siempre overlay (modo inline eliminado)
+  storybookPreview = false, // Modo preview para Storybook (sin overlay completo)
   
   // ===== PROPS LEGACY (BACKWARD COMPATIBILITY) =====
   color,                 // ⚠️ DEPRECADO: Usar variant en su lugar
@@ -69,16 +70,6 @@ function Spinner({
   if (disabled || !loading) {
     return null;
   }
-  // ===== CLASES CSS CON SISTEMA ESTÁNDAR =====
-  const spinnerClasses = [
-    'spinner',
-    `spinner--size-${size}`,
-    `spinner--variant-${finalVariant}`,
-    `spinner--rounded-${rounded}`,
-    loading ? 'spinner--loading' : '',
-    disabled ? 'spinner--disabled' : '',
-    className
-  ].filter(Boolean).join(' ');
   
   // Renderizado de diferentes variantes
   const renderSpinnerVariant = () => {
@@ -122,33 +113,35 @@ function Spinner({
     }
   };
 
-  // Si es overlay, usar estructura específica
-  if (overlay) {
+  // Modo Storybook Preview (sin overlay completo)
+  if (storybookPreview) {
     return (
-      <div {...restProps} className={`spinner-overlay`}>
-        <div className={`spinner-overlay__container spinner-overlay__container--variant-${finalVariant}`}>
-          <div className="spinner-overlay__spinner">
-            {renderSpinnerVariant()}
-          </div>
-          {message && (
-            <div className={`spinner-overlay__message spinner__message--size-${size}`}>
-              {message}
-            </div>
-          )}
+      <div {...restProps} style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', padding: '2rem' }}>
+        <div>
+          {renderSpinnerVariant()}
         </div>
+        {message && (
+          <div className={`spinner-overlay__message spinner__message--size-${size}`}>
+            {message}
+          </div>
+        )}
       </div>
     );
   }
 
-  // Modo inline normal
+  // Modo normal - overlay completo
   return (
-    <div {...restProps} className={`spinner-inline ${spinnerClasses}`}>
-      {renderSpinnerVariant()}
-      {message && (
-        <div className={`spinner-inline__message spinner__message--size-${size}`}>
-          {message}
+    <div {...restProps} className={`spinner-overlay`}>
+      <div className={`spinner-overlay__container spinner-overlay__container--variant-${finalVariant}`}>
+        <div className="spinner-overlay__spinner">
+          {renderSpinnerVariant()}
         </div>
-      )}
+        {message && (
+          <div className={`spinner-overlay__message spinner__message--size-${size}`}>
+            {message}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -160,7 +153,7 @@ Spinner.propTypes = {
   // ===== PROPS ESPECÍFICOS DEL SPINNER =====
   spinnerVariant: PropTypes.oneOf(['circle', 'dots', 'pulse', 'bars']),
   message: PropTypes.string,
-  overlay: PropTypes.bool,
+  storybookPreview: PropTypes.bool, // Modo preview para Storybook
   
   // ===== PROPS LEGACY (DEPRECADOS) =====
   color: PropTypes.oneOf(['primary', 'secondary', 'success', 'danger', 'warning']) // ⚠️ DEPRECADO
