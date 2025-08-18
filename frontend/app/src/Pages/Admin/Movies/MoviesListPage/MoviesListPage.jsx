@@ -8,6 +8,8 @@ import { DataTable } from '../../../../components/organisms/DataTable/DataTable'
 import { Button } from '../../../../components/atoms/Button/Button';
 import { Badge } from '../../../../components/atoms/Badge/Badge';
 import { ContentImage } from '../../../../components/atoms/ContentImage/ContentImage';
+import { FlexContainer } from '../../../../components/atoms/FlexContainer/FlexContainer';
+import { Typography } from '../../../../components/atoms/Typography/Typography';
 import { useMovies } from '../../../../app/context/MoviesContext';
 import { useMovieNavigation } from '../../../../hooks/useMovieNavigation';
 import './MoviesListPage.css';
@@ -51,9 +53,9 @@ function MoviesListPage() {
       header: 'ID',
       size: 60,
       cell: ({ getValue }) => (
-        <span>
+        <Typography variant="span" size="xs" weight="medium" color="muted">
           #{getValue()}
-        </span>
+        </Typography>
       )
     },
     {
@@ -93,9 +95,9 @@ function MoviesListPage() {
 
         return (
           <div>
-            <p>
+            <Typography variant="body" size="sm" weight="medium">
               {title}
-            </p>
+            </Typography>
             <Badge
               variant="primary"
               size="xs"
@@ -132,9 +134,9 @@ function MoviesListPage() {
       accessorKey: 'release_year',
       header: 'Año',
       cell: ({ getValue }) => (
-        <span>
+        <Typography variant="span" size="sm" weight="normal">
           {getValue()}
-        </span>
+        </Typography>
       )
     },
     // ✅ DESCRIPCIÓN ELIMINADA - Esta columna ya no existe
@@ -165,7 +167,7 @@ function MoviesListPage() {
             >
               {timeDisplay}
             </Badge>
-            <div>
+            <Typography variant="div" size="xs" color="muted">
               {date.toLocaleDateString('es-ES', {
                 day: '2-digit',
                 month: '2-digit',
@@ -174,7 +176,7 @@ function MoviesListPage() {
                 hour: '2-digit',
                 minute: '2-digit'
               })}
-            </div>
+            </Typography>
           </div>
         );
       }
@@ -224,7 +226,7 @@ function MoviesListPage() {
         { label: 'Películas' }
       ]}
       headerActions={
-        <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
+        <FlexContainer gap="sm">
           <Button
             variant="primary"
             size="sm"
@@ -233,10 +235,10 @@ function MoviesListPage() {
           >
             Agregar Contenido
           </Button>
-        </div>
+        </FlexContainer>
       }
     >
-      <div>
+      
         {error && (
           <div style={{
             display: 'flex',
@@ -280,7 +282,6 @@ function MoviesListPage() {
           pageSizeOptions={[5, 10, 25, 50]}
           tableVariant="striped"
         />
-      </div>
     </AdminLayout>
   );
 }

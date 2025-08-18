@@ -2,13 +2,11 @@
 
 /* ===== CONTENEDOR PRINCIPAL ===== */
 .admin-sidebar {
-  /* Layout */
-  position: fixed;
-  top: 0;
-  left: 0;
+  /* Layout para CSS Grid */
+  position: relative;
   height: 100vh;
-  width: 28rem; /* 280px expandido */
-  z-index: 1000;
+  width: var(--sidebar-width-expanded, 28rem);
+  min-width: var(--sidebar-width-expanded, 28rem);
   
   /* Colores usando variables del sistema */
   background-color: var(--bg-secondary);
@@ -18,17 +16,14 @@
   /* Transiciones */
   transition: all var(--transition-normal);
   
-  /* Flexbox */
-  display: flex;
-  flex-direction: column;
-  
   /* Fuente */
   font-family: var(--font-family-base);
 }
 
 /* ===== VARIANTE COLAPSADA ===== */
 .admin-sidebar--collapsed {
-  width: 7.2rem; /* 72px colapsado */
+  width: var(--sidebar-width-collapsed, 7.2rem);
+  min-width: var(--sidebar-width-collapsed, 7.2rem);
 }
 
 /* ===== VARIANTES DE ESTILO ===== */
@@ -46,24 +41,13 @@
 
 /* ===== HEADER DEL SIDEBAR ===== */
 .admin-sidebar__header {
-  /* Layout */
-  padding: var(--space-lg);
+  /* Bordes y altura - layout manejado por FlexContainer */
   border-bottom: 0.1rem solid var(--border-default);
-  
-  /* Flexbox */
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-md);
-  
-  /* Altura fija */
   min-height: 7.2rem;
 }
 
 .admin-sidebar__brand {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
+  /* Layout manejado por FlexContainer */
   flex: 1;
   min-width: 0; /* Para truncar texto */
 }
@@ -74,23 +58,19 @@
 }
 
 .admin-sidebar__brand-text {
+  /* Layout manejado por FlexContainer */
   flex: 1;
   min-width: 0;
 }
 
 .admin-sidebar__title {
+  /* Margin y line-height manejado por Typography */
   margin: 0;
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--text-primary);
-  line-height: 1.2;
 }
 
 .admin-sidebar__subtitle {
+  /* Margin y line-height manejado por Typography */
   margin: 0;
-  font-size: var(--font-size-sm);
-  color: var(--text-muted);
-  line-height: 1.2;
 }
 
 .admin-sidebar__toggle {
@@ -319,19 +299,17 @@
 
 /* ===== FOOTER DEL SIDEBAR ===== */
 .admin-sidebar__footer {
-  padding: var(--space-lg);
+  /* Bordes y posición - layout manejado por FlexContainer */
   border-top: 0.1rem solid var(--border-default);
   margin-top: auto;
 }
 
 .admin-sidebar__user-info {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  margin-bottom: var(--space-md);
+  /* Layout manejado por FlexContainer */
 }
 
 .admin-sidebar__user-avatar {
+  /* Solo estilos visuales - layout center manejado por FlexContainer padre */
   width: 4.0rem;
   height: 4.0rem;
   border-radius: var(--radius-full);
@@ -345,23 +323,19 @@
 }
 
 .admin-sidebar__user-details {
+  /* Layout manejado por FlexContainer */
   flex: 1;
   min-width: 0;
 }
 
 .admin-sidebar__user-name {
+  /* Estilos manejados por Typography */
   margin: 0;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--text-primary);
-  line-height: 1.2;
 }
 
 .admin-sidebar__user-role {
+  /* Estilos manejados por Typography */
   margin: 0;
-  font-size: var(--font-size-xs);
-  color: var(--text-muted);
-  line-height: 1.2;
 }
 
 .admin-sidebar__back-button {
@@ -370,8 +344,8 @@
 
 /* ===== ESTADO COLAPSADO ===== */
 .admin-sidebar--collapsed .admin-sidebar__header {
+  /* Solo padding - justify-content manejado por FlexContainer */
   padding: var(--space-md);
-  justify-content: center;
 }
 
 .admin-sidebar--collapsed .admin-sidebar__item {

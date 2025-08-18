@@ -47,12 +47,14 @@ function GridContainer(props) {
     gap,
     columnGap,
     rowGap,
+    padding = null, // ✅ NUEVO: Padding interno del contenedor
     align = 'stretch',
     justify = 'stretch',
     autoRows = 'auto',
     areas,
     inline = false,
-    dense = false
+    dense = false,
+    style = {}
   } = props;
 
   // ✅ GENERAR CLASES CSS CON SISTEMA ESTÁNDAR
@@ -63,6 +65,7 @@ function GridContainer(props) {
     gap && `grid-container--gap-${gap}`,
     columnGap && `grid-container--column-gap-${columnGap}`,
     rowGap && `grid-container--row-gap-${rowGap}`,
+    padding && `grid-container--padding-${padding}`, // ✅ NUEVO: Clase de padding
     `grid-container--align-${align}`,
     `grid-container--justify-${justify}`,
     inline && 'grid-container--inline',
@@ -98,7 +101,8 @@ function GridContainer(props) {
     
     // Estados
     opacity: disabled ? '0.5' : '1',
-    pointerEvents: disabled ? 'none' : 'auto'
+    pointerEvents: disabled ? 'none' : 'auto',
+    ...style // ✅ COMBINAR con estilos que vienen de props
   };
 
   // ✅ FILTRAR PROPS PARA DOM
@@ -109,9 +113,9 @@ function GridContainer(props) {
 
   return (
     <Element 
+      {...domProps}
       className={gridClasses}
       style={gridStyles}
-      {...domProps}
     >
       {loading && (
         <div className="grid-container__loading">
@@ -183,6 +187,11 @@ GridContainer.propTypes = {
   rowGap: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl']),
   
   /**
+   * Padding interno del contenedor usando tokens del sistema
+   */
+  padding: PropTypes.oneOf(['none', 'xs', 'sm', 'md', 'lg', 'xl', '2xl']),
+  
+  /**
    * Alineación de elementos (align-items)
    */
   align: PropTypes.oneOf(['start', 'end', 'center', 'stretch']),
@@ -210,7 +219,12 @@ GridContainer.propTypes = {
   /**
    * Activar grid-auto-flow: dense
    */
-  dense: PropTypes.bool
+  dense: PropTypes.bool,
+  
+  /**
+   * Estilos CSS adicionales (compatibilidad con gridArea, etc.)
+   */
+  style: PropTypes.object
 };
 
 GridContainer.defaultProps = {
@@ -226,6 +240,7 @@ GridContainer.defaultProps = {
   align: 'stretch',
   justify: 'stretch',
   autoRows: 'auto',
+  padding: null, // ✅ NUEVO: Sin padding por defecto
   inline: false,
   dense: false
 };

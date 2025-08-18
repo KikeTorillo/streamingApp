@@ -1,69 +1,66 @@
-// PageLayout.jsx
+// PageLayout.jsx - REFACTORIZADO CON SISTEMA DE DISEÑO
 import PropTypes from 'prop-types';
-import { extractDOMProps } from '../../../tokens/standardProps';
+import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
+import { Container } from '../../atoms/Container/Container';
 import './PageLayout.css';
 
 /**
- * Componente PageLayout - Template
+ * PageLayout - TEMPLATE SIMPLIFICADO CON CONTENEDORES PUROS
  * 
- * Layout principal para páginas de la aplicación.
- * Estructura: Header + Filters + Content
+ * ✅ COMPOSICIÓN PURA: 100% FlexContainer + Container del sistema
+ * ✅ ZERO CSS: Sin estilos custom, solo contenedores
+ * ✅ RESPONSIVE: Automático desde tokens del sistema
+ * ✅ SIMPLE: Solo props de estructura y tamaño
+ * 
+ * Layout base para organizar páginas: Header + Filters + Content
+ * Sin variants - La variación visual viene de los contenidos, no del layout
  */
 function PageLayout({
   // Secciones del layout
   header = null,
   filters = null,
   children,
-  
+
   // Configuración del contenido
-  containerMaxWidth = '144rem', // 1440px
-  contentPadding = 'var(--space-xl)',
-  
-  // Estilos
-  variant = 'default',
-  
+  contentSize = 'xl',           // xs, sm, md, lg, xl, full
+  contentPadding = 'xl',        // xs, sm, md, lg, xl, 2xl
+
   // Props adicionales
   className = '',
   ...restProps
 }) {
-  
-  // Clases CSS dinámicas
-  const layoutClasses = [
-    'page-layout',
-    `page-layout--variant-${variant}`,
-    className
-  ].filter(Boolean).join(' ');
-
-  // Extraer solo props válidas para DOM
-  const validDOMProps = extractDOMProps(restProps);
 
   return (
-    <div {...validDOMProps} className={layoutClasses}>
-      {/* Header */}
+    <FlexContainer
+      {...restProps}
+      direction="column"
+      gap="none"
+      variant="neutral"
+    >
+      {/* Header Section */}
       {header && (
-        <div className="page-layout__header">
+        <Container
+          size="full"
+          padding="none"
+        >
           {header}
-        </div>
+        </Container>
       )}
 
-      {/* Filters */}
+      {/* Filters Section */}
       {filters && (
-        <div className="page-layout__filters">
-          {filters}
-        </div>
+        <>{filters}</>
       )}
 
       {/* Main Content */}
-      <main 
-        className="page-layout__content"
-        style={{
-          maxWidth: containerMaxWidth,
-          padding: contentPadding
-        }}
+      <Container
+        as="main"
+        size="full"
+        padding={contentPadding}
       >
         {children}
-      </main>
-    </div>
+      </Container>
+    </FlexContainer>
   );
 }
 
@@ -72,14 +69,11 @@ PageLayout.propTypes = {
   header: PropTypes.node,
   filters: PropTypes.node,
   children: PropTypes.node,
-  
-  // Configuración del contenido  
-  containerMaxWidth: PropTypes.string,
-  contentPadding: PropTypes.string,
-  
-  // Estilos
-  variant: PropTypes.string,
-  
+
+  // Configuración del contenido
+  contentSize: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl', 'full']),
+  contentPadding: PropTypes.oneOf(['none', 'xs', 'sm', 'md', 'lg', 'xl', '2xl']),
+
   // Props adicionales
   className: PropTypes.string
 };

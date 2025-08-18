@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { Container } from '../../../../components/atoms/Container/Container';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
+import { Typography } from '../../../../components/atoms/Typography/Typography';
 import { useSuccessRedirect } from '../../../../hooks/useSuccessRedirect';
 import './CategoryCreatePage.css';
 
@@ -162,32 +163,27 @@ function CategoryCreatePage() {
         { label: 'Crear Categoría' }
       ]}
     >
-      {/* 🎯 CONTENEDOR PRINCIPAL - MIGRADO A CONTAINER COMPONENT */}
-      <Container 
-        size="lg" 
-        variant="primary"
-      >
         {/* Mensaje de Error */}
         {(error || contextError) && (
           <div className="status-message status-message--error">
-            <span className="status-message__icon">⚠️</span>
+            <Typography variant="span" size="md" className="status-message__icon">⚠️</Typography>
             <div className="status-message__content">
-              <strong>Error al crear categoría</strong>
-              <span>{error || contextError}</span>
+              <Typography variant="strong" size="md" weight="semibold">Error al crear categoría</Typography>
+              <Typography variant="span" size="sm" color="muted">{error || contextError}</Typography>
             </div>
           </div>
         )}
 
         {/* Header del Formulario */}
         <div className="form-header">
-          <h2 className="form-title">
+          <Typography variant="h2" size="lg" weight="semibold" className="form-title">
             Nueva Categoría
-          </h2>
-          <p className="form-description">
+          </Typography>
+          <Typography variant="body" size="md" color="muted" className="form-description">
             Las categorías ayudan a organizar y clasificar el contenido multimedia. 
             Elige un nombre descriptivo que represente claramente el tipo de contenido 
             que agrupará (Ej: Acción, Drama, Comedia, Documental).
-          </p>
+          </Typography>
         </div>
 
         {/* Formulario Dinámico */}
@@ -212,7 +208,6 @@ function CategoryCreatePage() {
           validateOnChange={false}
           className="category-form"
         />
-      </Container>
     </AdminLayout>
   );
 }

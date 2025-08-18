@@ -2,6 +2,8 @@
 import PropTypes from 'prop-types';
 import { memo } from 'react';
 import { Button } from '../../atoms/Button/Button';
+import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
+import { Container } from '../../atoms/Container/Container.jsx';
 import { useFilterBarProps, extractDOMProps, STANDARD_PROP_TYPES } from '../../../tokens/index.js';
 import './FilterBar.css';
 
@@ -64,56 +66,72 @@ function FilterBar(props) {
   ].filter(Boolean).join(' ');
 
   return (
-    <div
+    <Container
+      size="full"
+      direction="row"
+      align="center"
+      justify="space-between"
+      gap="md"
+      padding="md"
       {...domProps} // ✅ Solo props válidas del DOM
       className={filterBarClasses}
     >
       {/* Estados de loading */}
       {loading && (
-        <div className="filter-bar__loading">
+        <FlexContainer
+          align="center"
+          justify="center"
+        >
           <span>Cargando filtros...</span>
-        </div>
+        </FlexContainer>
       )}
 
       {/* Estados de error */}
       {error && (
-        <div className="filter-bar__error">
+        <FlexContainer
+          align="start"
+        >
           <span>Error: {error}</span>
-        </div>
+        </FlexContainer>
       )}
 
       {/* Contenido normal cuando no hay loading ni error */}
       {!loading && !error && (
         <>
           {/* Categorías */}
-          <div className="filter-bar__categories">
-            {categories.map(category => (
-              <Button
-                key={category.value}
-                // ✅ VARIANTES ESTÁNDAR: Usar solo variantes del sistema de diseño
-                variant={selectedCategory === category.value ? 'primary' : 'secondary'}
-                size={size} // ✅ Heredar tamaño del FilterBar
-                rounded={rounded} // ✅ Heredar rounded del FilterBar
-                onClick={() => onCategoryChange(category.value)}
-                className="filter-bar__category-button"
-                disabled={disabled || loading} // ✅ Deshabilitar durante loading
-                // ✅ ICONOS DEL SISTEMA: Si la categoría tiene icono, usar leftIcon
-                leftIcon={category.icon}
-              >
-                {category.label}
-              </Button>
-            ))}
-          </div>
+          <FlexContainer
+            align="center"
+          >
+            <FlexContainer
+            wrap="wrap"
+            gap="sm"
+            >
+              {categories.map(category => (
+                <Button
+                  key={category.value}
+                  // ✅ VARIANTES ESTÁNDAR: Usar solo variantes del sistema de diseño
+                  variant={selectedCategory === category.value ? 'primary' : 'secondary'}
+                  size={size} // ✅ Heredar tamaño del FilterBar
+                  rounded={rounded} // ✅ Heredar rounded del FilterBar
+                  onClick={() => onCategoryChange(category.value)}
+                  className="filter-bar__category-button"
+                  disabled={disabled || loading} // ✅ Deshabilitar durante loading
+                  // ✅ ICONOS DEL SISTEMA: Si la categoría tiene icono, usar leftIcon
+                  leftIcon={category.icon}
+                >
+                  {category.label}
+                </Button>
+              ))}
+            </FlexContainer>
 
-          {/* Acciones */}
-          {actions && (
-            <div className="filter-bar__actions">
-              {actions}
-            </div>
-          )}
+            {/* Acciones */}
+            {actions && (
+              <>{actions}</>
+            )}
+          </FlexContainer>
         </>
       )}
-    </div>
+    </Container>
   );
 }
 

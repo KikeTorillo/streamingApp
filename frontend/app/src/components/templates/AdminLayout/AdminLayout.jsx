@@ -5,10 +5,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { AdminSidebar } from '../../organisms/AdminSidebar/AdminSidebar';
-import { Button } from '../../atoms/Button/Button';
-import { Container } from '../../atoms/Container/Container';
 import { Breadcrumb } from '../../molecules/Breadcrumb/Breadcrumb';
+import { GridContainer } from '../../atoms/GridContainer/GridContainer';
+import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
+import { Container } from '../../atoms/Container/Container';
+import { Typography } from '../../atoms/Typography/Typography';
 import { validateStandardProps, STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens/standardProps';
+import { LAYOUT_TOKENS } from '../../../tokens/designTokens';
 import './AdminLayout.css';
 
 // Importar servicios para obtener contadores en tiempo real
@@ -59,7 +62,7 @@ function AdminLayout({
   disabled = false,      // Deshabilitar interacciones
   loading = false,       // Estado de loading global
   className = '',        // Clases CSS adicionales
-  
+
   // Props adicionales
   ...restProps
 }) {
@@ -69,14 +72,14 @@ function AdminLayout({
     sidebarCollapsed, onSidebarToggle, title, subtitle, breadcrumbs, headerActions,
     ...restProps
   }, 'AdminLayout');
-  
+
   // Mapear variant legacy con deprecation warning
   let finalVariant = variant;
   if (variant === 'default') {
     console.warn('AdminLayout: variant="default" está deprecada. Usar variant="primary" en su lugar.');
     finalVariant = 'primary';
   }
-  
+
   // Extraer variantes de layout legacy (mantener compatibilidad)
   const layoutVariant = restProps.layoutVariant || (variant === 'compact' ? 'compact' : variant === 'full' ? 'full' : 'default');
   const navigate = useNavigate();
@@ -209,12 +212,20 @@ function AdminLayout({
   // ===== SI NO HAY USUARIO O LOADING GLOBAL, MOSTRAR LOADING =====
   if (!user || loading) {
     return (
-      <div className="admin-layout__loading">
-        <div className="admin-layout__loading-content">
-          <div className="admin-layout__spinner"></div>
-          <p>{loading ? 'Cargando panel de administración...' : 'Verificando acceso de administrador...'}</p>
-        </div>
-      </div>
+      <FlexContainer 
+        direction="column" 
+        align="center" 
+        justify="center"
+        className="admin-layout__loading"
+        style={{ height: '100vh' }}
+      >
+        <FlexContainer direction="column" align="center" gap="md" className="admin-layout__loading-content">
+          <Container className="admin-layout__spinner" />
+          <Typography variant="body" size="md" color="muted">
+            {loading ? 'Cargando panel de administración...' : 'Verificando acceso de administrador...'}
+          </Typography>
+        </FlexContainer>
+      </FlexContainer>
     );
   }
 
@@ -223,77 +234,105 @@ function AdminLayout({
 
   // ===== RENDER PRINCIPAL =====
   return (
-    <div {...validDOMProps} className={layoutClasses}>
+    <GridContainer
+      {...validDOMProps}
+      columns={isCollapsed ? `${LAYOUT_TOKENS.sidebar.widthCollapsed} 1fr` : `${LAYOUT_TOKENS.sidebar.widthExpanded} 1fr`}
+      rows="min-content 1fr"
+      areas={`
+          "sidebar header"
+          "sidebar main"
+        `}
+      gap="none"
+      style={{ height: '100vh', width: '100%' }}
+      className={layoutClasses}
+    >
 
       {/* ===== SIDEBAR ===== */}
       <AdminSidebar
-        isCollapsed={isCollapsed}  // Usar el prop correcto
+        isCollapsed={isCollapsed}
         onToggleCollapse={handleSidebarToggle}
         counts={counts}
         loading={loadingCounts}
         error={countsError}
         currentPath={location.pathname}
+        style={{ gridArea: 'sidebar' }}
       />
 
-      {/* ===== ÁREA PRINCIPAL ===== */}
-      <div className="admin-layout__main">
-        {/* ===== HEADER ===== */}
-        <header className="admin-layout__header">
-          {/* Botón de menú móvil */}
-          <Button
-            variant="neutral"
-            size="sm"
-            onClick={handleSidebarToggle}
-            className="admin-layout__mobile-menu-button"
-            aria-label={isCollapsed ? 'Abrir menú' : 'Cerrar menú'}
-            disabled={disabled}
-          >
-            ☰
-          </Button>
+      {/* ===== HEADER ===== */}
+      <Container
+        as="header"
+        size="full"
+        padding="md"
+        style={{ gridArea: 'header' }}
+      >
+        <FlexContainer
+          direction="column"
+          gap="sm"
+          padding="none"
 
-          {/* Contenido del header */}
-          <div className="admin-layout__header-content">  
-            {/* Breadcrumbs */}
-            {breadcrumbs && breadcrumbs.length > 0 && (
-              <div className="admin-layout__breadcrumbs">
-                <Breadcrumb 
-                  items={breadcrumbs}
-                  size="sm"
-                  variant="neutral"
-                  showHome={true}
-                  showIcons={true}
-                  homeItem={{
-                    label: 'Admin',
-                    to: '/admin',
-                    icon: 'settings'
-                  }}
-                />
-              </div>
+        >
+        {/* Breadcrumbs */}
+        {breadcrumbs && breadcrumbs.length > 0 && (
+            <Breadcrumb
+              items={breadcrumbs}
+              size="sm"
+              variant="neutral"
+              showHome={true}
+              showIcons={true}
+              homeItem={{
+                label: 'Admin',
+                to: '/admin',
+                icon: 'settings'
+              }}
+            />
+        )}
+
+        {/* Título y acciones */}
+        <FlexContainer direction="row" justify="space-between">
+          <FlexContainer direction="column">
+            {title && (
+              <Typography 
+                variant="h1" 
+                size="lg" 
+                weight="bold"
+                className="admin-layout__title"
+              >
+                {title}
+              </Typography>
             )}
-            
-            {/* Título y acciones */}
-            <div className="admin-layout__header-row">
-              <div className="admin-layout__header-info">
-                {title && <h1 className="admin-layout__title">{title}</h1>}
-                {subtitle && <p className="admin-layout__subtitle">{subtitle}</p>}
-              </div>
-              
-              {/* Acciones del header */}
-              {headerActions && (
-                <div className="admin-layout__actions">
-                  {headerActions}
-                </div>
-              )}
-            </div>
-          </div>
-        </header>
-        
-        {/* ===== CONTENIDO PRINCIPAL CON CONTAINER DEL SISTEMA ===== */}
-        <main className="admin-layout__content">
-            {children}
-        </main>
-      </div>
-    </div>
+            {subtitle && (
+              <Typography 
+                variant="body" 
+                size="md" 
+                color="muted"
+                className="admin-layout__subtitle"
+              >
+                {subtitle}
+              </Typography>
+            )}
+          </FlexContainer>
+
+          {/* Acciones del header */}
+          {headerActions && (
+            <FlexContainer direction="row" gap="sm">
+              {headerActions}
+            </FlexContainer>
+          )}
+        </FlexContainer>
+        </FlexContainer>
+      </Container>
+
+      {/* ===== CONTENIDO PRINCIPAL ===== */}
+      <Container
+        as="main"
+        size="full"
+        padding="lg"
+        style={{ gridArea: 'main'}}
+      >
+        {children}
+      </Container>
+
+    </GridContainer>
   );
 }
 
@@ -307,12 +346,12 @@ AdminLayout.propTypes = {
     to: PropTypes.string
   })),
   headerActions: PropTypes.node,
-  
+
   // Props del layout
   sidebarCollapsed: PropTypes.bool,
   onSidebarToggle: PropTypes.func,
   layoutVariant: PropTypes.oneOf(['default', 'compact', 'full']), // Layout específico (legacy)
-  
+
   // ===== PROPS ESTÁNDAR DEL SISTEMA =====
   ...STANDARD_PROP_TYPES
 };

@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Card, CardBody, CardTitle, CardSubtitle } from '../../atoms/Card/Card';
 import { Badge } from '../../atoms/Badge/Badge';
 import { ContentImage } from '../../atoms/ContentImage/ContentImage';
+import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
 import { useContentCardProps } from '../../../hooks/useStandardProps';
 import { extractDOMProps, STANDARD_PROP_TYPES } from '../../../tokens/standardProps';
 import './ContentCard.css';
@@ -164,7 +165,11 @@ function ContentCard(props) {
       {...validDOMProps}
     >
       {/* Contenedor de imagen */}
-      <div className="content-card__image-container">
+      <FlexContainer
+        align="center"
+        justify="center"
+        className="content-card__image-container"
+      >
         <ContentImage
           src={cover}
           alt={`Carátula de ${title}`}
@@ -189,7 +194,7 @@ function ContentCard(props) {
             {type === 'movie' ? 'Película' : 'Serie'}
           </Badge>
         </div>
-      </div>
+      </FlexContainer>
 
       {/* Información del contenido */}
       <CardBody className="content-card__info">
@@ -204,17 +209,32 @@ function ContentCard(props) {
         )}
 
         {/* Metadatos y rating */}
-        <div className="content-card__details">
-          <div className="content-card__meta">
+        <FlexContainer
+          direction="row"
+          align="center"
+          gap="xs"
+          className="content-card__details"
+        >
+          <FlexContainer direction="column" gap="2xs" className="content-card__meta">
             {showMeta && (
-              <span className="content-card__duration">
+              <FlexContainer
+                direction="row"
+                align="center"
+                gap="2xs"
+                className="content-card__duration"
+              >
                 {getMetaText()}
-              </span>
+              </FlexContainer>
             )}
-          </div>
+          </FlexContainer>
           
           {showRating && rating && (
-            <div className="content-card__rating">
+            <FlexContainer
+              direction="row"
+              align="center"
+              gap="2xs"
+              className="content-card__rating"
+            >
               <Badge
                 variant="warning"
                 size={size === 'xs' ? 'xs' : size === 'xl' ? 'sm' : 'xs'}
@@ -223,9 +243,9 @@ function ContentCard(props) {
               >
                 {rating}
               </Badge>
-            </div>
+            </FlexContainer>
           )}
-        </div>
+        </FlexContainer>
       </CardBody>
     </Card>
   );

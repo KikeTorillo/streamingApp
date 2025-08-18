@@ -315,5 +315,29 @@ export const tokensToStyles = (tokens) => {
   };
 };
 
+// ===== LAYOUT TOKENS =====
+
+/**
+ * Tokens para components de layout (sidebar, header, etc.)
+ */
+export const LAYOUT_TOKENS = {
+  sidebar: {
+    widthExpanded: 'var(--sidebar-width-expanded, 28rem)',
+    widthCollapsed: 'var(--sidebar-width-collapsed, 7.2rem)',
+    height: '100vh',
+    transition: 'var(--transition-normal)',
+    breakpointCollapse: 'var(--screen-md)' // Collapsar en móvil
+  },
+  header: {
+    height: 'var(--header-height, auto)',
+    minHeight: 'var(--header-min-height, 6rem)',
+    padding: 'var(--space-lg) var(--space-xl)'
+  },
+  content: {
+    padding: 'var(--space-lg)',
+    minHeight: 'calc(100vh - var(--header-min-height, 6rem))'
+  }
+};
+
 // ===== EXPORTS DEFAULT =====
 export default DESIGN_TOKENS;

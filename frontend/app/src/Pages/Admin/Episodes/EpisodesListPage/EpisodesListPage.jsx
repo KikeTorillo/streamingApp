@@ -9,6 +9,7 @@ import { Button } from '../../../../components/atoms/Button/Button';
 import { Badge } from '../../../../components/atoms/Badge/Badge';
 import { Select } from '../../../../components/atoms/Select/Select';
 import { Label } from '../../../../components/atoms/Label/Label';
+import { Typography } from '../../../../components/atoms/Typography/Typography';
 import './EpisodesListPage.css';
 
 // Context y servicios
@@ -53,9 +54,9 @@ function EpisodesListPage() {
       accessorKey: 'id',
       header: 'ID',
       cell: ({ getValue }) => (
-        <span>
+        <Typography variant="span" size="xs" weight="medium" color="muted">
           #{getValue()}
-        </span>
+        </Typography>
       )
     },
     {
@@ -67,9 +68,9 @@ function EpisodesListPage() {
 
         return (
           <div>
-            <p>
+            <Typography variant="body" size="sm" weight="medium">
               {title || 'Sin título'}
-            </p>
+            </Typography>
           </div>
         );
       }
@@ -119,10 +120,10 @@ function EpisodesListPage() {
       cell: ({ getValue }) => {
         const dateString = getValue();
         const date = new Date(dateString);
-        
+
         // ✅ USAR FUNCIÓN DEL CONTEXTO: formatEpisodeDate mantiene consistencia
         const timeDisplay = formatEpisodeDate(dateString);
-        
+
         // Determinar variant del badge basado en el texto
         let badgeVariant = 'neutral';
         if (timeDisplay === 'Hoy') badgeVariant = 'success';
@@ -139,7 +140,7 @@ function EpisodesListPage() {
             >
               {timeDisplay}
             </Badge>
-            <div>
+            <Typography variant="div" size="xs" color="muted">
               {date.toLocaleDateString('es-ES', {
                 day: '2-digit',
                 month: '2-digit',
@@ -148,7 +149,7 @@ function EpisodesListPage() {
                 hour: '2-digit',
                 minute: '2-digit'
               })}
-            </div>
+            </Typography>
           </div>
         );
       }
@@ -231,14 +232,14 @@ function EpisodesListPage() {
 
     // Listener para cuando cambias de tab y regresas
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    
+
     // Listener para cuando regresas con el botón atrás del navegador
     const handleFocus = () => {
       if (selectedSerieId) {
         loadEpisodes();
       }
     };
-    
+
     window.addEventListener('focus', handleFocus);
 
     return () => {
@@ -270,87 +271,83 @@ function EpisodesListPage() {
         </div>
       }
     >
-      <div>
-        {/* SELECTOR DE SERIES */}
-        <div className="episodes-list__series-selector">
-          <Label
-            htmlFor="serie-selector"
-            leftIcon="video"
-            className="episodes-list__label"
-          >
-            Seleccionar Serie:
-          </Label>
-          <Select
-            id="serie-selector"
-            value={selectedSerieId}
-            onChange={handleSerieChange}
-            disabled={seriesLoading || seriesError}
-            placeholder='-- Selecciona una serie --'
-            options={seriesData.map(serie => ({
-              value: serie.id.toString(),
-              label: `${serie.title} (${serie.release_year})`
-            }))}
-            size="md"
-            variant="primary"
-          />
-        </div>
-
-        {seriesError && (
-          <div className="episodes-list__error-container">
-            <Badge
-              variant="danger"
-              size="lg"
-              leftIcon="x"
-              appearance="soft"
-            >
-              {seriesError}
-            </Badge>
-          </div>
-        )}
-
-        {error && (
-          <div className="episodes-list__error-container">
-            <Badge
-              variant="danger"
-              size="lg"
-              leftIcon="x"
-              appearance="soft"
-            >
-              {error}
-            </Badge>
-          </div>
-        )}
-
-        <DataTable
-          data={episodes}
-          columns={episodesColumns}
-          loading={loading}
-          onEdit={handleEditEpisode}
-          onView={handleViewEpisode}
-          onDelete={handleDeleteEpisode}
-          deleting={deleting}
-          emptyTitle={selectedSerieId ? "No hay episodios" : "Selecciona una serie"}
-          emptyDescription={selectedSerieId
-            ? "Esta serie no tiene episodios registrados"
-            : "Elige una serie del selector para ver sus episodios"
-          }
-          emptyIcon="video"
-          emptyAction={selectedSerieId ? (
-            <Button
-              variant="primary"
-              onClick={handleCreateEpisode}
-              leftIcon="plus"
-            >
-              Agregar Primer Episodio
-            </Button>
-          ) : null}
-          searchable={episodes.length > 0}
-          searchPlaceholder="Buscar por título de episodio..."
-          pageSize={10}
-          pageSizeOptions={[5, 10, 25, 50]}
-          tableVariant="striped"
+      {/* SELECTOR DE SERIES */}
+        <Label
+          htmlFor="serie-selector"
+          leftIcon="video"
+          className="episodes-list__label"
+        >
+          Seleccionar Serie:
+        </Label>
+        <Select
+          id="serie-selector"
+          value={selectedSerieId}
+          onChange={handleSerieChange}
+          disabled={seriesLoading || seriesError}
+          placeholder='-- Selecciona una serie --'
+          options={seriesData.map(serie => ({
+            value: serie.id.toString(),
+            label: `${serie.title} (${serie.release_year})`
+          }))}
+          size="md"
+          variant="primary"
         />
-      </div>
+
+      {seriesError && (
+        <div className="episodes-list__error-container">
+          <Badge
+            variant="danger"
+            size="lg"
+            leftIcon="x"
+            appearance="soft"
+          >
+            {seriesError}
+          </Badge>
+        </div>
+      )}
+
+      {error && (
+        <div className="episodes-list__error-container">
+          <Badge
+            variant="danger"
+            size="lg"
+            leftIcon="x"
+            appearance="soft"
+          >
+            {error}
+          </Badge>
+        </div>
+      )}
+
+      <DataTable
+        data={episodes}
+        columns={episodesColumns}
+        loading={loading}
+        onEdit={handleEditEpisode}
+        onView={handleViewEpisode}
+        onDelete={handleDeleteEpisode}
+        deleting={deleting}
+        emptyTitle={selectedSerieId ? "No hay episodios" : "Selecciona una serie"}
+        emptyDescription={selectedSerieId
+          ? "Esta serie no tiene episodios registrados"
+          : "Elige una serie del selector para ver sus episodios"
+        }
+        emptyIcon="video"
+        emptyAction={selectedSerieId ? (
+          <Button
+            variant="primary"
+            onClick={handleCreateEpisode}
+            leftIcon="plus"
+          >
+            Agregar Primer Episodio
+          </Button>
+        ) : null}
+        searchable={episodes.length > 0}
+        searchPlaceholder="Buscar por título de episodio..."
+        pageSize={10}
+        pageSizeOptions={[5, 10, 25, 50]}
+        tableVariant="striped"
+      />
     </AdminLayout>
   );
 }

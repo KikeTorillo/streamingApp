@@ -8,6 +8,7 @@ import { DataTable } from '../../../../components/organisms/DataTable/DataTable'
 import { Button } from '../../../../components/atoms/Button/Button';
 import { Badge } from '../../../../components/atoms/Badge/Badge';
 import { ContentImage } from '../../../../components/atoms/ContentImage/ContentImage';
+import { Typography } from '../../../../components/atoms/Typography/Typography';
 import './SeriesListPage.css';
 
 // Contexto de series
@@ -24,7 +25,7 @@ import { useSeries } from '../../../../app/context/SeriesContext';
  */
 function SeriesListPage() {
   const navigate = useNavigate();
-  
+
   // Los mensajes son manejados por el contexto internamente
 
   // ===== CONTEXTO DE SERIES =====
@@ -45,9 +46,9 @@ function SeriesListPage() {
       accessorKey: 'id',
       header: 'ID',
       cell: ({ getValue }) => (
-        <span>
+        <Typography variant="span" size="xs" weight="medium" color="muted">
           #{getValue()}
-        </span>
+        </Typography>
       )
     },
     {
@@ -58,10 +59,10 @@ function SeriesListPage() {
       cell: ({ getValue, row }) => {
         const coverImage = getValue();
         const title = row.original.title;
-        
+
         // Construir URL completa para la imagen usando el contexto
         const imageUrl = getSeriesCoverUrl(coverImage);
-        
+
         return (
           <ContentImage
             src={imageUrl}
@@ -82,13 +83,13 @@ function SeriesListPage() {
       header: 'Título',
       cell: ({ getValue }) => {
         const title = getValue();
-        
+
         return (
           <div>
-            <p>
+            <Typography variant="body" size="sm" weight="medium">
               {title}
-            </p>
-            <Badge 
+            </Typography>
+            <Badge
               variant="warning"
               size="xs"
               appearance="soft"
@@ -106,9 +107,9 @@ function SeriesListPage() {
       header: 'Categoría',
       cell: ({ getValue }) => {
         const categoryName = getValue();
-        
+
         return (
-          <Badge 
+          <Badge
             variant="primary"
             size="sm"
             appearance="soft"
@@ -124,9 +125,9 @@ function SeriesListPage() {
       accessorKey: 'release_year',
       header: 'Año',
       cell: ({ getValue }) => (
-        <span>
+        <Typography variant="span" size="sm" weight="normal">
           {getValue()}
-        </span>
+        </Typography>
       )
     },
     // ✅ DESCRIPCIÓN ELIMINADA - Esta columna ya no existe
@@ -136,9 +137,9 @@ function SeriesListPage() {
       header: 'Episodios',
       cell: ({ getValue }) => {
         const count = getValue() || 0;
-        
+
         return (
-          <Badge 
+          <Badge
             variant={count > 0 ? 'success' : 'secondary'}
             size="sm"
             appearance="soft"
@@ -156,18 +157,18 @@ function SeriesListPage() {
       cell: ({ getValue }) => {
         const date = new Date(getValue());
         const now = new Date();
-        
+
         // ✅ CORREGIDO: Comparar solo las fechas (año, mes, día) ignorando horas
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         const createdDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-        
+
         // Calcular diferencia en días de forma correcta
         const diffTime = today.getTime() - createdDate.getTime();
         const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        
+
         let timeDisplay;
         let badgeVariant = 'secondary';
-        
+
         if (diffDays === 0) {
           // Mismo día = HOY
           timeDisplay = 'Hoy';
@@ -198,31 +199,31 @@ function SeriesListPage() {
           timeDisplay = years === 1 ? '1 año' : `${years} años`;
         } else {
           // Fecha muy reciente (menos de 1 día)
-          timeDisplay = date.toLocaleDateString('es-ES', { 
-            month: 'short', 
+          timeDisplay = date.toLocaleDateString('es-ES', {
+            month: 'short',
             day: 'numeric'
           });
         }
-        
+
         return (
           <div>
-            <Badge 
+            <Badge
               variant={badgeVariant}
               size="xs"
               appearance="soft"
             >
               {timeDisplay}
             </Badge>
-            <div>
+            <Typography variant="div" size="xs" color="muted">
               {date.toLocaleDateString('es-ES', {
                 day: '2-digit',
-                month: '2-digit', 
+                month: '2-digit',
                 year: 'numeric'
               })} {date.toLocaleTimeString('es-ES', {
                 hour: '2-digit',
                 minute: '2-digit'
               })}
-            </div>
+            </Typography>
           </div>
         );
       }
@@ -275,47 +276,46 @@ function SeriesListPage() {
         </div>
       }
     >
-      <div>
-        {error && (
-          <div className="series-list__error-container">
-            <Badge 
-              variant="danger" 
-              size="lg"
-              leftIcon="x"
-              appearance="soft"
-            >
-              {error}
-            </Badge>
-          </div>
-        )}
 
-        <DataTable
-          data={series}
-          columns={seriesColumns}
-          loading={loading}
-          onEdit={handleEditSeries}
-          onView={handleViewSeries}
-          onDelete={handleDeleteSeries}
-          deleting={deleting}
-          emptyTitle="No hay series registradas"
-          emptyDescription="Comienza agregando tu primera serie"
-          emptyIcon="video"
-          emptyAction={
-            <Button 
-              variant="primary" 
-              onClick={handleCreateSeries}
-              leftIcon="plus"
-            >
-              Agregar Primera Serie
-            </Button>
-          }
-          searchable
-          searchPlaceholder="Buscar por título, categoría o año..."
-          pageSize={10}
-          pageSizeOptions={[5, 10, 25, 50]}
-          tableVariant="striped"
-        />
-      </div>
+      {error && (
+        <div className="series-list__error-container">
+          <Badge
+            variant="danger"
+            size="lg"
+            leftIcon="x"
+            appearance="soft"
+          >
+            {error}
+          </Badge>
+        </div>
+      )}
+
+      <DataTable
+        data={series}
+        columns={seriesColumns}
+        loading={loading}
+        onEdit={handleEditSeries}
+        onView={handleViewSeries}
+        onDelete={handleDeleteSeries}
+        deleting={deleting}
+        emptyTitle="No hay series registradas"
+        emptyDescription="Comienza agregando tu primera serie"
+        emptyIcon="video"
+        emptyAction={
+          <Button
+            variant="primary"
+            onClick={handleCreateSeries}
+            leftIcon="plus"
+          >
+            Agregar Primera Serie
+          </Button>
+        }
+        searchable
+        searchPlaceholder="Buscar por título, categoría o año..."
+        pageSize={10}
+        pageSizeOptions={[5, 10, 25, 50]}
+        tableVariant="striped"
+      />
     </AdminLayout>
   );
 }

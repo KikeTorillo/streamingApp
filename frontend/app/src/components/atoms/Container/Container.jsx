@@ -23,20 +23,35 @@ import './Container.css';
  * - Deprecation warning para prop 'debug' (usar className en su lugar)
  */
 function Container(props) {
+  // ✅ MANEJAR TAMAÑOS ESPECÍFICOS DE CONTAINER ANTES DE useStandardProps
+  const { size: originalSize, ...propsForStandardHook } = props;
+  
+  // Container acepta tamaños adicionales: 'full'
+  const containerSpecificSizes = ['full'];
+  const isContainerSpecificSize = containerSpecificSizes.includes(originalSize);
+  
+  // Si es un tamaño específico de Container, usar 'xl' para useStandardProps (evitar warning)
+  const propsForHook = isContainerSpecificSize 
+    ? { ...propsForStandardHook, size: 'xl' }
+    : props;
+
   // ✅ USAR HOOK ESTÁNDAR CON CONFIGURACIÓN ESPECÍFICA
   const {
-    size,
+    size: standardSize,
     variant,
     disabled,
     loading,
     className,
     ...standardProps
-  } = useStandardProps(props, {
+  } = useStandardProps(propsForHook, {
     componentType: 'container',
     defaultSize: 'md',
-    defaultVariant: 'primary',
-    defaultRounded: 'lg'
+    defaultVariant: 'neutral', // ✅ Neutral por defecto para layout
+    defaultRounded: 'none'      // ✅ Sin bordes por defecto para layout
   });
+
+  // ✅ USAR EL TAMAÑO ORIGINAL SI ES ESPECÍFICO DE CONTAINER
+  const finalSize = isContainerSpecificSize ? originalSize : standardSize;
 
   // ✅ EXTRAER PROPS ESPECÍFICAS DE CONTAINER
   const {
@@ -45,6 +60,7 @@ function Container(props) {
     debug,
     spacing,
     padding,
+    style = {},
     // Props legacy con warnings
     variant: originalVariant
   } = props;
@@ -67,8 +83,8 @@ function Container(props) {
 
   // ✅ GENERAR CLASES CSS CON SISTEMA ESTÁNDAR
   const containerClasses = [
-    `container-${size}`,
-    `container-${size}--${variant}`,
+    `container-${finalSize}`,
+    `container-${finalSize}--${variant}`,
     loading && 'container--loading',
     debug && 'debug-containers', // Mantener temporalmente
     className
@@ -81,7 +97,8 @@ function Container(props) {
     ...(padding && { padding }),
     // Estados
     opacity: disabled ? '0.5' : '1',
-    pointerEvents: disabled ? 'none' : 'auto'
+    pointerEvents: disabled ? 'none' : 'auto',
+    ...style // ✅ COMBINAR con estilos que vienen de props
   };
 
   // ✅ FILTRAR PROPS PARA DOM
@@ -90,12 +107,11 @@ function Container(props) {
   // ✅ CREAR ELEMENTO DINÁMICO
   const Element = as;
 
-  console.log(containerClasses);
   return (
     <Element 
+      {...domProps}
       className={containerClasses}
       style={containerStyles}
-      {...domProps}
     >
       {loading && (
         <div className="container__loading">
@@ -131,6 +147,11 @@ Container.propTypes = {
    */
   spacing: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl', '2xl']),
   
+  /**
+   * Estilos CSS adicionales (compatibilidad con gridArea, etc.)
+   */
+  style: PropTypes.object,
+  
   // ✅ PROPS LEGACY CON DEPRECATION WARNINGS
   /**
    * @deprecated Usar className="debug-containers" en su lugar
@@ -140,8 +161,8 @@ Container.propTypes = {
 
 Container.defaultProps = {
   size: 'md',
-  variant: 'primary', // ✅ Cambio: default → primary
-  rounded: 'lg',
+  variant: 'neutral', // ✅ Neutral por defecto para layout
+  rounded: 'none',    // ✅ Sin bordes por defecto para layout
   disabled: false,
   loading: false,
   className: '',
@@ -169,7 +190,7 @@ export const CONTAINER_VARIANTS = {
   SUCCESS: 'success',      // Verde/azul - contenedor de éxito
   WARNING: 'warning',      // Amarillo/dorado - contenedor de advertencia
   DANGER: 'danger',        // Rojo - contenedor de error
-  NEUTRAL: 'neutral'       // Gris - contenedor neutro
+  NEUTRAL: 'neutral'       // Gris - contenedor neutro (DEFAULT para layouts)
 };
 
 // ✅ MAPEO DE COMPATIBILIDAD (Legacy → Estándar)

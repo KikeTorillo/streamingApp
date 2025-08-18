@@ -3,9 +3,7 @@
 
 /* ===== CONTENEDOR PRINCIPAL ===== */
 .content-card {
-  /* Layout específico para contenido multimedia */
-  display: flex;
-  flex-direction: column;
+  /* Layout principal manejado por Card con FlexContainer */
   
   /* Los tamaños específicos se definen en las clases .content-card--size-* */
   /* No usar fit-content para evitar que el texto afecte el ancho de la imagen */
@@ -15,13 +13,8 @@
 
 /* ===== CONTENEDOR DE IMAGEN ===== */
 .content-card__image-container {
+  /* Layout manejado por FlexContainer */
   position: relative;
-  /* Dejar que ContentImage defina su propio ancho */
-  
-  /* Centrar contenido */
-  display: flex;
-  align-items: center;
-  justify-content: center;
   
   /* Aspect ratio se maneja en ContentImage */
   overflow: hidden;
@@ -48,11 +41,9 @@
 
 /* ===== CONTENIDO DE TEXTO ===== */
 .content-card__content {
+  /* Layout manejado por CardBody con FlexContainer */
   padding: var(--space-sm);
   flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
 }
 
 /* ===== TÍTULO ===== */
@@ -73,9 +64,7 @@
 
 /* ===== META INFORMACIÓN ===== */
 .content-card__meta {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2xs);
+  /* Layout manejado por FlexContainer */
 }
 
 .content-card__category {
@@ -85,9 +74,7 @@
 }
 
 .content-card__details {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
+  /* Layout manejado por FlexContainer */
   font-size: var(--font-size-sm);
   color: var(--text-muted);
 }
@@ -97,9 +84,7 @@
 }
 
 .content-card__rating {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2xs);
+  /* Layout manejado por FlexContainer */
 }
 
 .content-card__rating-star {
@@ -109,9 +94,7 @@
 
 .content-card__duration,
 .content-card__episodes {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2xs);
+  /* Layout manejado por FlexContainer */
 }
 
 /* ===== VARIANTES SEMÁNTICAS ===== */

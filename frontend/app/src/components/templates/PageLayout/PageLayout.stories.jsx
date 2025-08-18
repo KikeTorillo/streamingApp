@@ -16,13 +16,20 @@ export default {
         component: `
 # PageLayout Template
 
-Layout principal que estructura las páginas de la app: Header + Filters + Content.
+Template simplificado que estructura páginas usando 100% Container + FlexContainer del sistema.
+
+## Características
+- **Zero CSS**: Sin estilos custom, solo contenedores del sistema
+- **Composición pura**: FlexContainer + Container únicamente
+- **Responsive automático**: Desde tokens del sistema
+- **Sin variants**: La variación viene del contenido, no del layout
 
 ## Uso básico
 \`\`\`jsx
 <PageLayout
   header={<AppHeader />}
   filters={<FilterBar />}
+  contentPadding="xl"
 >
   <ContentSection title="Películas">
     {movies.map(movie => <ContentCard key={movie.id} content={movie} />)}
@@ -34,9 +41,16 @@ Layout principal que estructura las páginas de la app: Header + Filters + Conte
     }
   },
   argTypes: {
-    containerMaxWidth: { control: 'text' },
-    contentPadding: { control: 'text' },
-    variant: { control: 'select', options: ['default', 'centered', 'wide', 'compact'] }
+    contentSize: { 
+      control: 'select', 
+      options: ['xs', 'sm', 'md', 'lg', 'xl', 'full'],
+      description: 'Tamaño del contenedor principal'
+    },
+    contentPadding: { 
+      control: 'select', 
+      options: ['none', 'xs', 'sm', 'md', 'lg', 'xl', '2xl'],
+      description: 'Padding interno del contenido'
+    }
   }
 };
 
@@ -71,9 +85,7 @@ const CATEGORIES = [
 // ========== DEFAULT ==========
 export const Default = {
   args: {
-    variant: 'default',
-    containerMaxWidth: '144rem',
-    contentPadding: 'var(--space-xl)'
+    contentPadding: 'xl'
   },
   render: (args) => (
     <PageLayout {...args}>
@@ -164,41 +176,41 @@ export const CompleteLayout = {
   )
 };
 
-// ========== VARIANTES ==========
-export const Variants = () => (
+// ========== CONFIGURACIONES DE PADDING ==========
+export const PaddingOptions = () => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xl)' }}>
     <div>
-      <h3>Default (1440px max)</h3>
-      <PageLayout variant="default">
+      <h3>Padding None</h3>
+      <PageLayout contentPadding="none">
         <div style={{ background: 'var(--bg-secondary)', padding: 'var(--space-md)', borderRadius: 'var(--radius-md)' }}>
-          Contenido con ancho máximo de 1440px
+          Sin padding interno - contenido pegado a los bordes
         </div>
       </PageLayout>
     </div>
     
     <div>
-      <h3>Centered (800px max)</h3>
-      <PageLayout variant="centered">
+      <h3>Padding MD (estándar)</h3>
+      <PageLayout contentPadding="md">
         <div style={{ background: 'var(--bg-secondary)', padding: 'var(--space-md)', borderRadius: 'var(--radius-md)' }}>
-          Contenido centrado y más estrecho
+          Padding medio - para páginas estándar
         </div>
       </PageLayout>
     </div>
     
     <div>
-      <h3>Wide (sin límite)</h3>
-      <PageLayout variant="wide">
+      <h3>Padding XL (generoso)</h3>
+      <PageLayout contentPadding="xl">
         <div style={{ background: 'var(--bg-secondary)', padding: 'var(--space-md)', borderRadius: 'var(--radius-md)' }}>
-          Contenido que ocupa todo el ancho disponible
+          Padding extra grande - para páginas con mucho contenido
         </div>
       </PageLayout>
     </div>
     
     <div>
-      <h3>Compact (menos padding)</h3>
-      <PageLayout variant="compact">
+      <h3>Padding 2XL (máximo)</h3>
+      <PageLayout contentPadding="2xl">
         <div style={{ background: 'var(--bg-secondary)', padding: 'var(--space-md)', borderRadius: 'var(--radius-md)' }}>
-          Contenido con espaciado reducido
+          Padding máximo - para páginas especiales
         </div>
       </PageLayout>
     </div>
@@ -214,7 +226,7 @@ export const MainPageSimulation = {
           appTitle="StreamFlix"
           userName="Alex Rivera"
           searchPlaceholder="Buscar películas, series, documentales..."
-          variant="default"
+          contentPadding="xl"
           size="lg"
         />
       }
@@ -229,7 +241,7 @@ export const MainPageSimulation = {
           selectedCategory="all"
         />
       }
-      variant="default"
+      contentPadding="xl"
     >
       <ContentSection 
         title="🎬 Películas Populares" 

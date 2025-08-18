@@ -267,7 +267,6 @@ function MainPage() {
                     }
                 />
             }
-            variant="primary"
         >
             {/* ===== SECCIÓN DE PELÍCULAS ===== */}
             <ContentSection

@@ -123,27 +123,51 @@
 /* ===== TAMAÑOS USANDO SISTEMA ESTÁNDAR ===== */
 .flex-container--size-xs {
   min-height: var(--component-height-xs);
-  padding: var(--space-xs);
 }
 
 .flex-container--size-sm {
   min-height: var(--component-height-sm);
-  padding: var(--space-sm);
 }
 
 .flex-container--size-md {
   min-height: var(--component-height-md);
-  padding: var(--space-md);
 }
 
 .flex-container--size-lg {
   min-height: var(--component-height-lg);
-  padding: var(--space-lg);
 }
 
 .flex-container--size-xl {
   min-height: var(--component-height-xl);
+}
+
+/* ===== PADDING ESPECÍFICO (NUEVO) ===== */
+.flex-container--padding-none {
+  padding: 0;
+}
+
+.flex-container--padding-xs {
+  padding: var(--space-xs);
+}
+
+.flex-container--padding-sm {
+  padding: var(--space-sm);
+}
+
+.flex-container--padding-md {
+  padding: var(--space-md);
+}
+
+.flex-container--padding-lg {
+  padding: var(--space-lg);
+}
+
+.flex-container--padding-xl {
   padding: var(--space-xl);
+}
+
+.flex-container--padding-2xl {
+  padding: var(--space-2xl);
 }
 
 /* ===== FLEX GROW/SHRINK ===== */
@@ -244,6 +268,30 @@
   /* Wrapping automático en móvil para contenedores row */
   .flex-container--direction-row.flex-container--wrap-nowrap {
     flex-wrap: wrap;
+  }
+}
+
+/* ===== DISTRIBUTE - DISTRIBUCIÓN EQUITATIVA ===== */
+.flex-container--distribute > * {
+  flex: 1 1 0 !important; /* Prioridad sobre width de componentes hijos */
+  min-width: 0; /* Evitar overflow en contenido largo */
+  width: auto !important; /* Override fullWidth de Card */
+}
+
+/* En móvil con wrap, mejor distribución responsiva */
+@media (max-width: 48rem) {
+  .flex-container--distribute.flex-container--wrap-wrap > * {
+    flex: 1 1 calc(50% - var(--space-lg)) !important; /* 2 por fila en móvil */
+    width: auto !important; /* Override fullWidth en móvil */
+    max-width: calc(50% - var(--space-lg)); /* Máximo 2 por fila */
+  }
+}
+
+/* En pantallas muy pequeñas, una card por fila */
+@media (max-width: 32rem) {
+  .flex-container--distribute.flex-container--wrap-wrap > * {
+    flex: 1 1 100% !important; /* 1 por fila en pantallas muy pequeñas */
+    max-width: 100% !important;
   }
 }
 

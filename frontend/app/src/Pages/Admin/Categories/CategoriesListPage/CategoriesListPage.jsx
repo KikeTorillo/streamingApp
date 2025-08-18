@@ -7,6 +7,7 @@ import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminL
 import { DataTable } from '../../../../components/organisms/DataTable/DataTable';
 import { Button } from '../../../../components/atoms/Button/Button';
 import { EditModal } from '../../../../components/organisms/EditModal/EditModal';
+import { Typography } from '../../../../components/atoms/Typography/Typography';
 import { AlertProvider, useAlertContext } from '../../../../app/context/AlertContext';
 import './CategoriesListPage.css';
 
@@ -67,9 +68,9 @@ function CategoriesListContent() {
       accessorKey: 'id',
       header: 'ID',
       cell: ({ row }) => (
-        <span>
+        <Typography variant="span" size="xs" weight="medium" color="muted">
           {row.original.id}
-        </span>
+        </Typography>
       )
     },
     {
@@ -77,12 +78,12 @@ function CategoriesListContent() {
       header: 'Nombre de Categoría',
       cell: ({ row }) => (
         <div>
-          <div>
+          <Typography variant="div" size="sm" weight="medium">
             {row.original.name}
-          </div>
-          <div>
+          </Typography>
+          <Typography variant="div" size="xs" color="muted">
             Categoría
-          </div>
+          </Typography>
         </div>
       )
     },
@@ -90,18 +91,18 @@ function CategoriesListContent() {
       accessorKey: 'createdAt',
       header: 'Fecha de Creación',
       cell: ({ row }) => (
-        <span>
+        <Typography variant="span" size="sm" weight="normal">
           {formatCategoryDate(row.original.createdAt)}
-        </span>
+        </Typography>
       )
     },
     {
       accessorKey: 'updatedAt',
       header: 'Última Actualización',
       cell: ({ row }) => (
-        <span>
+        <Typography variant="span" size="sm" weight="normal">
           {formatCategoryDate(row.original.updatedAt)}
-        </span>
+        </Typography>
       )
     }
   ];

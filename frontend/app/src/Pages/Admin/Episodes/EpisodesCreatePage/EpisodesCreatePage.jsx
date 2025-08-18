@@ -6,6 +6,7 @@ import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminL
 import { Container } from '../../../../components/atoms/Container/Container';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
 import { ProgressModal } from "../../../../components/molecules/ProgressModal/ProgressModal";
+import { Typography } from '../../../../components/atoms/Typography/Typography';
 import { useFormNavigation } from "../../../../hooks/useFormNavigation";
 import { useSuccessRedirect } from "../../../../hooks/useSuccessRedirect";
 import "./EpisodesCreatePage.css";
@@ -259,33 +260,27 @@ function EpisodesCreatePage() {
         { label: 'Crear Episodio' }
       ]}
     >
-      {/* CONTENEDOR PRINCIPAL */}
-      <Container 
-        size="lg" 
-        variant="primary"
-        className={`${uploadStatus !== 'idle' ? 'episodes-create--loading' : ''}`}
-      >
         {/* Mensaje de Error */}
         {error && (
           <div className="status-message status-message--error">
-            <span className="status-message__icon">⚠️</span>
+            <Typography variant="span" size="md" className="status-message__icon">⚠️</Typography>
             <div className="status-message__content">
-              <strong>Error al crear episodio</strong>
-              <span>{error}</span>
+              <Typography variant="strong" size="md" weight="semibold">Error al crear episodio</Typography>
+              <Typography variant="span" size="sm" color="muted">{error}</Typography>
             </div>
           </div>
         )}
 
         {/* Header del Formulario */}
         <div className="form-header">
-          <h2 className="form-title">
+          <Typography variant="h2" size="lg" weight="semibold" className="form-title">
             Nuevo Episodio
-          </h2>
-          <p className="form-description">
+          </Typography>
+          <Typography variant="body" size="md" color="muted" className="form-description">
             Los episodios deben estar asociados a una serie existente. 
             Cada episodio se identifica por su temporada y número dentro de la serie.
             El archivo de video se procesará automáticamente después de la creación.
-          </p>
+          </Typography>
         </div>
 
         {/* Formulario Dinámico */}
@@ -316,7 +311,6 @@ function EpisodesCreatePage() {
           showSubmit={uploadStatus !== 'completed'}
           className="episode-form"
         />
-      </Container>
 
       <ProgressModal
         isVisible={uploadStatus !== 'idle'}

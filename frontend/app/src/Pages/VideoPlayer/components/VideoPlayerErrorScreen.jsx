@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { Button } from '../../../components/atoms/Button/Button';
+import { Typography } from '../../../components/atoms/Typography/Typography';
 
 /**
  * VideoPlayerErrorScreen - Componente para mostrar pantallas de error
@@ -9,8 +10,8 @@ export const VideoPlayerErrorScreen = ({ error, onGoBack, resolutionsError = fal
     return (
       <div className="video-player-container">
         <div className="video-info">
-          <h2>Error: Resoluciones no encontradas</h2>
-          <p>Verifica que la URL contenga parámetros de resolución</p>
+          <Typography variant="h2" size="lg" weight="semibold" color="danger">Error: Resoluciones no encontradas</Typography>
+          <Typography variant="body" size="md" color="muted">Verifica que la URL contenga parámetros de resolución</Typography>
         </div>
       </div>
     );
@@ -19,8 +20,8 @@ export const VideoPlayerErrorScreen = ({ error, onGoBack, resolutionsError = fal
   return (
     <div className="video-player-container">
       <div className="video-info">
-        <h2>Error</h2>
-        <p>{error}</p>
+        <Typography variant="h2" size="lg" weight="semibold" color="danger">Error</Typography>
+        <Typography variant="body" size="md" color="muted">{error}</Typography>
         <Button 
           onClick={onGoBack}
           variant="primary"

@@ -142,23 +142,52 @@
 
 /* ===== TAMAÑOS USANDO SISTEMA ESTÁNDAR ===== */
 .grid-container--size-xs {
-  padding: var(--space-xs);
+  /* Reservado para futuras propiedades de tamaño */
 }
 
 .grid-container--size-sm {
-  padding: var(--space-sm);
+  /* Reservado para futuras propiedades de tamaño */
 }
 
 .grid-container--size-md {
-  padding: var(--space-md);
+  /* Reservado para futuras propiedades de tamaño */
 }
 
 .grid-container--size-lg {
-  padding: var(--space-lg);
+  /* Reservado para futuras propiedades de tamaño */
 }
 
 .grid-container--size-xl {
+  /* Reservado para futuras propiedades de tamaño */
+}
+
+/* ===== PADDING ESPECÍFICO (NUEVO) ===== */
+.grid-container--padding-none {
+  padding: 0;
+}
+
+.grid-container--padding-xs {
+  padding: var(--space-xs);
+}
+
+.grid-container--padding-sm {
+  padding: var(--space-sm);
+}
+
+.grid-container--padding-md {
+  padding: var(--space-md);
+}
+
+.grid-container--padding-lg {
+  padding: var(--space-lg);
+}
+
+.grid-container--padding-xl {
   padding: var(--space-xl);
+}
+
+.grid-container--padding-2xl {
+  padding: var(--space-2xl);
 }
 
 /* ===== VARIANTES SEMÁNTICAS OPCIONALES ===== */

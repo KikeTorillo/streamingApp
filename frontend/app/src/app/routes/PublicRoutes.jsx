@@ -8,6 +8,11 @@ import { MainPage } from "../../Pages/MainPage/MainPage";
 import { SeriesDetailPage } from "../../Pages/SeriesDetailPage/SeriesDetailPage";
 import { MoviesDetailPage } from "../../Pages/MoviesDetailPage/MoviesDetailPage";
 
+// Componentes del sistema de diseño
+import { FlexContainer } from "../../components/atoms/FlexContainer/FlexContainer";
+import { Typography } from "../../components/atoms/Typography/Typography";
+import { Button } from "../../components/atoms/Button/Button";
+
 /**
  * PublicRoutes - Configuración de todas las rutas públicas
  * 
@@ -66,30 +71,40 @@ export function PublicRoutes() {
     {
       path: "*",
       element: (
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '100vh',
-          textAlign: 'center'
-        }}>
-          <h1>404 - Página no encontrada</h1>
-          <p>La página que buscas no existe.</p>
-          <button
+        <FlexContainer
+          direction="column"
+          align="center"
+          justify="center"
+          gap="lg"
+          padding="xl"
+          style={{ minHeight: '100vh', textAlign: 'center' }}
+        >
+          <Typography 
+            variant="h1" 
+            size="xl" 
+            weight="bold"
+            color="primary"
+          >
+            404 - Página no encontrada
+          </Typography>
+          
+          <Typography 
+            variant="body" 
+            size="lg" 
+            color="muted"
+          >
+            La página que buscas no existe.
+          </Typography>
+          
+          <Button
+            variant="primary"
+            size="lg"
+            leftIcon="home"
             onClick={() => window.location.href = '/main-page'}
-            style={{
-              padding: '1rem 2rem',
-              backgroundColor: 'var(--color-primary)',
-              color: 'white',
-              border: 'none',
-              borderRadius: 'var(--radius-md)',
-              cursor: 'pointer'
-            }}
           >
             Volver al Inicio
-          </button>
-        </div>
+          </Button>
+        </FlexContainer>
       )
     }
   ]);

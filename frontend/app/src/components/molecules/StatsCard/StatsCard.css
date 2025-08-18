@@ -3,11 +3,9 @@
 
 /* ===== CONTENEDOR PRINCIPAL ===== */
 .stats-card {
-  /* Layout */
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
+  /* Layout principal manejado por Card + FlexContainer */
   min-height: 12rem;
+  min-width: 23rem;
   
   /* Fuente */
   font-family: var(--font-family-base);
@@ -17,8 +15,6 @@
   
   /* Posición relativa para elementos absolutos */
   position: relative;
-
-  min-width: 23rem;
 }
 
 /* ===== FULL WIDTH OVERRIDE ===== */
@@ -201,23 +197,12 @@
 
 /* ===== HEADER ===== */
 .stats-card__header {
-  /* Layout */
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  
-  /* Flex para distribución */
+  /* Layout manejado por FlexContainer */
   flex-shrink: 0;
 }
 
 .stats-card__icon {
-  /* Layout */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  
-  /* Tamaño */
+  /* Solo estilos visuales - layout manejado por FlexContainer */
   width: 3rem;
   height: 3rem;
   
@@ -231,17 +216,16 @@
   /* Tipografía */
   font-size: var(--font-size-lg);
   line-height: 1;
+  flex-shrink: 0;
 }
 
 .stats-card__title {
-  /* Reset */
+  /* Layout manejado por Typography + FlexContainer padre */
   margin: 0;
-  
-  /* Layout */
   flex: 1;
   min-width: 0;
   
-  /* Tipografía */
+  /* Tipografía manejada por Typography */
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-medium);
   color: var(--text-secondary);
@@ -255,25 +239,21 @@
 
 /* ===== VALOR PRINCIPAL ===== */
 .stats-card__value-section {
-  /* Layout */
+  /* Layout manejado por FlexContainer */
   flex: 1;
-  display: flex;
-  align-items: center;
   min-height: 0;
 }
 
 .stats-card__value {
-  /* Reset */
+  /* Tipografía manejada por Typography */
   margin: 0;
+  width: 100%;
   
-  /* Tipografía */
+  /* Estilos específicos del valor */
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
   color: var(--text-primary);
   line-height: var(--line-height-tight);
-  
-  /* Layout */
-  width: 100%;
   
   /* Permitir wrap en números muy largos */
   word-break: break-word;
@@ -287,10 +267,7 @@
 }
 
 .stats-card__change {
-  /* Layout */
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
+  /* Layout manejado por FlexContainer */
   
   /* Tipografía */
   font-size: var(--font-size-sm);
@@ -367,13 +344,11 @@
 }
 
 .stats-card__value--skeleton {
-  display: flex;
-  align-items: center;
+  /* Layout manejado por FlexContainer */
 }
 
 .stats-card__change--skeleton {
-  display: flex;
-  align-items: center;
+  /* Layout manejado por FlexContainer */
 }
 
 @keyframes shimmer {

@@ -46,9 +46,12 @@ function FlexContainer(props) {
     justify = 'flex-start',
     wrap = 'nowrap',
     gap,
+    padding = null, // ✅ NUEVO: Padding interno del contenedor
     inline = false,
     grow = false,
-    shrink = false
+    shrink = false,
+    distribute = false, // Nueva prop para distribuir espacio equitativamente
+    style = {}
   } = props;
 
   // ✅ GENERAR CLASES CSS CON SISTEMA ESTÁNDAR
@@ -59,11 +62,13 @@ function FlexContainer(props) {
     `flex-container--justify-${justify}`,
     `flex-container--wrap-${wrap}`,
     gap && `flex-container--gap-${gap}`,
+    padding && `flex-container--padding-${padding}`, // ✅ NUEVO: Clase de padding
     `flex-container--size-${size}`,
     variant !== 'neutral' && `flex-container--variant-${variant}`,
     inline && 'flex-container--inline',
     grow && 'flex-container--grow',
     shrink && 'flex-container--shrink',
+    distribute && 'flex-container--distribute',
     loading && 'flex-container--loading',
     disabled && 'flex-container--disabled',
     className
@@ -72,7 +77,8 @@ function FlexContainer(props) {
   // ✅ ESTILOS DINÁMICOS MÍNIMOS (CSS maneja la mayoría)
   const flexStyles = {
     opacity: disabled ? '0.5' : '1',
-    pointerEvents: disabled ? 'none' : 'auto'
+    pointerEvents: disabled ? 'none' : 'auto',
+    ...style // ✅ COMBINAR con estilos que vienen de props
   };
 
   // ✅ FILTRAR PROPS PARA DOM
@@ -83,7 +89,7 @@ function FlexContainer(props) {
 
   return (
     <Element 
-     {...domProps}
+      {...domProps}
       className={flexClasses}
       style={flexStyles}
     >
@@ -140,6 +146,11 @@ FlexContainer.propTypes = {
   gap: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl']),
   
   /**
+   * Padding interno del contenedor usando tokens del sistema
+   */
+  padding: PropTypes.oneOf(['none', 'xs', 'sm', 'md', 'lg', 'xl', '2xl']),
+  
+  /**
    * Usar display: inline-flex en lugar de flex
    */
   inline: PropTypes.bool,
@@ -152,7 +163,17 @@ FlexContainer.propTypes = {
   /**
    * Aplicar flex-shrink: 1 al contenedor
    */
-  shrink: PropTypes.bool
+  shrink: PropTypes.bool,
+  
+  /**
+   * Distribuir espacio equitativamente entre hijos (flex: 1 para cada hijo)
+   */
+  distribute: PropTypes.bool,
+  
+  /**
+   * Estilos CSS adicionales (compatibilidad con gridArea, etc.)
+   */
+  style: PropTypes.object
 };
 
 FlexContainer.defaultProps = {
@@ -166,9 +187,11 @@ FlexContainer.defaultProps = {
   align: 'stretch',
   justify: 'flex-start',
   wrap: 'nowrap',
+  padding: null, // ✅ NUEVO: Sin padding por defecto
   inline: false,
   grow: false,
-  shrink: false
+  shrink: false,
+  distribute: false
 };
 
 // ===== EXPORTS ===== 

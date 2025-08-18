@@ -8,6 +8,7 @@ import { Container } from '../../../../../components/atoms/Container/Container';
 import { Divider } from '../../../../../components/atoms/Divider/Divider';
 import { Button } from '../../../../../components/atoms/Button/Button';
 import { ContentImage } from '../../../../../components/atoms/ContentImage/ContentImage';
+import { Typography } from '../../../../../components/atoms/Typography/Typography';
 import { filterEmptyFields } from '../../../../../utils/formUtils';
 import { getImageTypeInfo, selectFinalImage } from '../../../../../utils/imageUtils';
 import './SeriesFormView.css';
@@ -163,8 +164,8 @@ function SeriesFormView({
 
     return (
       <div className={`series-form-view__image-info ${imageInfo.bgClass}`}>
-        <span className="series-form-view__image-badge">{imageInfo.badge}</span>
-        <span className="series-form-view__image-description">{imageInfo.description}</span>
+        <Typography variant="span" size="xs" weight="medium" className="series-form-view__image-badge">{imageInfo.badge}</Typography>
+        <Typography variant="span" size="sm" color="muted" className="series-form-view__image-description">{imageInfo.description}</Typography>
       </div>
     );
   };
@@ -212,7 +213,7 @@ function SeriesFormView({
         {imagePreview && imageType && (
           <div className="series-form-view__preview-section">
             <div className="series-form-view__preview-header">
-              <h4 className="series-form-view__preview-title">Vista Previa de Portada</h4>
+              <Typography variant="h4" size="sm" weight="medium" className="series-form-view__preview-title">Vista Previa de Portada</Typography>
               {renderImageInfo()}
             </div>
             
@@ -284,8 +285,8 @@ function SeriesFormView({
           <div className="series-form-view__success">
             <div className="series-form-view__success-icon">✅</div>
             <div className="series-form-view__success-content">
-              <h3>¡Serie creada exitosamente!</h3>
-              <p>La serie se ha agregado al catálogo correctamente.</p>
+              <Typography variant="h3" size="md" weight="semibold" color="success">¡Serie creada exitosamente!</Typography>
+              <Typography variant="body" size="md" color="muted">La serie se ha agregado al catálogo correctamente.</Typography>
             </div>
           </div>
         )}
@@ -294,8 +295,8 @@ function SeriesFormView({
           <div className="series-form-view__error-message">
             <div className="series-form-view__error-icon">⚠️</div>
             <div className="series-form-view__error-content">
-              <h4>Error al crear serie</h4>
-              <p>{typeof error === 'string' ? error : error.message || 'Ha ocurrido un error inesperado'}</p>
+              <Typography variant="h4" size="sm" weight="semibold" color="danger">Error al crear serie</Typography>
+              <Typography variant="body" size="md" color="muted">{typeof error === 'string' ? error : error.message || 'Ha ocurrido un error inesperado'}</Typography>
             </div>
           </div>
         )}

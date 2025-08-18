@@ -9,6 +9,7 @@ import { Button } from '../../../../components/atoms/Button/Button';
 import { Container } from '../../../../components/atoms/Container/Container';
 import { Divider } from '../../../../components/atoms/Divider/Divider';
 import { Badge } from '../../../../components/atoms/Badge/Badge';
+import { Typography } from '../../../../components/atoms/Typography/Typography';
 import './EpisodeEditPage.css';
 
 // Context
@@ -276,7 +277,7 @@ function EpisodeEditPage() {
       >
         <div className="episode-edit__loading">
           <div className="episode-edit__loading-spinner">⏳</div>
-          <p>Cargando información del episodio...</p>
+          <Typography variant="body" size="md" color="muted">Cargando información del episodio...</Typography>
         </div>
       </AdminLayout>
     );
@@ -296,8 +297,8 @@ function EpisodeEditPage() {
       >
         <div className="episode-edit__error">
           <div className="episode-edit__error-icon">❌</div>
-          <h2>Error al cargar episodio</h2>
-          <p>{errorToShow}</p>
+          <Typography variant="h2" size="lg" weight="semibold" color="danger">Error al cargar episodio</Typography>
+          <Typography variant="body" size="md" color="muted">{errorToShow}</Typography>
           <Button onClick={() => navigate('/admin/episodes')} variant="primary">
             Volver a la lista
           </Button>
@@ -324,8 +325,8 @@ function EpisodeEditPage() {
           <Container variant="success" className="edit-notification">
             <div className="edit-notification__icon">✅</div>
             <div className="edit-notification__content">
-              <h3>¡Episodio actualizado exitosamente!</h3>
-              <p>Los cambios se han guardado correctamente. Redirigiendo...</p>
+              <Typography variant="h3" size="md" weight="semibold" color="success">¡Episodio actualizado exitosamente!</Typography>
+              <Typography variant="body" size="md" color="muted">Los cambios se han guardado correctamente. Redirigiendo...</Typography>
             </div>
           </Container>
         )}
@@ -334,8 +335,8 @@ function EpisodeEditPage() {
           <Container variant="danger" className="edit-notification">
             <div className="edit-notification__icon">⚠️</div>
             <div className="edit-notification__content">
-              <h4>Error al guardar</h4>
-              <p>{errorToShow}</p>
+              <Typography variant="h4" size="sm" weight="semibold" color="danger">Error al guardar</Typography>
+              <Typography variant="body" size="md" color="muted">{errorToShow}</Typography>
             </div>
           </Container>
         )}
@@ -349,9 +350,9 @@ function EpisodeEditPage() {
             {/* Panel de información */}
             <Container variant="neutral" size="lg" className="info-panel">
               <div className="info-panel__header">
-                <h3 className="info-panel__title">
+                <Typography variant="h3" size="md" weight="semibold" className="info-panel__title">
                   📋 Información Actual
-                </h3>
+                </Typography>
                 <Badge variant="primary" size="sm">
                   ID: {currentEpisode?.id}
                 </Badge>
@@ -361,20 +362,20 @@ function EpisodeEditPage() {
 
               {/* Detalles actuales */}
               <div className="info-panel__details">
-                <h4 className="info-panel__subtitle">Detalles</h4>
+                <Typography variant="h4" size="sm" weight="medium" className="info-panel__subtitle">Detalles</Typography>
                 
                 <div className="info-detail">
-                  <span className="info-detail__label">Título:</span>
-                  <span className="info-detail__value">{currentEpisode?.title}</span>
+                  <Typography variant="span" size="xs" weight="medium" color="muted" className="info-detail__label">Título:</Typography>
+                  <Typography variant="span" size="sm" weight="normal" className="info-detail__value">{currentEpisode?.title}</Typography>
                 </div>
                 
                 <div className="info-detail">
-                  <span className="info-detail__label">Serie:</span>
-                  <span className="info-detail__value">{currentSeries?.title || 'Sin serie'}</span>
+                  <Typography variant="span" size="xs" weight="medium" color="muted" className="info-detail__label">Serie:</Typography>
+                  <Typography variant="span" size="sm" weight="normal" className="info-detail__value">{currentSeries?.title || 'Sin serie'}</Typography>
                 </div>
                 
                 <div className="info-detail">
-                  <span className="info-detail__label">Temporada:</span>
+                  <Typography variant="span" size="xs" weight="medium" color="muted" className="info-detail__label">Temporada:</Typography>
                   <span className="info-detail__value">
                     {currentEpisode?.season ? (
                       <Badge variant="primary" size="sm">
@@ -385,7 +386,7 @@ function EpisodeEditPage() {
                 </div>
                 
                 <div className="info-detail">
-                  <span className="info-detail__label">Episodio:</span>
+                  <Typography variant="span" size="xs" weight="medium" color="muted" className="info-detail__label">Episodio:</Typography>
                   <span className="info-detail__value">
                     {currentEpisode?.episode_number ? (
                       <Badge variant="success" size="sm">
@@ -396,22 +397,22 @@ function EpisodeEditPage() {
                 </div>
                 
                 <div className="info-detail">
-                  <span className="info-detail__label">Duración:</span>
-                  <span className="info-detail__value">
+                  <Typography variant="span" size="xs" weight="medium" color="muted" className="info-detail__label">Duración:</Typography>
+                  <Typography variant="span" size="sm" weight="normal" className="info-detail__value">
                     {currentEpisode?.duration ? `${currentEpisode.duration} min` : 'No disponible'}
-                  </span>
+                  </Typography>
                 </div>
                 
                 <div className="info-detail">
-                  <span className="info-detail__label">Fecha de Estreno:</span>
-                  <span className="info-detail__value">
+                  <Typography variant="span" size="xs" weight="medium" color="muted" className="info-detail__label">Fecha de Estreno:</Typography>
+                  <Typography variant="span" size="sm" weight="normal" className="info-detail__value">
                     {currentEpisode?.release_date ? new Date(currentEpisode.release_date).toLocaleDateString('es-ES') : 'No disponible'}
-                  </span>
+                  </Typography>
                 </div>
                 
                 <div className="info-detail">
-                  <span className="info-detail__label">Estado:</span>
-                  <span className="info-detail__value">{currentEpisode?.status || 'Desconocido'}</span>
+                  <Typography variant="span" size="xs" weight="medium" color="muted" className="info-detail__label">Estado:</Typography>
+                  <Typography variant="span" size="sm" weight="normal" className="info-detail__value">{currentEpisode?.status || 'Desconocido'}</Typography>
                 </div>
               </div>
             </Container>
@@ -422,12 +423,12 @@ function EpisodeEditPage() {
           <div className="episode-edit__main">
             <Container variant="neutral" size="xl" className="edit-form-container">
               <div className="edit-form-container__header">
-                <h3 className="edit-form-container__title">
+                <Typography variant="h3" size="md" weight="semibold" className="edit-form-container__title">
                   ✏️ Editar Información
-                </h3>
-                <p className="edit-form-container__subtitle">
+                </Typography>
+                <Typography variant="body" size="md" color="muted" className="edit-form-container__subtitle">
                   Modifica los campos que necesites. Solo se enviarán los campos que cambies.
-                </p>
+                </Typography>
               </div>
 
               <Divider variant="neutral" size="md" />

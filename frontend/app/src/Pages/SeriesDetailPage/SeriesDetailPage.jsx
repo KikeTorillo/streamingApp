@@ -8,6 +8,8 @@ import { AppHeader } from '../../components/organisms/AppHeader/AppHeader';
 import { EpisodeListItem } from '../../components/molecules/EpisodeListItem/EpisodeListItem';
 import { SeasonSelector } from '../../components/molecules/SeasonSelector/SeasonSelector';
 import { EmptyState } from '../../components/molecules/EmptyState/EmptyState';
+import { Container } from '../../components/atoms/Container/Container';
+import { Typography } from '../../components/atoms/Typography/Typography';
 
 // Servicios (necesitarás crearlos)
 import { getSerieByIdService } from '../../services/Series/getSerieByIdService';
@@ -235,15 +237,17 @@ function SeriesDetailPage() {
                     }}
                 >
                     <div>
-                        <h2>Error al cargar la serie</h2>
-                        <p
+                        <Typography variant="h2" size="lg" weight="semibold" color="danger">Error al cargar la serie</Typography>
+                        <Typography 
+                            variant="body" 
+                            size="md" 
+                            color="muted"
                             style={{
-                                color: 'var(--text-secondary)',
                                 marginBottom: 'var(--space-lg)'
                             }}
                         >
                             {serieError}
-                        </p>
+                        </Typography>
                         <Button variant="primary" onClick={handleRetry}>
                             Reintentar
                         </Button>
@@ -269,7 +273,7 @@ function SeriesDetailPage() {
                 />
             }
         >
-            <div style={{ padding: 'var(--space-lg)' }}>
+            <Container size="lg" padding="lg">
                     {/* ===== INFORMACIÓN DE LA SERIE ===== */}
                     {serie && (
                         <div style={{ 
@@ -294,54 +298,72 @@ function SeriesDetailPage() {
                                 }}
                             />
                             <div style={{ flex: '1', minWidth: '300px' }}>
-                                <h1 style={{ 
-                                    fontSize: 'var(--font-size-2xl)', 
-                                    marginBottom: 'var(--space-md)',
-                                    color: 'var(--text-primary)'
-                                }}>
+                                <Typography 
+                                    variant="h1" 
+                                    size="2xl" 
+                                    weight="bold"
+                                    style={{ 
+                                        marginBottom: 'var(--space-md)'
+                                    }}
+                                >
                                     {serie.title}
-                                </h1>
-                                <p style={{ 
-                                    color: 'var(--text-secondary)', 
-                                    marginBottom: 'var(--space-md)',
-                                    lineHeight: 'var(--line-height-relaxed)'
-                                }}>
+                                </Typography>
+                                <Typography 
+                                    variant="body" 
+                                    size="md" 
+                                    color="muted"
+                                    style={{ 
+                                        marginBottom: 'var(--space-md)',
+                                        lineHeight: 'var(--line-height-relaxed)'
+                                    }}
+                                >
                                     {serie.description || 'Sin descripción disponible'}
-                                </p>
+                                </Typography>
                                 <div style={{ 
                                     display: 'flex', 
                                     gap: 'var(--space-md)', 
                                     flexWrap: 'wrap',
                                     alignItems: 'center'
                                 }}>
-                                    <span style={{ 
-                                        background: 'var(--bg-accent)', 
-                                        padding: 'var(--space-xs) var(--space-sm)',
-                                        borderRadius: 'var(--radius-sm)',
-                                        fontSize: 'var(--font-size-sm)'
-                                    }}>
-                                        {serie.release_year}
-                                    </span>
-                                    <span style={{ 
-                                        background: 'var(--bg-primary-light)', 
-                                        color: 'var(--color-primary)',
-                                        padding: 'var(--space-xs) var(--space-sm)',
-                                        borderRadius: 'var(--radius-sm)',
-                                        fontSize: 'var(--font-size-sm)'
-                                    }}>
-                                        Categoría {serie.category_id}
-                                    </span>
-                                    {serie.rating && (
-                                        <span style={{ 
-                                            background: 'var(--bg-success-light)', 
-                                            color: 'var(--color-success)',
+                                    <Typography 
+                                        variant="span" 
+                                        size="sm" 
+                                        weight="medium"
+                                        style={{ 
+                                            background: 'var(--bg-accent)', 
                                             padding: 'var(--space-xs) var(--space-sm)',
-                                            borderRadius: 'var(--radius-sm)',
-                                            fontSize: 'var(--font-size-sm)',
-                                            fontWeight: 'var(--font-weight-semibold)'
-                                        }}>
+                                            borderRadius: 'var(--radius-sm)'
+                                        }}
+                                    >
+                                        {serie.release_year}
+                                    </Typography>
+                                    <Typography 
+                                        variant="span" 
+                                        size="sm" 
+                                        weight="medium"
+                                        style={{ 
+                                            background: 'var(--bg-primary-light)', 
+                                            color: 'var(--color-primary)',
+                                            padding: 'var(--space-xs) var(--space-sm)',
+                                            borderRadius: 'var(--radius-sm)'
+                                        }}
+                                    >
+                                        Categoría {serie.category_id}
+                                    </Typography>
+                                    {serie.rating && (
+                                        <Typography 
+                                            variant="span" 
+                                            size="sm" 
+                                            weight="semibold"
+                                            style={{ 
+                                                background: 'var(--bg-success-light)', 
+                                                color: 'var(--color-success)',
+                                                padding: 'var(--space-xs) var(--space-sm)',
+                                                borderRadius: 'var(--radius-sm)'
+                                            }}
+                                        >
                                             ⭐ {serie.rating}
-                                        </span>
+                                        </Typography>
                                     )}
                                 </div>
                             </div>
@@ -364,17 +386,19 @@ function SeriesDetailPage() {
 
                     {/* ===== LISTA DE EPISODIOS ===== */}
                     <div style={{ marginBottom: 'var(--space-xl)' }}>
-                        <h2 style={{ 
-                            fontSize: 'var(--font-size-xl)',
-                            fontWeight: 'var(--font-weight-semibold)',
-                            color: 'var(--text-primary)',
-                            marginBottom: 'var(--space-lg)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 'var(--space-sm)'
-                        }}>
+                        <Typography 
+                            variant="h2" 
+                            size="xl" 
+                            weight="semibold"
+                            style={{ 
+                                marginBottom: 'var(--space-lg)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 'var(--space-sm)'
+                            }}
+                        >
                             🎬 Episodios{seasonsData.length > 1 ? ` - Temporada ${selectedSeason}` : ''}
-                        </h2>
+                        </Typography>
 
                         {loadingEpisodes ? (
                             <div style={{ 
@@ -383,7 +407,7 @@ function SeriesDetailPage() {
                                 alignItems: 'center',
                                 minHeight: '200px'
                             }}>
-                                <div>Cargando episodios...</div>
+                                <Typography variant="body" size="md" color="muted">Cargando episodios...</Typography>
                             </div>
                         ) : episodesError ? (
                             <EmptyState
@@ -433,7 +457,7 @@ function SeriesDetailPage() {
                             </div>
                         )}
                     </div>
-                </div>
+                </Container>
             </PageLayout>
         );
 }

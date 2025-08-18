@@ -3,6 +3,8 @@
 import PropTypes from 'prop-types';
 import { Card } from '../../atoms/Card/Card';
 import { Icon } from '../../atoms/Icon/Icon';
+import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
+import { Typography } from '../../atoms/Typography/Typography';
 import { useStandardProps } from '../../../hooks/useStandardProps';
 import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens/standardProps';
 import './StatsCard.css';
@@ -48,7 +50,9 @@ function StatsCard(props) {
     icon = 'activity',
     
     // Props deprecadas (mantener compatibilidad)
-    // change, changeLabel, changeDirection - NO IMPLEMENTADAS ACTUALMENTE
+    change,
+    changeLabel,
+    changeDirection,
     color, // DEPRECADO: mapear a variant
     
     // Interactividad
@@ -69,7 +73,7 @@ function StatsCard(props) {
     loading,
     fullWidth,
     className,
-    // tokens, renderIcon - del hook pero no implementadas actualmente
+    // tokens, renderIcon - disponibles del hook
     ...standardProps
   } = useStandardProps(restProps, {
     componentType: 'card',
@@ -139,10 +143,20 @@ function StatsCard(props) {
     className
   ].filter(Boolean).join(' ');
 
-  // const changeClasses = [
-  //   'stats-card__change',
-  //   `stats-card__change--${finalChangeDirection}`
-  // ].filter(Boolean).join(' ');
+  // Determinar dirección del cambio
+  const finalChangeDirection = (() => {
+    if (changeDirection) return changeDirection;
+    if (change && typeof change === 'string') {
+      if (change.startsWith('+')) return 'up';
+      if (change.startsWith('-')) return 'down';
+    }
+    return 'neutral';
+  })();
+
+  const changeClasses = [
+    'stats-card__change',
+    `stats-card__change--${finalChangeDirection}`
+  ].filter(Boolean).join(' ');
 
 
   // ===== HANDLERS =====
@@ -166,29 +180,67 @@ function StatsCard(props) {
   const cardContent = (
     <>
       {/* Header con icono y título */}
-      <div className="stats-card__header">
+      <FlexContainer
+        direction="row"
+        align="center"
+        gap="sm"
+        className="stats-card__header"
+      >
         {icon && (
-          <div className="stats-card__icon" aria-hidden="true">
+          <FlexContainer
+            align="center"
+            justify="center"
+            className="stats-card__icon"
+            aria-hidden="true"
+          >
             <Icon name={icon} size={size === 'sm' ? 'sm' : size === 'lg' ? 'lg' : 'md'} />
-          </div>
+          </FlexContainer>
         )}
-        <h3 className="stats-card__title">
+        <Typography variant="h3" className="stats-card__title">
           {title}
-        </h3>
-      </div>
+        </Typography>
+      </FlexContainer>
 
       {/* Valor principal */}
-      <div className="stats-card__value-section">
+      <FlexContainer
+        direction="column"
+        align="flex-start"
+        className="stats-card__value-section"
+      >
         {loading ? (
-          <div className="stats-card__value stats-card__value--skeleton">
+          <FlexContainer align="center" className="stats-card__value stats-card__value--skeleton">
             <div className="stats-card__skeleton stats-card__skeleton--value"></div>
-          </div>
+          </FlexContainer>
         ) : (
-          <div className="stats-card__value" aria-live="polite">
+          <Typography variant="div" className="stats-card__value" aria-live="polite">
             {formattedValue}
-          </div>
+          </Typography>
         )}
-      </div>
+        
+        {/* Cambio/tendencia (si existe) */}
+        {change && !loading && (
+          <FlexContainer direction="column" gap="xs" className="stats-card__change-section">
+            <FlexContainer
+              direction="row"
+              align="center"
+              gap="xs"
+              className={changeClasses}
+              aria-label={`Cambio: ${change}`}
+            >
+              <Icon 
+                name={finalChangeDirection === 'up' ? 'trending-up' : finalChangeDirection === 'down' ? 'trending-down' : 'minus'} 
+                size="xs" 
+              />
+              <Typography variant="span">{change}</Typography>
+            </FlexContainer>
+            {changeLabel && (
+              <Typography variant="span" className="stats-card__change-label">
+                {changeLabel}
+              </Typography>
+            )}
+          </FlexContainer>
+        )}
+      </FlexContainer>
     </>
   );
 

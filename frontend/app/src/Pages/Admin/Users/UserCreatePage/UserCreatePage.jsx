@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { Container } from '../../../../components/atoms/Container/Container';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
+import { Typography } from '../../../../components/atoms/Typography/Typography';
 import { useUsers } from '../../../../app/context/UserContext';
 import { useSuccessRedirect } from '../../../../hooks/useSuccessRedirect';
 import './UserCreatePage.css';
@@ -149,18 +150,13 @@ function UserCreatePage() {
         { label: 'Crear Usuario' }
       ]}
     >
-      {/* 🎯 CONTENEDOR PRINCIPAL - MIGRADO A CONTAINER COMPONENT */}
-      <Container
-        size="lg"
-        className={`${loading ? 'user-create--loading' : ''}`}
-      >
         {/*MENSAJE DE ERROR - SISTEMA DE DISEÑO */}
         {error && (
           <div className="status-message status-message--error">
-            <span className="status-message__icon">⚠️</span>
+            <Typography variant="span" size="md" className="status-message__icon">⚠️</Typography>
             <div className="status-message__content">
-              <strong>Error al crear usuario</strong>
-              <span>{error}</span>
+              <Typography variant="strong" size="md" weight="semibold">Error al crear usuario</Typography>
+              <Typography variant="span" size="sm" color="muted">{error}</Typography>
             </div>
             <button
               className="status-message__close"
@@ -174,11 +170,11 @@ function UserCreatePage() {
 
         {/* Header del formulario */}
         <div className="form-header">
-          <h2 className="form-title">Información del Usuario</h2>
-          <p className="form-description">
+          <Typography variant="h2" size="lg" weight="semibold" className="form-title">Información del Usuario</Typography>
+          <Typography variant="body" size="md" color="muted" className="form-description">
             Completa todos los campos requeridos para crear el nuevo usuario.
             La información de rol define los permisos de acceso al sistema.
-          </p>
+          </Typography>
         </div>
 
         {/* Formulario */}
@@ -198,7 +194,6 @@ function UserCreatePage() {
           validateOnBlur={true}
           className=""
         />
-      </Container>
     </AdminLayout>
   );
 }

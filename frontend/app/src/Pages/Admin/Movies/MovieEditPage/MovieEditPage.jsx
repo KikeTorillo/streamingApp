@@ -10,6 +10,7 @@ import { Container } from '../../../../components/atoms/Container/Container';
 import { Divider } from '../../../../components/atoms/Divider/Divider';
 import { Badge } from '../../../../components/atoms/Badge/Badge';
 import { ContentImage } from '../../../../components/atoms/ContentImage/ContentImage';
+import { Typography } from '../../../../components/atoms/Typography/Typography';
 import './MovieEditPage.css';
 
 // Hooks y contextos
@@ -41,21 +42,21 @@ function MovieEditPage() {
   const [localError, setLocalError] = useState(null);
 
   // ===== CONTEXTOS =====
-  const { 
-    currentMovie, 
-    loadingMovie, 
-    editing, 
-    error: contextError, 
-    loadMovieById, 
-    updateMovie, 
+  const {
+    currentMovie,
+    loadingMovie,
+    editing,
+    error: contextError,
+    loadMovieById,
+    updateMovie,
     getMovieCoverUrl,
-    clearCurrentMovie 
+    clearCurrentMovie
   } = useMovies();
-  
+
   const { categories, loading: categoriesLoading } = useCategories();
 
   // ===== CONFIGURACIÓN DEL FORMULARIO =====
-  
+
   /**
    * Campos de edición - Solo campos permitidos para actualización
    * PERMITIDOS: title, categoryId, releaseYear, coverImage (portada)
@@ -99,7 +100,7 @@ function MovieEditPage() {
         name: 'coverImage',
         type: 'image-crop',
         label: 'Portada (Imagen)',
-        aspect: 2/3,
+        aspect: 2 / 3,
         maxFileSize: '5MB',
         showPreview: true,
         previewDimensions: { width: 120, height: 180 },
@@ -109,7 +110,7 @@ function MovieEditPage() {
   };
 
   // ===== FUNCIONES DE DATOS SIMPLIFICADAS =====
-  
+
   /**
    * Cargar datos de la película usando el contexto
    */
@@ -124,7 +125,7 @@ function MovieEditPage() {
 
       // ✅ USAR FUNCIÓN DEL CONTEXTO
       const result = await loadMovieById(id);
-      
+
       if (result.success) {
         const movieInfo = result.data;
 
@@ -133,26 +134,26 @@ function MovieEditPage() {
           const currentImageUrl = getMovieCoverUrl(movieInfo.cover_image);
           setImagePreview(currentImageUrl);
         }
-        
+
         // Configurar datos iniciales
-        setInitialData({ 
+        setInitialData({
           title: movieInfo.title || '',
           categoryId: movieInfo.category_id || '',
           releaseYear: movieInfo.release_year || new Date().getFullYear(),
           // coverImage no se incluye en initialData porque es un archivo
         });
-        
+
       } else {
         setLocalError(result.error || 'Error al cargar datos de la película');
       }
-      
+
     } catch (error) {
       setLocalError(error.message || 'Error al cargar datos de la película');
     }
   }, [id, loadMovieById, getMovieCoverUrl]);
 
   // ===== FUNCIONES DE MANEJO =====
-  
+
   /**
    * Manejar cambios en el formulario
    */
@@ -165,7 +166,7 @@ function MovieEditPage() {
       parseInt(formData.releaseYear) !== initialData.releaseYear ||
       formData.coverImage // Si hay nueva imagen siempre es un cambio
     );
-    
+
     setHasChanges(hasRealChanges);
 
   };
@@ -179,15 +180,15 @@ function MovieEditPage() {
 
       // ✅ MIGRADO: Preparar datos para el backend (solo campos que cambiaron)
       const updateData = {};
-      
+
       if (formData.title !== initialData.title) {
         updateData.title = formData.title.trim();
       }
-      
+
       if (parseInt(formData.categoryId) !== initialData.categoryId) {
         updateData.categoryId = parseInt(formData.categoryId);
       }
-      
+
       if (parseInt(formData.releaseYear) !== initialData.releaseYear) {
         updateData.releaseYear = parseInt(formData.releaseYear);
       }
@@ -214,7 +215,7 @@ function MovieEditPage() {
         setTimeout(() => {
           navigate('/admin/movies');
         }, 2500);
-        
+
       } else {
 
         if (result.error === 'No hay cambios para guardar') {
@@ -241,14 +242,14 @@ function MovieEditPage() {
       );
       if (!confirmCancel) return;
     }
-    
+
     navigate('/admin/movies');
   };
 
   // ===== EFECTOS =====
   useEffect(() => {
     loadMovieData();
-    
+
     // Cleanup al desmontar
     return () => {
       clearCurrentMovie();
@@ -256,7 +257,7 @@ function MovieEditPage() {
   }, [loadMovieData, clearCurrentMovie]);
 
   // ===== RENDER =====
-  
+
   // ✅ USAR ESTADOS DEL CONTEXTO
   if (loadingMovie || categoriesLoading) {
     return (
@@ -270,7 +271,7 @@ function MovieEditPage() {
       >
         <div className="movie-edit__loading">
           <div className="movie-edit__loading-spinner">⏳</div>
-          <p>Cargando información de la película...</p>
+          <Typography variant="body" size="md" color="muted">Cargando información de la película...</Typography>
         </div>
       </AdminLayout>
     );
@@ -290,8 +291,8 @@ function MovieEditPage() {
       >
         <div className="movie-edit__error">
           <div className="movie-edit__error-icon">❌</div>
-          <h2>Error al cargar película</h2>
-          <p>{errorToShow}</p>
+          <Typography variant="h2" size="lg" weight="semibold" color="danger">Error al cargar película</Typography>
+          <Typography variant="body" size="md" color="muted">{errorToShow}</Typography>
           <Button onClick={() => navigate('/admin/movies')} variant="primary">
             Volver a la lista
           </Button>
@@ -309,171 +310,149 @@ function MovieEditPage() {
         { label: currentMovie?.title || 'Editar' }
       ]}
     >
-      <div className="movie-edit">
-        
-        {/* ===== NOTIFICACIONES ===== */}
-        {success && (
-          <div className="movie-edit__success">
-            <div className="movie-edit__success-icon">✅</div>
-            <div className="movie-edit__success-content">
-              <h3>¡Película actualizada exitosamente!</h3>
-              <p>Los cambios se han guardado correctamente. Redirigiendo...</p>
-            </div>
-          </div>
-        )}
-
-        {errorToShow && (
-          <div className="movie-edit__error-message">
-            <div className="movie-edit__error-icon">⚠️</div>
-            <div className="movie-edit__error-content">
-              <h4>Error al guardar</h4>
-              <p>{errorToShow}</p>
-            </div>
-          </div>
-        )}
-
-        {/* ===== LAYOUT PRINCIPAL DE 2 COLUMNAS ===== */}
-        <div className="movie-edit__layout">
-          
-          {/* ===== COLUMNA IZQUIERDA - INFORMACIÓN ACTUAL ===== */}
-          <div className="movie-edit__sidebar">
-            
-            {/* Panel de información */}
-            <Container variant="neutral" size="lg" className="info-panel">
-              <div className="info-panel__header">
-                <h3 className="info-panel__title">
-                  📋 Información Actual
-                </h3>
-                <Badge variant="primary" size="sm">
-                  ID: {currentMovie?.id}
-                </Badge>
-              </div>
-              
-              <Divider variant="neutral" size="sm" />
-              
-              {/* Portada actual */}
-              <div className="info-panel__cover">
-                <h4 className="info-panel__subtitle">Portada</h4>
-                {imagePreview ? (
-                  <ContentImage
-                    src={imagePreview}
-                    alt={`Portada de ${currentMovie?.title}`}
-                    aspectRatio="2/3"
-                    contentType="movie"
-                    placeholder="🎬"
-                    rounded="md"
-                    showFallback={true}
-                    size="md"
-                  />
-                ) : (
-                  <div className="info-panel__no-image">
-                    <span className="info-panel__no-image-icon">🎬</span>
-                    <span className="info-panel__no-image-text">Sin portada</span>
-                  </div>
-                )}
-              </div>
-
-              <Divider variant="neutral" size="sm" />
-
-              {/* Detalles actuales */}
-              <div className="info-panel__details">
-                <h4 className="info-panel__subtitle">Detalles</h4>
-                
-                <div className="info-detail">
-                  <span className="info-detail__label">Título:</span>
-                  <span className="info-detail__value">{currentMovie?.title}</span>
-                </div>
-                
-                <div className="info-detail">
-                  <span className="info-detail__label">Categoría:</span>
-                  <span className="info-detail__value">
-                    {categories.find(c => c.id === currentMovie?.category_id)?.name || 'Sin categoría'}
-                  </span>
-                </div>
-                
-                <div className="info-detail">
-                  <span className="info-detail__label">Año:</span>
-                  <span className="info-detail__value">{currentMovie?.release_year}</span>
-                </div>
-                
-                <div className="info-detail">
-                  <span className="info-detail__label">Duración:</span>
-                  <span className="info-detail__value">
-                    {currentMovie?.duration ? `${currentMovie.duration} min` : 'No disponible'}
-                  </span>
-                </div>
-              </div>
-            </Container>
-
-          </div>
-
-          {/* ===== COLUMNA DERECHA - FORMULARIO DE EDICIÓN ===== */}
-          <div className="movie-edit__main">
-            <Container variant="neutral" size="xl" className="edit-form-container">
-              <div className="edit-form-container__header">
-                <h3 className="edit-form-container__title">
-                  ✏️ Editar Información
-                </h3>
-                <p className="edit-form-container__subtitle">
-                  Modifica los campos que necesites. Solo se enviarán los campos que cambies.
-                </p>
-              </div>
-
-              <Divider variant="neutral" size="md" />
-
-              {/* Formulario principal */}
-              <div className="edit-form-container__form">
-                {currentMovie && (
-                  <DynamicForm
-                  id="movie-edit-form"
-                  fields={getEditFormFields()}
-                  initialData={{
-                    title: currentMovie.title || '',
-                    categoryId: currentMovie.category_id || '',
-                    releaseYear: currentMovie.release_year || new Date().getFullYear()
-                    // coverImage no se incluye porque es un archivo
-                  }}
-                  onSubmit={handleSubmit}
-                  onChange={handleFormChange}
-                  loading={editing}
-                  disabled={editing || success}
-                  columnsPerRow={2}
-                  tabletColumns={1}
-                  mobileColumns={1}
-                  fieldSize="md"
-                  fieldRounded="md"
-                  submitText={editing ? 'Guardando...' : 'Guardar Cambios'}
-                  submitVariant="primary"
-                  submitSize="md"
-                  submitIcon="save"
-                  validateOnBlur={true}
-                  validateOnChange={false}
-                  actions={[
-                    {
-                      key: 'cancel',
-                      type: 'button',
-                      variant: 'outline',
-                      text: 'Cancelar',
-                      onClick: handleCancel,
-                      disabled: editing
-                    },
-                    {
-                      key: 'save',
-                      type: 'submit',
-                      variant: 'primary',
-                      text: editing ? 'Guardando...' : 'Guardar Cambios',
-                      loading: editing,
-                      disabled: !hasChanges || editing,
-                      leftIcon: 'save'
-                    }
-                  ]}
-                    className={`movie-edit__form ${success ? 'movie-edit__form--success' : ''}`}
-                  />
-                )}
-              </div>
-            </Container>
+      {/* ===== NOTIFICACIONES ===== */}
+      {success && (
+        <div className="movie-edit__success">
+          <div className="movie-edit__success-icon">✅</div>
+          <div className="movie-edit__success-content">
+            <Typography variant="h3" size="md" weight="semibold" color="success">¡Película actualizada exitosamente!</Typography>
+            <Typography variant="body" size="md" color="muted">Los cambios se han guardado correctamente. Redirigiendo...</Typography>
           </div>
         </div>
+      )}
+
+      {errorToShow && (
+        <div className="movie-edit__error-message">
+          <div className="movie-edit__error-icon">⚠️</div>
+          <div className="movie-edit__error-content">
+            <Typography variant="h4" size="sm" weight="semibold" color="danger">Error al guardar</Typography>
+            <Typography variant="body" size="md" color="muted">{errorToShow}</Typography>
+          </div>
+        </div>
+      )}
+      <div className="info-panel__header">
+        <Typography variant="h3" size="md" weight="semibold" className="info-panel__title">
+          📋 Información Actual
+        </Typography>
+        <Badge variant="primary" size="sm">
+          ID: {currentMovie?.id}
+        </Badge>
+      </div>
+
+      <Divider variant="neutral" size="sm" />
+
+      {/* Portada actual */}
+      <div className="info-panel__cover">
+        <Typography variant="h4" size="sm" weight="medium" className="info-panel__subtitle">Portada</Typography>
+        {imagePreview ? (
+          <ContentImage
+            src={imagePreview}
+            alt={`Portada de ${currentMovie?.title}`}
+            aspectRatio="2/3"
+            contentType="movie"
+            placeholder="🎬"
+            rounded="md"
+            showFallback={true}
+            size="md"
+          />
+        ) : (
+          <div className="info-panel__no-image">
+            <span className="info-panel__no-image-icon">🎬</span>
+            <Typography variant="span" size="sm" weight="normal" color="muted" className="info-panel__no-image-text">Sin portada</Typography>
+          </div>
+        )}
+      </div>
+
+      <Divider variant="neutral" size="sm" />
+
+      {/* Detalles actuales */}
+      <div className="info-panel__details">
+        <Typography variant="h4" size="sm" weight="medium" className="info-panel__subtitle">Detalles</Typography>
+
+        <div className="info-detail">
+          <Typography variant="span" size="xs" weight="medium" color="muted" className="info-detail__label">Título:</Typography>
+          <Typography variant="span" size="sm" weight="normal" className="info-detail__value">{currentMovie?.title}</Typography>
+        </div>
+
+        <div className="info-detail">
+          <Typography variant="span" size="xs" weight="medium" color="muted" className="info-detail__label">Categoría:</Typography>
+          <Typography variant="span" size="sm" weight="normal" className="info-detail__value">
+            {categories.find(c => c.id === currentMovie?.category_id)?.name || 'Sin categoría'}
+          </Typography>
+        </div>
+
+        <div className="info-detail">
+          <Typography variant="span" size="xs" weight="medium" color="muted" className="info-detail__label">Año:</Typography>
+          <Typography variant="span" size="sm" weight="normal" className="info-detail__value">{currentMovie?.release_year}</Typography>
+        </div>
+
+        <div className="info-detail">
+          <Typography variant="span" size="xs" weight="medium" color="muted" className="info-detail__label">Duración:</Typography>
+          <Typography variant="span" size="sm" weight="normal" className="info-detail__value">
+            {currentMovie?.duration ? `${currentMovie.duration} min` : 'No disponible'}
+          </Typography>
+        </div>
+      </div>
+      <div className="edit-form-container__header">
+        <Typography variant="h3" size="md" weight="semibold" className="edit-form-container__title">
+          ✏️ Editar Información
+        </Typography>
+        <Typography variant="body" size="md" color="muted" className="edit-form-container__subtitle">
+          Modifica los campos que necesites. Solo se enviarán los campos que cambies.
+        </Typography>
+      </div>
+
+      <Divider variant="neutral" size="md" />
+
+      {/* Formulario principal */}
+      <div className="edit-form-container__form">
+        {currentMovie && (
+          <DynamicForm
+            id="movie-edit-form"
+            fields={getEditFormFields()}
+            initialData={{
+              title: currentMovie.title || '',
+              categoryId: currentMovie.category_id || '',
+              releaseYear: currentMovie.release_year || new Date().getFullYear()
+              // coverImage no se incluye porque es un archivo
+            }}
+            onSubmit={handleSubmit}
+            onChange={handleFormChange}
+            loading={editing}
+            disabled={editing || success}
+            columnsPerRow={2}
+            tabletColumns={1}
+            mobileColumns={1}
+            fieldSize="md"
+            fieldRounded="md"
+            submitText={editing ? 'Guardando...' : 'Guardar Cambios'}
+            submitVariant="primary"
+            submitSize="md"
+            submitIcon="save"
+            validateOnBlur={true}
+            validateOnChange={false}
+            actions={[
+              {
+                key: 'cancel',
+                type: 'button',
+                variant: 'outline',
+                text: 'Cancelar',
+                onClick: handleCancel,
+                disabled: editing
+              },
+              {
+                key: 'save',
+                type: 'submit',
+                variant: 'primary',
+                text: editing ? 'Guardando...' : 'Guardar Cambios',
+                loading: editing,
+                disabled: !hasChanges || editing,
+                leftIcon: 'save'
+              }
+            ]}
+            className={`movie-edit__form ${success ? 'movie-edit__form--success' : ''}`}
+          />
+        )}
       </div>
     </AdminLayout>
   );

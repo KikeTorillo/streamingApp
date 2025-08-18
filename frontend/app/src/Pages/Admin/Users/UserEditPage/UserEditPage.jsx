@@ -9,6 +9,7 @@ import { Button } from '../../../../components/atoms/Button/Button';
 import { Container } from '../../../../components/atoms/Container/Container';
 import { Divider } from '../../../../components/atoms/Divider/Divider';
 import { Badge } from '../../../../components/atoms/Badge/Badge';
+import { Typography } from '../../../../components/atoms/Typography/Typography';
 import { useUsers } from '../../../../app/context/UserContext';
 import './UserEditPage.css';
 
@@ -229,7 +230,7 @@ function UserEditPage() {
       >
         <div className="user-edit__loading">
           <div className="user-edit__loading-spinner">⏳</div>
-          <p>Cargando información del usuario...</p>
+          <Typography variant="body" size="md" color="muted">Cargando información del usuario...</Typography>
         </div>
       </AdminLayout>
     );
@@ -247,8 +248,8 @@ function UserEditPage() {
       >
         <div className="user-edit__error">
           <div className="user-edit__error-icon">❌</div>
-          <h2>Error al cargar usuario</h2>
-          <p>{error}</p>
+          <Typography variant="h2" size="lg" weight="semibold" color="danger">Error al cargar usuario</Typography>
+          <Typography variant="body" size="md" color="muted">{error}</Typography>
           <Button onClick={() => navigate('/admin/users')} variant="primary">
             Volver a la lista
           </Button>
@@ -295,8 +296,8 @@ function UserEditPage() {
           <div className="user-edit__success">
             <div className="user-edit__success-icon">✅</div>
             <div className="user-edit__success-content">
-              <h3>¡Usuario actualizado exitosamente!</h3>
-              <p>Los cambios se han guardado correctamente. Redirigiendo...</p>
+              <Typography variant="h3" size="md" weight="semibold" color="success">¡Usuario actualizado exitosamente!</Typography>
+              <Typography variant="body" size="md" color="muted">Los cambios se han guardado correctamente. Redirigiendo...</Typography>
             </div>
           </div>
         )}
@@ -305,8 +306,8 @@ function UserEditPage() {
           <div className="user-edit__error-message">
             <div className="user-edit__error-icon">⚠️</div>
             <div className="user-edit__error-content">
-              <h4>Error al guardar</h4>
-              <p>{error}</p>
+              <Typography variant="h4" size="sm" weight="semibold" color="danger">Error al guardar</Typography>
+              <Typography variant="body" size="md" color="muted">{error}</Typography>
             </div>
           </div>
         )}
@@ -320,9 +321,9 @@ function UserEditPage() {
             {/* Panel de información */}
             <Container variant="neutral" size="lg" className="info-panel">
               <div className="info-panel__header">
-                <h3 className="info-panel__title">
+                <Typography variant="h3" size="md" weight="semibold" className="info-panel__title">
                   📋 Información Actual
-                </h3>
+                </Typography>
                 <Badge variant="primary" size="sm">
                   ID: {userData?.id}
                 </Badge>
@@ -330,43 +331,43 @@ function UserEditPage() {
               <Divider variant="neutral" size="sm" />
               {/* Detalles actuales */}
               <div className="info-panel__details">
-                <h4 className="info-panel__subtitle">Detalles</h4>
+                <Typography variant="h4" size="sm" weight="medium" className="info-panel__subtitle">Detalles</Typography>
                 
                 <div className="info-detail">
-                  <span className="info-detail__label">Usuario:</span>
-                  <span className="info-detail__value">{userData?.username}</span>
+                  <Typography variant="span" size="xs" weight="medium" color="muted" className="info-detail__label">Usuario:</Typography>
+                  <Typography variant="span" size="sm" weight="normal" className="info-detail__value">{userData?.username}</Typography>
                 </div>
                 
                 <div className="info-detail">
-                  <span className="info-detail__label">Email:</span>
-                  <span className="info-detail__value">{userData?.email || 'Sin email'}</span>
+                  <Typography variant="span" size="xs" weight="medium" color="muted" className="info-detail__label">Email:</Typography>
+                  <Typography variant="span" size="sm" weight="normal" className="info-detail__value">{userData?.email || 'Sin email'}</Typography>
                 </div>
                 
                 <div className="info-detail">
-                  <span className="info-detail__label">Rol:</span>
-                  <span className="info-detail__value">{userData?.roleName}</span>
+                  <Typography variant="span" size="xs" weight="medium" color="muted" className="info-detail__label">Rol:</Typography>
+                  <Typography variant="span" size="sm" weight="normal" className="info-detail__value">{userData?.roleName}</Typography>
                 </div>
                 
                 <div className="info-detail">
-                  <span className="info-detail__label">Creado:</span>
-                  <span className="info-detail__value">
+                  <Typography variant="span" size="xs" weight="medium" color="muted" className="info-detail__label">Creado:</Typography>
+                  <Typography variant="span" size="sm" weight="normal" className="info-detail__value">
                     {userData?.createdAt ? new Date(userData.createdAt).toLocaleDateString('es-ES', {
                       year: 'numeric',
                       month: 'short',
                       day: 'numeric'
                     }) : 'N/A'}
-                  </span>
+                  </Typography>
                 </div>
                 
                 <div className="info-detail">
-                  <span className="info-detail__label">Actualizado:</span>
-                  <span className="info-detail__value">
+                  <Typography variant="span" size="xs" weight="medium" color="muted" className="info-detail__label">Actualizado:</Typography>
+                  <Typography variant="span" size="sm" weight="normal" className="info-detail__value">
                     {userData?.updatedAt ? new Date(userData.updatedAt).toLocaleDateString('es-ES', {
                       year: 'numeric', 
                       month: 'short',
                       day: 'numeric'
                     }) : 'Nunca'}
-                  </span>
+                  </Typography>
                 </div>
               </div>
               
@@ -376,9 +377,9 @@ function UserEditPage() {
                   <Divider variant="warning" size="sm" />
                   <div className="info-panel__warning">
                     <span className="info-panel__warning-icon">⚠️</span>
-                    <span className="info-panel__warning-text">
+                    <Typography variant="span" size="sm" weight="medium" color="warning" className="info-panel__warning-text">
                       Estás editando tu propia cuenta. Ten cuidado con los cambios.
-                    </span>
+                    </Typography>
                   </div>
                 </>
               )}
@@ -389,12 +390,12 @@ function UserEditPage() {
           <div className="user-edit__main">
             <Container variant="neutral" size="xl" className="edit-form-container">
               <div className="edit-form-container__header">
-                <h3 className="edit-form-container__title">
+                <Typography variant="h3" size="md" weight="semibold" className="edit-form-container__title">
                   ✏️ Editar Información
-                </h3>
-                <p className="edit-form-container__subtitle">
+                </Typography>
+                <Typography variant="body" size="md" color="muted" className="edit-form-container__subtitle">
                   Modifica los campos necesarios. Solo se enviarán los campos que cambies y que existen en la base de datos.
-                </p>
+                </Typography>
               </div>
 
               <Divider variant="neutral" size="md" />

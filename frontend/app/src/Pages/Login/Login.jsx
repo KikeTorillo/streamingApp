@@ -13,6 +13,7 @@ import { useAuth } from "../../app/context/AuthContext";
 
 // Componente LoginCard del sistema de diseño
 import { LoginCard } from "../../components/organisms/LoginCard/LoginCard";
+import { Typography } from "../../components/atoms/Typography/Typography";
 import './Login.css';
 
 function Login() {
@@ -113,8 +114,22 @@ function Login() {
       <div className="login-register-content">
         {/* Header con título de la app */}
         <div className="login-register-header">
-          <h1 className="app-title">StreamingApp</h1>
-          <p className="app-subtitle">Inicia sesión para continuar</p>
+          <Typography 
+            variant="h1" 
+            size="2xl" 
+            weight="bold"
+            className="app-title"
+          >
+            StreamingApp
+          </Typography>
+          <Typography 
+            variant="body" 
+            size="lg" 
+            color="muted"
+            className="app-subtitle"
+          >
+            Inicia sesión para continuar
+          </Typography>
         </div>
 
         {/* LoginCard del sistema de diseño */}

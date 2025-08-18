@@ -10,6 +10,7 @@ import { Container } from '../../../../components/atoms/Container/Container';
 import { Divider } from '../../../../components/atoms/Divider/Divider';
 import { Badge } from '../../../../components/atoms/Badge/Badge';
 import { ContentImage } from '../../../../components/atoms/ContentImage/ContentImage';
+import { Typography } from '../../../../components/atoms/Typography/Typography';
 import './SeriesEditPage.css';
 
 // Contexto
@@ -270,7 +271,7 @@ function SeriesEditPage() {
       >
         <div className="series-edit__loading">
           <div className="series-edit__loading-spinner">⏳</div>
-          <p>Cargando información de la serie...</p>
+          <Typography variant="body" size="md" color="muted">Cargando información de la serie...</Typography>
         </div>
       </AdminLayout>
     );
@@ -290,8 +291,8 @@ function SeriesEditPage() {
       >
         <div className="series-edit__error">
           <div className="series-edit__error-icon">❌</div>
-          <h2>Error al cargar serie</h2>
-          <p>{errorToShow}</p>
+          <Typography variant="h2" size="lg" weight="semibold" color="danger">Error al cargar serie</Typography>
+          <Typography variant="body" size="md" color="muted">{errorToShow}</Typography>
           <Button onClick={() => navigate('/admin/series')} variant="primary">
             Volver a la lista
           </Button>
@@ -316,8 +317,8 @@ function SeriesEditPage() {
           <Container variant="success" className="edit-notification">
             <div className="edit-notification__icon">✅</div>
             <div className="edit-notification__content">
-              <h3>¡Serie actualizada exitosamente!</h3>
-              <p>Los cambios se han guardado correctamente. Redirigiendo...</p>
+              <Typography variant="h3" size="md" weight="semibold" color="success">¡Serie actualizada exitosamente!</Typography>
+              <Typography variant="body" size="md" color="muted">Los cambios se han guardado correctamente. Redirigiendo...</Typography>
             </div>
           </Container>
         )}
@@ -326,8 +327,8 @@ function SeriesEditPage() {
           <Container variant="danger" className="edit-notification">
             <div className="edit-notification__icon">⚠️</div>
             <div className="edit-notification__content">
-              <h4>Error al guardar</h4>
-              <p>{errorToShow}</p>
+              <Typography variant="h4" size="sm" weight="semibold" color="danger">Error al guardar</Typography>
+              <Typography variant="body" size="md" color="muted">{errorToShow}</Typography>
             </div>
           </Container>
         )}
@@ -341,9 +342,9 @@ function SeriesEditPage() {
             {/* Panel de información */}
             <Container variant="neutral" size="lg" className="info-panel">
               <div className="info-panel__header">
-                <h3 className="info-panel__title">
+                <Typography variant="h3" size="md" weight="semibold" className="info-panel__title">
                   📋 Información Actual
-                </h3>
+                </Typography>
                 <Badge variant="primary" size="sm">
                   ID: {currentSeries?.id}
                 </Badge>
@@ -353,7 +354,7 @@ function SeriesEditPage() {
               
               {/* Portada actual */}
               <div className="info-panel__cover">
-                <h4 className="info-panel__subtitle">Portada</h4>
+                <Typography variant="h4" size="sm" weight="medium" className="info-panel__subtitle">Portada</Typography>
                 {imagePreview ? (
                   <ContentImage
                     src={imagePreview}
@@ -368,7 +369,7 @@ function SeriesEditPage() {
                 ) : (
                   <div className="info-panel__no-image">
                     <span className="info-panel__no-image-icon">📺</span>
-                    <span className="info-panel__no-image-text">Sin portada</span>
+                    <Typography variant="span" size="sm" weight="normal" color="muted" className="info-panel__no-image-text">Sin portada</Typography>
                   </div>
                 )}
               </div>
@@ -377,38 +378,38 @@ function SeriesEditPage() {
 
               {/* Detalles actuales */}
               <div className="info-panel__details">
-                <h4 className="info-panel__subtitle">Detalles</h4>
+                <Typography variant="h4" size="sm" weight="medium" className="info-panel__subtitle">Detalles</Typography>
                 
                 <div className="info-detail">
-                  <span className="info-detail__label">Título:</span>
-                  <span className="info-detail__value">{currentSeries?.title}</span>
+                  <Typography variant="span" size="xs" weight="medium" color="muted" className="info-detail__label">Título:</Typography>
+                  <Typography variant="span" size="sm" weight="normal" className="info-detail__value">{currentSeries?.title}</Typography>
                 </div>
                 
                 <div className="info-detail">
-                  <span className="info-detail__label">Categoría:</span>
-                  <span className="info-detail__value">
+                  <Typography variant="span" size="xs" weight="medium" color="muted" className="info-detail__label">Categoría:</Typography>
+                  <Typography variant="span" size="sm" weight="normal" className="info-detail__value">
                     {categories.find(c => c.id === currentSeries?.category_id)?.name || 'Sin categoría'}
-                  </span>
+                  </Typography>
                 </div>
                 
                 <div className="info-detail">
-                  <span className="info-detail__label">Año:</span>
-                  <span className="info-detail__value">{currentSeries?.release_year}</span>
+                  <Typography variant="span" size="xs" weight="medium" color="muted" className="info-detail__label">Año:</Typography>
+                  <Typography variant="span" size="sm" weight="normal" className="info-detail__value">{currentSeries?.release_year}</Typography>
                 </div>
                 
                 <div className="info-detail">
-                  <span className="info-detail__label">Temporadas:</span>
-                  <span className="info-detail__value">{currentSeries?.total_seasons || 0}</span>
+                  <Typography variant="span" size="xs" weight="medium" color="muted" className="info-detail__label">Temporadas:</Typography>
+                  <Typography variant="span" size="sm" weight="normal" className="info-detail__value">{currentSeries?.total_seasons || 0}</Typography>
                 </div>
                 
                 <div className="info-detail">
-                  <span className="info-detail__label">Episodios:</span>
-                  <span className="info-detail__value">{currentSeries?.total_episodes || 0}</span>
+                  <Typography variant="span" size="xs" weight="medium" color="muted" className="info-detail__label">Episodios:</Typography>
+                  <Typography variant="span" size="sm" weight="normal" className="info-detail__value">{currentSeries?.total_episodes || 0}</Typography>
                 </div>
                 
                 <div className="info-detail">
-                  <span className="info-detail__label">Estado:</span>
-                  <span className="info-detail__value">{currentSeries?.status || 'Desconocido'}</span>
+                  <Typography variant="span" size="xs" weight="medium" color="muted" className="info-detail__label">Estado:</Typography>
+                  <Typography variant="span" size="sm" weight="normal" className="info-detail__value">{currentSeries?.status || 'Desconocido'}</Typography>
                 </div>
               </div>
             </Container>
@@ -419,12 +420,12 @@ function SeriesEditPage() {
           <div className="series-edit__main">
             <Container variant="neutral" size="xl" className="edit-form-container">
               <div className="edit-form-container__header">
-                <h3 className="edit-form-container__title">
+                <Typography variant="h3" size="md" weight="semibold" className="edit-form-container__title">
                   ✏️ Editar Información
-                </h3>
-                <p className="edit-form-container__subtitle">
+                </Typography>
+                <Typography variant="body" size="md" color="muted" className="edit-form-container__subtitle">
                   Modifica los campos que necesites. Solo se enviarán los campos que cambies.
-                </p>
+                </Typography>
               </div>
 
               <Divider variant="neutral" size="md" />

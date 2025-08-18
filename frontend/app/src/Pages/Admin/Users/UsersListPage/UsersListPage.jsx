@@ -7,6 +7,7 @@ import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminL
 import { DataTable } from '../../../../components/organisms/DataTable/DataTable';
 import { Button } from '../../../../components/atoms/Button/Button';
 import { Badge } from '../../../../components/atoms/Badge/Badge';
+import { Typography } from '../../../../components/atoms/Typography/Typography';
 import { useUsers } from '../../../../app/context/UserContext';
 import { useAlertContext } from '../../../../app/context/AlertContext';
 import './UsersListPage.css';
@@ -23,7 +24,7 @@ import './UsersListPage.css';
  */
 function UsersListPage() {
   const navigate = useNavigate();
-  
+
   // ===== CONTEXTO DE USUARIOS =====
   const {
     users,
@@ -94,27 +95,27 @@ function UsersListPage() {
       accessorKey: 'id',
       header: 'ID',
       cell: ({ getValue }) => (
-        <span>
+        <Typography variant="span" size="xs" weight="medium" color="muted">
           #{getValue()}
-        </span>
+        </Typography>
       )
     },
     {
       accessorKey: 'userName',
       header: 'Usuario',
       cell: ({ getValue }) => (
-        <span title={getValue()}>
+        <Typography variant="span" size="sm" weight="medium" title={getValue()}>
           {getValue()}
-        </span>
+        </Typography>
       )
     },
     {
       accessorKey: 'email',
       header: 'Email',
       cell: ({ getValue }) => (
-        <span title={getValue() || 'Sin email'}>
-          {getValue() || <em style={{ color: 'var(--text-muted)' }}>Sin email</em>}
-        </span>
+        <Typography variant="span" size="sm" weight="normal" title={getValue() || 'Sin email'}>
+          {getValue() || <Typography variant="body" color="muted" italic>Sin email</Typography>}
+        </Typography>
       )
     },
     {
@@ -129,7 +130,7 @@ function UsersListPage() {
               'success';                // Usuario
 
         return (
-          <Badge 
+          <Badge
             variant={badgeVariant}
             size="sm"
             text={role}
@@ -142,9 +143,9 @@ function UsersListPage() {
       accessorKey: 'createdAt',
       header: 'Fecha de Registro',
       cell: ({ getValue }) => (
-        <span>
+        <Typography variant="span" size="sm" weight="normal">
           {formatUserDate(getValue())}
-        </span>
+        </Typography>
       )
     },
   ];
@@ -170,28 +171,24 @@ function UsersListPage() {
         </div>
       }
     >
-      <div className="users-list">
-        {/* ===== TABLA DE USUARIOS ===== */}
-        <div className="users-list__table">
-          <DataTable
-            data={users}
-            columns={userColumns}
-            loading={loading}
-            error={error}
-            searchPlaceholder="Buscar por usuario, email o rol..."
-            pageSizeOptions={[10, 25, 50, 100]}
-            pageSize={10}
-            variant="primary"
-            emptyTitle="No hay usuarios registrados"
-            emptyDescription="Crea tu primer usuario para comenzar a gestionar tu plataforma"
-            emptyIcon="👥"
-            onView={handleViewUser}
-            onEdit={handleEditUser}
-            onDelete={handleDeleteUser}
-            className={deleting ? 'users-list__table--deleting' : ''}
-          />
-        </div>
-      </div>
+      <DataTable
+        data={users}
+        columns={userColumns}
+        loading={loading}
+        error={error}
+        searchPlaceholder="Buscar por usuario, email o rol..."
+        pageSizeOptions={[10, 25, 50, 100]}
+        pageSize={10}
+        variant="primary"
+        emptyTitle="No hay usuarios registrados"
+        emptyDescription="Crea tu primer usuario para comenzar a gestionar tu plataforma"
+        emptyIcon="👥"
+        onView={handleViewUser}
+        onEdit={handleEditUser}
+        onDelete={handleDeleteUser}
+        className={deleting ? 'users-list__table--deleting' : ''}
+      />
+
     </AdminLayout>
   );
 }

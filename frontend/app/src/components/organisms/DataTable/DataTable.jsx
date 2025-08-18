@@ -264,17 +264,9 @@ function DataTable(props) {
       </div>
     );
   }
-
   // ===== RENDER PRINCIPAL =====
   return (
     <div
-      className={`data-table data-table--${finalTableVariant} data-table--${size} data-table--${variant} ${loading ? 'data-table--loading' : ''} ${disabled ? 'data-table--disabled' : ''} ${className}`}
-      style={{
-        '--table-border-radius': tokens.rounded,
-        '--table-size': tokens.size.height,
-        '--table-padding': tokens.size.padding,
-        '--table-font-size': tokens.size.fontSize
-      }}
       {...domProps}
     >
       {/* ===== CONTROLES SUPERIORES ===== */}

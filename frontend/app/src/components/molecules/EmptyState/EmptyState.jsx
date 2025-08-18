@@ -2,6 +2,8 @@
 import PropTypes from 'prop-types';
 import { Card } from '../../atoms/Card/Card';
 import { Icon } from '../../atoms/Icon/Icon';
+import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
+import { Typography } from '../../atoms/Typography/Typography';
 import { useEmptyStateProps } from '../../../hooks/useStandardProps.jsx';
 import { STANDARD_PROP_TYPES } from '../../../tokens/standardProps.js';
 import './EmptyState.css';
@@ -101,9 +103,18 @@ function EmptyState({
       loading={isLoading}
       {...standardProps}
     >
-      <div className="empty-state__content">
+      <FlexContainer
+        direction="column"
+        align="center"
+        gap="md"
+        className="empty-state__content"
+      >
         {/* Ícono con sistema unificado */}
-        <div className="empty-state__icon">
+        <FlexContainer
+          align="center"
+          justify="center"
+          className="empty-state__icon"
+        >
           {renderIcon ? renderIcon(icon) : (
             typeof icon === 'string' && icon.length <= 2 ? (
               icon // Emoji directo
@@ -111,17 +122,17 @@ function EmptyState({
               <Icon name={icon} size={tokens.size.iconSize} />
             )
           )}
-        </div>
+        </FlexContainer>
         
         {/* Título */}
-        <h3 className="empty-state__title">
+        <Typography variant="h3" className="empty-state__title">
           {title}
-        </h3>
+        </Typography>
         
         {/* Descripción */}
-        <p className="empty-state__description">
+        <Typography variant="p" className="empty-state__description">
           {description}
-        </p>
+        </Typography>
         
         {/* Acción opcional */}
         {action && (
@@ -132,11 +143,15 @@ function EmptyState({
         
         {/* Estado loading overlay */}
         {isLoading && (
-          <div className="empty-state__loading-overlay">
+          <FlexContainer
+            align="center"
+            justify="center"
+            className="empty-state__loading-overlay"
+          >
             <Icon name="loader-2" size={tokens.size.iconSize} className="animate-spin" />
-          </div>
+          </FlexContainer>
         )}
-      </div>
+      </FlexContainer>
     </Card>
   );
 }

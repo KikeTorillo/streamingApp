@@ -11,6 +11,7 @@ import { Button } from '../../components/atoms/Button/Button';
 import { Skeleton } from '../../components/atoms/Skeleton/Skeleton';
 import { EmptyState } from '../../components/molecules/EmptyState/EmptyState';
 import { Icon } from '../../components/atoms/Icon/Icon';
+import { Container } from '../../components/atoms/Container/Container';
 
 // Importar servicios para datos reales
 import { getUsersService } from '../../services/Users/getUsersService';
@@ -205,7 +206,7 @@ function AdminDashboard() {
           ))}
         </FlexContainer>
       ) : (
-        <FlexContainer direction="row" gap="lg">
+        <FlexContainer direction="row" gap="lg" wrap="wrap" distribute>
           {statsCards.map((card, index) => (
             <StatsCard
               key={index}

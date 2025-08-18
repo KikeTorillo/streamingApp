@@ -5,6 +5,9 @@ import { useMovieNavigation } from '../../hooks/useMovieNavigation';
 import { Button } from '../../components/atoms/Button/Button';
 import { PageLayout } from '../../components/templates/PageLayout/PageLayout';
 import { AppHeader } from '../../components/organisms/AppHeader/AppHeader';
+import { FlexContainer } from '../../components/atoms/FlexContainer/FlexContainer';
+import { Typography } from '../../components/atoms/Typography/Typography';
+import { Container } from '../../components/atoms/Container/Container';
 
 // Servicios
 import { getMovieByIdService } from '../../services/Movies/getMovieByIdService';
@@ -138,15 +141,17 @@ function MoviesDetailPage() {
                     }}
                 >
                     <div>
-                        <h2>Error al cargar la película</h2>
-                        <p
+                        <Typography variant="h2" size="lg" weight="semibold" color="danger">Error al cargar la película</Typography>
+                        <Typography 
+                            variant="body" 
+                            size="md" 
+                            color="muted"
                             style={{
-                                color: 'var(--text-secondary)',
                                 marginBottom: 'var(--space-lg)'
                             }}
                         >
                             {movieError}
-                        </p>
+                        </Typography>
                         <Button variant="primary" onClick={handleRetry}>
                             Reintentar
                         </Button>
@@ -181,7 +186,7 @@ function MoviesDetailPage() {
                         fontSize: 'var(--font-size-lg)'
                     }}
                 >
-                    Cargando película...
+                    <Typography variant="body" size="lg" color="muted">Cargando película...</Typography>
                 </div>
             </PageLayout>
         );
@@ -203,16 +208,15 @@ function MoviesDetailPage() {
                 />
             }
         >
-            <div style={{ padding: 'var(--space-lg)' }}>
+            <Container size="lg"  padding="lg">
                 {/* ===== INFORMACIÓN DE LA PELÍCULA ===== */}
                 {movie && (
-                    <div style={{ 
-                        marginBottom: 'var(--space-xl)',
-                        display: 'flex',
-                        gap: 'var(--space-lg)',
-                        alignItems: 'flex-start',
-                        flexWrap: 'wrap'
-                    }}>
+                    <FlexContainer 
+                        gap="lg"
+                        align="start"
+                        wrap="wrap"
+                        style={{ marginBottom: 'var(--space-xl)' }}
+                    >
                         <img
                             src={movie.cover_image ? `${import.meta.env.VITE_CDN_URL || 'http://localhost:8082'}/covers/${movie.cover_image}/cover.jpg` : 'https://via.placeholder.com/300x450?text=Película'}
                             alt={`Carátula de ${movie.title}`}
@@ -228,21 +232,24 @@ function MoviesDetailPage() {
                             }}
                         />
                         <div style={{ flex: '1', minWidth: '300px' }}>
-                            <h1 style={{ 
-                                fontSize: 'var(--font-size-2xl)', 
-                                marginBottom: 'var(--space-md)',
-                                color: 'var(--text-primary)'
-                            }}>
+                            <Typography 
+                                variant="h1" 
+                                size="2xl"
+                                style={{ marginBottom: 'var(--space-md)' }}
+                            >
                                 {movie.title}
-                            </h1>
-                            <p style={{ 
-                                color: 'var(--text-secondary)', 
-                                marginBottom: 'var(--space-md)',
-                                lineHeight: 'var(--line-height-relaxed)',
-                                fontSize: 'var(--font-size-md)'
-                            }}>
+                            </Typography>
+                            <Typography 
+                                variant="body" 
+                                size="md" 
+                                color="muted"
+                                style={{ 
+                                    marginBottom: 'var(--space-md)',
+                                    lineHeight: 'var(--line-height-relaxed)'
+                                }}
+                            >
                                 {movie.description || 'Sin descripción disponible'}
-                            </p>
+                            </Typography>
                             
                             {/* Información adicional */}
                             <div style={{ 
@@ -253,48 +260,63 @@ function MoviesDetailPage() {
                                 marginBottom: 'var(--space-lg)'
                             }}>
                                 {movie.release_year && (
-                                    <span style={{ 
-                                        background: 'var(--bg-accent)', 
-                                        padding: 'var(--space-xs) var(--space-sm)',
-                                        borderRadius: 'var(--radius-sm)',
-                                        fontSize: 'var(--font-size-sm)'
-                                    }}>
+                                    <Typography 
+                                        variant="span" 
+                                        size="sm" 
+                                        weight="medium"
+                                        style={{ 
+                                            background: 'var(--bg-accent)', 
+                                            padding: 'var(--space-xs) var(--space-sm)',
+                                            borderRadius: 'var(--radius-sm)'
+                                        }}
+                                    >
                                         {movie.release_year}
-                                    </span>
+                                    </Typography>
                                 )}
                                 {movie.category_id && (
-                                    <span style={{ 
-                                        background: 'var(--bg-primary-light)', 
-                                        color: 'var(--color-primary)',
-                                        padding: 'var(--space-xs) var(--space-sm)',
-                                        borderRadius: 'var(--radius-sm)',
-                                        fontSize: 'var(--font-size-sm)'
-                                    }}>
+                                    <Typography 
+                                        variant="span" 
+                                        size="sm" 
+                                        weight="medium"
+                                        style={{ 
+                                            background: 'var(--bg-primary-light)', 
+                                            color: 'var(--color-primary)',
+                                            padding: 'var(--space-xs) var(--space-sm)',
+                                            borderRadius: 'var(--radius-sm)'
+                                        }}
+                                    >
                                         Categoría {movie.category_id}
-                                    </span>
+                                    </Typography>
                                 )}
                                 {movie.rating && (
-                                    <span style={{ 
-                                        background: 'var(--bg-success-light)', 
-                                        color: 'var(--color-success)',
-                                        padding: 'var(--space-xs) var(--space-sm)',
-                                        borderRadius: 'var(--radius-sm)',
-                                        fontSize: 'var(--font-size-sm)',
-                                        fontWeight: 'var(--font-weight-semibold)'
-                                    }}>
+                                    <Typography 
+                                        variant="span" 
+                                        size="sm" 
+                                        weight="semibold"
+                                        style={{ 
+                                            background: 'var(--bg-success-light)', 
+                                            color: 'var(--color-success)',
+                                            padding: 'var(--space-xs) var(--space-sm)',
+                                            borderRadius: 'var(--radius-sm)'
+                                        }}
+                                    >
                                         ⭐ {movie.rating}
-                                    </span>
+                                    </Typography>
                                 )}
                                 {movie.video_duration && (
-                                    <span style={{ 
-                                        background: 'var(--bg-secondary)', 
-                                        color: 'var(--text-secondary)',
-                                        padding: 'var(--space-xs) var(--space-sm)',
-                                        borderRadius: 'var(--radius-sm)',
-                                        fontSize: 'var(--font-size-sm)'
-                                    }}>
+                                    <Typography 
+                                        variant="span" 
+                                        size="sm" 
+                                        weight="medium"
+                                        style={{ 
+                                            background: 'var(--bg-secondary)', 
+                                            color: 'var(--text-secondary)',
+                                            padding: 'var(--space-xs) var(--space-sm)',
+                                            borderRadius: 'var(--radius-sm)'
+                                        }}
+                                    >
                                         🕐 {typeof movie.video_duration === 'string' ? movie.video_duration : 'N/A'}
-                                    </span>
+                                    </Typography>
                                 )}
                             </div>
 
@@ -323,9 +345,9 @@ function MoviesDetailPage() {
                                 </Button>
                             </div>
                         </div>
-                    </div>
+                    </FlexContainer>
                 )}
-            </div>
+            </Container>
         </PageLayout>
     );
 }
