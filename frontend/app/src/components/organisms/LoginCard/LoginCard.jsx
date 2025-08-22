@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 import { Card, CardHeader, CardBody, CardFooter, CardTitle } from '../../atoms/Card/Card';
 import { TextInput } from '../../molecules/TextInput/TextInput';
 import { Button } from '../../atoms/Button/Button';
-import './LoginCard.css';
+import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
+import { Typography } from '../../atoms/Typography/Typography';
 
 /**
  * Componente de inicio de sesión usando el sistema de diseño
@@ -17,6 +18,9 @@ import './LoginCard.css';
  * @param {function} [props.onRegisterClick] - Función para ir a registro
  * @param {'xs'|'sm'|'md'|'lg'|'xl'} [props.size='lg'] - Tamaño de los campos
  * @param {'sm'|'md'|'lg'|'xl'} [props.rounded='lg'] - Border radius
+ * @param {string} [props.title] - Título personalizado del card
+ * @param {string} [props.subtitle] - Subtítulo personalizado del card
+ * @param {boolean} [props.showHeader=true] - Mostrar/ocultar header del card
  */
 const LoginCard = ({
   loading = false,
@@ -27,6 +31,12 @@ const LoginCard = ({
   onRegisterClick,
   size = 'lg',
   rounded = 'lg',
+  
+  // Nuevas props de configuración
+  title = 'Iniciar Sesión',
+  subtitle = null,
+  showHeader = true,
+  
   ...cardProps
 }) => {
   // Estado local del formulario
@@ -116,15 +126,32 @@ const LoginCard = ({
       size="xl"
       shadow="lg"
       rounded={rounded}
-      className="login-card"
       {...cardProps}
     >
-      <CardHeader>
-        <CardTitle as="h1">Iniciar Sesión</CardTitle>
-      </CardHeader>
+      {showHeader && (
+        <CardHeader>
+          <CardTitle as="h1">{title}</CardTitle>
+          {subtitle && (
+            <Typography
+              variant="body"
+              size="md"
+              color="muted"
+              align="center"
+            >
+              {subtitle}
+            </Typography>
+          )}
+        </CardHeader>
+      )}
 
       <CardBody>
-        <form onSubmit={handleSubmit} className="login-form">
+        <FlexContainer
+          as="form"
+          onSubmit={handleSubmit}
+          direction="column"
+          gap="lg"
+          width="full"
+        >
           <TextInput
             label="Usuario"
             name="username"
@@ -138,7 +165,7 @@ const LoginCard = ({
             leftIcon="user"
             size={size}
             rounded={rounded}
-            fullWidth
+            width="full"
             required
             disabled={loading}
             variant={touched.username && formErrors.username ? 'danger' : 'primary'}
@@ -159,7 +186,7 @@ const LoginCard = ({
             leftIcon="lock"
             size={size}
             rounded={rounded}
-            fullWidth
+            width="full"
             required
             disabled={loading}
             variant={touched.password && formErrors.password ? 'danger' : 'primary'}
@@ -167,9 +194,21 @@ const LoginCard = ({
 
           {/* Mensaje de error global */}
           {error && (
-            <div className="login-card__error" role="alert">
-              {error}
-            </div>
+            <FlexContainer
+              direction="row"
+              align="center"
+              gap="sm"
+              padding="md"
+              role="alert"
+            >
+              <Typography
+                variant="danger"
+                size="sm"
+                weight="medium"
+              >
+                {error}
+              </Typography>
+            </FlexContainer>
           )}
 
           {/* Botón de envío */}
@@ -180,16 +219,20 @@ const LoginCard = ({
             rounded={rounded}
             loading={loading}
             disabled={loading}
-            fullWidth
+            width="full"
             leftIcon="lock"
           >
             {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </Button>
-        </form>
+        </FlexContainer>
       </CardBody>
 
       <CardFooter>
-        <div className="login-card__actions">
+        <FlexContainer
+          direction="column"
+          gap="md"
+          align="center"
+        >
           {/* Enlace de contraseña olvidada */}
           {onForgotPassword && (
             <Button
@@ -204,10 +247,17 @@ const LoginCard = ({
 
           {/* Enlace de registro */}
           {showRegisterLink && onRegisterClick && (
-            <div className="login-card__register">
-              <span className="login-card__register-text">
+            <FlexContainer
+              direction="row"
+              gap="sm"
+              align="center"
+            >
+              <Typography
+                size="sm"
+                color="muted"
+              >
                 ¿No tienes cuenta?
-              </span>
+              </Typography>
               <Button
                 variant="neutral"
                 size="sm"
@@ -216,9 +266,9 @@ const LoginCard = ({
               >
                 Crear cuenta
               </Button>
-            </div>
+            </FlexContainer>
           )}
-        </div>
+        </FlexContainer>
       </CardFooter>
     </Card>
   );
@@ -232,7 +282,12 @@ LoginCard.propTypes = {
   showRegisterLink: PropTypes.bool,
   onRegisterClick: PropTypes.func,
   size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
-  rounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl'])
+  rounded: PropTypes.oneOf(['sm', 'md', 'lg', 'xl']),
+  
+  // Nuevas props
+  title: PropTypes.string,
+  subtitle: PropTypes.string,
+  showHeader: PropTypes.bool
 };
 
 export { LoginCard };

@@ -237,49 +237,23 @@ function MoviesListPage() {
         </FlexContainer>
       }
     >
-      
-        {error && (
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            padding: 'var(--space-lg)'
-          }}>
-            <Badge
-              variant="danger"
-              size="lg"
-              leftIcon="x"
-              appearance="soft"
-            >
-              {error}
-            </Badge>
-          </div>
-        )}
-
         <DataTable
           data={movies}
           columns={movieColumns}
           loading={loading}
+          error={error}
           onEdit={handleEditMovie}
           onView={handleViewMovie}
           onDelete={handleDeleteMovie}
           deleting={deleting}
-          emptyTitle="No hay películas registradas"
-          emptyDescription="Comienza agregando tu primera película o serie"
-          emptyIcon="film"
-          emptyAction={
-            <Button
-              variant="primary"
-              onClick={handleCreateMovie}
-              leftIcon="plus"
-            >
-              Agregar Primera Película
-            </Button>
-          }
-          searchable
-          searchPlaceholder="Buscar por título, categoría o año..."
+          searchPlaceholder="Buscar películas por título, categoría o año..."
+          pageSizeOptions={[10, 25, 50, 100]}
           pageSize={10}
-          pageSizeOptions={[5, 10, 25, 50]}
-          tableVariant="striped"
+          variant="primary"
+          emptyTitle="No hay películas registradas"
+          emptyDescription="Comienza agregando tu primera película al catálogo"
+          emptyIcon="film"
+          className={deleting ? 'movies-list__table--deleting' : ''}
         />
     </AdminLayout>
   );

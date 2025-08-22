@@ -1,123 +1,47 @@
-// ===== LOGIN PAGE CORREGIDO =====
+// ===== LOGIN PAGE OPTIMIZADO =====
 // src/Pages/Login/Login.jsx
 
-import { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+// Hook personalizado con lógica de login
+import { useLoginLogic } from "../../hooks/useLoginLogic";
 
-// Servicios de autenticación
-import { loginService } from "../../services/Auth/loginService";
-import { recoveryService } from "../../services/Auth/recoveryService";
-
-// Hook de autenticación
-import { useAuth } from "../../app/context/AuthContext";
-
-// Componente LoginCard del sistema de diseño
+// Componentes del sistema de diseño
 import { LoginCard } from "../../components/organisms/LoginCard/LoginCard";
 import { Typography } from "../../components/atoms/Typography/Typography";
+import { FlexContainer } from "../../components/atoms/FlexContainer/FlexContainer";
+import { Container } from "../../components/atoms/Container/Container";
 
 function Login() {
-  // Estados de la UI
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  
-  const navigate = useNavigate();
-  const { login } = useAuth();
-
-  /**
-   * ✅ CORREGIDO: Manejo de respuesta del loginService
-   */
-  const handleLoginSubmit = async (formData) => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      const response = await loginService(formData.username, formData.password);
-      
-      if (response.success && response.user?.sub) {
-        // Guardar datos del usuario en sessionStorage
-        sessionStorage.setItem('sessionUser', JSON.stringify(response.user));
-        
-        // ✅ NUEVO: Actualizar el AuthContext
-        login(response.user);
-        
-        // Navegar a la página principal
-        navigate('/main-page');
-        
-      } else {
-        const errorMessage = response.message || response.error || 'Credenciales incorrectas';
-        setError(errorMessage);
-      }
-      
-    } catch (err) {
-      console.error('Error en login:', err); // Solo este log es útil para debugging
-      
-      const errorMessage = err.message || 'Error de conexión. Inténtalo de nuevo.';
-      setError(errorMessage);
-      
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  /**
-   * ✅ MEJORADO: Recovery con mejor manejo de errores
-   */
-  const handleForgotPassword = async (username) => {
-    if (!username || username.trim() === '') {
-      setError('Ingresa tu usuario para recuperar la contraseña.');
-      return;
-    }
-
-    // Validación básica del username
-    const userNameRegex = /^[a-zA-Z0-9._-]+$/;
-    if (!userNameRegex.test(username)) {
-      setError('Usuario inválido. Solo letras, números, puntos, guiones y guiones bajos.');
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      await recoveryService(username);
-      setError('✅ Email de recuperación enviado. Revisa tu bandeja de entrada.');
-      
-    } catch (err) {
-      console.error('Error en recovery:', err);
-      setError('❌ Error al enviar email de recuperación.');
-      
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  /**
-   * ✅ NUEVO: Verificar si el usuario ya está logueado
-   */
-  useEffect(() => {
-    const sessionUser = sessionStorage.getItem('sessionUser');
-    if (sessionUser) {
-      try {
-        const user = JSON.parse(sessionUser);
-        if (user?.sub) {
-          navigate('/main-page');
-        }
-      } catch {
-        sessionStorage.removeItem('sessionUser');
-      }
-    }
-  }, [navigate]);
+  // ✅ NUEVO: Toda la lógica viene del hook personalizado
+  const { 
+    handleLoginSubmit, 
+    handleForgotPassword, 
+    error, 
+    isLoading 
+  } = useLoginLogic();
 
   return (
-    <div className="login-register-container">
-      <div className="login-register-content">
-        {/* Header con título de la app */}
-        <div className="login-register-header">
+    <Container size="full">
+      <FlexContainer
+        direction="column"
+        justify="center"
+        align="center"
+        gap="2xl"
+        padding="2xl"
+        width="full"
+        style={{ minHeight: '100vh' }}
+      >
+        {/* Header de la aplicación */}
+        <FlexContainer
+          direction="column"
+          align="center"
+          gap="md"
+        >
           <Typography 
+            as="h1"
             variant="h1" 
-            size="2xl" 
+            size="3xl" 
             weight="bold"
-            className="app-title"
+            align="center"
           >
             StreamingApp
           </Typography>
@@ -125,23 +49,27 @@ function Login() {
             variant="body" 
             size="lg" 
             color="muted"
-            className="app-subtitle"
+            align="center"
           >
-            Inicia sesión para continuar
+            Tu plataforma de entretenimiento
           </Typography>
-        </div>
+        </FlexContainer>
 
-        {/* LoginCard del sistema de diseño */}
-        <LoginCard
-          onSubmit={handleLoginSubmit}
-          onForgotPassword={handleForgotPassword}
-          loading={isLoading}
-          error={error}
-          size="lg"
-          rounded="lg"
-        />
-      </div>
-    </div>
+        {/* LoginCard optimizado */}
+        <Container size="lg" style={{ maxWidth: '42rem', width: '100%' }}>
+          <LoginCard
+            title="Iniciar Sesión"
+            subtitle="Ingresa tus credenciales para continuar"
+            onSubmit={handleLoginSubmit}
+            onForgotPassword={handleForgotPassword}
+            loading={isLoading}
+            error={error}
+            size="lg"
+            rounded="lg"
+          />
+        </Container>
+      </FlexContainer>
+    </Container>
   );
 }
 

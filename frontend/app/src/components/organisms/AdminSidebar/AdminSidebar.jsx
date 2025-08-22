@@ -1,10 +1,12 @@
 // ===== ADMINSIDEBAR COMPONENT =====
 
-import { useState} from 'react';
+import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Button } from '../../atoms/Button/Button';
-import { createIconRenderer } from '../../../utils/iconHelpers';
+import { Icon } from '../../atoms/Icon/Icon';
+import { Badge } from '../../atoms/Badge/Badge';
+import { Avatar } from '../../atoms/Avatar/Avatar';
 import { useStandardProps } from '../../../hooks/useStandardProps';
 import { extractDOMProps } from '../../../tokens/standardProps';
 import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
@@ -87,10 +89,13 @@ function AdminSidebar(props) {
 
   const [expandedMenus, setExpandedMenus] = useState(new Set(['dashboard']));
 
-  // ===== FUNCIONES DE RENDERIZADO DE ICONOS =====
-  const renderMainIcon = createIconRenderer('sm', { default: 'sm' });
-  const renderSubIcon = createIconRenderer('xs', { default: 'xs' });
-  const renderLogoIcon = createIconRenderer('md', { default: 'md' });
+  // ===== TAMAÑOS DE ICONOS DEFINIDOS =====
+  // Usando Icon directo porque AdminSidebar es componente de aplicación
+  const ICON_SIZES = {
+    logo: 'md',
+    main: 'sm',
+    sub: 'xs'
+  };
 
   // ===== CONFIGURACIÓN DE MENÚS =====
   const sidebarItems = [
@@ -99,7 +104,6 @@ function AdminSidebar(props) {
       icon: 'trending',
       label: 'Dashboard',
       route: '/admin',
-      description: 'Panel principal con métricas generales',
       badge: 0
     },
     {
@@ -107,14 +111,12 @@ function AdminSidebar(props) {
       icon: 'users',
       label: 'Usuarios',
       route: '/admin/users',
-      description: 'Gestión de usuarios registrados',
       badge: userCount
     },
     {
       id: 'content',
       icon: 'film',
       label: 'Contenido',
-      description: 'Gestión de películas, series y episodios',
       badge: movieCount + seriesCount,
       submenu: [
         {
@@ -142,7 +144,6 @@ function AdminSidebar(props) {
       icon: 'grid',
       label: 'Categorías',
       route: '/admin/categories',
-      description: 'Organización por géneros y categorías',
       badge: categoryCount
     }
   ];
@@ -230,11 +231,14 @@ function AdminSidebar(props) {
             gap="md"
             className="admin-sidebar__brand"
           >
-            <span className="admin-sidebar__logo">
-              {renderLogoIcon('settings')}
-            </span>
+            <Icon
+              name="settings"
+              size={ICON_SIZES.logo}
+              variant={variant}
+              className="admin-sidebar__logo"
+            />
             <FlexContainer direction="column" className="admin-sidebar__brand-text">
-              <Typography variant="h2" size="md" weight="semibold" className="admin-sidebar__title">Admin Panel</Typography>
+              <Typography variant="h2" size="md" weight="semibold" align="center" className="admin-sidebar__title">Admin Panel</Typography>
               <Typography variant="body" size="sm" color="muted" className="admin-sidebar__subtitle">StreamApp</Typography>
             </FlexContainer>
           </FlexContainer>
@@ -286,50 +290,73 @@ function AdminSidebar(props) {
                   aria-describedby={!isCollapsed ? `${item.id}-desc` : undefined}
                   title={isCollapsed ? item.label : undefined}
                 >
-                  <span className="admin-sidebar__item-icon">
-                    {renderMainIcon(item.icon)}
-                  </span>
+                  <Icon
+                    name={item.icon}
+                    size={ICON_SIZES.main}
+                    variant={isActive ? 'primary' : variant}
+                    className="admin-sidebar__item-icon"
+                  />
 
                   {!isCollapsed && (
                     <>
-                      <span className="admin-sidebar__item-label">
+                      <Typography
+                        as="span"
+                        size="sm"
+                        weight="medium"
+                        className="admin-sidebar__item-label"
+                        align="center"
+                      >
                         {item.label}
-                      </span>
+                      </Typography>
 
                       {/* Badge con contador */}
                       {item.badge > 0 && (
-                        <span
+                        <Badge
+                          variant={isActive ? 'primary' : 'secondary'}
+                          size="xs"
                           className="admin-sidebar__badge"
                           aria-label={`${item.badge} elementos`}
                         >
                           {item.badge}
-                        </span>
+                        </Badge>
                       )}
 
                       {/* Flecha para submenús */}
                       {hasSubmenu && (
-                        <span
+                        <Icon
+                          name={isExpanded ? 'chevron-up' : 'chevron-down'}
+                          size={ICON_SIZES.sub}
+                          variant={variant}
                           className={[
                             'admin-sidebar__arrow',
                             isExpanded && 'admin-sidebar__arrow--expanded'
                           ].filter(Boolean).join(' ')}
                           aria-hidden="true"
-                        >
-                          {renderSubIcon('chevron-down')}
-                        </span>
+                        />
                       )}
                     </>
                   )}
                 </button>
 
                 {/* Descripción para accesibilidad */}
-                {!isCollapsed && (
-                  <span
-                    id={`${item.id}-desc`}
-                    className="admin-sidebar__description"
+                {(!isCollapsed && item.description) && (
+                  <FlexContainer
+                    justify="center"
+                    align="center"
+                    padding="sm"
+                    className="admin-sidebar__description-container"
                   >
-                    {item.description}
-                  </span>
+                    <Typography
+                      as="span"
+                      id={`${item.id}-desc`}
+                      size="xs"
+                      color="muted"
+                      align="center"
+                      className="admin-sidebar__description"
+                    >
+                      {item.description}
+                    </Typography>
+                  </FlexContainer>
                 )}
 
                 {/* Submenú */}
@@ -354,21 +381,31 @@ function AdminSidebar(props) {
                           role="menuitem"
                           aria-current={isRouteActive(subitem.route, true) ? 'page' : undefined}
                         >
-                          <span className="admin-sidebar__subitem-icon">
-                            {renderSubIcon(subitem.icon)}
-                          </span>
-                          <span className="admin-sidebar__subitem-label">
+                          <Icon
+                            name={subitem.icon}
+                            size={ICON_SIZES.sub}
+                            variant={isRouteActive(subitem.route, true) ? 'primary' : variant}
+                            className="admin-sidebar__subitem-icon"
+                          />
+                          <Typography
+                            as="span"
+                            size="sm"
+                            weight="medium"
+                            className="admin-sidebar__subitem-label"
+                          >
                             {subitem.label}
-                          </span>
+                          </Typography>
 
                           {/* Badge para subitem */}
                           {subitem.badge > 0 && (
-                            <span
+                            <Badge
+                              variant={isRouteActive(subitem.route, true) ? 'primary' : 'secondary'}
+                              size="xs"
                               className="admin-sidebar__badge admin-sidebar__badge--small"
                               aria-label={`${subitem.badge} elementos`}
                             >
                               {subitem.badge}
-                            </span>
+                            </Badge>
                           )}
                         </button>
                       </li>
@@ -395,9 +432,12 @@ function AdminSidebar(props) {
             gap="md"
             className="admin-sidebar__user-info"
           >
-            <div className="admin-sidebar__user-avatar">
-              {renderMainIcon('user')}
-            </div>
+            <Avatar
+              name="Administrador"
+              size="sm"
+              variant={variant}
+              className="admin-sidebar__user-avatar"
+            />
             <FlexContainer direction="column" className="admin-sidebar__user-details">
               <Typography variant="body" size="sm" weight="medium" className="admin-sidebar__user-name">Administrador</Typography>
               <Typography variant="body" size="xs" color="muted" className="admin-sidebar__user-role">Panel de Control</Typography>
@@ -434,7 +474,8 @@ AdminSidebar.propTypes = {
   onToggle: PropTypes.func,
   onNavigate: PropTypes.func,
   currentPath: PropTypes.string,
-  style: PropTypes.object
+  style: PropTypes.object,
+  area: PropTypes.string
 };
 
 export { AdminSidebar };

@@ -241,27 +241,24 @@ function AdminLayout({
           "sidebar main"
         `}
       gap="none"
-      className={`${layoutClasses} admin-layout__main-grid`}
     >
 
       {/* ===== SIDEBAR ===== */}
       <AdminSidebar
-        as="sidebar"
+        area="sidebar"
         isCollapsed={isCollapsed}
         onToggleCollapse={handleSidebarToggle}
         counts={counts}
         loading={loadingCounts}
         error={countsError}
         currentPath={location.pathname}
-        className="admin-layout__sidebar"
       />
 
       {/* ===== HEADER ===== */}
       <Container
-        as="header"
+        area="header"
         size="full"
         padding="md"
-        className="admin-layout__header"
       >
         <FlexContainer
           direction="column"
@@ -293,7 +290,6 @@ function AdminLayout({
                 variant="h1" 
                 size="lg" 
                 weight="bold"
-                className="admin-layout__title"
               >
                 {title}
               </Typography>
@@ -303,7 +299,6 @@ function AdminLayout({
                 variant="body" 
                 size="md" 
                 color="muted"
-                className="admin-layout__subtitle"
               >
                 {subtitle}
               </Typography>
@@ -322,10 +317,9 @@ function AdminLayout({
 
       {/* ===== CONTENIDO PRINCIPAL ===== */}
       <Container
-        as="main"
+        area="main"
         size="full"
-        padding="lg"
-        className="admin-layout__main"
+        spacing="lg"
       >
         {children}
       </Container>

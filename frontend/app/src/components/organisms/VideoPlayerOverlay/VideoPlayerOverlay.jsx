@@ -1,7 +1,7 @@
 import { useState, useCallback, forwardRef, useImperativeHandle } from 'react';
 import PropTypes from 'prop-types';
-import { Icon } from '../../atoms/Icon/Icon';
-import './VideoPlayerOverlay.css';
+import { Button } from '../../atoms/Button/Button';
+import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
 
 const VideoPlayerOverlay = forwardRef(({ 
   onSkipBack, 
@@ -29,13 +29,23 @@ const VideoPlayerOverlay = forwardRef(({
   }), [showControls, hideControls]);
 
   return (
-    <div 
+    <FlexContainer
       className={`video-player-overlay ${className}`}
+      align="center"
+      justify="center"
       style={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '100%',
+        height: 'calc(100% - 3rem)',
+        marginTop: '-4rem',
         opacity: isVisible ? 1 : 0,
         visibility: isVisible ? 'visible' : 'hidden',
         transition: 'opacity 0.3s ease',
-        pointerEvents: isVisible ? 'all' : 'none'
+        pointerEvents: isVisible ? 'all' : 'none',
+        zIndex: 500
       }}
       onClick={(e) => {
         // Click en fondo muestra controles brevemente
@@ -44,35 +54,65 @@ const VideoPlayerOverlay = forwardRef(({
         }
       }}
     >
-      <div className="video-player-overlay__center-controls">
-        <button 
-          className="video-player-overlay__control-btn video-player-overlay__control-btn--skip-back"
+      <FlexContainer
+        align="center"
+        justify="center"
+        gap="2xl"
+        style={{ pointerEvents: 'all' }}
+      >
+        <Button
+          iconOnly
+          leftIcon="skip-back"
+          size="xl"
+          variant="secondary"
           onClick={onSkipBack}
-          type="button"
-          aria-label={`Retroceder ${skipSeconds} segundos`}
-        >
-          <Icon name="skip-back" size="lg" />
-        </button>
+          ariaLabel={`Retroceder ${skipSeconds} segundos`}
+          style={{
+            backgroundColor: 'var(--backdrop-dark)',
+            backdropFilter: 'blur(8px)',
+            border: '0.2rem solid var(--bg-primary)',
+            borderRadius: 'var(--radius-full)',
+            width: '6rem',
+            height: '6rem',
+            boxShadow: 'var(--shadow-xl)'
+          }}
+        />
         
-        <button 
-          className="video-player-overlay__control-btn video-player-overlay__control-btn--play-pause"
+        <Button
+          iconOnly
+          leftIcon={isPlaying ? 'pause' : 'play'}
+          size="xl"
+          variant="primary"
           onClick={onPlayPause}
-          type="button"
-          aria-label={isPlaying ? 'Pausar' : 'Reproducir'}
-        >
-          <Icon name={isPlaying ? 'pause' : 'play'} size="xl" />
-        </button>
+          ariaLabel={isPlaying ? 'Pausar' : 'Reproducir'}
+          style={{
+            border: '0.3rem solid var(--bg-primary)',
+            borderRadius: 'var(--radius-full)',
+            width: '8rem',
+            height: '8rem',
+            boxShadow: 'var(--shadow-2xl)'
+          }}
+        />
         
-        <button 
-          className="video-player-overlay__control-btn video-player-overlay__control-btn--skip-forward"
+        <Button
+          iconOnly
+          leftIcon="skip-forward"
+          size="xl"
+          variant="secondary"
           onClick={onSkipForward}
-          type="button"
-          aria-label={`Avanzar ${skipSeconds} segundos`}
-        >
-          <Icon name="skip-forward" size="lg" />
-        </button>
-      </div>
-    </div>
+          ariaLabel={`Avanzar ${skipSeconds} segundos`}
+          style={{
+            backgroundColor: 'var(--backdrop-dark)',
+            backdropFilter: 'blur(8px)',
+            border: '0.2rem solid var(--bg-primary)',
+            borderRadius: 'var(--radius-full)',
+            width: '6rem',
+            height: '6rem',
+            boxShadow: 'var(--shadow-xl)'
+          }}
+        />
+      </FlexContainer>
+    </FlexContainer>
   );
 });
 

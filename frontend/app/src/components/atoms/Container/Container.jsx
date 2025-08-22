@@ -151,6 +151,12 @@ Container.propTypes = {
    * Estilos CSS adicionales (compatibilidad con gridArea, etc.)
    */
   style: PropTypes.object,
+
+  /**
+   * Grid area para uso con GridContainer
+   * Se convierte automáticamente en style={{ gridArea: area }}
+   */
+  area: PropTypes.string,
   
   // ✅ PROPS LEGACY CON DEPRECATION WARNINGS
   /**

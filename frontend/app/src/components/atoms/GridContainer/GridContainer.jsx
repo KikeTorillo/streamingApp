@@ -2,6 +2,7 @@
 
 /* eslint-disable react-refresh/only-export-components */
 
+import { Children, cloneElement } from 'react';
 import PropTypes from 'prop-types';
 import { useStandardProps } from '../../../hooks/useStandardProps';
 import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens';
@@ -14,12 +15,20 @@ import './GridContainer.css';
  * ✅ SISTEMA ESTÁNDAR: Props unificadas con otros componentes
  * ✅ TOKENS AUTOMÁTICOS: Gap, spacing y columnas del sistema
  * ✅ RESPONSIVE: Adaptación automática por breakpoints
- * ✅ CASOS DE USO: Dashboards, galerías de contenido, formularios grid
+ * ✅ GRID AREAS: Manejo automático de grid-area para children con prop 'area'
+ * ✅ CASOS DE USO: Dashboards, galerías de contenido, formularios grid, layouts admin
  * 
  * CASOS COMUNES A REEMPLAZAR:
  * - style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(20rem, 1fr))', gap: 'var(--space-lg)' }}
  * - style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-md)' }}
  * - style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' }}
+ * 
+ * NUEVO: Grid Areas automáticas
+ * <GridContainer areas='"sidebar header" "sidebar main"'>
+ *   <Sidebar area="sidebar" />
+ *   <Header area="header" />
+ *   <Main area="main" />
+ * </GridContainer>
  */
 function GridContainer(props) {
   // ✅ USAR HOOK ESTÁNDAR DEL SISTEMA
@@ -105,6 +114,24 @@ function GridContainer(props) {
     ...style // ✅ COMBINAR con estilos que vienen de props
   };
 
+  // ✅ PROCESAR CHILDREN CON GRID AREAS AUTOMÁTICAS
+  const processedChildren = areas ? 
+    Children.map(children, child => {
+      // Si el child tiene prop 'area', agregar gridArea automáticamente
+      if (child && child.props && child.props.area) {
+        const childArea = child.props.area;
+        return cloneElement(child, {
+          style: { 
+            gridArea: childArea,
+            ...child.props.style // Preservar estilos existentes
+          },
+          // Remover la prop 'area' para que no se pase al DOM
+          area: undefined
+        });
+      }
+      return child;
+    }) : children;
+
   // ✅ FILTRAR PROPS PARA DOM
   const domProps = extractDOMProps(standardProps);
 
@@ -122,7 +149,7 @@ function GridContainer(props) {
           <div className="grid-container__spinner"></div>
         </div>
       )}
-      {children}
+      {processedChildren}
     </Element>
   );
 }
@@ -224,7 +251,14 @@ GridContainer.propTypes = {
   /**
    * Estilos CSS adicionales (compatibilidad con gridArea, etc.)
    */
-  style: PropTypes.object
+  style: PropTypes.object,
+
+  /**
+   * NUEVO: Grid area automática para children
+   * Se pasa como prop a los children que tengan prop 'area'
+   * Ejemplo: <Component area="sidebar" /> → style={{ gridArea: 'sidebar' }}
+   */
+  area: PropTypes.string
 };
 
 GridContainer.defaultProps = {

@@ -10,6 +10,7 @@ import { Badge } from '../../../../components/atoms/Badge/Badge';
 import { Select } from '../../../../components/atoms/Select/Select';
 import { Label } from '../../../../components/atoms/Label/Label';
 import { Typography } from '../../../../components/atoms/Typography/Typography';
+import { Container } from '../../../../components/atoms/Container/Container';
 
 // Context y servicios
 import { useEpisodes } from '../../../../app/context/EpisodesContext';
@@ -257,96 +258,59 @@ function EpisodesListPage() {
         { label: 'Episodios' }
       ]}
       headerActions={
-        <div className="episodes-list__header-actions">
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={handleCreateEpisode}
-            leftIcon="plus"
-            disabled={!selectedSerieId}
-          >
-            Agregar Episodio
-          </Button>
-        </div>
+        <Button
+          variant="primary"
+          size="sm"
+          onClick={handleCreateEpisode}
+          leftIcon="play"
+          disabled={!selectedSerieId}
+        >
+          Crear Episodio
+        </Button>
       }
     >
       {/* SELECTOR DE SERIES */}
-        <Label
-          htmlFor="serie-selector"
-          leftIcon="video"
-          className="episodes-list__label"
-        >
-          Seleccionar Serie:
-        </Label>
-        <Select
-          id="serie-selector"
-          value={selectedSerieId}
-          onChange={handleSerieChange}
-          disabled={seriesLoading || seriesError}
-          placeholder='-- Selecciona una serie --'
-          options={seriesData.map(serie => ({
-            value: serie.id.toString(),
-            label: `${serie.title} (${serie.release_year})`
-          }))}
-          size="md"
-          variant="primary"
-        />
 
-      {seriesError && (
-        <div className="episodes-list__error-container">
-          <Badge
-            variant="danger"
-            size="lg"
-            leftIcon="x"
-            appearance="soft"
-          >
-            {seriesError}
-          </Badge>
-        </div>
-      )}
-
-      {error && (
-        <div className="episodes-list__error-container">
-          <Badge
-            variant="danger"
-            size="lg"
-            leftIcon="x"
-            appearance="soft"
-          >
-            {error}
-          </Badge>
-        </div>
-      )}
-
+      <Label
+        htmlFor="serie-selector"
+        leftIcon="video"
+        className="episodes-list__label"
+      >
+        Seleccionar Serie:
+      </Label>
+      <Select
+        id="serie-selector"
+        value={selectedSerieId}
+        onChange={handleSerieChange}
+        disabled={seriesLoading || seriesError}
+        placeholder='-- Selecciona una serie --'
+        options={seriesData.map(serie => ({
+          value: serie.id.toString(),
+          label: `${serie.title} (${serie.release_year})`
+        }))}
+        size="md"
+        variant="primary"
+      />
       <DataTable
         data={episodes}
         columns={episodesColumns}
         loading={loading}
-        variant="primary"
+        error={error || seriesError}
         onEdit={handleEditEpisode}
         onView={handleViewEpisode}
         onDelete={handleDeleteEpisode}
         deleting={deleting}
+        searchPlaceholder="Buscar episodios por título..."
+        pageSizeOptions={[10, 25, 50, 100]}
+        pageSize={10}
+        variant="primary"
         emptyTitle={selectedSerieId ? "No hay episodios" : "Selecciona una serie"}
         emptyDescription={selectedSerieId
           ? "Esta serie no tiene episodios registrados"
           : "Elige una serie del selector para ver sus episodios"
         }
-        emptyIcon="video"
-        emptyAction={selectedSerieId ? (
-          <Button
-            variant="primary"
-            onClick={handleCreateEpisode}
-            leftIcon="plus"
-          >
-            Agregar Primer Episodio
-          </Button>
-        ) : null}
-        searchable={episodes.length > 0}
-        searchPlaceholder="Buscar por título de episodio..."
-        pageSize={10}
-        pageSizeOptions={[5, 10, 25, 50]}
-        tableVariant="striped"
+        emptyIcon="play"
+        className={deleting ? 'episodes-list__table--deleting' : ''}
       />
     </AdminLayout>
   );

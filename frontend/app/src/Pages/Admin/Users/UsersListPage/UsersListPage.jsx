@@ -158,16 +158,14 @@ function UsersListPage() {
         { label: 'Usuarios' }
       ]}
       headerActions={
-        <div className="users-list__header-actions">
-          <Button
-            variant="primary"
-            size="sm"
-            leftIcon="plus"
-            onClick={handleCreateUser}
-          >
-            Crear Usuario
-          </Button>
-        </div>
+        <Button
+          variant="primary"
+          size="sm"
+          leftIcon="users"
+          onClick={handleCreateUser}
+        >
+          Crear Usuario
+        </Button>
       }
     >
       <DataTable

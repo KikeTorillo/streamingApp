@@ -165,7 +165,14 @@ import { Button } from '../../../components/atoms/Button/Button';
 
 ### **🔴 Específicos del Dominio (No reutilizables)**
 - SeasonSelector, EpisodeListItem, ActionsDropdown
-- ImageCropperModal
+- ImageCropperModal, VideoPlayerOverlay
+
+### **📈 Optimizaciones Arquitectónicas Recientes**
+- **LoginCard**: Configurable con props title, subtitle, showHeader
+- **useLoginLogic**: Hook para separar lógica de autenticación de UI
+- **Login Page**: Reducido de 149 a 75 líneas (-50% código)
+- **AdminSidebar**: 100% migrado con Icon, Badge, Avatar del sistema
+- **DataTable**: 100% migrado manteniendo semántica HTML correcta
 
 ---
 
@@ -189,8 +196,53 @@ ls frontend/app/src/components/atoms/Button/Button.stories.jsx
 
 ---
 
+---
+
+## 🎣 **HOOKS PERSONALIZADOS**
+
+### **Hooks de Dominio Específico**
+| Hook | Ubicación | Propósito | Componentes que lo usan |
+|------|-----------|-----------|-------------------------|
+| **useLoginLogic** | `/hooks/useLoginLogic.js` | Lógica de autenticación separada | Login.jsx, futuros modales de auth |
+| **useAuth** | `/app/context/AuthContext.jsx` | Estado global de autenticación | App-wide |
+| **useUsers** | `/hooks/useUsers.js` | CRUD usuarios | UsersListPage, UsersCreatePage |
+| **useMovies** | `/hooks/useMovies.js` | CRUD películas | MoviesListPage, MoviesCreatePage |
+
+### **✅ Patrón Hook Recomendado**
+```javascript
+// ✅ HOOK para lógica específica de página
+const useLoginLogic = () => {
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const handleLoginSubmit = async (formData) => {
+    // Lógica de negocio aquí
+  };
+
+  return { handleLoginSubmit, error, isLoading };
+};
+
+// ✅ PÁGINA usa hook + componentes del sistema
+const Login = () => {
+  const { handleLoginSubmit, error, isLoading } = useLoginLogic();
+  
+  return (
+    <Container>
+      <LoginCard 
+        onSubmit={handleLoginSubmit}
+        error={error}
+        loading={isLoading}
+      />
+    </Container>
+  );
+};
+```
+
+---
+
 **💡 TIP:** Antes de crear un componente nuevo, verificar:
 1. ¿Existe en esta lista?
 2. ¿Se puede componer con componentes existentes?
 3. ¿Es específico del dominio streaming o genérico?
 4. ¿Tiene Storybook completo?
+5. ¿Necesita un hook personalizado para lógica compleja?

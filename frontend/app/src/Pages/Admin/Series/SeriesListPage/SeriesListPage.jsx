@@ -262,57 +262,34 @@ function SeriesListPage() {
         { label: 'Series' }
       ]}
       headerActions={
-        <div className="series-list__header-actions">
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={handleCreateSeries}
-            leftIcon="plus"
-          >
-            Agregar Serie
-          </Button>
-        </div>
+        <Button
+          variant="primary"
+          size="sm"
+          onClick={handleCreateSeries}
+          leftIcon="video"
+        >
+          Crear Serie
+        </Button>
       }
     >
-
-      {error && (
-        <div className="series-list__error-container">
-          <Badge
-            variant="danger"
-            size="lg"
-            leftIcon="x"
-            appearance="soft"
-          >
-            {error}
-          </Badge>
-        </div>
-      )}
 
       <DataTable
         data={series}
         columns={seriesColumns}
         loading={loading}
+        error={error}
         onEdit={handleEditSeries}
         onView={handleViewSeries}
         onDelete={handleDeleteSeries}
         deleting={deleting}
-        emptyTitle="No hay series registradas"
-        emptyDescription="Comienza agregando tu primera serie"
-        emptyIcon="video"
-        emptyAction={
-          <Button
-            variant="primary"
-            onClick={handleCreateSeries}
-            leftIcon="plus"
-          >
-            Agregar Primera Serie
-          </Button>
-        }
-        searchable
-        searchPlaceholder="Buscar por título, categoría o año..."
+        searchPlaceholder="Buscar series por título, categoría o año..."
+        pageSizeOptions={[10, 25, 50, 100]}
         pageSize={10}
-        pageSizeOptions={[5, 10, 25, 50]}
-        tableVariant="striped"
+        variant="primary"
+        emptyTitle="No hay series registradas"
+        emptyDescription="Comienza agregando tu primera serie al catálogo"
+        emptyIcon="video"
+        className={deleting ? 'series-list__table--deleting' : ''}
       />
     </AdminLayout>
   );

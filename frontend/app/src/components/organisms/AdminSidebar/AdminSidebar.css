@@ -177,26 +177,7 @@
 }
 
 .admin-sidebar__badge {
-  /* Layout */
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 2.0rem;
-  height: 2.0rem;
-  padding: 0 var(--space-xs);
-  
-  /* Colores */
-  background-color: var(--color-primary);
-  color: var(--text-on-primary);
-  
-  /* Tipografía */
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-  
-  /* Forma */
-  border-radius: var(--radius-full);
-  
-  /* Posición */
+  /* Posición y layout específico - estilos manejados por Badge component */
   flex-shrink: 0;
 }
 
@@ -309,16 +290,7 @@
 }
 
 .admin-sidebar__user-avatar {
-  /* Solo estilos visuales - layout center manejado por FlexContainer padre */
-  width: 4.0rem;
-  height: 4.0rem;
-  border-radius: var(--radius-full);
-  background-color: var(--color-primary-light);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--font-size-lg);
-  color: var(--color-primary);
+  /* Layout específico - estilos manejados por Avatar component */
   flex-shrink: 0;
 }
 
@@ -449,19 +421,7 @@
   }
 }
 
-/* Animación de badge */
-.admin-sidebar__badge {
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
+/* Badge animations removidas - manejadas por Badge component */
 
 /* ===== ACCESIBILIDAD ===== */
 
