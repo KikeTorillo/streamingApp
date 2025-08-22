@@ -9,25 +9,29 @@
   font-family: var(--font-family-base);
 }
 
-/* ===== WIDTH VARIANTS - HOMOLOGADAS CON SISTEMA ===== */
-.select-wrapper--width-auto {
-  width: auto;
+/* ===== WIDTH VARIANTS - TAMAÑOS ESPECÍFICOS + FULL ===== */
+.select-wrapper--width-xs {
+  width: 12rem; /* 192px */
+}
+
+.select-wrapper--width-sm {
+  width: 16rem; /* 256px */
+}
+
+.select-wrapper--width-md {
+  width: 20rem; /* 320px - Default */
+}
+
+.select-wrapper--width-lg {
+  width: 24rem; /* 384px */
+}
+
+.select-wrapper--width-xl {
+  width: 32rem; /* 512px */
 }
 
 .select-wrapper--width-full {
   width: 100%;
-}
-
-.select-wrapper--width-fit-content {
-  width: fit-content;
-}
-
-.select-wrapper--width-min-content {
-  width: min-content;
-}
-
-.select-wrapper--width-max-content {
-  width: max-content;
 }
 
 /* ===== SELECT BASE - ELEMENTO PRINCIPAL ===== */

@@ -6,9 +6,6 @@ import PropTypes from 'prop-types';
 
 // Importar librerías de iconos disponibles
 import * as FeatherIcons from 'react-icons/fi';
-import * as LucideIcons from 'react-icons/lu';
-import * as HeroIcons from 'react-icons/hi2';
-import * as PhosphorIcons from 'react-icons/ph';
 
 /**
  * ✅ CONFIGURACIÓN DE LIBRERÍAS SOPORTADAS
@@ -20,24 +17,6 @@ const ICON_LIBRARIES = {
     icons: FeatherIcons,
     prefix: 'Fi',
     fallback: 'FiHelpCircle'
-  },
-  lucide: {
-    name: 'Lucide Icons', 
-    icons: LucideIcons,
-    prefix: 'Lu',
-    fallback: 'LuHelpCircle'
-  },
-  heroicons: {
-    name: 'Hero Icons v2',
-    icons: HeroIcons,
-    prefix: 'Hi2',
-    fallback: 'Hi2QuestionMarkCircleIcon'
-  },
-  phosphor: {
-    name: 'Phosphor Icons',
-    icons: PhosphorIcons,
-    prefix: 'Ph',
-    fallback: 'PhQuestion'
   }
 };
 
@@ -47,51 +26,51 @@ const ICON_LIBRARIES = {
  */
 const UNIVERSAL_ICON_MAP = {
   // Navigation & Actions
-  'home': { feather: 'FiHome', lucide: 'LuHome', heroicons: 'Hi2HomeIcon', phosphor: 'PhHouse' },
-  'search': { feather: 'FiSearch', lucide: 'LuSearch', heroicons: 'Hi2MagnifyingGlassIcon', phosphor: 'PhMagnifyingGlass' },
-  'menu': { feather: 'FiMenu', lucide: 'LuMenu', heroicons: 'Hi2Bars3Icon', phosphor: 'PhList' },
-  'close': { feather: 'FiX', lucide: 'LuX', heroicons: 'Hi2XMarkIcon', phosphor: 'PhX' },
-  'plus': { feather: 'FiPlus', lucide: 'LuPlus', heroicons: 'Hi2PlusIcon', phosphor: 'PhPlus' },
-  'edit': { feather: 'FiEdit3', lucide: 'LuEdit3', heroicons: 'Hi2PencilIcon', phosphor: 'PhPencil' },
-  'delete': { feather: 'FiTrash2', lucide: 'LuTrash2', heroicons: 'Hi2TrashIcon', phosphor: 'PhTrash' },
-  'save': { feather: 'FiSave', lucide: 'LuSave', heroicons: 'Hi2CheckIcon', phosphor: 'PhFloppyDisk' },
+  'home': { feather: 'FiHome' },
+  'search': { feather: 'FiSearch' },
+  'menu': { feather: 'FiMenu' },
+  'close': { feather: 'FiX' },
+  'plus': { feather: 'FiPlus' },
+  'edit': { feather: 'FiEdit3' },
+  'delete': { feather: 'FiTrash2' },
+  'save': { feather: 'FiSave' },
   
   // User & Profile
-  'user': { feather: 'FiUser', lucide: 'LuUser', heroicons: 'Hi2UserIcon', phosphor: 'PhUser' },
-  'users': { feather: 'FiUsers', lucide: 'LuUsers', heroicons: 'Hi2UsersIcon', phosphor: 'PhUsers' },
-  'settings': { feather: 'FiSettings', lucide: 'LuSettings', heroicons: 'Hi2CogIcon', phosphor: 'PhGear' },
+  'user': { feather: 'FiUser' },
+  'users': { feather: 'FiUsers' },
+  'settings': { feather: 'FiSettings' },
   
   // Media & Content
-  'play': { feather: 'FiPlay', lucide: 'LuPlay', heroicons: 'Hi2PlayIcon', phosphor: 'PhPlay' },
-  'pause': { feather: 'FiPause', lucide: 'LuPause', heroicons: 'Hi2PauseIcon', phosphor: 'PhPause' },
-  'video': { feather: 'FiVideo', lucide: 'LuVideo', heroicons: 'Hi2VideoCameraIcon', phosphor: 'PhVideoCamera' },
-  'image': { feather: 'FiImage', lucide: 'LuImage', heroicons: 'Hi2PhotoIcon', phosphor: 'PhImage' },
-  'film': { feather: 'FiFilm', lucide: 'LuFilm', heroicons: 'Hi2FilmIcon', phosphor: 'PhFilmStrip' },
+  'play': { feather: 'FiPlay' },
+  'pause': { feather: 'FiPause' },
+  'video': { feather: 'FiVideo' },
+  'image': { feather: 'FiImage' },
+  'film': { feather: 'FiFilm' },
   
   // Status & Notifications
-  'success': { feather: 'FiCheckCircle', lucide: 'LuCheckCircle', heroicons: 'Hi2CheckCircleIcon', phosphor: 'PhCheckCircle' },
-  'warning': { feather: 'FiAlertCircle', lucide: 'LuAlertCircle', heroicons: 'Hi2ExclamationTriangleIcon', phosphor: 'PhWarningCircle' },
-  'error': { feather: 'FiXCircle', lucide: 'LuXCircle', heroicons: 'Hi2XCircleIcon', phosphor: 'PhXCircle' },
-  'info': { feather: 'FiInfo', lucide: 'LuInfo', heroicons: 'Hi2InformationCircleIcon', phosphor: 'PhInfo' },
-  'loading': { feather: 'FiLoader', lucide: 'LuLoader', heroicons: 'Hi2ArrowPathIcon', phosphor: 'PhSpinner' },
+  'success': { feather: 'FiCheckCircle' },
+  'warning': { feather: 'FiAlertCircle' },
+  'error': { feather: 'FiXCircle' },
+  'info': { feather: 'FiInfo' },
+  'loading': { feather: 'FiLoader' },
   
   // Arrows & Navigation
-  'arrow-left': { feather: 'FiArrowLeft', lucide: 'LuArrowLeft', heroicons: 'Hi2ArrowLeftIcon', phosphor: 'PhArrowLeft' },
-  'arrow-right': { feather: 'FiArrowRight', lucide: 'LuArrowRight', heroicons: 'Hi2ArrowRightIcon', phosphor: 'PhArrowRight' },
-  'chevron-down': { feather: 'FiChevronDown', lucide: 'LuChevronDown', heroicons: 'Hi2ChevronDownIcon', phosphor: 'PhCaretDown' },
-  'chevron-up': { feather: 'FiChevronUp', lucide: 'LuChevronUp', heroicons: 'Hi2ChevronUpIcon', phosphor: 'PhCaretUp' },
+  'arrow-left': { feather: 'FiArrowLeft' },
+  'arrow-right': { feather: 'FiArrowRight' },
+  'chevron-down': { feather: 'FiChevronDown' },
+  'chevron-up': { feather: 'FiChevronUp' },
   
   // Theme & Preferences
-  'sun': { feather: 'FiSun', lucide: 'LuSun', heroicons: 'Hi2SunIcon', phosphor: 'PhSun' },
-  'moon': { feather: 'FiMoon', lucide: 'LuMoon', heroicons: 'Hi2MoonIcon', phosphor: 'PhMoon' },
+  'sun': { feather: 'FiSun' },
+  'moon': { feather: 'FiMoon' },
   
   // Common UI Elements
-  'eye': { feather: 'FiEye', lucide: 'LuEye', heroicons: 'Hi2EyeIcon', phosphor: 'PhEye' },
-  'eye-off': { feather: 'FiEyeOff', lucide: 'LuEyeOff', heroicons: 'Hi2EyeSlashIcon', phosphor: 'PhEyeSlash' },
-  'heart': { feather: 'FiHeart', lucide: 'LuHeart', heroicons: 'Hi2HeartIcon', phosphor: 'PhHeart' },
-  'star': { feather: 'FiStar', lucide: 'LuStar', heroicons: 'Hi2StarIcon', phosphor: 'PhStar' },
-  'calendar': { feather: 'FiCalendar', lucide: 'LuCalendar', heroicons: 'Hi2CalendarIcon', phosphor: 'PhCalendar' },
-  'clock': { feather: 'FiClock', lucide: 'LuClock', heroicons: 'Hi2ClockIcon', phosphor: 'PhClock' }
+  'eye': { feather: 'FiEye' },
+  'eye-off': { feather: 'FiEyeOff' },
+  'heart': { feather: 'FiHeart' },
+  'star': { feather: 'FiStar' },
+  'calendar': { feather: 'FiCalendar' },
+  'clock': { feather: 'FiClock' }
 };
 
 /**
@@ -246,7 +225,7 @@ export function IconProvider({ children, config = {} }) {
         console.log(`📚 Cambiando librería de iconos a: "${newLibrary}"`);
       }
     } else {
-      console.error(`❌ Librería de iconos "${newLibrary}" no soportada. Disponibles: ${Object.keys(ICON_LIBRARIES).join(', ')}`);
+      console.warn(`⚠️ Librería de iconos "${newLibrary}" no disponible. Solo 'feather' está soportada actualmente.`);
     }
   };
 
@@ -325,7 +304,7 @@ function findNormalizedName(iconKey, library) {
 IconProvider.propTypes = {
   children: PropTypes.node.isRequired,
   config: PropTypes.shape({
-    library: PropTypes.oneOf(['feather', 'lucide', 'heroicons', 'phosphor']),
+    library: PropTypes.oneOf(['feather']),
     customIcons: PropTypes.object,
     fallback: PropTypes.string,
     sizes: PropTypes.object,

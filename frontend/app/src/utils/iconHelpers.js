@@ -233,10 +233,11 @@ export const createStandardIconRenderer = (context = 'generic', componentSize = 
       // Usar tamaño override o tamaño automático contextual
       const finalSize = overrideSize || autoIconSize;
       
+      // ✅ USAR ICON DEL SISTEMA DE DISEÑO (ahora siempre es el mejorado)
       return React.createElement(Icon, {
         name: iconName,
         size: finalSize,
-        color: overrideColor,
+        variant: overrideColor, // Nueva API usa variant
         ...overrideProps
       });
     }

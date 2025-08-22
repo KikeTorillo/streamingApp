@@ -65,6 +65,7 @@ const Input = forwardRef((props, ref) => {
     required = false,
     autoFocus = false,
     compact = false,
+    width = 'md', // ✅ NUEVO: Sistema de width fijo como Select
     ariaLabel,
     ariaDescribedBy,
     ariaErrorMessage,
@@ -111,6 +112,7 @@ const Input = forwardRef((props, ref) => {
   // Clases para el wrapper (cuando tiene iconos)
   const wrapperClasses = [
     'input-wrapper',
+    `input-wrapper--width-${width}`, // ✅ NUEVO: Width fijo como Select
     `input-wrapper--${size}`,
     variant !== 'primary' && `input-wrapper--${variant}`,
     rounded !== 'md' && `input-wrapper--rounded-${rounded}`,

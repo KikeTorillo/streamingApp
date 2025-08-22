@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 8080",
     "build": "vite build",
+    "build:analyze": "vite build --mode analyze && npx vite-bundle-analyzer dist",
+    "build:report": "vite build && echo '✅ Bundle analysis:' && du -sh dist/* | sort -hr",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview --host 0.0.0.0 --port 4173",
     "_comment_docker_426_fix": "=== SCRIPTS DOCKER - SOLUCIÓN ERROR 426 ===",

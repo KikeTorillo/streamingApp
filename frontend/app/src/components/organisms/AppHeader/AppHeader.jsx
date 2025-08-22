@@ -55,7 +55,7 @@ function AppHeader({
   };
 
   return (
-    <header {...validDOMProps} className={headerClasses} style={headerStyles}>
+    <header {...validDOMProps}>
       <FlexContainer 
         align="center" 
         justify="space-between" 
@@ -124,7 +124,9 @@ function AppHeader({
           >
             Cerrar Sesión
           </Button>
-          <ThemeSelector variant="neutral" size='md' />
+          <ThemeSelector 
+            variant="neutral" 
+          />
         </FlexContainer>
       </FlexContainer>
     </header>
