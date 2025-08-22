@@ -8,7 +8,6 @@ import { Container } from '../../../../components/atoms/Container/Container';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
 import { Typography } from '../../../../components/atoms/Typography/Typography';
 import { useSuccessRedirect } from '../../../../hooks/useSuccessRedirect';
-import './CategoryCreatePage.css';
 
 // Contexto de categorías
 import { useCategories } from '../../../../app/context/CategoriesContext';

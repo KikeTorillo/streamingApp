@@ -11,7 +11,6 @@ import { Divider } from '../../../../components/atoms/Divider/Divider';
 import { Badge } from '../../../../components/atoms/Badge/Badge';
 import { Typography } from '../../../../components/atoms/Typography/Typography';
 import { useUsers } from '../../../../app/context/UserContext';
-import './UserEditPage.css';
 
 /**
  * UserEditPage - REFACTORIZADO CON USERCONTEXT

@@ -12,7 +12,6 @@ import { Container } from '../../atoms/Container/Container';
 import { Typography } from '../../atoms/Typography/Typography';
 import { validateStandardProps, STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens/standardProps';
 import { LAYOUT_TOKENS } from '../../../tokens/designTokens';
-import './AdminLayout.css';
 
 // Importar servicios para obtener contadores en tiempo real
 import { getUsersService } from '../../../services/Users/getUsersService';
@@ -217,7 +216,6 @@ function AdminLayout({
         align="center" 
         justify="center"
         className="admin-layout__loading"
-        style={{ height: '100vh' }}
       >
         <FlexContainer direction="column" align="center" gap="md" className="admin-layout__loading-content">
           <Container className="admin-layout__spinner" />
@@ -243,19 +241,19 @@ function AdminLayout({
           "sidebar main"
         `}
       gap="none"
-      style={{ height: '100vh', width: '100%' }}
-      className={layoutClasses}
+      className={`${layoutClasses} admin-layout__main-grid`}
     >
 
       {/* ===== SIDEBAR ===== */}
       <AdminSidebar
+        as="sidebar"
         isCollapsed={isCollapsed}
         onToggleCollapse={handleSidebarToggle}
         counts={counts}
         loading={loadingCounts}
         error={countsError}
         currentPath={location.pathname}
-        style={{ gridArea: 'sidebar' }}
+        className="admin-layout__sidebar"
       />
 
       {/* ===== HEADER ===== */}
@@ -263,7 +261,7 @@ function AdminLayout({
         as="header"
         size="full"
         padding="md"
-        style={{ gridArea: 'header' }}
+        className="admin-layout__header"
       >
         <FlexContainer
           direction="column"
@@ -327,7 +325,7 @@ function AdminLayout({
         as="main"
         size="full"
         padding="lg"
-        style={{ gridArea: 'main'}}
+        className="admin-layout__main"
       >
         {children}
       </Container>

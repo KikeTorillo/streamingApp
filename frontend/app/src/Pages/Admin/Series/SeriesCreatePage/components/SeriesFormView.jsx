@@ -11,7 +11,6 @@ import { ContentImage } from '../../../../../components/atoms/ContentImage/Conte
 import { Typography } from '../../../../../components/atoms/Typography/Typography';
 import { filterEmptyFields } from '../../../../../utils/formUtils';
 import { getImageTypeInfo, selectFinalImage } from '../../../../../utils/imageUtils';
-import './SeriesFormView.css';
 
 /**
  * SeriesFormView - VERSIÓN REFACTORIZADA CON SISTEMA DE DISEÑO

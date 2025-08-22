@@ -69,10 +69,6 @@ function FilterBar(props) {
     <Container
       size="full"
       direction="row"
-      align="center"
-      justify="space-between"
-      gap="md"
-      padding="md"
       {...domProps} // ✅ Solo props válidas del DOM
       className={filterBarClasses}
     >

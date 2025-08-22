@@ -49,12 +49,25 @@ export const STANDARD_ROUNDED = {
 };
 
 /**
+ * Anchos estándar del sistema de diseño
+ * Homologados para TODOS los componentes
+ */
+export const STANDARD_WIDTHS = {
+  auto: 'auto',           // Ancho automático (natural del componente)
+  full: 'full',           // 100% del contenedor padre
+  'fit-content': 'fit-content', // Ajustar al contenido
+  'min-content': 'min-content', // Ancho mínimo necesario
+  'max-content': 'max-content'  // Ancho máximo posible
+};
+
+/**
  * Props base que TODOS los componentes deben soportar
  * 
  * @typedef {Object} StandardProps
  * @property {'xs'|'sm'|'md'|'lg'|'xl'} [size='md'] - Tamaño del componente
  * @property {'primary'|'secondary'|'success'|'warning'|'danger'|'neutral'} [variant='primary'] - Variante semántica
  * @property {'sm'|'md'|'lg'|'xl'|'full'} [rounded='md'] - Radio de bordes
+ * @property {'auto'|'full'|'fit-content'|'min-content'|'max-content'} [width='auto'] - Ancho del componente
  * @property {boolean} [disabled=false] - Si está deshabilitado
  * @property {boolean} [loading=false] - Estado de carga
  * @property {string} [className=''] - Clases CSS adicionales
@@ -83,6 +96,13 @@ export const STANDARD_PROPS_DEFINITION = {
     enum: Object.values(STANDARD_ROUNDED), 
     default: 'md',
     description: 'Radio de bordes del componente'
+  },
+  
+  width: {
+    type: 'string',
+    enum: Object.values(STANDARD_WIDTHS),
+    default: 'auto',
+    description: 'Ancho del componente según sistema homologado'
   },
 
   // Props de estado
@@ -188,6 +208,12 @@ export const DEPRECATED_PROPS = {
   'variant.ghost': {
     replacement: 'appearance="ghost" (específico por componente)',
     reason: 'Ghost es más appearance que variant semántica'
+  },
+
+  // Props de ancho legacy
+  fullWidth: {
+    replacement: 'width="full"',
+    reason: 'Homologación del sistema de anchos entre todos los componentes'
   }
 };
 
@@ -223,6 +249,11 @@ export const validateStandardProps = (props, componentName = 'Component') => {
     warnings.push(`${componentName}: rounded="${props.rounded}" no es válido. Usar: ${Object.values(STANDARD_ROUNDED).join(', ')}`);
   }
 
+  // Validar width
+  if (props.width && !Object.values(STANDARD_WIDTHS).includes(props.width)) {
+    warnings.push(`${componentName}: width="${props.width}" no es válido. Usar: ${Object.values(STANDARD_WIDTHS).join(', ')}`);
+  }
+
   // Detectar props deprecadas
   Object.keys(DEPRECATED_PROPS).forEach(deprecatedProp => {
     if (Object.prototype.hasOwnProperty.call(props, deprecatedProp)) {
@@ -253,6 +284,7 @@ export const extractStandardProps = (props) => {
     size,
     variant, 
     rounded,
+    width,
     disabled,
     loading,
     className,
@@ -267,7 +299,8 @@ export const extractStandardProps = (props) => {
   return {
     size,
     variant,
-    rounded, 
+    rounded,
+    width,
     disabled,
     loading,
     className,
@@ -290,7 +323,7 @@ export const extractStandardProps = (props) => {
 export const extractDOMProps = (props) => {
   const {
     // Props del sistema de diseño (NO van al DOM)
-    size, variant, rounded, loading, leftIcon, rightIcon, iconOnly,
+    size, variant, rounded, width, loading, leftIcon, rightIcon, iconOnly,
     
     // Props adicionales del hook useStandardProps (NO van al DOM)  
     tokens, renderIcon, hasLeftIcon, hasRightIcon, hasAnyIcon,
@@ -302,7 +335,7 @@ export const extractDOMProps = (props) => {
   } = props;
 
   // Marcar variables como utilizadas para evitar warnings de linting
-  void size; void variant; void rounded; void loading; void leftIcon; void rightIcon; void iconOnly;
+  void size; void variant; void rounded; void width; void loading; void leftIcon; void rightIcon; void iconOnly;
   void tokens; void renderIcon; void hasLeftIcon; void hasRightIcon; void hasAnyIcon;
   void isDisabled; void isLoading; void isEmpty;
 
@@ -333,6 +366,7 @@ export const STANDARD_PROP_TYPES = {
   size: PropTypes.oneOf(Object.values(STANDARD_SIZES)),
   variant: PropTypes.oneOf(Object.values(STANDARD_VARIANTS)), 
   rounded: PropTypes.oneOf(Object.values(STANDARD_ROUNDED)),
+  width: PropTypes.oneOf(Object.values(STANDARD_WIDTHS)),
   disabled: PropTypes.bool,
   loading: PropTypes.bool,
   className: PropTypes.string,

@@ -63,6 +63,7 @@ const Select = forwardRef((props, ref) => {
     required = false,
     autoFocus = false,
     compact = false,
+    width = 'auto', // ✅ HOMOLOGACIÓN: Misma prop que TextInput y Container
     ariaLabel,
     ariaDescribedBy,
     ariaErrorMessage,
@@ -109,6 +110,7 @@ const Select = forwardRef((props, ref) => {
   // Clases para el wrapper (cuando tiene iconos)
   const wrapperClasses = [
     'select-wrapper',
+    width !== 'auto' && `select-wrapper--width-${width}`, // ✅ HOMOLOGACIÓN: width como otros componentes
     variant !== 'primary' && `select-wrapper--${variant}`,
     disabled && 'select-wrapper--disabled',
     loading && 'select-wrapper--loading',
@@ -118,6 +120,7 @@ const Select = forwardRef((props, ref) => {
   // Clases simples para wrapper sin iconos (solo contenedor básico)
   const simpleWrapperClasses = [
     'select-wrapper',
+    width !== 'auto' && `select-wrapper--width-${width}`, // ✅ HOMOLOGACIÓN: width también en wrapper simple
     !needsWrapper ? className : '' // Agregar className al wrapper simple
   ].filter(Boolean).join(' ');
 
@@ -298,6 +301,7 @@ Select.propTypes = {
   required: PropTypes.bool,
   autoFocus: PropTypes.bool,
   compact: PropTypes.bool,
+  width: PropTypes.oneOf(['auto', 'full', 'fit-content', 'min-content', 'max-content']),
   ariaLabel: PropTypes.string,
   ariaDescribedBy: PropTypes.string,
   ariaErrorMessage: PropTypes.string,

@@ -428,7 +428,7 @@ const DynamicForm = ({
             size={finalSize}
             rounded={finalRounded}
             variant={hasError ? 'danger' : (field.variant || variant)}
-            fullWidth={true}
+            width="full"
             compact={compact}
             onChange={(e) => {
               // Manejar archivos de manera especial
@@ -458,7 +458,7 @@ const DynamicForm = ({
             size={finalSize}
             rounded={finalRounded}
             variant={hasError ? 'danger' : (field.variant || variant)}
-            fullWidth={true}
+            width="full"
             compact={compact}
             // Props específicas de ImageCropField
             aspect={field.aspect || 16/9}

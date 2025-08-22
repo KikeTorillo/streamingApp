@@ -74,7 +74,7 @@ const TextInput = forwardRef((props, ref) => {
     readOnly = false,
     required = false,
     autoFocus = false,
-    fullWidth = false,
+    width = 'auto',    // ✅ HOMOLOGACIÓN: Nueva prop estándar del sistema
     compact = false,
     onRightIconClick,
     onLeftIconClick,
@@ -112,8 +112,8 @@ const TextInput = forwardRef((props, ref) => {
     `text-input-wrapper--${size}`,
     currentVariant !== 'primary' && `text-input-wrapper--${currentVariant}`,
     rounded !== 'md' && `text-input-wrapper--rounded-${rounded}`,
+    width !== 'auto' && `text-input-wrapper--width-${width}`, // ✅ HOMOLOGACIÓN: width como sistema estándar
     isFocused && 'text-input-wrapper--focused',
-    fullWidth && 'text-input-wrapper--full-width',
     disabled && 'text-input-wrapper--disabled',
     loading && 'text-input-wrapper--loading',
     compact && 'text-input-wrapper--compact',
@@ -286,7 +286,7 @@ TextInput.propTypes = {
   readOnly: PropTypes.bool,
   required: PropTypes.bool,
   autoFocus: PropTypes.bool,
-  fullWidth: PropTypes.bool,
+  width: PropTypes.oneOf(['auto', 'full', 'fit-content', 'min-content', 'max-content']),
   compact: PropTypes.bool,
   onRightIconClick: PropTypes.func,
   onLeftIconClick: PropTypes.func,

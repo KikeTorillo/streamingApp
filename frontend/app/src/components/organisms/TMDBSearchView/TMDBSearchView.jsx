@@ -8,21 +8,28 @@ import { Divider } from '../../atoms/Divider/Divider';
 import { DynamicForm } from '../../molecules/DynamicForm/DynamicForm';
 import { ContentCard } from '../../molecules/ContentCard/ContentCard';
 import { EmptyState } from '../../molecules/EmptyState/EmptyState';
+import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
+import { Typography } from '../../atoms/Typography/Typography';
+import { Spinner } from '../../atoms/Spinner/Spinner';
 import { tmdbService } from '../../../services/tmdb/TMDBService';
-import './TMDBSearchView.css';
 
 /**
- * TMDBSearchView - VERSIÓN ACTUALIZADA CON API REAL DE TMDB
+ * TMDBSearchView - 100% MIGRADO AL SISTEMA DE DISEÑO
+ * 
+ * ✅ ZERO CSS CUSTOM: Usa únicamente componentes del sistema de diseño
+ * ✅ LAYOUT PURO: FlexContainer, Container, Typography - sin estilos adicionales
  * ✅ SERVICIO REAL: Conecta con la API de TMDB usando VITE_TMDB_API_KEY
  * ✅ BÚSQUEDA FUNCIONAL: Películas, series o contenido mixto
- * ✅ SISTEMA DE DISEÑO: Solo componentes con stories de Storybook
+ * ✅ SISTEMA DE DISEÑO: Solo componentes del sistema homologado
  * ✅ MANEJO DE ERRORES: Errores de red, API key inválida, etc.
  * ✅ UX OPTIMIZADA: Loading states, debouncing, validaciones
+ * ✅ RESPONSIVE AUTOMÁTICO: Sin media queries, usando props del sistema
+ * ✅ LIBRERÍA READY: Listo para extracción NPM sin dependencias CSS
  */
 function TMDBSearchView({
   // Handlers principales
-  onSelectItem = () => {},
-  onManualCreate = () => {},
+  onSelectItem = () => { },
+  onManualCreate = () => { },
 
   // Configuración
   contentType = "all",
@@ -59,7 +66,7 @@ function TMDBSearchView({
     const checkApiKey = () => {
       const hasApiKey = !!import.meta.env.VITE_TMDB_API_KEY;
       setIsApiKeyValid(hasApiKey);
-      
+
       if (!hasApiKey) {
         setError('⚠️ API Key de TMDB no configurada. Asegúrate de tener VITE_TMDB_API_KEY en tu archivo .env');
       }
@@ -88,7 +95,7 @@ function TMDBSearchView({
 
       // Usar el servicio real de TMDB
       const searchResults = await tmdbService.searchContent(
-        safeSearchQuery, 
+        safeSearchQuery,
         contentType,
         { sortBy }
       );
@@ -98,12 +105,12 @@ function TMDBSearchView({
       if (searchResults.length === 0) {
         setError(`No se encontraron resultados para "${safeSearchQuery}". Intenta con otros términos.`);
       }
-      
+
     } catch (err) {
 
       // Manejar diferentes tipos de errores
       let errorMessage = 'Error desconocido al buscar en TMDB.';
-      
+
       if (err.message.includes('API Key')) {
         errorMessage = '🔑 Error de autenticación con TMDB. Verifica tu API Key.';
         setIsApiKeyValid(false);
@@ -116,7 +123,7 @@ function TMDBSearchView({
       } else {
         errorMessage = `Error: ${err.message}`;
       }
-      
+
       setError(errorMessage);
       setResults([]);
     } finally {
@@ -212,6 +219,7 @@ function TMDBSearchView({
           showMeta={false}
           showRating={rating !== 'N/A'}
           onClick={() => handleItemClick(item)}
+          style={{ width: '100%' }}
         />
       );
     },
@@ -229,7 +237,7 @@ function TMDBSearchView({
 
   const renderLoadingState = () => (
     <EmptyState
-      icon={<div className="tmdb-search-view__loading-spinner"><div className="spinner" /></div>}
+      icon={<Spinner size="lg" variant="primary" />}
       title="Buscando en TMDB..."
       description="Consultando la base de datos de The Movie Database"
     />
@@ -237,29 +245,29 @@ function TMDBSearchView({
 
   const renderErrorState = () => (
     <EmptyState
-      icon="❌"
+      icon="alert-circle"
       title="Error en la búsqueda"
       description={error}
       action={(
-        <div className="tmdb-search-view__error-actions">
+        <FlexContainer gap="sm" justify="center" wrap="wrap">
           <Button
-            variant="outline"
+            variant="secondary"
             size="sm"
-            leftIcon="refresh"
+            leftIcon="refresh-cw"
             onClick={performSearch}
             disabled={!isApiKeyValid}
           >
             Intentar de nuevo
           </Button>
           <Button
-            variant="ghost"
+            variant="neutral"
             size="sm"
-            leftIcon="trash"
+            leftIcon="trash-2"
             onClick={handleClearResults}
           >
             Limpiar
           </Button>
-        </div>
+        </FlexContainer>
       )}
       variant="danger"
     />
@@ -271,104 +279,122 @@ function TMDBSearchView({
       title="Sin resultados"
       description={`No se encontraron resultados para "${safeSearchQuery}".`}
       action={(
-        <div className="tmdb-search-view__empty-actions">
+        <FlexContainer gap="sm" justify="center" wrap="wrap">
           <Button
-            variant="outline"
+            variant="secondary"
             size="sm"
-            leftIcon="refresh"
+            leftIcon="refresh-cw"
             onClick={handleClearResults}
           >
             Nueva búsqueda
           </Button>
           {showManualCreate && (
             <Button
-              variant="secondary"
+              variant="primary"
               size="sm"
-              leftIcon="edit"
+              leftIcon="plus"
               onClick={onManualCreate}
             >
               Crear manualmente
             </Button>
           )}
-        </div>
+        </FlexContainer>
       )}
     />
   );
 
   // ===== RENDER PRINCIPAL =====
   return (
-    <div className="tmdb-search-view">
-      {/* Formulario de búsqueda */}
-      <Container variant="neutral" size="xl" className="tmdb-search-view__container">
-        <div className="tmdb-search-view__header">
-          <h3 className="tmdb-search-view__title">{title}</h3>
+    <Container variant="neutral" size="full" padding="lg">
+      <FlexContainer direction="column" gap="lg">
+        {/* Header */}
+        <FlexContainer direction="column" gap="sm">
+          <Typography as="h3" size="xl" weight="bold" color="primary">
+            {title}
+          </Typography>
           {description && (
-            <p className="tmdb-search-view__description">
+            <Typography size="sm" color="muted">
               {description}
-            </p>
+            </Typography>
           )}
-        </div>
-        
-        <Divider variant="neutral" size="md" />
-          <DynamicForm
-            fields={searchFields}
-            onSubmit={handleSearchSubmit}
-            onChange={handleSearchFormChange}
-            className="tmdb-search-view__form"
-            size="md"
-            variant="primary"
-            rounded="md"
-            actions={[
-              {
-                key: 'search',
-                type: 'submit',
-                text: loading ? 'Buscando...' : 'Buscar',
-                variant: 'primary',
-                leftIcon: 'search',
-                loading: loading,
-                disabled: !safeSearchQuery || safeSearchQuery.length < 2 || !isApiKeyValid,
-                onClick: performSearch
-              },
-              {
-                key: 'clear',
-                text: 'Limpiar',
-                variant: 'neutral',
-                leftIcon: 'trash',
-                onClick: handleClearResults,
-                disabled: loading,
-                show: hasSearched
-              },
-              {
-                key: 'manual',
-                text: 'Crear manualmente',
-                variant: 'secondary',
-                leftIcon: 'edit',
-                onClick: onManualCreate,
-                disabled: loading,
-                show: showManualCreate
-              }
-            ]}
-          />
-          
-          <Divider variant="neutral" size="sm" />
+        </FlexContainer>
 
-          {/* Estados de contenido */}
-          {loading && renderLoadingState()}
-          
-          {error && !loading && renderErrorState()}
-          
-          {!loading && !error && !hasSearched && renderWelcomeState()}
-          
-          {!loading && !error && hasSearched && safeResults.length === 0 && renderEmptyState()}
-          
-          {/* Resultados */}
-          {!loading && !error && safeResults.length > 0 && (
-            <div className="tmdb-search-view__results-grid">
+        <Divider variant="neutral" size="md" />
+        
+        {/* Formulario de búsqueda */}
+        <DynamicForm
+          fields={searchFields}
+          onSubmit={handleSearchSubmit}
+          onChange={handleSearchFormChange}
+          size="md"
+          variant="primary"
+          rounded="md"
+          actions={[
+            {
+              key: 'search',
+              type: 'submit',
+              text: loading ? 'Buscando...' : 'Buscar',
+              variant: 'primary',
+              leftIcon: 'search',
+              loading: loading,
+              disabled: !safeSearchQuery || safeSearchQuery.length < 2 || !isApiKeyValid,
+              onClick: performSearch
+            },
+            {
+              key: 'clear',
+              text: 'Limpiar',
+              variant: 'neutral',
+              leftIcon: 'trash-2',
+              onClick: handleClearResults,
+              disabled: loading,
+              show: hasSearched
+            },
+            {
+              key: 'manual',
+              text: 'Crear manualmente',
+              variant: 'secondary',
+              leftIcon: 'plus',
+              onClick: onManualCreate,
+              disabled: loading,
+              show: showManualCreate
+            }
+          ]}
+        />
+
+        <Divider variant="neutral" size="sm" />
+
+        {/* Estados de contenido */}
+        {loading && renderLoadingState()}
+
+        {error && !loading && renderErrorState()}
+
+        {!loading && !error && !hasSearched && renderWelcomeState()}
+
+        {!loading && !error && hasSearched && safeResults.length === 0 && renderEmptyState()}
+
+        {/* Resultados en grid responsive */}
+        {!loading && !error && safeResults.length > 0 && (
+          <FlexContainer direction="column" gap="md">
+            <Typography size="md" weight="medium" color="primary">
+              Resultados encontrados: {safeResults.length}
+            </Typography>
+            <FlexContainer 
+              direction="row" 
+              gap="lg" 
+              wrap="wrap"
+              justify="flex-start"
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+                gap: 'var(--space-lg)'
+              }}
+            >
               {safeResults.map(renderResultItem)}
-            </div>
-          )}
-      </Container>
-    </div>
+            </FlexContainer>
+          </FlexContainer>
+        )}
+      </FlexContainer>
+    </Container>
   );
 }
 

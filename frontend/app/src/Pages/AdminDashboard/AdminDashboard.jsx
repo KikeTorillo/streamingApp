@@ -216,7 +216,7 @@ function AdminDashboard() {
               variant={card.variant || 'neutral'}
               onClick={card.onClick}
               loading={loading}
-              fullWidth={true}
+              width="full"
             />
           ))}
         </FlexContainer>

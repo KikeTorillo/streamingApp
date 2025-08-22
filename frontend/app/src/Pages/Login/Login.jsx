@@ -14,7 +14,6 @@ import { useAuth } from "../../app/context/AuthContext";
 // Componente LoginCard del sistema de diseño
 import { LoginCard } from "../../components/organisms/LoginCard/LoginCard";
 import { Typography } from "../../components/atoms/Typography/Typography";
-import './Login.css';
 
 function Login() {
   // Estados de la UI

@@ -10,7 +10,6 @@ import { Container } from '../../../../components/atoms/Container/Container';
 import { Divider } from '../../../../components/atoms/Divider/Divider';
 import { Badge } from '../../../../components/atoms/Badge/Badge';
 import { Typography } from '../../../../components/atoms/Typography/Typography';
-import './EpisodeEditPage.css';
 
 // Context
 import { useEpisodes } from '../../../../app/context/EpisodesContext';

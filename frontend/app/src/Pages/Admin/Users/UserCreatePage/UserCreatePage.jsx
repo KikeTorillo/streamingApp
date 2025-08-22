@@ -9,7 +9,6 @@ import { DynamicForm } from '../../../../components/molecules/DynamicForm/Dynami
 import { Typography } from '../../../../components/atoms/Typography/Typography';
 import { useUsers } from '../../../../app/context/UserContext';
 import { useSuccessRedirect } from '../../../../hooks/useSuccessRedirect';
-import './UserCreatePage.css';
 
 /**
  * UserCreatePage - REFACTORIZADO CON USERCONTEXT

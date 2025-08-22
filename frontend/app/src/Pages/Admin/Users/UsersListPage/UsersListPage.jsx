@@ -10,7 +10,6 @@ import { Badge } from '../../../../components/atoms/Badge/Badge';
 import { Typography } from '../../../../components/atoms/Typography/Typography';
 import { useUsers } from '../../../../app/context/UserContext';
 import { useAlertContext } from '../../../../app/context/AlertContext';
-import './UsersListPage.css';
 
 // Servicios de usuarios
 // deleteUserService ahora se maneja en UserContext

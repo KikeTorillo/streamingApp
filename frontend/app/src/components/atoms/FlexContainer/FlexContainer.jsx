@@ -47,6 +47,7 @@ function FlexContainer(props) {
     wrap = 'nowrap',
     gap,
     padding = null, // ✅ NUEVO: Padding interno del contenedor
+    width = 'auto', // ✅ HOMOLOGACIÓN: Misma prop que Container
     inline = false,
     grow = false,
     shrink = false,
@@ -63,6 +64,7 @@ function FlexContainer(props) {
     `flex-container--wrap-${wrap}`,
     gap && `flex-container--gap-${gap}`,
     padding && `flex-container--padding-${padding}`, // ✅ NUEVO: Clase de padding
+    width !== 'auto' && `flex-container--width-${width}`, // ✅ HOMOLOGACIÓN: width como Container
     `flex-container--size-${size}`,
     variant !== 'neutral' && `flex-container--variant-${variant}`,
     inline && 'flex-container--inline',
@@ -151,6 +153,11 @@ FlexContainer.propTypes = {
   padding: PropTypes.oneOf(['none', 'xs', 'sm', 'md', 'lg', 'xl', '2xl']),
   
   /**
+   * Ancho del contenedor usando sistema homologado
+   */
+  width: PropTypes.oneOf(['auto', 'full', 'fit-content', 'min-content', 'max-content']),
+  
+  /**
    * Usar display: inline-flex en lugar de flex
    */
   inline: PropTypes.bool,
@@ -188,6 +195,7 @@ FlexContainer.defaultProps = {
   justify: 'flex-start',
   wrap: 'nowrap',
   padding: null, // ✅ NUEVO: Sin padding por defecto
+  width: 'auto', // ✅ HOMOLOGACIÓN: Default como Container
   inline: false,
   grow: false,
   shrink: false,

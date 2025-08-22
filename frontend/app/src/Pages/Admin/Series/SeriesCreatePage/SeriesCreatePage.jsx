@@ -18,9 +18,6 @@ import { useCategories } from "../../../../hooks/useCategories";
 import { useFormNavigation } from "../../../../hooks/useFormNavigation";
 import { useSuccessRedirect } from "../../../../hooks/useSuccessRedirect";
 
-// ===== ESTILOS =====
-import './SeriesCreatePage.css';
-
 /**
  * SeriesCreatePage - USANDO CONTEXTO DE SERIES
  * ✅ CAMPO REMOVIDO: original_title eliminado del formulario

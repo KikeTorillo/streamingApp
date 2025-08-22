@@ -9,6 +9,27 @@
   font-family: var(--font-family-base);
 }
 
+/* ===== WIDTH VARIANTS - HOMOLOGADAS CON SISTEMA ===== */
+.select-wrapper--width-auto {
+  width: auto;
+}
+
+.select-wrapper--width-full {
+  width: 100%;
+}
+
+.select-wrapper--width-fit-content {
+  width: fit-content;
+}
+
+.select-wrapper--width-min-content {
+  width: min-content;
+}
+
+.select-wrapper--width-max-content {
+  width: max-content;
+}
+
 /* ===== SELECT BASE - ELEMENTO PRINCIPAL ===== */
 .select-base {
   /* Layout */

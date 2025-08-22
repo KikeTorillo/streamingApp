@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { Button } from '../../atoms/Button/Button';
 import { SearchBar } from '../../molecules/SearchBar/SearchBar';
 import { ThemeSelector } from '../../atoms/ThemeSelector';
-import './AppHeader.css';
+import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
+import { Typography } from '../../atoms/Typography/Typography';
 
 /**
  * Componente AppHeader - Organism
@@ -35,13 +36,8 @@ function AppHeader({
   ...restProps
 }) {
   
-  // Clases CSS dinámicas
-  const headerClasses = [
-    'app-header',
-    `app-header--variant-${variant}`,
-    `app-header--size-${size}`,
-    className
-  ].filter(Boolean).join(' ');
+  // Clases CSS simplificadas (sin CSS file)
+  const headerClasses = className;
 
   // Filtrar props que no deben propagarse al DOM
   const {
@@ -53,51 +49,84 @@ function AppHeader({
   // Evitar warnings de variables no usadas (necesarias para filtrar del DOM)
   void showBackButton; void onBackClick;
 
+  // Solo el background usando tokens del sistema de diseño
+  const headerStyles = {
+    background: 'var(--color-primary)'
+  };
+
   return (
-    <header {...validDOMProps} className={headerClasses}>
-      {/* Brand/Logo */}
-      <div className="app-header__brand">
-        <h1 
-          className={`app-header__title ${onTitleClick ? 'app-header__title--clickable' : ''}`}
-          onClick={onTitleClick}
-          style={onTitleClick ? { cursor: 'pointer' } : {}}
+    <header {...validDOMProps} className={headerClasses} style={headerStyles}>
+      <FlexContainer 
+        align="center" 
+        justify="space-between" 
+        gap="lg"
+        width="full"
+        as="div"
+        padding="lg"
+      >
+        {/* Brand/Logo */}
+        <FlexContainer 
+          align="center" 
+          shrink={false}
         >
-          {appTitle}
-        </h1>
-      </div>
+          <Typography
+            as="h1"
+            size={size === 'lg' ? '2xl' : 'xl'}
+            weight="bold"
+            color="light"
+            onClick={onTitleClick}
+          >
+            {appTitle}
+          </Typography>
+        </FlexContainer>
 
-      {/* Búsqueda */}
-      {showSearch && (
-        <div className="app-header__search">
-          <SearchBar
-            searchVariant="simple"
-            variant="primary"
-            placeholder={searchPlaceholder}
-            value={searchValue}
-            onChange={onSearchChange}
-            size={size === 'lg' ? 'lg' : 'md'}
-            className="search-input"
-          />
-        </div>
-      )}
-
-      {/* Usuario */}
-      <div className="app-header__user">
-        {userName && (
-          <span className="app-header__welcome">
-            ¡Hola, {userName}!
-          </span>
+        {/* Búsqueda */}
+        {showSearch && (
+          <FlexContainer 
+            grow 
+            justify="center"
+            style={{ maxWidth: '40rem' }}
+          >
+            <SearchBar
+              searchVariant="simple"
+              variant="primary"
+              placeholder={searchPlaceholder}
+              value={searchValue}
+              onChange={onSearchChange}
+              size={size === 'lg' ? 'lg' : 'md'}
+              width="full"
+            />
+          </FlexContainer>
         )}
-        <Button
-          variant="secondary"
-          size={size === 'lg' ? 'md' : 'sm'}
-          onClick={onLogout}
-          className="logout-button"
+
+        {/* Usuario */}
+        <FlexContainer 
+          align="center" 
+          gap="md"
+          className="app-header__user"
+          shrink={false}
         >
-          Cerrar Sesión
-        </Button>
-        <ThemeSelector variant="neutral" size='md' />
-      </div>
+          {userName && (
+            <Typography
+              size="sm"
+              weight="medium"
+              color="light"
+              className="app-header__welcome"
+            >
+              ¡Hola, {userName}!
+            </Typography>
+          )}
+          <Button
+            variant="secondary"
+            size={size === 'lg' ? 'md' : 'sm'}
+            onClick={onLogout}
+            className="logout-button"
+          >
+            Cerrar Sesión
+          </Button>
+          <ThemeSelector variant="neutral" size='md' />
+        </FlexContainer>
+      </FlexContainer>
     </header>
   );
 }
@@ -111,7 +140,7 @@ AppHeader.propTypes = {
   onSearchChange: PropTypes.func,
   searchPlaceholder: PropTypes.string,
   showSearch: PropTypes.bool,
-  variant: PropTypes.oneOf(['default', 'dark', 'light']),
+  variant: PropTypes.oneOf(['primary', 'secondary', 'dark', 'light']),
   size: PropTypes.oneOf(['sm', 'md', 'lg']),
   className: PropTypes.string
 };

@@ -9,7 +9,6 @@ import { ProgressModal } from "../../../../components/molecules/ProgressModal/Pr
 import { Typography } from '../../../../components/atoms/Typography/Typography';
 import { useFormNavigation } from "../../../../hooks/useFormNavigation";
 import { useSuccessRedirect } from "../../../../hooks/useSuccessRedirect";
-import "./EpisodesCreatePage.css";
 
 // Context
 import { useEpisodes } from '../../../../app/context/EpisodesContext';

@@ -10,7 +10,6 @@ import { Badge } from '../../../../components/atoms/Badge/Badge';
 import { Select } from '../../../../components/atoms/Select/Select';
 import { Label } from '../../../../components/atoms/Label/Label';
 import { Typography } from '../../../../components/atoms/Typography/Typography';
-import './EpisodesListPage.css';
 
 // Context y servicios
 import { useEpisodes } from '../../../../app/context/EpisodesContext';
@@ -323,6 +322,7 @@ function EpisodesListPage() {
         data={episodes}
         columns={episodesColumns}
         loading={loading}
+        variant="primary"
         onEdit={handleEditEpisode}
         onView={handleViewEpisode}
         onDelete={handleDeleteEpisode}

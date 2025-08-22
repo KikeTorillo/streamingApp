@@ -295,10 +295,31 @@
   }
 }
 
+/* ===== WIDTH VARIANTS - HOMOLOGADAS CON CONTAINER ===== */
+.flex-container--width-auto {
+  width: auto;
+}
+
+.flex-container--width-full {
+  width: 100%;
+}
+
+.flex-container--width-fit-content {
+  width: fit-content;
+}
+
+.flex-container--width-min-content {
+  width: min-content;
+}
+
+.flex-container--width-max-content {
+  width: max-content;
+}
+
 /* ===== UTILIDADES COMUNES ===== */
 /* Para casos específicos que necesiten override */
 .flex-container--full-width {
-  width: 100%;
+  width: 100%; /* ✅ BACKWARD COMPATIBILITY */
 }
 
 .flex-container--full-height {

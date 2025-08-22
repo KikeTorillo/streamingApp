@@ -11,6 +11,28 @@
     gap: var(--space-xs);
 }
 
+/* ===== WIDTH VARIANTS - HOMOLOGADAS CON SISTEMA ===== */
+.text-input-wrapper--width-auto {
+    width: auto;
+}
+
+.text-input-wrapper--width-full {
+    width: 100%;
+}
+
+.text-input-wrapper--width-fit-content {
+    width: fit-content;
+}
+
+.text-input-wrapper--width-min-content {
+    width: min-content;
+}
+
+.text-input-wrapper--width-max-content {
+    width: max-content;
+}
+
+/* ===== BACKWARD COMPATIBILITY (mantener temporalmente) ===== */
 .text-input-wrapper--full-width {
     width: 100%;
 }

@@ -18,8 +18,6 @@ import { useFormNavigation } from "../../../../hooks/useFormNavigation";
 import { useMovies } from "../../../../app/context/MoviesContext";
 import { useSuccessRedirect } from "../../../../hooks/useSuccessRedirect";
 
-// ===== ESTILOS =====
-import './MovieCreatePage.css';
 
 /**
  * MovieCreatePage - VERSIÓN REFACTORIZADA CON MOVIESCONTEXT
@@ -51,7 +49,7 @@ function MovieCreatePage() {
   } = useFormNavigation();
 
   // ===== CONTEXTO DE PELÍCULAS =====
-  const { 
+  const {
     createMovie,
     monitorProgress,
     resetCreationState,
@@ -140,7 +138,7 @@ function MovieCreatePage() {
         name: 'coverImageFile',
         type: 'image-crop',
         label: 'Archivo de Portada',
-        aspect: 2/3,
+        aspect: 2 / 3,
         maxFileSize: '5MB',
         showPreview: true,
         previewDimensions: { width: 120, height: 180 },
@@ -246,51 +244,46 @@ function MovieCreatePage() {
         { label: 'Crear Película' }
       ]}
     >
-      <Container size='lg'>
-        <div className="movie-create-page">
-          {/* Contenido principal */}
-          {currentView === 'search' && (
-            <TMDBSearchView
-              onSelectItem={handleSelectFromTMDBWithReset}
-              onManualCreate={handleManualCreateWithReset}
-              contentType="movie"
-              title="Buscar Películas en TMDB"
-              description="Busca películas en The Movie Database para agregar a tu catálogo"
-              placeholder="Ej: Avatar, Inception, Avengers..."
-              helperText="Busca películas por título, año o palabras clave"
-              showManualCreate={true}
-            />
-          )}
+      {/* Contenido principal */}
+      {currentView === 'search' && (
+        <TMDBSearchView
+          onSelectItem={handleSelectFromTMDBWithReset}
+          onManualCreate={handleManualCreateWithReset}
+          contentType="movie"
+          title="Buscar Películas en TMDB"
+          description="Busca películas en The Movie Database para agregar a tu catálogo"
+          placeholder="Ej: Avatar, Inception, Avengers..."
+          helperText="Busca películas por título, año o palabras clave"
+          showManualCreate={true}
+        />
+      )}
 
-          {currentView === 'form' && (
-            <MovieFormView
-              title={selectedItem ? `${selectedItem.title || selectedItem.name} (desde TMDB)` : "Crear Película Manualmente"}
-              description={selectedItem ? 
-                "Completa la información adicional para la película seleccionada de TMDB" : 
-                "Completa toda la información para crear una nueva película desde cero"
-              }
-              fields={generateFormFields()}
-              initialData={generateInitialFormData(selectedItem)}
-              onSubmit={handleFormSubmit}
-              categoryOptions={categories.map(cat => ({ value: cat.id, label: cat.name }))}
-              loading={creating || processing}
-              error={submitError || contextError}
-              hasChanges={hasChanges}
-              onChange={markAsChanged}
-              selectedItem={selectedItem} // ✅ AGREGAR: Para detectar si es manual o TMDB
-            />
-          )}
-
-        </div>
-      </Container>
+      {currentView === 'form' && (
+        <MovieFormView
+          title={selectedItem ? `${selectedItem.title || selectedItem.name} (desde TMDB)` : "Crear Película Manualmente"}
+          description={selectedItem ?
+            "Completa la información adicional para la película seleccionada de TMDB" :
+            "Completa toda la información para crear una nueva película desde cero"
+          }
+          fields={generateFormFields()}
+          initialData={generateInitialFormData(selectedItem)}
+          onSubmit={handleFormSubmit}
+          categoryOptions={categories.map(cat => ({ value: cat.id, label: cat.name }))}
+          loading={creating || processing}
+          error={submitError || contextError}
+          hasChanges={hasChanges}
+          onChange={markAsChanged}
+          selectedItem={selectedItem} // ✅ AGREGAR: Para detectar si es manual o TMDB
+        />
+      )}
       <ProgressModal
         isVisible={uploadStatus !== 'idle'}
         progress={uploadProgress}
         status={uploadStatus}
-        message={contextError || (uploadStatus === 'uploading' ? 'Subiendo video...' : 
-                uploadStatus === 'processing' ? 'Procesando video...' : 
-                uploadStatus === 'completed' ? 'Procesamiento completado' : 
-                'Preparando...')}
+        message={contextError || (uploadStatus === 'uploading' ? 'Subiendo video...' :
+          uploadStatus === 'processing' ? 'Procesando video...' :
+            uploadStatus === 'completed' ? 'Procesamiento completado' :
+              'Preparando...')}
         size="lg"
       />
     </AdminLayout>

@@ -11,7 +11,6 @@ import { Divider } from '../../../../components/atoms/Divider/Divider';
 import { Badge } from '../../../../components/atoms/Badge/Badge';
 import { ContentImage } from '../../../../components/atoms/ContentImage/ContentImage';
 import { Typography } from '../../../../components/atoms/Typography/Typography';
-import './SeriesEditPage.css';
 
 // Contexto
 import { useSeries } from '../../../../app/context/SeriesContext';

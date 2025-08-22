@@ -2,7 +2,6 @@
 import PropTypes from 'prop-types';
 import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
 import { Container } from '../../atoms/Container/Container';
-import './PageLayout.css';
 
 /**
  * PageLayout - TEMPLATE SIMPLIFICADO CON CONTENEDORES PUROS

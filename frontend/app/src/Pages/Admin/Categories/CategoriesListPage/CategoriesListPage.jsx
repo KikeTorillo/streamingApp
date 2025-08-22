@@ -9,7 +9,6 @@ import { Button } from '../../../../components/atoms/Button/Button';
 import { EditModal } from '../../../../components/organisms/EditModal/EditModal';
 import { Typography } from '../../../../components/atoms/Typography/Typography';
 import { AlertProvider, useAlertContext } from '../../../../app/context/AlertContext';
-import './CategoriesListPage.css';
 
 // Contexto de categorías
 import { useCategories } from '../../../../app/context/CategoriesContext';
@@ -34,7 +33,7 @@ function CategoriesListPage() {
 
 function CategoriesListContent() {
   const navigate = useNavigate();
-  
+
   // ===== HOOKS DE ALERTAS =====
   const { showInfo, showError } = useAlertContext();
 
@@ -55,11 +54,11 @@ function CategoriesListContent() {
   } = useCategories();
 
   // ===== FUNCIONES AUXILIARES =====
-  
+
   // Formatear fechas se obtiene del contexto como formatCategoryDate
 
   // ===== CONFIGURACIÓN DE COLUMNAS =====
-  
+
   /**
    * ✅ Columnas de la tabla - SIN columna de acciones personalizada (usa DataTable integrado)
    */
@@ -108,7 +107,7 @@ function CategoriesListContent() {
   ];
 
   // ===== FUNCIONES DE ACCIONES =====
-  
+
   /**
    * Ver detalles de categoría
    */
@@ -132,21 +131,21 @@ function CategoriesListContent() {
 
     openEditModal(category);
   };
-  
+
   /**
    * Guardar cambios en categoría
    */
   const handleSaveCategory = async (newName) => {
     try {
       const result = await saveFromModal(newName);
-      
+
       if (result.success) {
         // Éxito - no se requiere acción, el contexto ya actualizó la lista
       } else if (result.error === 'SESSION_EXPIRED') {
 
         navigate('/login');
       }
-      
+
     } catch (error) {
       if (error.message === 'SESSION_EXPIRED') {
 
@@ -192,7 +191,7 @@ function CategoriesListContent() {
   }, [loadCategories]);
 
   // ===== RENDER =====
-  
+
   return (
     <AdminLayout
       title="Gestión de Categorías"
@@ -201,42 +200,37 @@ function CategoriesListContent() {
         { label: 'Categorías' }
       ]}
       headerActions={
-        <div className="categories-list__header-actions">
-          <Button
-            variant="primary"
-            size="sm"
-            leftIcon="grid"
-            onClick={handleCreateCategory}
-          >
-            Crear Categoría
-          </Button>
-        </div>
+        <Button
+          variant="primary"
+          size="sm"
+          leftIcon="grid"
+          onClick={handleCreateCategory}
+        >
+          Crear Categoría
+        </Button>
+
       }
     >
-      <div className="categories-list">
-        {/* ===== TABLA DE CATEGORÍAS ===== */}
-        <div className="categories-list__table">
-          <DataTable
-            data={categories}
-            columns={categoryColumns}
-            loading={loading}
-            error={error}
-            searchPlaceholder="Buscar categorías por nombre..."
-            pageSizeOptions={[10, 25, 50, 100]}
-            pageSize={10}
-            variant="primary"
-            emptyTitle="No hay categorías registradas"
-            emptyDescription="Crea tu primera categoría para organizar el contenido multimedia"
-            emptyIcon="grid"
-            onView={handleViewCategory}
-            onEdit={handleEditCategory}
-            onDelete={handleDeleteCategory}
-            deleting={deleting}
-            className={deleting ? 'categories-list__table--deleting' : ''}
-          />
-        </div>
-      </div>
-      
+
+      <DataTable
+        data={categories}
+        columns={categoryColumns}
+        loading={loading}
+        error={error}
+        searchPlaceholder="Buscar categorías por nombre..."
+        pageSizeOptions={[10, 25, 50, 100]}
+        pageSize={10}
+        variant="primary"
+        emptyTitle="No hay categorías registradas"
+        emptyDescription="Crea tu primera categoría para organizar el contenido multimedia"
+        emptyIcon="grid"
+        onView={handleViewCategory}
+        onEdit={handleEditCategory}
+        onDelete={handleDeleteCategory}
+        deleting={deleting}
+        className={deleting ? 'categories-list__table--deleting' : ''}
+      />
+
       {/* Modal de edición */}
       <EditModal
         isOpen={editModal.isOpen}

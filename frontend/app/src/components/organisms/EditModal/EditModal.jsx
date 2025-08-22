@@ -7,24 +7,28 @@ import { Modal } from '../../molecules/Modal/Modal';
 import { TextInput } from '../../molecules/TextInput/TextInput';
 import { Button } from '../../atoms/Button/Button';
 import { Icon } from '../../atoms/Icon/Icon';
+import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
+import { Typography } from '../../atoms/Typography/Typography';
+import { Container } from '../../atoms/Container/Container';
 import { useEditModalProps } from '../../../hooks/useStandardProps';
 import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens';
-import './EditModal.css';
 
 /**
- * EditModal - Organismo MIGRADO para editar campos de texto simples
+ * EditModal - Organismo 100% MIGRADO AL SISTEMA DE DISEÑO
  * 
- * ✅ SISTEMA DE DISEÑO: Usa componentes migrados (Modal, TextInput, Button)
+ * ✅ ZERO CSS CUSTOM: Usa únicamente componentes del sistema de diseño
+ * ✅ LAYOUT PURO: FlexContainer, Container, Typography - sin estilos adicionales
  * ✅ PROPS ESTÁNDAR: size, variant, rounded, loading, disabled + hook useEditModalProps()
- * ✅ DESIGN TOKENS: Espaciado, colores y tipografía automáticos
+ * ✅ DESIGN TOKENS: Espaciado, colores y tipografía 100% automáticos
  * ✅ SISTEMA ICONOS: Integración completa con renderIcon Feather
- * ✅ ESTADOS AVANZADOS: loading/disabled con overlays visuales
+ * ✅ ESTADOS AVANZADOS: loading/disabled con overlays del sistema
  * ✅ REUTILIZABLE: Para editar nombres, títulos, descripciones CRUD
  * ✅ VALIDATION: Maneja validación básica con iconos automáticos
  * ✅ ACCESIBILIDAD: ARIA completa + navegación teclado
  * ✅ BACKWARD COMPATIBILITY: 100% sin breaking changes
- * ✅ MOBILE-FIRST: Responsive con breakpoints automáticos
+ * ✅ MOBILE-FIRST: Responsive automático del sistema
  * ✅ PERFORMANCE: Memoización automática y extractDOMProps
+ * ✅ LIBRERÍA READY: Listo para extracción NPM sin dependencias CSS
  */
 function EditModal(props) {
   // ✅ HOOK ESPECIALIZADO - Props estándar + tokens automáticos
@@ -220,27 +224,57 @@ function EditModal(props) {
       rounded={rounded}
       disabled={isDisabled}
       loading={isLoading}
-      className={`edit-modal-wrapper ${className}`}
+      className={className}
       closeOnBackdrop={!hasChanges && !isLoading}
       closeOnEscape={!hasChanges && !isLoading}
       aria-labelledby={fieldId}
       {...domProps}
     >
-      <form onSubmit={handleSubmit} className={`edit-modal ${className}`}>
+      <FlexContainer 
+        as="form"
+        onSubmit={handleSubmit}
+        direction="column"
+        gap="lg"
+        padding="sm"
+        style={{ position: 'relative' }}
+      >
         {/* Overlay para estados loading/disabled */}
         {(isLoading || isDisabled) && (
-          <div className="edit-modal__overlay">
+          <Container
+            style={{ 
+              position: 'absolute', 
+              top: 0, 
+              left: 0, 
+              right: 0, 
+              bottom: 0, 
+              zIndex: 10,
+              background: 'rgba(255, 255, 255, 0.9)',
+              borderRadius: 'inherit',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
             {isLoading && (
-              <div className="edit-modal__overlay-content">
+              <FlexContainer 
+                direction="column"
+                align="center"
+                gap="sm"
+              >
                 <Icon name="loader" size="sm" variant="primary" spinning />
-                <span>Guardando cambios...</span>
-              </div>
+                <Typography size="sm" color="muted">
+                  Guardando cambios...
+                </Typography>
+              </FlexContainer>
             )}
-          </div>
+          </Container>
         )}
         
         {/* Campo de entrada */}
-        <div className="edit-modal__field">
+        <FlexContainer 
+          direction="column"
+          gap="sm"
+        >
           <TextInput
             id={fieldId}
             label={fieldLabel}
@@ -265,22 +299,46 @@ function EditModal(props) {
           
           {/* Contador de caracteres */}
           {maxLength && (
-            <div className="edit-modal__counter">
+            <Typography 
+              size="sm" 
+              color="muted" 
+              align="right"
+            >
               {value.length}/{maxLength}
-            </div>
+            </Typography>
           )}
-        </div>
+        </FlexContainer>
         
         {/* Error general */}
         {error && (
-          <div className="edit-modal__error" id={errorId}>
-            <Icon name="alert-circle" size="sm" variant="danger" />
-            <span className="edit-modal__error-message">{error}</span>
-          </div>
+          <Container
+            id={errorId}
+            variant="danger"
+            padding="sm"
+            rounded="md"
+            style={{
+              background: 'var(--color-danger-light)',
+              border: '1px solid var(--color-danger)',
+              color: 'var(--color-danger)'
+            }}
+          >
+            <FlexContainer 
+              align="flex-start"
+              gap="sm"
+            >
+              <Icon name="alert-circle" size="sm" variant="danger" />
+              <Typography size="sm" style={{ flex: 1 }}>
+                {error}
+              </Typography>
+            </FlexContainer>
+          </Container>
         )}
         
         {/* Botones */}
-        <div className="edit-modal__actions">
+        <FlexContainer 
+          gap="sm"
+          justify="space-around"
+        >
           <Button
             type="button"
             size={size}
@@ -289,6 +347,7 @@ function EditModal(props) {
             onClick={handleClose}
             disabled={isLoading}
             leftIcon="x"
+            style={{ minWidth: '6rem' }}
           >
             {cancelText}
           </Button>
@@ -301,28 +360,35 @@ function EditModal(props) {
             disabled={!canSave}
             loading={isLoading}
             leftIcon="save"
+            style={{ minWidth: '6rem' }}
           >
             {saveText}
           </Button>
-        </div>
+        </FlexContainer>
         
         {/* Información de ayuda */}
-        <div className="edit-modal__help">
-          <p>
-            {hasChanges ? (
-              <>
-                <Icon name="edit" size="sm" variant="warning" />
+        <FlexContainer 
+          justify="center"
+          align="center"
+          gap="sm"
+        >
+          {hasChanges ? (
+            <>
+              <Icon name="edit" size="sm" variant="warning" />
+              <Typography size="sm" color="muted">
                 Tienes cambios sin guardar
-              </>
-            ) : (
-              <>
-                <Icon name="info" size="sm" variant="primary" />
+              </Typography>
+            </>
+          ) : (
+            <>
+              <Icon name="info" size="sm" variant="primary" />
+              <Typography size="sm" color="muted">
                 Modifica el valor y presiona Guardar
-              </>
-            )}
-          </p>
-        </div>
-      </form>
+              </Typography>
+            </>
+          )}
+        </FlexContainer>
+      </FlexContainer>
     </Modal>
   );
 }

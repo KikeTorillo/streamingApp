@@ -1,25 +1,24 @@
 // EmptyState.jsx
 import PropTypes from 'prop-types';
-import { Card } from '../../atoms/Card/Card';
+import { Container } from '../../atoms/Container/Container';
 import { Icon } from '../../atoms/Icon/Icon';
 import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
 import { Typography } from '../../atoms/Typography/Typography';
 import { useEmptyStateProps } from '../../../hooks/useStandardProps.jsx';
 import { STANDARD_PROP_TYPES } from '../../../tokens/standardProps.js';
-import './EmptyState.css';
 
 /**
- * Componente EmptyState - Molecule
+ * Componente EmptyState - Molecule SIMPLIFICADO
  * 
- * ✅ MIGRADO: Sistema de diseño estándar completo
- * ✅ HOOKS: useEmptyStateProps() integrado
- * ✅ TOKENS: Spacing/sizing automáticos con design tokens
- * ✅ ICONS: Sistema de iconos unificado con renderIcon
- * ✅ COMPATIBILITY: Backward compatibility con deprecation warnings
+ * ✅ SIMPLIFICACIÓN SISTEMAÁTICA: Eliminado CSS custom, solo componentes del sistema
+ * ✅ CONTAINER + FLEXCONTAINER: Layout puro del sistema de diseño
+ * ✅ TYPOGRAPHY: Componente Typography para todo el texto
+ * ✅ ZERO CSS: Sin archivos .css, composición pura
+ * ✅ TOKENS AUTOMÁTICOS: Spacing, colors y sizing del sistema
  * 
  * Muestra un estado vacío cuando no hay contenido que mostrar.
  * Incluye ícono, título, descripción y acción opcional.
- * Usa el sistema de componentes Card como base.
+ * NUEVO: Usa Container + FlexContainer para layout limpio.
  */
 function EmptyState({
   // Contenido
@@ -83,62 +82,48 @@ function EmptyState({
     return mappedVariant;
   })();
   
-  // Clases CSS dinámicas con sistema de tokens
-  const emptyStateClasses = [
-    'empty-state',
-    `empty-state--size-${finalSize}`,
-    `empty-state--variant-${finalVariantCompat}`,
-    isDisabled && 'empty-state--disabled',
-    isLoading && 'empty-state--loading',
-    standardClassName
-  ].filter(Boolean).join(' ');
+  // ✅ SIMPLIFICADO: Sin clases CSS, solo sistema de componentes
 
   // ===== RENDER =====
   return (
-    <Card 
-      variant="neutral"
-      size={finalSize}
-      className={emptyStateClasses}
-      disabled={isDisabled}
-      loading={isLoading}
+    <Container 
+      size="full"
+      padding="xl"
+      variant={finalVariantCompat}
+      className={standardClassName}
       {...standardProps}
     >
       <FlexContainer
         direction="column"
         align="center"
-        gap="md"
-        className="empty-state__content"
+        justify="center"
+        gap="lg"
+        style={{ minHeight: '16rem' }}
       >
         {/* Ícono con sistema unificado */}
-        <FlexContainer
-          align="center"
-          justify="center"
-          className="empty-state__icon"
-        >
-          {renderIcon ? renderIcon(icon) : (
-            typeof icon === 'string' && icon.length <= 2 ? (
-              icon // Emoji directo
-            ) : (
-              <Icon name={icon} size={tokens.size.iconSize} />
-            )
-          )}
-        </FlexContainer>
+        {renderIcon ? renderIcon(icon) : (
+          typeof icon === 'string' && icon.length <= 2 ? (
+            <span style={{ fontSize: '3rem' }}>{icon}</span> // Emoji directo
+          ) : (
+            <Icon name={icon} size="xl" />
+          )
+        )}
         
         {/* Título */}
-        <Typography variant="h3" className="empty-state__title">
+        <Typography variant="h3" size="lg" weight="semibold">
           {title}
         </Typography>
         
         {/* Descripción */}
-        <Typography variant="p" className="empty-state__description">
+        <Typography variant="p" size="md" color="muted" style={{ textAlign: 'center', maxWidth: '32rem' }}>
           {description}
         </Typography>
         
         {/* Acción opcional */}
         {action && (
-          <div className="empty-state__action">
+          <FlexContainer justify="center">
             {action}
-          </div>
+          </FlexContainer>
         )}
         
         {/* Estado loading overlay */}
@@ -146,13 +131,12 @@ function EmptyState({
           <FlexContainer
             align="center"
             justify="center"
-            className="empty-state__loading-overlay"
           >
-            <Icon name="loader-2" size={tokens.size.iconSize} className="animate-spin" />
+            <Icon name="loader-2" size="lg" className="animate-spin" />
           </FlexContainer>
         )}
       </FlexContainer>
-    </Card>
+    </Container>
   );
 }
 

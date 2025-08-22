@@ -9,8 +9,6 @@ import { Button } from '../../../../components/atoms/Button/Button';
 import { Badge } from '../../../../components/atoms/Badge/Badge';
 import { ContentImage } from '../../../../components/atoms/ContentImage/ContentImage';
 import { Typography } from '../../../../components/atoms/Typography/Typography';
-import './SeriesListPage.css';
-
 // Contexto de series
 import { useSeries } from '../../../../app/context/SeriesContext';
 

@@ -12,7 +12,6 @@ import { FlexContainer } from '../../../../components/atoms/FlexContainer/FlexCo
 import { Typography } from '../../../../components/atoms/Typography/Typography';
 import { useMovies } from '../../../../app/context/MoviesContext';
 import { useMovieNavigation } from '../../../../hooks/useMovieNavigation';
-import './MoviesListPage.css';
 
 /**
  * MoviesListPage - REFACTORIZADO CON MOVIESCONTEXT
