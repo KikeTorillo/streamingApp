@@ -12,7 +12,7 @@ import './FlexContainer.css';
  * 
  * ✅ OBJETIVO: Eliminar 40+ usos repetitivos de display: flex en el proyecto
  * ✅ SISTEMA ESTÁNDAR: Props unificadas con otros componentes
- * ✅ TOKENS AUTOMÁTICOS: Gap, spacing y alignment del sistema
+ * ✅ TOKENS AUTOMÁTICOS: Spacing y alignment del sistema
  * ✅ RESPONSIVE: Adaptación automática por breakpoints
  * ✅ CASOS DE USO: Headers, barras de navegación, formularios, cards
  * 
@@ -45,7 +45,7 @@ function FlexContainer(props) {
     align = 'stretch', 
     justify = 'flex-start',
     wrap = 'nowrap',
-    gap,
+    spacing,
     padding = null, // ✅ NUEVO: Padding interno del contenedor
     width = 'auto', // ✅ HOMOLOGACIÓN: Misma prop que Container
     inline = false,
@@ -62,7 +62,7 @@ function FlexContainer(props) {
     `flex-container--align-${align}`,
     `flex-container--justify-${justify}`,
     `flex-container--wrap-${wrap}`,
-    gap && `flex-container--gap-${gap}`,
+    spacing && `flex-container--gap-${spacing}`, // ✅ USAR spacing EN LUGAR DE gap
     padding && `flex-container--padding-${padding}`, // ✅ NUEVO: Clase de padding
     width !== 'auto' && `flex-container--width-${width}`, // ✅ HOMOLOGACIÓN: width como Container
     `flex-container--size-${size}`,
@@ -145,7 +145,7 @@ FlexContainer.propTypes = {
   /**
    * Espaciado entre elementos (gap) usando tokens del sistema
    */
-  gap: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl']),
+  spacing: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl']),
   
   /**
    * Padding interno del contenedor usando tokens del sistema

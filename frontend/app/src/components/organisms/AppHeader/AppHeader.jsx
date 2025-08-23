@@ -59,7 +59,7 @@ function AppHeader({
       <FlexContainer 
         align="center" 
         justify="space-between" 
-        gap="lg"
+        spacing="lg"
         width="full"
         as="div"
         padding="lg"
@@ -102,7 +102,7 @@ function AppHeader({
         {/* Usuario */}
         <FlexContainer 
           align="center" 
-          gap="md"
+          spacing="md"
           className="app-header__user"
           shrink={false}
         >

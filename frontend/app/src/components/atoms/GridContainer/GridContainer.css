@@ -1,6 +1,6 @@
 /* ===== GRIDCONTAINER - ÁTOMO PARA LAYOUTS CSS GRID ===== */
 /* ✅ OBJETIVO: Eliminar 31+ usos repetitivos de display: grid */
-/* ✅ TOKENS AUTOMÁTICOS: Gap, spacing y columnas del sistema */
+/* ✅ TOKENS AUTOMÁTICOS: Spacing y columnas del sistema */
 /* ✅ RESPONSIVE: Adaptación automática por breakpoints */
 
 /* ===== BASE GRID CONTAINER ===== */
@@ -19,7 +19,7 @@
   grid-auto-flow: dense;
 }
 
-/* ===== GAP USANDO TOKENS DEL SISTEMA ===== */
+/* ===== SPACING (GAP) USANDO TOKENS DEL SISTEMA ===== */
 .grid-container--gap-xs {
   gap: var(--space-xs);
 }
@@ -280,7 +280,7 @@
 /* Tablet (481px - 767px) - Forzar menos columnas */
 @media (max-width: 76.7rem) and (min-width: 48.1rem) {
   .grid-container {
-    /* En tablet, reducir gaps grandes automáticamente */
+    /* En tablet, reducir spacings grandes automáticamente */
   }
   
   .grid-container--gap-xl,
@@ -308,7 +308,7 @@
     /* Los auto-fit con min-width de 20rem se adaptarán a móvil automáticamente */
   }
   
-  /* Reducir gaps en móvil */
+  /* Reducir spacings en móvil */
   .grid-container--gap-lg,
   .grid-container--gap-xl,
   .grid-container--gap-2xl,

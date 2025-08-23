@@ -149,7 +149,7 @@ const LoginCard = ({
           as="form"
           onSubmit={handleSubmit}
           direction="column"
-          gap="lg"
+          spacing="lg"
           width="full"
         >
           <TextInput
@@ -197,7 +197,7 @@ const LoginCard = ({
             <FlexContainer
               direction="row"
               align="center"
-              gap="sm"
+              spacing="sm"
               padding="md"
               role="alert"
             >
@@ -230,7 +230,7 @@ const LoginCard = ({
       <CardFooter>
         <FlexContainer
           direction="column"
-          gap="md"
+          spacing="md"
           align="center"
         >
           {/* Enlace de contraseña olvidada */}
@@ -249,7 +249,7 @@ const LoginCard = ({
           {showRegisterLink && onRegisterClick && (
             <FlexContainer
               direction="row"
-              gap="sm"
+              spacing="sm"
               align="center"
             >
               <Typography

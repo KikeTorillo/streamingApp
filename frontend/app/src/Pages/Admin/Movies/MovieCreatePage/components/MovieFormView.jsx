@@ -11,6 +11,7 @@ import { ContentImage } from '../../../../../components/atoms/ContentImage/Conte
 import { Typography } from '../../../../../components/atoms/Typography/Typography';
 import { filterEmptyFields } from '../../../../../utils/formUtils';
 import { getImageTypeInfo, selectFinalImage } from '../../../../../utils/imageUtils';
+import { FlexContainer } from '../../../../../components/atoms/FlexContainer/FlexContainer';
 
 /**
  * MovieFormView - VERSIÓN REFACTORIZADA CON SISTEMA DE DISEÑO
@@ -25,7 +26,7 @@ function MovieFormView({
   // Propiedades homologadas con TMDBSearchView
   title = "🎬 Información de la Película",
   description = "Completa la información para agregar la película al catálogo",
-  
+
   // Propiedades específicas del formulario
   fields = [],
   initialData = {},
@@ -59,7 +60,7 @@ function MovieFormView({
   const updateImagePreview = useCallback((coverImageUrl, coverImage, coverImageFile) => {
     let newImagePreview = null;
     let newImageType = null;
-    
+
     // Determinar nueva imagen y tipo sin cambiar estado aún
     if (coverImageFile && coverImageFile instanceof File) {
       newImagePreview = URL.createObjectURL(coverImageFile);
@@ -71,7 +72,7 @@ function MovieFormView({
       newImagePreview = coverImage;
       newImageType = coverImage.includes('image.tmdb.org') ? 'tmdb' : 'url';
     }
-    
+
     // Solo actualizar si realmente cambió (evita loop infinito)
     setImagePreview(prevPreview => {
       if (newImagePreview !== prevPreview) {
@@ -83,7 +84,7 @@ function MovieFormView({
       }
       return prevPreview;
     });
-    
+
     setImageType(newImageType);
   }, []);
 
@@ -140,7 +141,7 @@ function MovieFormView({
 
     // Los datos ya están filtrados, no necesitamos filtrar de nuevo
     const finalData = movieData;
-    
+
     onSubmit?.(finalData);
   };
 
@@ -150,7 +151,7 @@ function MovieFormView({
   const handleFormChange = (newFormData) => {
     // Actualizar datos del formulario
     setCurrentFormData(newFormData || {});
-    
+
     // Notificar cambios al padre
     onChange?.();
   };
@@ -161,7 +162,7 @@ function MovieFormView({
   const renderImageInfo = () => {
     const imageInfo = getImageTypeInfo(imageType, 'movie-form-view');
     if (!imageInfo) return null;
-    
+
     return (
       <div className={`movie-form-view__image-info ${imageInfo.bgClass}`}>
         <Typography variant="span" size="xs" weight="medium" className="movie-form-view__image-badge">{imageInfo.badge}</Typography>
@@ -183,125 +184,124 @@ function MovieFormView({
 
   // ===== RENDER =====
   return (
-    <div className="movie-form-view">
-      <Container variant="neutral" size="xl" className="movie-form-view__container">
-        {/* ===== HEADER DEL FORMULARIO ===== */}
-        <div className="movie-form-view__header">
-          <h3 className="movie-form-view__title">
-            {title}
-          </h3>
-          <p className="movie-form-view__subtitle">
-            {description}
-          </p>
-          {showBackButton && (
-            <div className="movie-form-view__back-section">
-              <Button
-                onClick={onBackToSearch}
-                variant="outline"
-                size="sm"
-                leftIcon="arrow-left"
-              >
-                Volver a búsqueda
-              </Button>
-            </div>
-          )}
-        </div>
-
-        <Divider variant="neutral" size="md" />
-
-        {/* ===== PREVIEW DE IMAGEN (URLs y archivos) ===== */}
-        {imagePreview && imageType && (
-          <div className="movie-form-view__preview-section">
-            <div className="movie-form-view__preview-header">
-              <Typography variant="h4" size="sm" weight="medium" className="movie-form-view__preview-title">📸 Vista Previa de Portada</Typography>
-              {renderImageInfo()}
-            </div>
-            
-            <div className="movie-form-view__image-preview">
-              <ContentImage
-                src={imagePreview}
-                alt="Vista previa de la portada"
-                aspectRatio="2/3"
-                contentType="movie"
-                placeholder="🎬"
-                rounded="md"
-                showFallback={true}
-                size="md"
-                className="movie-form-view__preview-image"
-              />
-            </div>
-            
-            <Divider variant="neutral" size="sm" />
+    <Container variant="neutral" size="full">
+      {/* ===== HEADER DEL FORMULARIO ===== */}
+      <Container className="movie-form-view__header">
+        <Typography variant="h3" size="md" weight="semibold" className="movie-form-view__title">
+          {title}
+        </Typography>
+        <Typography variant="body" size="md" color="muted" className="movie-form-view__subtitle">
+          {description}
+        </Typography>
+        {showBackButton && (
+          <div className="movie-form-view__back-section">
+            <Button
+              onClick={onBackToSearch}
+              variant="outline"
+              size="sm"
+              leftIcon="arrow-left"
+            >
+              Volver a búsqueda
+            </Button>
           </div>
         )}
+      </Container>
 
-        {/* ===== FORMULARIO DINÁMICO ===== */}
-        <div className="movie-form-view__form">
-          <DynamicForm
-            id="movie-create-form"
-            fields={resolvedFields}
-            onSubmit={handleFormSubmit}
-            onChange={handleFormChange}
-            initialData={currentFormData}
-            loading={formLoading}
-            disabled={formLoading || success}
-            columnsPerRow={2}
-            tabletColumns={1}
-            mobileColumns={1}
-            fieldSize="md"
-            fieldRounded="md"
-            submitText={success ? "✅ Guardado Exitosamente" : "Crear Película"}
-            submitVariant={success ? "success" : "primary"}
-            submitSize="md"
-            submitIcon={success ? "check" : "plus"}
-            validateOnBlur={true}
-            validateOnChange={false}
-            actions={[
-              {
-                key: 'cancel',
-                type: 'button',
-                variant: 'outline',
-                text: 'Cancelar',
-                onClick: () => window.history.back(),
-                disabled: formLoading
-              },
-              {
-                key: 'submit',
-                type: 'submit',
-                variant: success ? 'success' : 'primary',
-                text: success ? 'Guardado Exitosamente' : 'Crear Película',
-                loading: formLoading,
-                disabled: formLoading || success,
-                leftIcon: success ? 'check' : 'plus'
-              }
-            ]}
-            className={`movie-form-view__form ${success ? 'movie-form-view__form--success' : ''}`}
-          />
-        </div>
+      <Divider variant="neutral" size="md" />
 
+      {/* ===== PREVIEW DE IMAGEN (URLs y archivos) ===== */}
+      {imagePreview && imageType && (
+        <Container className="movie-form-view__preview-section">
+          <FlexContainer direction="row" justify="between" align="center" className="movie-form-view__preview-header">
+            <Typography variant="h4" size="sm" weight="medium" className="movie-form-view__preview-title">📸 Vista Previa de Portada</Typography>
+            {renderImageInfo()}
+          </FlexContainer>
 
-        {/* ===== NOTIFICACIONES ===== */}
-        {success && (
-          <div className="movie-form-view__success">
+          <Container className="movie-form-view__image-preview">
+            <ContentImage
+              src={imagePreview}
+              alt="Vista previa de la portada"
+              aspectRatio="2/3"
+              contentType="movie"
+              placeholder="🎬"
+              rounded="md"
+              showFallback={true}
+              size="md"
+              className="movie-form-view__preview-image"
+            />
+          </Container>
+
+          <Divider variant="neutral" size="sm" />
+        </Container>
+      )}
+
+      {/* ===== FORMULARIO DINÁMICO ===== */}
+      <DynamicForm
+        id="movie-create-form"
+        fields={resolvedFields}
+        onSubmit={handleFormSubmit}
+        onChange={handleFormChange}
+        initialData={currentFormData}
+        loading={formLoading}
+        disabled={formLoading || success}
+        columnsPerRow={2}
+        tabletColumns={1}
+        mobileColumns={1}
+        fieldSize="md"
+        fieldRounded="md"
+        submitText={success ? "✅ Guardado Exitosamente" : "Crear Película"}
+        submitVariant={success ? "success" : "primary"}
+        submitSize="md"
+        submitIcon={success ? "check" : "plus"}
+        validateOnBlur={true}
+        validateOnChange={false}
+        actions={[
+          {
+            key: 'cancel',
+            type: 'button',
+            variant: 'outline',
+            text: 'Cancelar',
+            onClick: () => window.history.back(),
+            disabled: formLoading
+          },
+          {
+            key: 'submit',
+            type: 'submit',
+            variant: success ? 'success' : 'primary',
+            text: success ? 'Guardado Exitosamente' : 'Crear Película',
+            loading: formLoading,
+            disabled: formLoading || success,
+            leftIcon: success ? 'check' : 'plus'
+          }
+        ]}
+        className={`movie-form-view__form ${success ? 'movie-form-view__form--success' : ''}`}
+      />
+
+      {/* ===== NOTIFICACIONES ===== */}
+      {success && (
+        <Container className="movie-form-view__success">
+          <FlexContainer direction="row" spacing="md" align="center">
             <div className="movie-form-view__success-icon">✅</div>
             <div className="movie-form-view__success-content">
               <Typography variant="h3" size="md" weight="semibold" color="success">¡Película creada exitosamente!</Typography>
               <Typography variant="body" size="md" color="muted">La película se ha agregado al catálogo correctamente.</Typography>
             </div>
-          </div>
-        )}
+          </FlexContainer>
+        </Container>
+      )}
 
-        {error && (
-          <div className="movie-form-view__error-message">
+      {error && (
+        <Container className="movie-form-view__error-message">
+          <FlexContainer direction="row" spacing="md" align="center">
             <div className="movie-form-view__error-icon">⚠️</div>
             <div className="movie-form-view__error-content">
               <Typography variant="h4" size="sm" weight="semibold" color="danger">Error al crear película</Typography>
               <Typography variant="body" size="md" color="muted">{typeof error === 'string' ? error : error.message || 'Ha ocurrido un error inesperado'}</Typography>
             </div>
-          </div>
-        )}
-      </Container>
-    </div>
+          </FlexContainer>
+        </Container>
+      )}
+    </Container>
   );
 }
 
@@ -309,7 +309,7 @@ MovieFormView.propTypes = {
   // Propiedades homologadas con TMDBSearchView
   title: PropTypes.string,
   description: PropTypes.string,
-  
+
   // Propiedades específicas del formulario
   fields: PropTypes.array,
   initialData: PropTypes.object,

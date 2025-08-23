@@ -125,7 +125,7 @@ function SeriesCreatePage() {
         name: 'coverImageFile',
         type: 'image-crop',
         label: 'Archivo de Portada',
-        aspect: 2/3,
+        aspect: 2 / 3,
         maxFileSize: '5MB',
         showPreview: true,
         previewDimensions: { width: 120, height: 180 },
@@ -175,7 +175,7 @@ function SeriesCreatePage() {
     try {
 
       setProgressMessage('Iniciando creación de la serie...');
-      
+
       const result = await createSeries(seriesData, handleProgressCallback);
 
       if (result.success) {
@@ -202,43 +202,39 @@ function SeriesCreatePage() {
         { label: 'Crear Serie' }
       ]}
     >
-      <Container size='lg'>
-        <div className="series-create-page">
-          {/* Contenido principal */}
-          {currentView === 'search' && (
-            <TMDBSearchView
-              onSelectItem={handleSelectFromTMDBWithReset}
-              onManualCreate={handleManualCreateWithReset}
-              contentType="tv"
-              title="Buscar Series en TMDB"
-              description="Busca series en The Movie Database para agregar a tu catálogo"
-              placeholder="Ej: Breaking Bad, Game of Thrones, The Office..."
-              helperText="Busca series por título, año o palabras clave"
-              showManualCreate={true}
-            />
-          )}
+      {/* Contenido principal */}
+      {currentView === 'search' && (
+        <TMDBSearchView
+          onSelectItem={handleSelectFromTMDBWithReset}
+          onManualCreate={handleManualCreateWithReset}
+          contentType="tv"
+          title="Buscar Series en TMDB"
+          description="Busca series en The Movie Database para agregar a tu catálogo"
+          placeholder="Ej: Breaking Bad, Game of Thrones, The Office..."
+          helperText="Busca series por título, año o palabras clave"
+          showManualCreate={true}
+        />
+      )}
 
-          {currentView === 'form' && (
-            <SeriesFormView
-              title={selectedItem ? `${selectedItem.title || selectedItem.name} (desde TMDB)` : "Crear Serie Manualmente"}
-              description={selectedItem ? 
-                "Completa la información adicional para la serie seleccionada de TMDB" : 
-                "Completa toda la información para crear una nueva serie desde cero"
-              }
-              fields={generateFormFields()}
-              initialData={generateInitialFormData(selectedItem)}
-              onSubmit={handleFormSubmit}
-              categoryOptions={categories.map(cat => ({ value: cat.id, label: cat.name }))}
-              loading={creating || processing}
-              error={contextError}
-              hasChanges={hasChanges}
-              onChange={markAsChanged}
-            />
-          )}
+      {currentView === 'form' && (
+        <SeriesFormView
+          title={selectedItem ? `${selectedItem.title || selectedItem.name} (desde TMDB)` : "Crear Serie Manualmente"}
+          description={selectedItem ?
+            "Completa la información adicional para la serie seleccionada de TMDB" :
+            "Completa toda la información para crear una nueva serie desde cero"
+          }
+          fields={generateFormFields()}
+          initialData={generateInitialFormData(selectedItem)}
+          onSubmit={handleFormSubmit}
+          categoryOptions={categories.map(cat => ({ value: cat.id, label: cat.name }))}
+          loading={creating || processing}
+          error={contextError}
+          hasChanges={hasChanges}
+          onChange={markAsChanged}
+        />
+      )}
 
-        </div>
-      </Container>
-      
+
       {/* Spinner overlay para procesos de subida */}
       {(creating || processing) && (
         <Spinner

@@ -33,7 +33,7 @@ function PageLayout({
     <FlexContainer
       {...restProps}
       direction="column"
-      gap="none"
+      spacing="none"
       variant="neutral"
     >
       {/* Header Section */}

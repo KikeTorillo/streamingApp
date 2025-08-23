@@ -217,7 +217,7 @@ function AdminLayout({
         justify="center"
         className="admin-layout__loading"
       >
-        <FlexContainer direction="column" align="center" gap="md" className="admin-layout__loading-content">
+        <FlexContainer direction="column" align="center" spacing="md" className="admin-layout__loading-content">
           <Container className="admin-layout__spinner" />
           <Typography variant="body" size="md" color="muted">
             {loading ? 'Cargando panel de administración...' : 'Verificando acceso de administrador...'}
@@ -240,7 +240,7 @@ function AdminLayout({
           "sidebar header"
           "sidebar main"
         `}
-      gap="none"
+      spacing="none"
     >
 
       {/* ===== SIDEBAR ===== */}
@@ -262,7 +262,7 @@ function AdminLayout({
       >
         <FlexContainer
           direction="column"
-          gap="sm"
+          spacing="sm"
           padding="none"
 
         >
@@ -307,7 +307,7 @@ function AdminLayout({
 
           {/* Acciones del header */}
           {headerActions && (
-            <FlexContainer direction="row" gap="sm">
+            <FlexContainer direction="row" spacing="sm">
               {headerActions}
             </FlexContainer>
           )}

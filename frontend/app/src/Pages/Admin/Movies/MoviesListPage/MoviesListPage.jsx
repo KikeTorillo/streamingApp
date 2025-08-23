@@ -225,7 +225,7 @@ function MoviesListPage() {
         { label: 'Películas' }
       ]}
       headerActions={
-        <FlexContainer gap="sm">
+        <FlexContainer spacing="sm">
           <Button
             variant="primary"
             size="sm"

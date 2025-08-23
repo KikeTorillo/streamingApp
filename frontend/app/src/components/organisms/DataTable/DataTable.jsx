@@ -274,7 +274,7 @@ function DataTable(props) {
       {searchable && (
         <FlexContainer
           direction="row"
-          gap="md"
+          spacing="md"
           padding="md"
           align="center"
           width="full"
@@ -335,7 +335,7 @@ function DataTable(props) {
                         <FlexContainer
                           align="center"
                           justify="between"
-                          gap="sm"
+                          spacing="sm"
                           width="full"
                         >
                           {flexRender(header.column.columnDef.header, header.getContext())}
@@ -382,7 +382,7 @@ function DataTable(props) {
                 <FlexContainer
                   direction="column"
                   align="center"
-                  gap="md"
+                  spacing="md"
                 >
                   <Label
                     leftIcon="alert-circle"
@@ -444,7 +444,7 @@ function DataTable(props) {
       {!loading && !error && data.length > 0 && (
         <FlexContainer
           direction="column"
-          gap="md"
+          spacing="md"
         >
           <FlexContainer
             align="center"
@@ -463,7 +463,7 @@ function DataTable(props) {
           <FlexContainer
             align="center"
             justify="center"
-            gap="sm"
+            spacing="sm"
             wrap="wrap"
           >
             <Button

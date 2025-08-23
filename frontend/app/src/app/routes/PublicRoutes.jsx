@@ -75,7 +75,7 @@ export function PublicRoutes() {
           direction="column"
           align="center"
           justify="center"
-          gap="lg"
+          spacing="lg"
           padding="xl"
           style={{ minHeight: '100vh', textAlign: 'center' }}
         >

@@ -212,7 +212,7 @@ function MoviesDetailPage() {
                 {/* ===== INFORMACIÓN DE LA PELÍCULA ===== */}
                 {movie && (
                     <FlexContainer 
-                        gap="lg"
+                        spacing="lg"
                         align="start"
                         wrap="wrap"
                         style={{ marginBottom: 'var(--space-xl)' }}
@@ -254,7 +254,7 @@ function MoviesDetailPage() {
                             {/* Información adicional */}
                             <div style={{ 
                                 display: 'flex', 
-                                gap: 'var(--space-md)', 
+                                spacing: 'var(--space-md)', 
                                 flexWrap: 'wrap',
                                 alignItems: 'center',
                                 marginBottom: 'var(--space-lg)'

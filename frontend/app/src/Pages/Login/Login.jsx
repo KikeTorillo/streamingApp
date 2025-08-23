@@ -25,8 +25,8 @@ function Login() {
         direction="column"
         justify="center"
         align="center"
-        gap="2xl"
-        padding="2xl"
+        spacing="xl"
+        padding="xl"
         width="full"
         style={{ minHeight: '100vh' }}
       >
@@ -34,7 +34,7 @@ function Login() {
         <FlexContainer
           direction="column"
           align="center"
-          gap="md"
+          spacing="md"
         >
           <Typography 
             as="h1"

@@ -16,7 +16,7 @@ export default {
 
 ✅ **Objetivo principal**: Eliminar 31+ usos repetitivos de \`display: grid\` en el proyecto  
 ✅ **Sistema estándar**: Props unificadas con otros componentes del sistema  
-✅ **Tokens automáticos**: Gap, spacing y columnas usando design tokens  
+✅ **Tokens automáticos**: Spacing y columnas usando design tokens  
 ✅ **Responsive**: Adaptación automática por breakpoints  
 
 ### Casos de uso principales:
@@ -35,7 +35,7 @@ style={{
 }}
 
 /* DESPUÉS */
-<GridContainer columns="auto-fit" minColumnWidth="20rem" gap="lg">
+<GridContainer columns="auto-fit" minColumnWidth="20rem" spacing="lg">
 \`\`\`
         `
       }
@@ -59,7 +59,12 @@ style={{
     gap: {
       control: { type: 'select' },
       options: ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'],
-      description: 'Gap general usando tokens'
+      description: 'Gap general usando tokens (deprecado, usar spacing)'
+    },
+    spacing: {
+      control: { type: 'select' },
+      options: ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'],
+      description: 'Espaciado general usando tokens'
     },
     columnGap: {
       control: { type: 'select' },
@@ -153,7 +158,7 @@ export const FixedColumns = () => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
     <div>
       <h3>2 Columnas</h3>
-      <GridContainer columns={2} gap="md">
+      <GridContainer columns={2} spacing="md">
         <SampleCard title="Card 1" content="Columna 1" />
         <SampleCard title="Card 2" content="Columna 2" />
         <SampleCard title="Card 3" content="Columna 1" />
@@ -163,7 +168,7 @@ export const FixedColumns = () => (
     
     <div>
       <h3>3 Columnas</h3>
-      <GridContainer columns={3} gap="md">
+      <GridContainer columns={3} spacing="md">
         <SampleCard title="Card 1" content="Col 1" />
         <SampleCard title="Card 2" content="Col 2" />
         <SampleCard title="Card 3" content="Col 3" />
@@ -175,7 +180,7 @@ export const FixedColumns = () => (
     
     <div>
       <h3>4 Columnas</h3>
-      <GridContainer columns={4} gap="sm">
+      <GridContainer columns={4} spacing="sm">
         {[1,2,3,4,5,6,7,8].map(i => (
           <SampleCard key={i} title={`Card ${i}`} content={`Col ${((i-1) % 4) + 1}`} />
         ))}
@@ -188,7 +193,7 @@ export const AutoFitColumns = () => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
     <div>
       <h3>Auto-fit (20rem min-width)</h3>
-      <GridContainer columns="auto-fit" minColumnWidth="20rem" gap="lg">
+      <GridContainer columns="auto-fit" minColumnWidth="20rem" spacing="lg">
         <SampleCard title="Card 1" content="Se adapta automáticamente" />
         <SampleCard title="Card 2" content="Mín 20rem de ancho" />
         <SampleCard title="Card 3" content="Responsive" />
@@ -198,56 +203,122 @@ export const AutoFitColumns = () => (
     
     <div>
       <h3>Auto-fit (15rem min-width)</h3>
-      <GridContainer columns="auto-fit" minColumnWidth="15rem" gap="md">
-        {[1,2,3,4,5,6].map(i => (
-          <SampleCard key={i} title={`Card ${i}`} content="Más columnas" />
-        ))}
+      <GridContainer columns="auto-fit" minColumnWidth="15rem" spacing="md">
+        <SampleCard title="Card 1" content="Mín 15rem" />
+        <SampleCard title="Card 2" content="Más columnas" />
+        <SampleCard title="Card 3" content="En desktop" />
+        <SampleCard title="Card 4" content="Misma altura" />
       </GridContainer>
     </div>
     
     <div>
       <h3>Auto-fill (25rem min-width)</h3>
-      <GridContainer columns="auto-fill" minColumnWidth="25rem" gap="xl">
-        <SampleCard title="Card 1" content="Auto-fill mantiene espacios" />
-        <SampleCard title="Card 2" content="Vs auto-fit que los colapsa" />
-        <SampleCard title="Card 3" content="Más ancho mínimo" />
+      <GridContainer columns="auto-fill" minColumnWidth="25rem" spacing="xl">
+        <SampleCard title="Card 1" content="Fill en lugar de fit" />
+        <SampleCard title="Card 2" content="Espacio vacío posible" />
       </GridContainer>
     </div>
   </div>
 );
 
-export const AllGaps = () => (
-  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
-    {['xs', 'sm', 'md', 'lg', 'xl', '2xl'].map(gap => (
-      <div key={gap}>
-        <h3>Gap: {gap}</h3>
-        <GridContainer columns={3} gap={gap}>
-          <SampleCard title="Card 1" content={`Gap ${gap}`} />
-          <SampleCard title="Card 2" content={`Gap ${gap}`} />
-          <SampleCard title="Card 3" content={`Gap ${gap}`} />
-        </GridContainer>
-      </div>
-    ))}
-  </div>
-);
-
-export const DifferentGaps = () => (
+export const AllSpacings = () => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
     <div>
-      <h3>Column Gap lg, Row Gap sm</h3>
-      <GridContainer columns={3} columnGap="lg" rowGap="sm">
-        {[1,2,3,4,5,6].map(i => (
-          <SampleCard key={i} title={`Card ${i}`} content="Gap diferente" />
-        ))}
+      <h3>Spacing: xs</h3>
+      <GridContainer columns={3} spacing="xs">
+        <SampleCard title="Card 1" content="Spacing xs" />
+        <SampleCard title="Card 2" content="Spacing xs" />
+        <SampleCard title="Card 3" content="Spacing xs" />
       </GridContainer>
     </div>
     
     <div>
-      <h3>Column Gap sm, Row Gap xl</h3>
-      <GridContainer columns={2} columnGap="sm" rowGap="xl">
-        {[1,2,3,4].map(i => (
-          <SampleCard key={i} title={`Card ${i}`} content="Gap diferente" />
-        ))}
+      <h3>Spacing: sm</h3>
+      <GridContainer columns={3} spacing="sm">
+        <SampleCard title="Card 1" content="Spacing sm" />
+        <SampleCard title="Card 2" content="Spacing sm" />
+        <SampleCard title="Card 3" content="Spacing sm" />
+      </GridContainer>
+    </div>
+    
+    <div>
+      <h3>Spacing: md</h3>
+      <GridContainer columns={3} spacing="md">
+        <SampleCard title="Card 1" content="Spacing md" />
+        <SampleCard title="Card 2" content="Spacing md" />
+        <SampleCard title="Card 3" content="Spacing md" />
+      </GridContainer>
+    </div>
+    
+    <div>
+      <h3>Spacing: lg</h3>
+      <GridContainer columns={3} spacing="lg">
+        <SampleCard title="Card 1" content="Spacing lg" />
+        <SampleCard title="Card 2" content="Spacing lg" />
+        <SampleCard title="Card 3" content="Spacing lg" />
+      </GridContainer>
+    </div>
+    
+    <div>
+      <h3>Spacing: xl</h3>
+      <GridContainer columns={3} spacing="xl">
+        <SampleCard title="Card 1" content="Spacing xl" />
+        <SampleCard title="Card 2" content="Spacing xl" />
+        <SampleCard title="Card 3" content="Spacing xl" />
+      </GridContainer>
+    </div>
+    
+    <div>
+      <h3>Spacing: 2xl</h3>
+      <GridContainer columns={3} spacing="2xl">
+        <SampleCard title="Card 1" content="Spacing 2xl" />
+        <SampleCard title="Card 2" content="Spacing 2xl" />
+        <SampleCard title="Card 3" content="Spacing 2xl" />
+      </GridContainer>
+    </div>
+    
+    <div>
+      <h3>Spacing: 3xl</h3>
+      <GridContainer columns={3} spacing="3xl">
+        <SampleCard title="Card 1" content="Spacing 3xl" />
+        <SampleCard title="Card 2" content="Spacing 3xl" />
+        <SampleCard title="Card 3" content="Spacing 3xl" />
+      </GridContainer>
+    </div>
+  </div>
+);
+
+export const ColumnRowGaps = () => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
+    <div>
+      <h3>Column Gap: lg, Row Gap: sm</h3>
+      <GridContainer 
+        columns={3} 
+        columnGap="lg" 
+        rowGap="sm"
+      >
+        <SampleCard title="Card 1" content="Col gap lg, Row gap sm" />
+        <SampleCard title="Card 2" content="Col gap lg, Row gap sm" />
+        <SampleCard title="Card 3" content="Col gap lg, Row gap sm" />
+        <SampleCard title="Card 4" content="Col gap lg, Row gap sm" />
+        <SampleCard title="Card 5" content="Col gap lg, Row gap sm" />
+        <SampleCard title="Card 6" content="Col gap lg, Row gap sm" />
+      </GridContainer>
+    </div>
+    
+    <div>
+      <h3>Column Gap: sm, Row Gap: xl</h3>
+      <GridContainer 
+        columns={3} 
+        columnGap="sm" 
+        rowGap="xl"
+      >
+        <SampleCard title="Card 1" content="Col gap sm, Row gap xl" />
+        <SampleCard title="Card 2" content="Col gap sm, Row gap xl" />
+        <SampleCard title="Card 3" content="Col gap sm, Row gap xl" />
+        <SampleCard title="Card 4" content="Col gap sm, Row gap xl" />
+        <SampleCard title="Card 5" content="Col gap sm, Row gap xl" />
+        <SampleCard title="Card 6" content="Col gap sm, Row gap xl" />
       </GridContainer>
     </div>
   </div>
@@ -466,25 +537,17 @@ export const DisabledState = {
 export const ResponsiveExample = () => (
   <div>
     <h3>Responsive GridContainer</h3>
-    <p>Redimensiona la ventana para ver la adaptación automática</p>
+    <p>En móvil, los spacings grandes se reducen automáticamente</p>
     <GridContainer 
       columns="auto-fit" 
-      minColumnWidth="18rem" 
-      gap="lg"
-      variant="primary"
-      style={{ 
-        resize: 'horizontal', 
-        overflow: 'auto', 
-        border: '1px dashed var(--border-default)',
-        minWidth: '300px'
-      }}
+      minColumnWidth="15rem" 
+      spacing="3xl"
+      style={{ resize: 'horizontal', overflow: 'auto', border: '1px dashed var(--border-default)' }}
     >
-      <SampleCard title="Responsive 1" content="Se adapta automáticamente" />
-      <SampleCard title="Responsive 2" content="Sin media queries manuales" />
-      <SampleCard title="Responsive 3" content="CSS Grid automático" />
-      <SampleCard title="Responsive 4" content="Mínimo 18rem por columna" />
-      <SampleCard title="Responsive 5" content="Máximo que quepa" />
-      <SampleCard title="Responsive 6" content="Perfecto para dashboards" />
+      <SampleCard title="Card 1" content="Responsive" />
+      <SampleCard title="Card 2" content="Auto-fit" />
+      <SampleCard title="Card 3" content="Mobile adapt" />
+      <SampleCard title="Card 4" content="Spacing 3xl" />
     </GridContainer>
   </div>
 );

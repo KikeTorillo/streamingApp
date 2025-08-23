@@ -234,7 +234,7 @@ function EditModal(props) {
         as="form"
         onSubmit={handleSubmit}
         direction="column"
-        gap="lg"
+        spacing="lg"
         padding="sm"
         style={{ position: 'relative' }}
       >
@@ -259,7 +259,7 @@ function EditModal(props) {
               <FlexContainer 
                 direction="column"
                 align="center"
-                gap="sm"
+                spacing="sm"
               >
                 <Icon name="loader" size="sm" variant="primary" spinning />
                 <Typography size="sm" color="muted">
@@ -273,7 +273,7 @@ function EditModal(props) {
         {/* Campo de entrada */}
         <FlexContainer 
           direction="column"
-          gap="sm"
+          spacing="sm"
         >
           <TextInput
             id={fieldId}
@@ -324,7 +324,7 @@ function EditModal(props) {
           >
             <FlexContainer 
               align="flex-start"
-              gap="sm"
+              spacing="sm"
             >
               <Icon name="alert-circle" size="sm" variant="danger" />
               <Typography size="sm" style={{ flex: 1 }}>
@@ -336,7 +336,7 @@ function EditModal(props) {
         
         {/* Botones */}
         <FlexContainer 
-          gap="sm"
+          spacing="sm"
           justify="space-around"
         >
           <Button
@@ -370,7 +370,7 @@ function EditModal(props) {
         <FlexContainer 
           justify="center"
           align="center"
-          gap="sm"
+          spacing="sm"
         >
           {hasChanges ? (
             <>

@@ -1,6 +1,6 @@
 /* ===== FLEXCONTAINER - ÁTOMO PARA LAYOUTS FLEXBOX ===== */
 /* ✅ OBJETIVO: Eliminar 40+ usos repetitivos de display: flex */
-/* ✅ TOKENS AUTOMÁTICOS: Gap, spacing y alignment del sistema */
+/* ✅ TOKENS AUTOMÁTICOS: Spacing y alignment del sistema */
 /* ✅ RESPONSIVE: Adaptación automática por breakpoints */
 
 /* ===== BASE FLEX CONTAINER ===== */
@@ -91,7 +91,7 @@
   flex-wrap: wrap-reverse;
 }
 
-/* ===== GAP USANDO TOKENS DEL SISTEMA ===== */
+/* ===== SPACING (GAP) USANDO TOKENS DEL SISTEMA ===== */
 .flex-container--gap-xs {
   gap: var(--space-xs);
 }

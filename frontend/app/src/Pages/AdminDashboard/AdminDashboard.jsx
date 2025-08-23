@@ -187,7 +187,7 @@ function AdminDashboard() {
   // ===== RENDER - SOLO COMPONENTES DEL SISTEMA =====
   return (
     <AdminLayout title="Dashboard">
-      <FlexContainer direction="row" gap="md">
+      <FlexContainer direction="row" spacing="md">
         <Icon name="trending" size="md" />
         <Typography size="lg" weight="semibold">
           Resumen General
@@ -206,7 +206,7 @@ function AdminDashboard() {
           ))}
         </FlexContainer>
       ) : (
-        <FlexContainer direction="row" gap="lg" wrap="wrap" distribute>
+        <FlexContainer direction="row" spacing="lg" wrap="wrap" distribute>
           {statsCards.map((card, index) => (
             <StatsCard
               key={index}
@@ -223,7 +223,7 @@ function AdminDashboard() {
       )}
 
       {/* ===== ACCIONES RÁPIDAS ===== */}
-      <FlexContainer gap="md">
+      <FlexContainer spacing="md">
         <Icon name="zap" size="md" />
         <Typography size="lg" weight="semibold">
           Acciones Rápidas
@@ -231,7 +231,7 @@ function AdminDashboard() {
       </FlexContainer>
 
 
-      <FlexContainer direction="row" gap="lg" wrap="wrap">
+      <FlexContainer direction="row" spacing="lg" wrap="wrap">
         <Button
           variant="secondary"
           size="md"

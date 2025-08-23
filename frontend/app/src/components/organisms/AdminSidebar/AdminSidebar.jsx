@@ -219,7 +219,7 @@ function AdminSidebar(props) {
         direction="row"
         align="center"
         justify="space-between"
-        gap="md"
+        spacing="md"
         padding="lg"
         className="admin-sidebar__header"
       >
@@ -228,7 +228,7 @@ function AdminSidebar(props) {
           <FlexContainer
             direction="row"
             align="center"
-            gap="md"
+            spacing="md"
             className="admin-sidebar__brand"
           >
             <Icon
@@ -422,14 +422,14 @@ function AdminSidebar(props) {
       {!isCollapsed && (
         <FlexContainer
           direction="column"
-          gap="md"
+          spacing="md"
           padding="lg"
           className="admin-sidebar__footer"
         >
           <FlexContainer
             direction="row"
             align="center"
-            gap="md"
+            spacing="md"
             className="admin-sidebar__user-info"
           >
             <Avatar

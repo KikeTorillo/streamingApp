@@ -249,7 +249,7 @@ function TMDBSearchView({
       title="Error en la búsqueda"
       description={error}
       action={(
-        <FlexContainer gap="sm" justify="center" wrap="wrap">
+        <FlexContainer spacing="sm" justify="center" wrap="wrap">
           <Button
             variant="secondary"
             size="sm"
@@ -279,7 +279,7 @@ function TMDBSearchView({
       title="Sin resultados"
       description={`No se encontraron resultados para "${safeSearchQuery}".`}
       action={(
-        <FlexContainer gap="sm" justify="center" wrap="wrap">
+        <FlexContainer spacing="sm" justify="center" wrap="wrap">
           <Button
             variant="secondary"
             size="sm"
@@ -306,9 +306,9 @@ function TMDBSearchView({
   // ===== RENDER PRINCIPAL =====
   return (
     <Container variant="neutral" size="full" padding="lg">
-      <FlexContainer direction="column" gap="lg">
+      <FlexContainer direction="column" spacing="lg">
         {/* Header */}
-        <FlexContainer direction="column" gap="sm">
+        <FlexContainer direction="column" spacing="sm">
           <Typography as="h3" size="xl" weight="bold" color="primary">
             {title}
           </Typography>
@@ -374,19 +374,19 @@ function TMDBSearchView({
 
         {/* Resultados en grid responsive */}
         {!loading && !error && safeResults.length > 0 && (
-          <FlexContainer direction="column" gap="md">
+          <FlexContainer direction="column" spacing="md">
             <Typography size="md" weight="medium" color="primary">
               Resultados encontrados: {safeResults.length}
             </Typography>
             <FlexContainer 
               direction="row" 
-              gap="lg" 
+              spacing="lg" 
               wrap="wrap"
               justify="flex-start"
               style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-                gap: 'var(--space-lg)'
+                spacing: 'lg'
               }}
             >
               {safeResults.map(renderResultItem)}

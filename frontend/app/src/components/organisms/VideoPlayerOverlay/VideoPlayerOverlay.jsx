@@ -57,7 +57,7 @@ const VideoPlayerOverlay = forwardRef(({
       <FlexContainer
         align="center"
         justify="center"
-        gap="2xl"
+        spacing="xl"
         style={{ pointerEvents: 'all' }}
       >
         <Button

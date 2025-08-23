@@ -13,7 +13,7 @@ import './GridContainer.css';
  * 
  * ✅ OBJETIVO: Eliminar 31+ usos repetitivos de display: grid en el proyecto
  * ✅ SISTEMA ESTÁNDAR: Props unificadas con otros componentes
- * ✅ TOKENS AUTOMÁTICOS: Gap, spacing y columnas del sistema
+ * ✅ TOKENS AUTOMÁTICOS: Spacing y columnas del sistema
  * ✅ RESPONSIVE: Adaptación automática por breakpoints
  * ✅ GRID AREAS: Manejo automático de grid-area para children con prop 'area'
  * ✅ CASOS DE USO: Dashboards, galerías de contenido, formularios grid, layouts admin
@@ -53,7 +53,8 @@ function GridContainer(props) {
     columns = 'auto-fit',
     minColumnWidth = '20rem',
     rows = 'auto',
-    gap,
+    gap, // Propiedad legacy
+    spacing, // Nueva propiedad estandarizada
     columnGap,
     rowGap,
     padding = null, // ✅ NUEVO: Padding interno del contenedor
@@ -66,12 +67,23 @@ function GridContainer(props) {
     style = {}
   } = props;
 
+  // ✅ MAPEO DE PROPS: Usar spacing si está definida, sino usar gap (backward compatibility)
+  const effectiveGap = spacing || gap;
+
+  // ✅ DEPRECATION WARNING para gap
+  if (gap !== undefined && typeof window !== 'undefined') {
+    console.warn(
+      '⚠️ DEPRECATION WARNING: GridContainer gap prop is deprecated. Use spacing instead.',
+      '\n📖 Migration guide: https://docs.streamingapp.com/components/gridcontainer#migration'
+    );
+  }
+
   // ✅ GENERAR CLASES CSS CON SISTEMA ESTÁNDAR
   const gridClasses = [
     'grid-container',
     `grid-container--size-${size}`,
     variant !== 'neutral' && `grid-container--variant-${variant}`,
-    gap && `grid-container--gap-${gap}`,
+    effectiveGap && `grid-container--gap-${effectiveGap}`,
     columnGap && `grid-container--column-gap-${columnGap}`,
     rowGap && `grid-container--row-gap-${rowGap}`,
     padding && `grid-container--padding-${padding}`, // ✅ NUEVO: Clase de padding
@@ -198,10 +210,7 @@ GridContainer.propTypes = {
     PropTypes.string
   ]),
   
-  /**
-   * Gap general usando tokens del sistema
-   */
-  gap: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl']),
+  /**\n   * Gap general usando tokens del sistema (deprecado, usar spacing)\n   */\n  gap: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl']),\n  \n  /**\n   * Espaciado general usando tokens del sistema\n   */\n  spacing: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl']),
   
   /**
    * Gap específico para columnas

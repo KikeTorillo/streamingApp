@@ -15,7 +15,7 @@ export default {
 
 ✅ **Objetivo principal**: Eliminar 40+ usos repetitivos de \`display: flex\` en el proyecto  
 ✅ **Sistema estándar**: Props unificadas con otros componentes del sistema  
-✅ **Tokens automáticos**: Gap, spacing y alignment usando design tokens  
+✅ **Tokens automáticos**: Spacing y alignment usando design tokens  
 ✅ **Responsive**: Adaptación automática por breakpoints  
 
 ### Casos de uso principales:
@@ -31,7 +31,7 @@ export default {
 style={{ display: 'flex', gap: 'var(--space-lg)', alignItems: 'center' }}
 
 /* DESPUÉS */
-<FlexContainer gap="lg" align="center">
+<FlexContainer spacing="lg" align="center">
 \`\`\`
         `
       }
@@ -53,7 +53,7 @@ style={{ display: 'flex', gap: 'var(--space-lg)', alignItems: 'center' }}
       options: Object.values(FLEX_JUSTIFIES), 
       description: 'Alineación en eje principal (justify-content)'
     },
-    gap: {
+    spacing: {
       control: { type: 'select' },
       options: ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'],
       description: 'Espaciado entre elementos usando tokens'
@@ -117,28 +117,28 @@ export const AllDirections = () => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
     <div>
       <h3>Row (default)</h3>
-      <FlexContainer direction="row" gap="md" variant="primary">
+      <FlexContainer direction="row" spacing="md" variant="primary">
         <SampleContent />
       </FlexContainer>
     </div>
     
     <div>
       <h3>Column</h3>
-      <FlexContainer direction="column" gap="md" variant="secondary">
+      <FlexContainer direction="column" spacing="md" variant="secondary">
         <SampleContent />
       </FlexContainer>
     </div>
     
     <div>
       <h3>Row Reverse</h3>
-      <FlexContainer direction="row-reverse" gap="md" variant="success">
+      <FlexContainer direction="row-reverse" spacing="md" variant="success">
         <SampleContent />
       </FlexContainer>
     </div>
     
     <div>
       <h3>Column Reverse</h3>
-      <FlexContainer direction="column-reverse" gap="md" variant="warning">
+      <FlexContainer direction="column-reverse" spacing="md" variant="warning">
         <SampleContent />
       </FlexContainer>
     </div>
@@ -151,7 +151,7 @@ export const AllAlignments = () => (
       <h3>Flex Start</h3>
       <FlexContainer 
         align="flex-start" 
-        gap="md" 
+        spacing="md" 
         variant="primary" 
         style={{ height: '100px' }}
       >
@@ -163,7 +163,7 @@ export const AllAlignments = () => (
       <h3>Center</h3>
       <FlexContainer 
         align="center" 
-        gap="md" 
+        spacing="md" 
         variant="secondary" 
         style={{ height: '100px' }}
       >
@@ -175,7 +175,7 @@ export const AllAlignments = () => (
       <h3>Flex End</h3>
       <FlexContainer 
         align="flex-end" 
-        gap="md" 
+        spacing="md" 
         variant="success" 
         style={{ height: '100px' }}
       >
@@ -187,7 +187,7 @@ export const AllAlignments = () => (
       <h3>Stretch</h3>
       <FlexContainer 
         align="stretch" 
-        gap="md" 
+        spacing="md" 
         variant="warning" 
         style={{ height: '100px' }}
       >
@@ -202,21 +202,21 @@ export const AllJustifications = () => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
     <div>
       <h3>Flex Start</h3>
-      <FlexContainer justify="flex-start" gap="md" variant="primary">
+      <FlexContainer justify="flex-start" spacing="md" variant="primary">
         <TextContent />
       </FlexContainer>
     </div>
     
     <div>
       <h3>Center</h3>
-      <FlexContainer justify="center" gap="md" variant="secondary">
+      <FlexContainer justify="center" spacing="md" variant="secondary">
         <TextContent />
       </FlexContainer>
     </div>
     
     <div>
       <h3>Flex End</h3>
-      <FlexContainer justify="flex-end" gap="md" variant="success">
+      <FlexContainer justify="flex-end" spacing="md" variant="success">
         <TextContent />
       </FlexContainer>
     </div>
@@ -244,12 +244,12 @@ export const AllJustifications = () => (
   </div>
 );
 
-export const AllGaps = () => (
+export const AllSpacings = () => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
-    {['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'].map(gap => (
-      <div key={gap}>
-        <h3>Gap: {gap}</h3>
-        <FlexContainer gap={gap} variant="primary">
+    {['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'].map(spacing => (
+      <div key={spacing}>
+        <h3>Spacing: {spacing}</h3>
+        <FlexContainer spacing={spacing} variant="primary">
           <TextContent />
         </FlexContainer>
       </div>
@@ -262,7 +262,7 @@ export const AllSizes = () => (
     {['xs', 'sm', 'md', 'lg', 'xl'].map(size => (
       <div key={size}>
         <h3>Size: {size}</h3>
-        <FlexContainer size={size} gap="md" variant="primary">
+        <FlexContainer size={size} spacing="md" variant="primary">
           <SampleContent />
         </FlexContainer>
       </div>
@@ -275,7 +275,7 @@ export const AllVariants = () => (
     {['neutral', 'primary', 'secondary', 'success', 'warning', 'danger'].map(variant => (
       <div key={variant}>
         <h3>Variant: {variant}</h3>
-        <FlexContainer variant={variant} gap="md" align="center">
+        <FlexContainer variant={variant} spacing="md" align="center">
           <SampleContent />
         </FlexContainer>
       </div>
@@ -289,12 +289,12 @@ export const HeaderPattern = () => (
   <FlexContainer 
     align="center" 
     justify="space-between" 
-    gap="lg" 
+    spacing="lg" 
     variant="primary"
     className="flex-container--header"
   >
     <h2>Título de Página</h2>
-    <FlexContainer gap="sm">
+    <FlexContainer spacing="sm">
       <Button variant="secondary" size="sm">Filtros</Button>
       <Button variant="primary" size="sm" leftIcon="plus">Crear</Button>
     </FlexContainer>
@@ -304,7 +304,7 @@ export const HeaderPattern = () => (
 export const NavigationPattern = () => (
   <FlexContainer 
     align="center" 
-    gap="md" 
+    spacing="md" 
     wrap="wrap"
     variant="secondary"
     className="flex-container--nav"
@@ -320,7 +320,7 @@ export const NavigationPattern = () => (
 export const FormRowPattern = () => (
   <FlexContainer 
     align="flex-end" 
-    gap="md" 
+    spacing="md" 
     wrap="wrap"
     className="flex-container--form-row"
   >
@@ -348,7 +348,7 @@ export const CardActionsPattern = () => (
     <FlexContainer 
       align="center" 
       justify="flex-end" 
-      gap="sm"
+      spacing="sm"
       className="flex-container--card-actions"
     >
       <Button variant="neutral" size="sm">Cancelar</Button>
@@ -379,7 +379,7 @@ export const LoadingState = {
   args: {
     loading: true,
     children: <SampleContent />,
-    gap: 'md',
+    spacing: 'md',
     variant: 'primary'
   }
 };
@@ -388,7 +388,7 @@ export const DisabledState = {
   args: {
     disabled: true,
     children: <SampleContent />,
-    gap: 'md',
+    spacing: 'md',
     variant: 'secondary'
   }
 };
@@ -398,9 +398,9 @@ export const DisabledState = {
 export const ResponsiveExample = () => (
   <div>
     <h3>Responsive FlexContainer</h3>
-    <p>En móvil, los gaps grandes se reducen automáticamente y los contenedores row hacen wrap</p>
+    <p>En móvil, los spacings grandes se reducen automáticamente y los contenedores row hacen wrap</p>
     <FlexContainer 
-      gap="3xl" 
+      spacing="3xl" 
       wrap="nowrap" 
       variant="primary"
       style={{ resize: 'horizontal', overflow: 'auto', border: '1px dashed var(--border-default)' }}

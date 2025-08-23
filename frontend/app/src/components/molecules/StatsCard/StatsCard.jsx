@@ -183,7 +183,7 @@ function StatsCard(props) {
       <FlexContainer
         direction="row"
         align="center"
-        gap="sm"
+        spacing="sm"
         className="stats-card__header"
       >
         {icon && (
@@ -219,11 +219,11 @@ function StatsCard(props) {
         
         {/* Cambio/tendencia (si existe) */}
         {change && !loading && (
-          <FlexContainer direction="column" gap="xs" className="stats-card__change-section">
+          <FlexContainer direction="column" spacing="xs" className="stats-card__change-section">
             <FlexContainer
               direction="row"
               align="center"
-              gap="xs"
+              spacing="xs"
               className={changeClasses}
               aria-label={`Cambio: ${change}`}
             >

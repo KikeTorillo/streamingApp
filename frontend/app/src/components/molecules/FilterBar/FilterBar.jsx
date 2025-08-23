@@ -100,7 +100,7 @@ function FilterBar(props) {
           >
             <FlexContainer
             wrap="wrap"
-            gap="sm"
+            spacing="sm"
             >
               {categories.map(category => (
                 <Button
