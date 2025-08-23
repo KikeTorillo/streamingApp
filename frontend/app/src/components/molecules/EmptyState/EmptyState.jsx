@@ -110,12 +110,12 @@ function EmptyState({
         )}
         
         {/* Título */}
-        <Typography variant="h3" size="lg" weight="semibold">
+        <Typography variant="primary" size="lg" weight="semibold">
           {title}
         </Typography>
         
         {/* Descripción */}
-        <Typography variant="p" size="md" color="muted" style={{ textAlign: 'center', maxWidth: '32rem' }}>
+        <Typography variant="neutral" size="md" style={{ textAlign: 'center', maxWidth: '32rem' }}>
           {description}
         </Typography>
         

@@ -8,6 +8,7 @@ import { AppHeader } from '../../components/organisms/AppHeader/AppHeader';
 import { FlexContainer } from '../../components/atoms/FlexContainer/FlexContainer';
 import { Typography } from '../../components/atoms/Typography/Typography';
 import { Container } from '../../components/atoms/Container/Container';
+import { ContentImage } from '../../components/atoms/ContentImage/ContentImage';
 
 // Servicios
 import { getMovieByIdService } from '../../services/Movies/getMovieByIdService';
@@ -130,33 +131,17 @@ function MoviesDetailPage() {
                     />
                 }
             >
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        minHeight: '50vh',
-                        textAlign: 'center',
-                        padding: 'var(--space-xl)'
-                    }}
-                >
-                    <div>
+                <FlexContainer justify="center" align="center">
+                    <Container size="sm" textAlign="center">
                         <Typography variant="h2" size="lg" weight="semibold" color="danger">Error al cargar la película</Typography>
-                        <Typography 
-                            variant="body" 
-                            size="md" 
-                            color="muted"
-                            style={{
-                                marginBottom: 'var(--space-lg)'
-                            }}
-                        >
+                        <Typography variant="body" size="md" color="muted">
                             {movieError}
                         </Typography>
                         <Button variant="primary" onClick={handleRetry}>
                             Reintentar
                         </Button>
-                    </div>
-                </div>
+                    </Container>
+                </FlexContainer>
             </PageLayout>
         );
     }
@@ -177,17 +162,9 @@ function MoviesDetailPage() {
                     />
                 }
             >
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        minHeight: '50vh',
-                        fontSize: 'var(--font-size-lg)'
-                    }}
-                >
+                <FlexContainer justify="center" align="center">
                     <Typography variant="body" size="lg" color="muted">Cargando película...</Typography>
-                </div>
+                </FlexContainer>
             </PageLayout>
         );
     }
@@ -215,27 +192,23 @@ function MoviesDetailPage() {
                         spacing="lg"
                         align="start"
                         wrap="wrap"
-                        style={{ marginBottom: 'var(--space-xl)' }}
                     >
-                        <img
-                            src={movie.cover_image ? `${import.meta.env.VITE_CDN_URL || 'http://localhost:8082'}/covers/${movie.cover_image}/cover.jpg` : 'https://via.placeholder.com/300x450?text=Película'}
+                        <ContentImage
+                            src={movie.cover_image}
                             alt={`Carátula de ${movie.title}`}
-                            style={{
-                                width: '200px',
-                                height: '300px',
-                                objectFit: 'cover',
-                                borderRadius: 'var(--radius-lg)',
-                                boxShadow: 'var(--shadow-lg)'
-                            }}
-                            onError={(e) => {
-                                e.target.src = 'https://via.placeholder.com/300x450?text=Película';
-                            }}
+                            aspectRatio="2/3"
+                            size="lg"
+                            rounded="lg"
+                            shadow="lg"
+                            contentType="movie"
+                            placeholder="film"
+                            showFallback={true}
+                            fallbackUrl="https://via.placeholder.com/300x450?text=Película"
                         />
-                        <div style={{ flex: '1', minWidth: '300px' }}>
+                        <FlexContainer flex="1" minWidth="300px" direction="column">
                             <Typography 
                                 variant="h1" 
-                                size="2xl"
-                                style={{ marginBottom: 'var(--space-md)' }}
+                                size="4xl"
                             >
                                 {movie.title}
                             </Typography>
@@ -243,32 +216,21 @@ function MoviesDetailPage() {
                                 variant="body" 
                                 size="md" 
                                 color="muted"
-                                style={{ 
-                                    marginBottom: 'var(--space-md)',
-                                    lineHeight: 'var(--line-height-relaxed)'
-                                }}
                             >
                                 {movie.description || 'Sin descripción disponible'}
                             </Typography>
                             
                             {/* Información adicional */}
-                            <div style={{ 
-                                display: 'flex', 
-                                spacing: 'var(--space-md)', 
-                                flexWrap: 'wrap',
-                                alignItems: 'center',
-                                marginBottom: 'var(--space-lg)'
-                            }}>
+                            <FlexContainer 
+                                spacing="md"
+                                wrap="wrap"
+                                align="center"
+                            >
                                 {movie.release_year && (
                                     <Typography 
                                         variant="span" 
                                         size="sm" 
                                         weight="medium"
-                                        style={{ 
-                                            background: 'var(--bg-accent)', 
-                                            padding: 'var(--space-xs) var(--space-sm)',
-                                            borderRadius: 'var(--radius-sm)'
-                                        }}
                                     >
                                         {movie.release_year}
                                     </Typography>
@@ -278,12 +240,6 @@ function MoviesDetailPage() {
                                         variant="span" 
                                         size="sm" 
                                         weight="medium"
-                                        style={{ 
-                                            background: 'var(--bg-primary-light)', 
-                                            color: 'var(--color-primary)',
-                                            padding: 'var(--space-xs) var(--space-sm)',
-                                            borderRadius: 'var(--radius-sm)'
-                                        }}
                                     >
                                         Categoría {movie.category_id}
                                     </Typography>
@@ -293,12 +249,6 @@ function MoviesDetailPage() {
                                         variant="span" 
                                         size="sm" 
                                         weight="semibold"
-                                        style={{ 
-                                            background: 'var(--bg-success-light)', 
-                                            color: 'var(--color-success)',
-                                            padding: 'var(--space-xs) var(--space-sm)',
-                                            borderRadius: 'var(--radius-sm)'
-                                        }}
                                     >
                                         ⭐ {movie.rating}
                                     </Typography>
@@ -308,24 +258,14 @@ function MoviesDetailPage() {
                                         variant="span" 
                                         size="sm" 
                                         weight="medium"
-                                        style={{ 
-                                            background: 'var(--bg-secondary)', 
-                                            color: 'var(--text-secondary)',
-                                            padding: 'var(--space-xs) var(--space-sm)',
-                                            borderRadius: 'var(--radius-sm)'
-                                        }}
                                     >
                                         🕐 {typeof movie.video_duration === 'string' ? movie.video_duration : 'N/A'}
                                     </Typography>
                                 )}
-                            </div>
+                            </FlexContainer>
 
                             {/* Botón de reproducir */}
-                            <div style={{ 
-                                display: 'flex', 
-                                gap: 'var(--space-md)', 
-                                flexWrap: 'wrap' 
-                            }}>
+                            <FlexContainer spacing="md" wrap="wrap">
                                 <Button
                                     variant="primary"
                                     size="lg"
@@ -343,8 +283,8 @@ function MoviesDetailPage() {
                                 >
                                     Volver a Películas
                                 </Button>
-                            </div>
-                        </div>
+                            </FlexContainer>
+                        </FlexContainer>
                     </FlexContainer>
                 )}
             </Container>

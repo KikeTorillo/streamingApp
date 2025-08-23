@@ -96,7 +96,7 @@ function ThemeSelector({
         options={themeOptions}
         size={size}
         variant={variant}
-        width={size}
+        width="auto"
         ariaLabel="Selector de tema"
         compact
       />
@@ -104,7 +104,7 @@ function ThemeSelector({
         onClick={toggleColorMode}
         variant="secondary"
         size={size}
-        width="md"
+        width="auto"
         iconOnly={true}
         leftIcon={isDark ? 'moon' : 'sun'}
         ariaLabel={`Cambiar a modo ${isDark ? 'claro' : 'oscuro'}`}

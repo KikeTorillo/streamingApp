@@ -46,7 +46,7 @@ const Card = (props) => {
     clickable = false,
     onClick,
     maxWidth,
-    fullWidth = false,
+    width = 'auto',  // ✅ MIGRADO: fullWidth → width="full"
     shadow = 'md',
     role,
     tabIndex,
@@ -117,7 +117,7 @@ const Card = (props) => {
     disabled && 'card--disabled',
     loading && 'card--loading',
     // Full width para flexbox
-    fullWidth && 'card--full-width',
+    width === 'full' && 'card--full-width',
     // Clases personalizadas
     className
   ].filter(Boolean).join(' ');
@@ -126,7 +126,7 @@ const Card = (props) => {
   const cardStyles = {
     // Solo override si se especifica manualmente
     maxWidth: maxWidth || undefined,
-    width: fullWidth ? '100%' : undefined
+    width: width === 'full' ? '100%' : width === 'auto' ? undefined : width
   };
 
   // ✅ MIGRACIÓN: Props de accesibilidad con sistema estándar
@@ -167,7 +167,7 @@ const Card = (props) => {
       {...Object.fromEntries(
         Object.entries(props).filter(([key]) => 
           !['size', 'variant', 'rounded', 'disabled', 'loading', 'className', 'ariaLabel',
-            'children', 'hoverable', 'clickable', 'onClick', 'maxWidth', 'fullWidth', 
+            'children', 'hoverable', 'clickable', 'onClick', 'maxWidth', 'width', 
             'shadow', 'role', 'tabIndex', 'padding', 'leftIcon', 'rightIcon', 'iconOnly',
             'tokens', 'renderIcon', 'hasLeftIcon', 'hasRightIcon', 'hasAnyIcon',
             'isDisabled', 'isLoading', 'isEmpty', 'changeLabel', 'change'].includes(key)
@@ -230,7 +230,7 @@ Card.propTypes = {
   clickable: PropTypes.bool,
   onClick: PropTypes.func,
   maxWidth: PropTypes.string,
-  fullWidth: PropTypes.bool,
+  width: PropTypes.oneOf(['auto', 'full', 'fit-content', 'min-content', 'max-content']),  // ✅ MIGRADO
   shadow: PropTypes.oneOf(['sm', 'md', 'lg', 'xl', 'none']),
   role: PropTypes.string,
   tabIndex: PropTypes.number,

@@ -10,6 +10,8 @@ import { SeasonSelector } from '../../components/molecules/SeasonSelector/Season
 import { EmptyState } from '../../components/molecules/EmptyState/EmptyState';
 import { Container } from '../../components/atoms/Container/Container';
 import { Typography } from '../../components/atoms/Typography/Typography';
+import { FlexContainer } from '../../components/atoms/FlexContainer/FlexContainer';
+import { ContentImage } from '../../components/atoms/ContentImage/ContentImage';
 
 // Servicios (necesitarás crearlos)
 import { getSerieByIdService } from '../../services/Series/getSerieByIdService';
@@ -226,33 +228,17 @@ function SeriesDetailPage() {
                     />
                 }
             >
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        minHeight: '50vh',
-                        textAlign: 'center',
-                        padding: 'var(--space-xl)'
-                    }}
-                >
-                    <div>
+                <FlexContainer justify="center" align="center">
+                    <Container size="sm" textAlign="center">
                         <Typography variant="h2" size="lg" weight="semibold" color="danger">Error al cargar la serie</Typography>
-                        <Typography 
-                            variant="body" 
-                            size="md" 
-                            color="muted"
-                            style={{
-                                marginBottom: 'var(--space-lg)'
-                            }}
-                        >
+                        <Typography variant="body" size="md" color="muted">
                             {serieError}
                         </Typography>
                         <Button variant="primary" onClick={handleRetry}>
                             Reintentar
                         </Button>
-                    </div>
-                </div>
+                    </Container>
+                </FlexContainer>
             </PageLayout>
         );
     }
@@ -276,35 +262,28 @@ function SeriesDetailPage() {
             <Container size="lg" padding="lg">
                     {/* ===== INFORMACIÓN DE LA SERIE ===== */}
                     {serie && (
-                        <div style={{ 
-                            marginBottom: 'var(--space-xl)',
-                            display: 'flex',
-                            gap: 'var(--space-lg)',
-                            alignItems: 'flex-start',
-                            flexWrap: 'wrap'
-                        }}>
-                            <img
-                                src={serie.cover_image ? `${import.meta.env.VITE_CDN_URL || 'http://localhost:8082'}/covers/${serie.cover_image}/cover.jpg` : 'https://via.placeholder.com/300x450?text=Serie'}
+                        <FlexContainer 
+                            spacing="lg"
+                            align="start"
+                            wrap="wrap"
+                        >
+                            <ContentImage
+                                src={serie.cover_image}
                                 alt={`Carátula de ${serie.title}`}
-                                style={{
-                                    width: '200px',
-                                    height: '300px',
-                                    objectFit: 'cover',
-                                    borderRadius: 'var(--radius-lg)',
-                                    boxShadow: 'var(--shadow-lg)'
-                                }}
-                                onError={(e) => {
-                                    e.target.src = 'https://via.placeholder.com/300x450?text=Serie';
-                                }}
+                                aspectRatio="2/3"
+                                size="lg"
+                                rounded="lg"
+                                shadow="lg"
+                                contentType="series"
+                                placeholder="film"
+                                showFallback={true}
+                                fallbackUrl="https://via.placeholder.com/300x450?text=Serie"
                             />
-                            <div style={{ flex: '1', minWidth: '300px' }}>
+                            <FlexContainer flex="1" minWidth="300px" direction="column">
                                 <Typography 
                                     variant="h1" 
-                                    size="2xl" 
+                                    size="4xl" 
                                     weight="bold"
-                                    style={{ 
-                                        marginBottom: 'var(--space-md)'
-                                    }}
                                 >
                                     {serie.title}
                                 </Typography>
@@ -312,28 +291,18 @@ function SeriesDetailPage() {
                                     variant="body" 
                                     size="md" 
                                     color="muted"
-                                    style={{ 
-                                        marginBottom: 'var(--space-md)',
-                                        lineHeight: 'var(--line-height-relaxed)'
-                                    }}
                                 >
                                     {serie.description || 'Sin descripción disponible'}
                                 </Typography>
-                                <div style={{ 
-                                    display: 'flex', 
-                                    gap: 'var(--space-md)', 
-                                    flexWrap: 'wrap',
-                                    alignItems: 'center'
-                                }}>
+                                <FlexContainer 
+                                    spacing="md"
+                                    wrap="wrap"
+                                    align="center"
+                                >
                                     <Typography 
                                         variant="span" 
                                         size="sm" 
                                         weight="medium"
-                                        style={{ 
-                                            background: 'var(--bg-accent)', 
-                                            padding: 'var(--space-xs) var(--space-sm)',
-                                            borderRadius: 'var(--radius-sm)'
-                                        }}
                                     >
                                         {serie.release_year}
                                     </Typography>
@@ -341,12 +310,6 @@ function SeriesDetailPage() {
                                         variant="span" 
                                         size="sm" 
                                         weight="medium"
-                                        style={{ 
-                                            background: 'var(--bg-primary-light)', 
-                                            color: 'var(--color-primary)',
-                                            padding: 'var(--space-xs) var(--space-sm)',
-                                            borderRadius: 'var(--radius-sm)'
-                                        }}
                                     >
                                         Categoría {serie.category_id}
                                     </Typography>
@@ -355,24 +318,18 @@ function SeriesDetailPage() {
                                             variant="span" 
                                             size="sm" 
                                             weight="semibold"
-                                            style={{ 
-                                                background: 'var(--bg-success-light)', 
-                                                color: 'var(--color-success)',
-                                                padding: 'var(--space-xs) var(--space-sm)',
-                                                borderRadius: 'var(--radius-sm)'
-                                            }}
                                         >
                                             ⭐ {serie.rating}
                                         </Typography>
                                     )}
-                                </div>
-                            </div>
-                        </div>
+                                </FlexContainer>
+                            </FlexContainer>
+                        </FlexContainer>
                     )}
 
                     {/* ===== SELECTOR DE TEMPORADAS ===== */}
                     {seasonsData.length > 1 && (
-                        <div style={{ marginBottom: 'var(--space-xl)' }}>
+                        <Container>
                             <SeasonSelector
                                 seasons={seasonsData}
                                 selectedSeason={selectedSeason}
@@ -381,34 +338,26 @@ function SeriesDetailPage() {
                                 variant="normal"
                                 size="md"
                             />
-                        </div>
+                        </Container>
                     )}
 
                     {/* ===== LISTA DE EPISODIOS ===== */}
-                    <div style={{ marginBottom: 'var(--space-xl)' }}>
+                    <Container>
                         <Typography 
                             variant="h2" 
                             size="xl" 
                             weight="semibold"
-                            style={{ 
-                                marginBottom: 'var(--space-lg)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 'var(--space-sm)'
-                            }}
                         >
                             🎬 Episodios{seasonsData.length > 1 ? ` - Temporada ${selectedSeason}` : ''}
                         </Typography>
 
                         {loadingEpisodes ? (
-                            <div style={{ 
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                minHeight: '200px'
-                            }}>
+                            <FlexContainer 
+                                justify="center"
+                                align="center"
+                            >
                                 <Typography variant="body" size="md" color="muted">Cargando episodios...</Typography>
-                            </div>
+                            </FlexContainer>
                         ) : episodesError ? (
                             <EmptyState
                                 title="Error al cargar episodios"
@@ -434,11 +383,10 @@ function SeriesDetailPage() {
                                 }
                             />
                         ) : (
-                            <div style={{ 
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: 'var(--space-sm)'
-                            }}>
+                            <FlexContainer 
+                                direction="column"
+                                spacing="sm"
+                            >
                                 {currentSeasonEpisodes.map(episode => {
                                     const transformedEpisode = transformEpisodeForList(episode);
 
@@ -454,9 +402,9 @@ function SeriesDetailPage() {
                                         />
                                     );
                                 })}
-                            </div>
+                            </FlexContainer>
                         )}
-                    </div>
+                    </Container>
                 </Container>
             </PageLayout>
         );

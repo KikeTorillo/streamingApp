@@ -83,8 +83,28 @@ function FlexContainer(props) {
     ...style // ✅ COMBINAR con estilos que vienen de props
   };
 
-  // ✅ FILTRAR PROPS PARA DOM
-  const domProps = extractDOMProps(standardProps);
+  // ✅ FILTRAR PROPS PARA DOM - Excluir TODAS las props específicas de FlexContainer
+  const {
+    // Props específicas de FlexContainer que NO van al DOM
+    direction: _direction,
+    align: _align,
+    justify: _justify,
+    wrap: _wrap,
+    spacing: _spacing,
+    padding: _padding,
+    width: _width,
+    inline: _inline,
+    grow: _grow,
+    shrink: _shrink,
+    distribute: _distribute,
+    // Props estructurales
+    children: _children,
+    as: _as,
+    style: _style,
+    ...cleanStandardProps
+  } = { ...standardProps, ...props };
+  
+  const domProps = extractDOMProps(cleanStandardProps);
 
   // ✅ CREAR ELEMENTO DINÁMICO
   const Element = as;

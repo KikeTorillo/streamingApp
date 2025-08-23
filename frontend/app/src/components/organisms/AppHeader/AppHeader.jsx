@@ -71,7 +71,7 @@ function AppHeader({
         >
           <Typography
             as="h1"
-            size={size === 'lg' ? '2xl' : 'xl'}
+            size="2xl"
             weight="bold"
             color="light"
             onClick={onTitleClick}

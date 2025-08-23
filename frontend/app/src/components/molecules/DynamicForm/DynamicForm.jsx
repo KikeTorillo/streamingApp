@@ -403,7 +403,7 @@ const DynamicForm = ({
             size={finalSize}
             rounded={finalRounded}
             compact={compact}
-            fullWidth
+            width="full"  // ✅ MIGRADO: fullWidth → width
             variant={hasError ? 'danger' : variant}
             autoComplete={fieldType === 'email' ? 'email' : fieldType === 'tel' ? 'tel' : undefined}
           />
@@ -497,7 +497,7 @@ const DynamicForm = ({
             size={finalSize}
             rounded={finalRounded}
             compact={compact}
-            fullWidth
+            width="full"  // ✅ MIGRADO: fullWidth → width
             variant={hasError ? 'danger' : variant}
           />
         </div>
@@ -669,7 +669,7 @@ const DynamicForm = ({
                     rightIcon={action.rightIcon}
                     loading={action.loading || loading}
                     disabled={action.disabled || disabled}
-                    fullWidth={action.fullWidth || submitFullWidth}
+                    width="full"  // ✅ MIGRADO: fullWidth → width={action.fullWidth || submitFullWidth}
                     onClick={action.onClick}
                   >
                     {action.text || action.children}
@@ -687,7 +687,7 @@ const DynamicForm = ({
                 rightIcon={submitRightIcon}
                 loading={loading}
                 disabled={disabled}
-                fullWidth={submitFullWidth}
+                width="full"  // ✅ MIGRADO: fullWidth → width={submitFullWidth}
               >
                 {submitText}
               </Button>

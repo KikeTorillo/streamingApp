@@ -15,6 +15,7 @@ import { AppHeader } from '../../components/organisms/AppHeader/AppHeader';
 import { FilterBar } from '../../components/molecules/FilterBar/FilterBar';
 import { ContentSection } from '../../components/molecules/ContentSection/ContentSection';
 import { ContentCard } from '../../components/molecules/ContentCard/ContentCard';
+import { FlexContainer } from '../../components/atoms/FlexContainer/FlexContainer';
 import { logoutService } from '../../services/Auth/logoutService';
 
 function MainPage() {
@@ -208,15 +209,12 @@ function MainPage() {
     // ===== LOADING INICIAL =====
     if (!user) {
         return (
-            <div style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minHeight: '100vh',
-                fontSize: 'var(--font-size-lg)'
-            }}>
+            <FlexContainer
+                justify="center"
+                align="center"
+            >
                 Cargando...
-            </div>
+            </FlexContainer>
         );
     }
 

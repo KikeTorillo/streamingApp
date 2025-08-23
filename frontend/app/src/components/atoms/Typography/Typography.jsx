@@ -3,46 +3,61 @@
 /* eslint-disable react-refresh/only-export-components */
 
 import PropTypes from 'prop-types';
-import { useStandardProps } from '../../../hooks/useStandardProps';
-import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens';
+import { useTypographyProps } from '../../../hooks/useStandardProps-v2.jsx';
+import { TYPOGRAPHY_PROP_TYPES, extractDOMPropsV2 } from '../../../tokens/standardProps-v2';
 import './Typography.css';
 
 /**
- * Typography - ÁTOMO PARA TIPOGRAFÍA SEMÁNTICA ESTANDARIZADA
+ * Typography - ÁTOMO V2.0 PARA TIPOGRAFÍA ESPECIALIZADA
  * 
- * ✅ OBJETIVO: Eliminar 13+ usos repetitivos de fontSize inline en el proyecto
- * ✅ SISTEMA ESTÁNDAR: Props unificadas con otros componentes
- * ✅ TOKENS AUTOMÁTICOS: Font sizes, weights y line heights del sistema
- * ✅ SEMÁNTICA: Elementos HTML correctos según contexto
- * ✅ ACCESIBILIDAD: Jerarquía visual y semántica correcta
+ * 🚀 MIGRADO: Sistema V2.0 con arquitectura especializada
+ * ✅ JERARQUÍA COMPLETA: xs → 6xl (escala tipográfica profesional)
+ * ✅ RESPONSIVE: Breakpoint support nativo
+ * ✅ TYPE-SAFE: Validación especializada para tipografía
+ * ✅ SEMÁNTICA: Mapeo automático HTML según tamaño
+ * ✅ PERFORMANCE: Tokens especializados + memoización
  * 
- * CASOS COMUNES A REEMPLAZAR:
- * - style={{ fontSize: 'var(--font-size-xl)', fontWeight: 'var(--font-weight-semibold)' }}
- * - <h1 style={{ fontSize: 'var(--font-size-2xl)' }}>
- * - <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-muted)' }}>
+ * CASOS DE USO:
+ * - <Typography size="6xl">H1 Display headers</Typography>
+ * - <Typography size="3xl">H2 Page titles</Typography>
+ * - <Typography size="md">Body text (default)</Typography>
+ * - <Typography size="xs">Captions, metadata</Typography>
+ * 
+ * RESPONSIVE:
+ * - <Typography size={{ base: 'lg', md: '2xl', lg: '4xl' }}>Responsive heading</Typography>
  */
 function Typography(props) {
-  // ✅ USAR HOOK ESTÁNDAR DEL SISTEMA
+  // ✅ USAR HOOK ESPECIALIZADO V2.0 PARA TIPOGRAFÍA
+  const hookResult = useTypographyProps(props, {
+    componentName: 'Typography',
+    defaultSize: 'md',
+    defaultVariant: 'neutral',
+    enableResponsive: true
+  });
+  
   const {
     size,
     variant,
+    weight,
+    width,
+    spacing,
     disabled,
     loading,
     className,
+    tokens,
+    generateClassName,
+    generateStyles,
+    currentBreakpoint,
+    isInteractive,
+    componentType,
     ...standardProps
-  } = useStandardProps(props, {
-    componentType: 'typography',
-    defaultSize: 'md',
-    defaultVariant: 'neutral', // Neutral por defecto para texto
-    defaultRounded: 'none'
-  });
+  } = hookResult;
 
   // ✅ EXTRAER PROPS ESPECÍFICAS DE TIPOGRAFÍA
   const {
     children,
     as,
     element = 'p',
-    weight = 'normal',
     align = 'left',
     color,
     truncate = false,
@@ -51,34 +66,37 @@ function Typography(props) {
     lineHeight,
     maxLines,
     uppercase = false,
-    lowercase = false
+    lowercase = false,
+    style: originalStyle = {}
   } = props;
 
-  // ✅ DETERMINAR ELEMENTO HTML AUTOMÁTICAMENTE
+  // ✅ DETERMINAR ELEMENTO HTML AUTOMÁTICAMENTE - ESCALA AMPLIADA V2
   const getElement = () => {
     if (as) return as;
     
-    // Mapeo semántico automático según size
+    // Mapeo semántico automático según escala tipográfica completa
     const semanticMapping = {
-      '3xl': 'h1',
-      '2xl': 'h1', 
-      'xl': 'h2',
-      'lg': 'h3',
-      'md': 'p',
-      'sm': 'span',
-      'xs': 'small'
+      '6xl': 'h1',  // Display headers - máximo impacto
+      '5xl': 'h1',  // Page headers - impacto alto
+      '4xl': 'h1',  // Section headers - destacados
+      '3xl': 'h2',  // Subsection headers
+      '2xl': 'h3',  // Component headers
+      'xl': 'h4',   // Small headers
+      'lg': 'h5',   // Lead text, subtitles
+      'md': 'p',    // Body text (default)
+      'sm': 'span', // Small text, labels
+      'xs': 'small' // Captions, metadata
     };
     
     return semanticMapping[size] || element;
   };
 
-  // ✅ GENERAR CLASES CSS CON SISTEMA ESTÁNDAR
+  // ✅ GENERAR CLASES CSS CON GENERADOR V2.0
+  const baseClassName = generateClassName('typography');
+  
   const typographyClasses = [
-    'typography',
-    `typography--size-${size}`,
-    `typography--weight-${weight}`,
+    baseClassName,
     `typography--align-${align}`,
-    variant !== 'neutral' && `typography--variant-${variant}`,
     color && `typography--color-${color}`,
     truncate && 'typography--truncate',
     italic && 'typography--italic',
@@ -86,15 +104,11 @@ function Typography(props) {
     uppercase && 'typography--uppercase',
     lowercase && 'typography--lowercase',
     lineHeight && `typography--line-height-${lineHeight}`,
-    maxLines && `typography--max-lines-${maxLines}`,
-    loading && 'typography--loading',
-    disabled && 'typography--disabled',
-    className
+    maxLines && `typography--max-lines-${maxLines}`
   ].filter(Boolean).join(' ');
 
-  // ✅ ESTILOS DINÁMICOS MÍNIMOS
-  const typographyStyles = {
-    opacity: disabled ? '0.5' : '1',
+  // ✅ GENERAR ESTILOS CSS CON GENERADOR V2.0 + ESPECIFICOS
+  const specificStyles = {
     // Limitar líneas si se especifica
     ...(maxLines && {
       display: '-webkit-box',
@@ -103,9 +117,30 @@ function Typography(props) {
       overflow: 'hidden'
     })
   };
+  
+  const baseStyles = generateStyles(specificStyles);
+  
+  // ✅ ASEGURAR QUE STYLES SEA SIEMPRE UN OBJETO Y COMBINAR CON STYLE ORIGINAL
+  const safeOriginalStyle = originalStyle && typeof originalStyle === 'object' && !Array.isArray(originalStyle) ? originalStyle : {};
+  const safeBaseStyles = baseStyles && typeof baseStyles === 'object' && !Array.isArray(baseStyles) ? baseStyles : {};
+  
+  const finalStyles = {
+    ...safeBaseStyles,
+    ...safeOriginalStyle
+  };
 
-  // ✅ FILTRAR PROPS PARA DOM
-  const domProps = extractDOMProps(standardProps);
+  // ✅ FILTRAR PROPS PARA DOM V2.0 - extractDOMPropsV2 ya filtra todo lo necesario
+  const domProps = extractDOMPropsV2({
+    ...standardProps,
+    ...props,
+    // Props del hook V2 que NO deben ir al DOM
+    tokens,
+    generateClassName,
+    generateStyles, 
+    currentBreakpoint,
+    isInteractive,
+    componentType
+  });
 
   // ✅ CREAR ELEMENTO DINÁMICO
   const Element = getElement();
@@ -113,7 +148,7 @@ function Typography(props) {
   return (
     <Element 
       className={typographyClasses}
-      style={typographyStyles}
+      style={finalStyles}
       {...domProps}
     >
       {loading ? (
@@ -126,8 +161,8 @@ function Typography(props) {
 }
 
 Typography.propTypes = {
-  // ✅ PROPS ESTÁNDAR DEL SISTEMA DE DISEÑO
-  ...STANDARD_PROP_TYPES,
+  // ✅ PROPS ESPECIALIZADAS V2.0 PARA TIPOGRAFÍA
+  ...TYPOGRAPHY_PROP_TYPES,
   
   /**
    * Contenido del texto
@@ -145,11 +180,10 @@ Typography.propTypes = {
   element: PropTypes.string,
   
   /**
-   * Peso de la fuente
+   * Peso de la fuente (ya incluido en TYPOGRAPHY_PROP_TYPES)
+   * Valores: light, normal, medium, semibold, bold
    */
-  weight: PropTypes.oneOf([
-    'light', 'normal', 'medium', 'semibold', 'bold', 'extrabold'
-  ]),
+  // weight: ya incluido en TYPOGRAPHY_PROP_TYPES
   
   /**
    * Alineación del texto
@@ -220,16 +254,22 @@ Typography.defaultProps = {
 
 export { Typography };
 
-// ✅ CONSTANTES PARA DESARROLLO
-export const TYPOGRAPHY_SIZES = {
-  XS: 'xs',      // 1.2rem - Small text, captions
-  SM: 'sm',      // 1.4rem - Secondary text
-  MD: 'md',      // 1.6rem - Body text (default)
-  LG: 'lg',      // 1.8rem - Subheadings
-  XL: 'xl',      // 2.4rem - Headings
-  '2XL': '2xl',  // 3.0rem - Large headings
-  '3XL': '3xl'   // 3.6rem - Display headings
+// ✅ CONSTANTES V2.0 - ESCALA TIPOGRÁFICA COMPLETA
+export const TYPOGRAPHY_SIZES_V2 = {
+  XS: 'xs',      // 1.2rem - Captions, metadatos, texto legal
+  SM: 'sm',      // 1.4rem - Body small, labels secundarios
+  MD: 'md',      // 1.6rem - Body text (DEFAULT)
+  LG: 'lg',      // 1.8rem - Lead text, subtítulos
+  XL: 'xl',      // 2.0rem - H6, títulos pequeños
+  '2XL': '2xl',  // 2.4rem - H5, títulos sección
+  '3XL': '3xl',  // 3.0rem - H4, títulos principales
+  '4XL': '4xl',  // 3.6rem - H3, títulos destacados
+  '5XL': '5xl',  // 4.8rem - H2, títulos página
+  '6XL': '6xl'   // 6.4rem - H1, display headers
 };
+
+// ✅ BACKWARD COMPATIBILITY
+export const TYPOGRAPHY_SIZES = TYPOGRAPHY_SIZES_V2;
 
 export const TYPOGRAPHY_WEIGHTS = {
   LIGHT: 'light',         // 300

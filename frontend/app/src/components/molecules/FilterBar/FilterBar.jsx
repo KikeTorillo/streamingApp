@@ -107,13 +107,14 @@ function FilterBar(props) {
                   key={category.value}
                   // ✅ VARIANTES ESTÁNDAR: Usar solo variantes del sistema de diseño
                   variant={selectedCategory === category.value ? 'primary' : 'secondary'}
-                  size={size} // ✅ Heredar tamaño del FilterBar
+                  size="lg"
                   rounded={rounded} // ✅ Heredar rounded del FilterBar
                   onClick={() => onCategoryChange(category.value)}
                   className="filter-bar__category-button"
                   disabled={disabled || loading} // ✅ Deshabilitar durante loading
                   // ✅ ICONOS DEL SISTEMA: Si la categoría tiene icono, usar leftIcon
                   leftIcon={category.icon}
+                  padding="md"
                 >
                   {category.label}
                 </Button>

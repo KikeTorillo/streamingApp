@@ -4,46 +4,54 @@
 
 import { Children, cloneElement } from 'react';
 import PropTypes from 'prop-types';
-import { useStandardProps } from '../../../hooks/useStandardProps';
-import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens';
+import { useContainerProps } from '../../../hooks/useStandardProps-v2.jsx';
+import { CONTAINER_PROP_TYPES, extractDOMPropsV2 } from '../../../tokens/standardProps-v2';
 import './GridContainer.css';
 
 /**
- * GridContainer - ÁTOMO PARA LAYOUTS CSS GRID ESTANDARIZADOS
+ * GridContainer - ÁTOMO V2.0 PARA LAYOUTS CSS GRID ESPECIALIZADOS
  * 
- * ✅ OBJETIVO: Eliminar 31+ usos repetitivos de display: grid en el proyecto
- * ✅ SISTEMA ESTÁNDAR: Props unificadas con otros componentes
- * ✅ TOKENS AUTOMÁTICOS: Spacing y columnas del sistema
- * ✅ RESPONSIVE: Adaptación automática por breakpoints
- * ✅ GRID AREAS: Manejo automático de grid-area para children con prop 'area'
- * ✅ CASOS DE USO: Dashboards, galerías de contenido, formularios grid, layouts admin
+ * 🚀 MIGRADO: Sistema V2.0 con arquitectura especializada para contenedores
+ * ✅ CONTAINER SPECIALIZED: Tokens específicos para layouts y composición
+ * ✅ RESPONSIVE: Soporte nativo para breakpoints en columnas y spacing
+ * ✅ TYPE-SAFE: Validación especializada para componentes contenedores
+ * ✅ GRID AREAS: Manejo automático de grid-area para children
+ * ✅ PERFORMANCE: Tokens especializados + memoización
  * 
- * CASOS COMUNES A REEMPLAZAR:
- * - style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(20rem, 1fr))', gap: 'var(--space-lg)' }}
- * - style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-md)' }}
- * - style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' }}
+ * CASOS DE USO:
+ * - <GridContainer columns="repeat(auto-fit, minmax(20rem, 1fr))" gap="lg">Cards responsivas</GridContainer>
+ * - <GridContainer columns="1fr 1fr" gap="md">Layout 2 columnas</GridContainer>
+ * - <GridContainer columns={{ base: "1fr", md: "repeat(3, 1fr)" }}>Responsive grid</GridContainer>
  * 
- * NUEVO: Grid Areas automáticas
- * <GridContainer areas='"sidebar header" "sidebar main"'>
- *   <Sidebar area="sidebar" />
+ * GRID AREAS V2.0:
+ * <GridContainer areas='"header header" "sidebar main"' gap="lg">
  *   <Header area="header" />
+ *   <Sidebar area="sidebar" />
  *   <Main area="main" />
  * </GridContainer>
  */
 function GridContainer(props) {
-  // ✅ USAR HOOK ESTÁNDAR DEL SISTEMA
+  // ✅ USAR HOOK ESPECIALIZADO V2.0 PARA COMPONENTES CONTENEDORES
   const {
     size,
     variant,
+    padding,
+    gap,
+    margin,
     disabled,
     loading,
     className,
+    tokens,
+    generateClassName,
+    generateStyles,
+    currentBreakpoint,
+    componentType,
     ...standardProps
-  } = useStandardProps(props, {
-    componentType: 'gridcontainer',
-    defaultSize: 'md',
-    defaultVariant: 'neutral', // Neutral por defecto para layout
-    defaultRounded: 'none'
+  } = useContainerProps(props, {
+    componentName: 'GridContainer',
+    defaultSize: 'lg',
+    defaultVariant: 'neutral',
+    enableResponsive: true
   });
 
   // ✅ EXTRAER PROPS ESPECÍFICAS DE CSS GRID
@@ -53,11 +61,11 @@ function GridContainer(props) {
     columns = 'auto-fit',
     minColumnWidth = '20rem',
     rows = 'auto',
-    gap, // Propiedad legacy
-    spacing, // Nueva propiedad estandarizada
+    gap: legacyGap, // Propiedad legacy (conflicto con hook)
+    spacing: legacySpacing, // Nueva propiedad estandarizada (conflicto con hook)
     columnGap,
     rowGap,
-    padding = null, // ✅ NUEVO: Padding interno del contenedor
+    padding: legacyPadding = null, // Conflicto con hook
     align = 'stretch',
     justify = 'stretch',
     autoRows = 'auto',
@@ -67,37 +75,35 @@ function GridContainer(props) {
     style = {}
   } = props;
 
-  // ✅ MAPEO DE PROPS: Usar spacing si está definida, sino usar gap (backward compatibility)
-  const effectiveGap = spacing || gap;
+  // ✅ MAPEO DE PROPS V2.0: Priorizar props del hook, luego legacy
+  const effectiveGap = gap || legacySpacing || legacyGap;
+  const effectivePadding = padding || legacyPadding;
 
-  // ✅ DEPRECATION WARNING para gap
-  if (gap !== undefined && typeof window !== 'undefined') {
-    console.warn(
-      '⚠️ DEPRECATION WARNING: GridContainer gap prop is deprecated. Use spacing instead.',
-      '\n📖 Migration guide: https://docs.streamingapp.com/components/gridcontainer#migration'
-    );
+  // ✅ DEPRECATION WARNINGS V2.0 para props legacy
+  if (import.meta.env?.DEV && (legacyGap || legacySpacing || legacyPadding)) {
+    const warnings = [];
+    if (legacyGap) warnings.push('prop "gap" deprecada → usar hook V2.0 gap');
+    if (legacySpacing) warnings.push('prop "spacing" deprecada → usar hook V2.0 gap');
+    if (legacyPadding) warnings.push('prop "padding" deprecada → usar hook V2.0 padding');
+    
+    console.warn(`🔄 GridContainer (V2): ${warnings.join(', ')}`);
   }
 
-  // ✅ GENERAR CLASES CSS CON SISTEMA ESTÁNDAR
+  // ✅ GENERAR CLASES CSS CON GENERADOR V2.0
+  const baseClassName = generateClassName('grid-container');
+  
   const gridClasses = [
-    'grid-container',
-    `grid-container--size-${size}`,
-    variant !== 'neutral' && `grid-container--variant-${variant}`,
-    effectiveGap && `grid-container--gap-${effectiveGap}`,
+    baseClassName,
     columnGap && `grid-container--column-gap-${columnGap}`,
     rowGap && `grid-container--row-gap-${rowGap}`,
-    padding && `grid-container--padding-${padding}`, // ✅ NUEVO: Clase de padding
     `grid-container--align-${align}`,
     `grid-container--justify-${justify}`,
     inline && 'grid-container--inline',
-    dense && 'grid-container--dense',
-    loading && 'grid-container--loading',
-    disabled && 'grid-container--disabled',
-    className
+    dense && 'grid-container--dense'
   ].filter(Boolean).join(' ');
 
-  // ✅ ESTILOS DINÁMICOS PARA GRID ESPECÍFICO
-  const gridStyles = {
+  // ✅ GENERAR ESTILOS CSS CON GENERADOR V2.0 + ESPECÍFICOS DE GRID
+  const gridSpecificStyles = {
     // Configuración dinámica de columnas
     gridTemplateColumns: typeof columns === 'number' 
       ? `repeat(${columns}, 1fr)`
@@ -120,11 +126,11 @@ function GridContainer(props) {
     // Grid areas si se especifican
     ...(areas && { gridTemplateAreas: areas }),
     
-    // Estados
-    opacity: disabled ? '0.5' : '1',
-    pointerEvents: disabled ? 'none' : 'auto',
-    ...style // ✅ COMBINAR con estilos que vienen de props
+    // Combinar con estilos que vienen de props
+    ...(style && typeof style === 'object' ? style : {})
   };
+
+  const gridStyles = generateStyles(gridSpecificStyles);
 
   // ✅ PROCESAR CHILDREN CON GRID AREAS AUTOMÁTICAS
   const processedChildren = areas ? 
@@ -144,8 +150,17 @@ function GridContainer(props) {
       return child;
     }) : children;
 
-  // ✅ FILTRAR PROPS PARA DOM
-  const domProps = extractDOMProps(standardProps);
+  // ✅ FILTRAR PROPS PARA DOM V2.0 - extractDOMPropsV2 ya filtra todo lo necesario
+  const domProps = extractDOMPropsV2({
+    ...standardProps,
+    ...props,
+    // Props del hook V2 que NO deben ir al DOM
+    tokens,
+    generateClassName,
+    generateStyles,
+    currentBreakpoint,
+    componentType
+  });
 
   // ✅ CREAR ELEMENTO DINÁMICO
   const Element = as;
@@ -167,8 +182,8 @@ function GridContainer(props) {
 }
 
 GridContainer.propTypes = {
-  // ✅ PROPS ESTÁNDAR DEL SISTEMA DE DISEÑO
-  ...STANDARD_PROP_TYPES,
+  // ✅ PROPS ESPECIALIZADAS V2.0 PARA COMPONENTES CONTENEDORES
+  ...CONTAINER_PROP_TYPES,
   
   /**
    * Contenido del componente
@@ -210,7 +225,11 @@ GridContainer.propTypes = {
     PropTypes.string
   ]),
   
-  /**\n   * Gap general usando tokens del sistema (deprecado, usar spacing)\n   */\n  gap: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl']),\n  \n  /**\n   * Espaciado general usando tokens del sistema\n   */\n  spacing: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl']),
+  /** Gap general usando tokens del sistema (deprecado, usar spacing) */
+  gap: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl']),
+  
+  /** Espaciado general usando tokens del sistema */
+  spacing: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl']),
   
   /**
    * Gap específico para columnas
@@ -271,7 +290,7 @@ GridContainer.propTypes = {
 };
 
 GridContainer.defaultProps = {
-  size: 'md',
+  size: 'lg',
   variant: 'neutral',
   disabled: false,
   loading: false,
@@ -283,7 +302,6 @@ GridContainer.defaultProps = {
   align: 'stretch',
   justify: 'stretch',
   autoRows: 'auto',
-  padding: null, // ✅ NUEVO: Sin padding por defecto
   inline: false,
   dense: false
 };

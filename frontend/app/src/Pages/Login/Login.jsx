@@ -39,7 +39,7 @@ function Login() {
           <Typography 
             as="h1"
             variant="h1" 
-            size="3xl" 
+            size="5xl" 
             weight="bold"
             align="center"
           >

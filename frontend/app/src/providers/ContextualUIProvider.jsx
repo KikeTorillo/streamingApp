@@ -107,23 +107,30 @@ export function ContextualUIProvider({
     };
   }, [config, preset]);
 
-  // ✅ WARNING SI SE DETECTA SETUP LEGACY
+  // ✅ LIMPIEZA AUTOMÁTICA DE LEGACY + WARNING
   React.useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
-      // Detectar si hay ThemeContext legacy en uso
-      const hasLegacyTheme = document.querySelector('.palette-tierra') || 
-                            localStorage.getItem('palette') ||
-                            localStorage.getItem('mode');
+      // Detectar y limpiar datos legacy
+      const hasLegacyPalette = localStorage.getItem('palette');
+      const hasLegacyMode = localStorage.getItem('mode');
+      const hasLegacyClasses = document.querySelector('.palette-tierra');
       
-      if (hasLegacyTheme) {
+      if (hasLegacyPalette || hasLegacyMode || hasLegacyClasses) {
         console.warn(
-          '🔄 MIGRATION NOTICE: Se detectó uso del ThemeContext legacy.\n' +
-          '📋 Para migrar completamente:\n' +
-          '1. Reemplazar imports de ThemeContext con ContextualUIProvider\n' +
-          '2. Actualizar componentes que usen useTheme legacy\n' +
-          '3. Remover ThemeContext.jsx antiguo\n' +
-          '📖 Guía: /utils/themeMigration.js'
+          '🔄 MIGRATION NOTICE: Limpiando datos del ThemeContext legacy...\n' +
+          '✅ Migración automática completada.\n' +
+          '📋 El nuevo ContextualUIProvider está activo.'
         );
+        
+        // Limpiar localStorage legacy
+        localStorage.removeItem('palette');
+        localStorage.removeItem('mode');
+        
+        // Limpiar clases CSS legacy del DOM
+        const root = document.documentElement;
+        root.classList.remove('palette-tierra', 'palette-default', 'dark');
+        
+        console.log('✅ Legacy theme data cleaned successfully');
       }
     }
   }, []);

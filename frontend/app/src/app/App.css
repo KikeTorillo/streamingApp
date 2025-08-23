@@ -276,6 +276,13 @@ html {
   --breakpoint-xl: 1280px;
   --breakpoint-2xl: 1536px;
 
+  /* === ICON SIZES === */
+  --icon-size-xs: 1.2rem;   /* 12px */
+  --icon-size-sm: 1.6rem;   /* 16px */
+  --icon-size-md: 2.0rem;   /* 20px */
+  --icon-size-lg: 2.4rem;   /* 24px */
+  --icon-size-xl: 3.2rem;   /* 32px */
+
   /* === PALETA TIERRA - SEGUNDA OPCIÓN === */
   --tierra-50: #fefae0;    /* Crema suave tierra */
   --tierra-100: #f7f3d6;   /* Beige muy claro */
