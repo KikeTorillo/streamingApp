@@ -1,7 +1,7 @@
 // src/components/molecules/ProgressModal/ProgressModal.jsx
 import PropTypes from 'prop-types';
 import { Modal } from "../Modal/Modal";
-import { UploadProgress } from "../../atoms/UploadProgress/UploadProgress";
+// import { UploadProgress } from "../../atoms/UploadProgress/UploadProgress"; // REMOVED: Specific to streaming domain
 import "./ProgressModal.css";
 
 /**

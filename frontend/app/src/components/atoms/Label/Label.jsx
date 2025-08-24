@@ -74,8 +74,7 @@ function Label({
     ariaLabel,
     testId,
     tokens, // Para futuras extensiones de estilo
-    generateClassName,
-    generateStyles
+    generateClassName
   } = useStandardPropsV2(propsWithCompatibility, {
     componentName: 'Label',
     componentType: 'typography',

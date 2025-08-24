@@ -54,8 +54,7 @@ const Select = forwardRef((props, ref) => {
     // Helpers de estado  
     isDisabled, isLoading,
     
-    // Generadores
-    generateStyles,
+    // Generadores - ELIMINADO generateStyles para consistencia
     
     // Meta información
     currentBreakpoint,
@@ -163,9 +162,8 @@ const Select = forwardRef((props, ref) => {
       ref={ref}
       className={selectClasses}
       style={{
-        // Aplicar algunos tokens V2 como fallback
+        // Estilos específicos manuales (sin generateStyles)
         ...(tokens.width && { width: tokens.width }),
-        ...generateStyles(),
         ...props.style
       }}
       value={value}

@@ -73,7 +73,6 @@ function FileInput(props) {
     hasRightIcon,
     ariaLabel,
     generateClassName,
-    generateStyles,
     tokens
   } = useInteractiveProps(restProps, {
     componentName: 'FileInput',

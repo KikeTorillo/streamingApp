@@ -46,7 +46,6 @@ function Typography(props) {
     className,
     tokens,
     generateClassName,
-    generateStyles,
     currentBreakpoint,
     isInteractive,
     componentType,
@@ -107,7 +106,7 @@ function Typography(props) {
     maxLines && `typography--max-lines-${maxLines}`
   ].filter(Boolean).join(' ');
 
-  // ✅ GENERAR ESTILOS CSS CON GENERADOR V2.0 + ESPECIFICOS
+  // ✅ ESTILOS ESPECÍFICOS MANUALES (SIN GENERATESTYLES)
   const specificStyles = {
     // Limitar líneas si se especifica
     ...(maxLines && {
@@ -118,14 +117,11 @@ function Typography(props) {
     })
   };
   
-  const baseStyles = generateStyles(specificStyles);
-  
   // ✅ ASEGURAR QUE STYLES SEA SIEMPRE UN OBJETO Y COMBINAR CON STYLE ORIGINAL
   const safeOriginalStyle = originalStyle && typeof originalStyle === 'object' && !Array.isArray(originalStyle) ? originalStyle : {};
-  const safeBaseStyles = baseStyles && typeof baseStyles === 'object' && !Array.isArray(baseStyles) ? baseStyles : {};
   
   const finalStyles = {
-    ...safeBaseStyles,
+    ...specificStyles,
     ...safeOriginalStyle
   };
 
@@ -136,7 +132,6 @@ function Typography(props) {
     // Props del hook V2 que NO deben ir al DOM
     tokens,
     generateClassName,
-    generateStyles, 
     currentBreakpoint,
     isInteractive,
     componentType

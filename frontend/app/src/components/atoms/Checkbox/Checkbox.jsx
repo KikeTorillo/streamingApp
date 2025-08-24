@@ -57,7 +57,6 @@ function Checkbox(props) {
     renderIcon,
     tokens,
     generateClassName,
-    generateStyles,
     // Props específicas de Checkbox
     checked = false,
     indeterminate = false,

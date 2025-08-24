@@ -79,7 +79,6 @@ function Modal(props) {
     onClosed = null,
     
     tokens,
-    generateStyles,
     ...restProps
   } = standardProps;
   
@@ -177,7 +176,7 @@ function Modal(props) {
       ref={dialogRef}
       {...domProps}
       className={modalClasses}
-      style={generateStyles()}
+      style={props.style}
       onClose={handleDialogClose}
       onClick={handleBackdropClick}
       onKeyDown={handleKeyDown}

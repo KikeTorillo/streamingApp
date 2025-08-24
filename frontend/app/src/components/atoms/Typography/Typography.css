@@ -136,6 +136,11 @@
   font-weight: var(--font-weight-medium);
 }
 
+.typography--variant-neutral {
+  /* Variante transparente sin decoración - mantiene estilos base */
+  /* No aplica colores o pesos específicos, permite flexibilidad total */
+}
+
 .typography--variant-success {
   color: var(--color-success);
   font-weight: var(--font-weight-medium);

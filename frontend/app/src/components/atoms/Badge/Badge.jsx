@@ -52,8 +52,7 @@ const Badge = (props) => {
     // Helpers de estado  
     isDisabled, isLoading, isInteractive,
     
-    // Generadores
-    generateStyles,
+    // Generadores - ELIMINADO generateStyles para consistencia
     
     // Meta información
     currentBreakpoint,
@@ -157,8 +156,7 @@ const Badge = (props) => {
       role={badgeRole}
       tabIndex={onClick ? 0 : undefined}
       style={{
-        // Aplicar algunos tokens V2 como fallback
-        ...generateStyles(),
+        // Estilos específicos manuales (sin generateStyles)
         ...props.style
       }}
       onClick={onClick ? handleClick : undefined}
