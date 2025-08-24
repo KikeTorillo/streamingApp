@@ -67,8 +67,6 @@ function Avatar(props) {
     className,
     renderIcon,
     tokens,
-    generateClassName,
-    generateStyles,
     ...restProps
   } = avatarProps;
   
@@ -115,11 +113,18 @@ function Avatar(props) {
     }
   }
   
-  // Construir clases CSS usando V2
-  const avatarClasses = generateClassName('avatar') + ' ' + [
+  // Construir clases CSS manualmente
+  const avatarClasses = [
+    'avatar',
+    `avatar--${size}`,
+    `avatar--${variant}`,
+    `avatar--rounded-${rounded}`,
     onClick && 'avatar--clickable',
     status && 'avatar--has-status',
-    badge && 'avatar--has-badge'
+    badge && 'avatar--has-badge',
+    loading && 'avatar--loading',
+    disabled && 'avatar--disabled',
+    className
   ].filter(Boolean).join(' ');
 
   // Determinar qué mostrar

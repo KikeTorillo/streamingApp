@@ -181,7 +181,7 @@ function ToastContainer({
       {/* ✅ V2: Overlay de loading usando isLoading del hook */}
       {isLoading && (
         <div className="toast-container__loading-overlay">
-          {renderIcon('loader', 'md', 'neutral', {
+          {renderIcon('loading', 'md', 'neutral', {
             className: 'toast-container__loading-icon',
             'aria-label': 'Cargando notificaciones...'
           })}

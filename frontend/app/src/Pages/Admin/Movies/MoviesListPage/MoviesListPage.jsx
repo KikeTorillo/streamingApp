@@ -7,7 +7,7 @@ import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminL
 import { DataTable } from '../../../../components/organisms/DataTable/DataTable';
 import { Button } from '../../../../components/atoms/Button/Button';
 import { Badge } from '../../../../components/atoms/Badge/Badge';
-import { ContentImage } from '../../../../components/atoms/ContentImage/ContentImage';
+import { Image } from '../../../../components/atoms/Image/Image';
 import { FlexContainer } from '../../../../components/atoms/FlexContainer/FlexContainer';
 import { Typography } from '../../../../components/atoms/Typography/Typography';
 import { useMovies } from '../../../../app/context/MoviesContext';
@@ -71,15 +71,18 @@ function MoviesListPage() {
         const imageUrl = getMovieCoverUrl(coverImage);
 
         return (
-          <ContentImage
+          <Image
             src={imageUrl}
             alt={`Portada de ${title}`}
-            aspectRatio="2/3"
-            contentType="movie"
-            placeholder="film"
+            aspectRatio="portrait"
+            loading="lazy"
             rounded="md"
-            showFallback={true}
-            size='xs'
+            size="xs"
+            style={{
+              width: '60px',
+              height: '80px',
+              objectFit: 'cover'
+            }}
           />
         );
       }

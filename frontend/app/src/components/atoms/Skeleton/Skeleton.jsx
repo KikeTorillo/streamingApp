@@ -73,9 +73,7 @@ function Skeleton({
     loading: finalLoading,
     disabled: finalDisabled,
     className: standardClassName,
-    tokens,
-    generateClassName,
-    generateStyles
+    tokens
   } = useStandardPropsV2({
     size,
     variant,
@@ -90,9 +88,6 @@ function Skeleton({
     defaultVariant: 'neutral',
     defaultRounded: 'md'
   });
-  
-  // Evitar warning de unused vars
-  void generateStyles;
   
   // Backward compatibility: detectar y mapear uso legacy
   let resolvedSkeletonVariant = skeletonVariant;
@@ -124,10 +119,16 @@ function Skeleton({
     'data-component': 'Skeleton',
     ...restProps
   };
-  // Generar clases CSS con sistema V2
-  const skeletonClasses = generateClassName('skeleton') + ' ' + [
+  
+  // Generar clases CSS manualmente
+  const skeletonClasses = [
+    'skeleton',
+    `skeleton--${finalSize}`,
+    `skeleton--${finalVariant}`,
+    `skeleton--rounded-${resolvedRounded}`,
     `skeleton--skeleton-variant-${resolvedSkeletonVariant}`, // Variante funcional
-    shouldAnimate && 'skeleton--animate'
+    shouldAnimate && 'skeleton--animate',
+    standardClassName
   ].filter(Boolean).join(' ');
 
   // Estilos dinámicos con tokens del sistema

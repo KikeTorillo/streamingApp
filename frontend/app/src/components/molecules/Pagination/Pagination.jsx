@@ -276,7 +276,7 @@ function Pagination(props) {
             </span>
           )}
           
-          {loading && renderIcon('loader')}
+          {loading && renderIcon('loading')}
         </div>
         
         {/* Botón Siguiente */}

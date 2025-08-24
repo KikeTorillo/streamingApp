@@ -60,32 +60,37 @@ function GridContainer(props) {
     columns = 'auto-fit',
     minColumnWidth = '20rem',
     rows = 'auto',
-    gap: legacyGap, // Propiedad legacy (conflicto con hook)
-    spacing: legacySpacing, // Nueva propiedad estandarizada (conflicto con hook)
+    // Props específicas de GridContainer (no del hook V2.0)
+    spacing: legacySpacing, // Prop legacy específica de GridContainer
     columnGap,
     rowGap,
-    padding: legacyPadding = null, // Conflicto con hook
     align = 'stretch',
     justify = 'stretch',
     autoRows = 'auto',
     areas,
     inline = false,
     dense = false,
-    style = {}
+    style = {},
+    // Extraer props que podrían entrar por error y causar conflictos
+    gap: directGapProp, // Solo para detectar uso directo incorrecto
+    padding: directPaddingProp, // Solo para detectar uso directo incorrecto
+    ...otherProps
   } = props;
 
-  // ✅ MAPEO DE PROPS V2.0: Priorizar props del hook, luego legacy
-  const effectiveGap = gap || legacySpacing || legacyGap;
-  const effectivePadding = padding || legacyPadding;
+  // ✅ MAPEO DE PROPS V2.0: Priorizar props del hook, luego legacy específicas
+  const effectiveGap = gap || legacySpacing; // gap viene del hook V2.0
+  const effectivePadding = padding; // padding viene del hook V2.0
 
-  // ✅ DEPRECATION WARNINGS V2.0 para props legacy
-  if (import.meta.env?.DEV && (legacyGap || legacySpacing || legacyPadding)) {
+  // ✅ DEPRECATION WARNINGS V2.0 - Solo para props legacy específicas
+  if (import.meta.env?.DEV) {
     const warnings = [];
-    if (legacyGap) warnings.push('prop "gap" deprecada → usar hook V2.0 gap');
-    if (legacySpacing) warnings.push('prop "spacing" deprecada → usar hook V2.0 gap');
-    if (legacyPadding) warnings.push('prop "padding" deprecada → usar hook V2.0 padding');
+    if (legacySpacing) warnings.push('prop "spacing" deprecada → usar gap="size"');
+    if (directGapProp && directGapProp !== gap) warnings.push('gap directo detectado → debería venir del hook V2.0');
+    if (directPaddingProp && directPaddingProp !== padding) warnings.push('padding directo detectado → debería venir del hook V2.0');
     
-    console.warn(`🔄 GridContainer (V2): ${warnings.join(', ')}`);
+    if (warnings.length > 0) {
+      console.warn(`🔄 GridContainer (V2): ${warnings.join(', ')}`);
+    }
   }
 
   // ✅ GENERAR CLASES CSS CON GENERADOR V2.0

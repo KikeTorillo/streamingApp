@@ -190,7 +190,7 @@ function FileInput(props) {
           {/* Spinner de loading */}
           {loading && (
             <div className="file-input__spinner">
-              {renderIcon('loader')}
+              {renderIcon('loading')}
             </div>
           )}
 
@@ -225,7 +225,7 @@ function FileInput(props) {
       {loading && (
         <div className="file-input__loading-overlay">
           <div className="file-input__loading-content">
-            {renderIcon('loader')}
+            {renderIcon('loading')}
             <span>Procesando archivo...</span>
           </div>
         </div>

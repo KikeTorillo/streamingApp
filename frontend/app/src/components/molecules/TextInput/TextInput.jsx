@@ -9,16 +9,16 @@ import { INTERACTIVE_PROP_TYPES, extractDOMPropsV2 } from '../../../tokens/stand
 import './TextInput.css';
 
 /**
- * TextInput - Molécula del Sistema de Diseño V2
+ * TextInput - Molï¿½cula del Sistema de Diseï¿½o V2
  * 
  *  SISTEMA V2 COMPLETO:
  * - useInteractiveProps con componentName
  * - INTERACTIVE_PROP_TYPES y extractDOMPropsV2
- * - Composición pura usando Input átomo migrado
+ * - Composiciï¿½n pura usando Input ï¿½tomo migrado
  * - Typography para labels y mensajes
  * - FlexContainer para layout
  * 
- * <¯ Funcionalidades:
+ * <ï¿½ Funcionalidades:
  * - Label con indicador de requerido
  * - Helper text y mensajes de error
  * - Contador de caracteres opcional
@@ -34,9 +34,9 @@ import './TextInput.css';
  * @param {React.Ref} ref - Referencia al elemento input
  */
 const TextInput = forwardRef((props, ref) => {
-  //  V2: Extraer props específicas antes del hook
+  //  V2: Extraer props especï¿½ficas antes del hook
   const {
-    // Props específicas de TextInput
+    // Props especï¿½ficas de TextInput
     label,
     helperText,
     errorText,
@@ -47,7 +47,7 @@ const TextInput = forwardRef((props, ref) => {
     ...restProps
   } = props;
   
-  //  V2: Hook del sistema de diseño
+  //  V2: Hook del sistema de diseï¿½o
   const {
     size, variant, rounded, disabled, loading, className,
     generateStyles,
@@ -59,7 +59,7 @@ const TextInput = forwardRef((props, ref) => {
     defaultRounded: 'md'
   });
   
-  //  V2: Props DOM válidas
+  //  V2: Props DOM vï¿½lidas
   const domProps = extractDOMPropsV2(standardProps);
   
   // Estado interno
@@ -79,7 +79,7 @@ const TextInput = forwardRef((props, ref) => {
     restProps.onBlur?.(e);
   };
   
-  // IDs únicos para accesibilidad
+  // IDs ï¿½nicos para accesibilidad
   const inputId = restProps.id || `textinput-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   const helperTextId = helperText ? `${inputId}-helper` : undefined;
   const errorTextId = errorText ? `${inputId}-error` : undefined;
@@ -154,6 +154,21 @@ const TextInput = forwardRef((props, ref) => {
         aria-describedby={describedByIds.length > 0 ? describedByIds.join(' ') : undefined}
         aria-invalid={errorText ? 'true' : undefined}
         className="text-input__input"
+        // âœ… PROPS ESENCIALES QUE FALTABAN
+        value={restProps.value}
+        onChange={restProps.onChange}
+        type={restProps.type}
+        placeholder={restProps.placeholder}
+        name={restProps.name}
+        autoComplete={restProps.autoComplete}
+        required={required}
+        maxLength={restProps.maxLength}
+        minLength={restProps.minLength}
+        pattern={restProps.pattern}
+        readOnly={restProps.readOnly}
+        autoFocus={restProps.autoFocus}
+        leftIcon={restProps.leftIcon}
+        rightIcon={restProps.rightIcon}
         {...domProps}
       />
       
@@ -209,10 +224,10 @@ const TextInput = forwardRef((props, ref) => {
 TextInput.displayName = 'TextInput';
 
 TextInput.propTypes = {
-  //  V2: Props estándar del sistema
+  //  V2: Props estï¿½ndar del sistema
   ...INTERACTIVE_PROP_TYPES,
   
-  // Props específicas de TextInput
+  // Props especï¿½ficas de TextInput
   label: PropTypes.string,
   helperText: PropTypes.string,
   errorText: PropTypes.string,

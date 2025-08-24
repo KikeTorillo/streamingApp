@@ -9,7 +9,7 @@ import { Button } from '../../../../components/atoms/Button/Button';
 import { Container } from '../../../../components/atoms/Container/Container';
 import { Divider } from '../../../../components/atoms/Divider/Divider';
 import { Badge } from '../../../../components/atoms/Badge/Badge';
-import { ContentImage } from '../../../../components/atoms/ContentImage/ContentImage';
+import { Image } from '../../../../components/atoms/Image/Image';
 import { Typography } from '../../../../components/atoms/Typography/Typography';
 // Hooks y contextos
 import { useMovies } from '../../../../app/context/MoviesContext';

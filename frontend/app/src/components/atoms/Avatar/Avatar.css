@@ -139,6 +139,27 @@
   border-radius: var(--radius-full);
 }
 
+/* ROUNDED ESPECÍFICO - OVERRIDE PARA PROPS ROUNDED ESPECÍFICAS */
+.avatar--rounded-sm .avatar__container {
+  border-radius: var(--radius-sm);
+}
+
+.avatar--rounded-md .avatar__container {
+  border-radius: var(--radius-md);
+}
+
+.avatar--rounded-lg .avatar__container {
+  border-radius: var(--radius-lg);
+}
+
+.avatar--rounded-xl .avatar__container {
+  border-radius: var(--radius-xl);
+}
+
+.avatar--rounded-full .avatar__container {
+  border-radius: var(--radius-full);
+}
+
 /* IMAGEN DEL AVATAR */
 .avatar__image {
   width: 100%;

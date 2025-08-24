@@ -1,0 +1,467 @@
+/* ===== IMAGE V2 - SISTEMA ESTÁNDAR ===== */
+/* Image.css - Migrado y Renombrado (antes UniversalImage) */
+
+/* ===== VARIABLES DE ANIMACIÓN ===== */
+:root {
+  /* Durations específicas para imagen */
+  --image-transition-fast: 150ms;
+  --image-transition-normal: 250ms;
+  --image-transition-slow: 350ms;
+  
+  /* Easing para efectos de imagen */
+  --image-easing-natural: cubic-bezier(0, 0, 0.2, 1);
+  --image-easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* Overlays y loading */
+  --image-overlay-opacity: 0.8;
+  --image-loading-bg: rgba(0, 0, 0, 0.05);
+}
+
+/* ===== BASE IMAGE - NOMENCLATURA ESTÁNDAR ===== */
+.image {
+  /* Layout base */
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  box-sizing: border-box;
+  
+  /* Transiciones suaves */
+  transition: all var(--image-transition-normal) var(--image-easing-natural);
+  
+  /* Layout interno */
+  width: 100%;
+  height: auto;
+  
+  /* Estados base */
+  background-color: var(--gray-50);
+  border: 1px solid var(--gray-200);
+}
+
+/* ===== CONTENEDOR DE IMAGEN ===== */
+.image__container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* ===== ELEMENTO IMG PRINCIPAL ===== */
+.image__element {
+  width: 100%;
+  height: 100%;
+  display: block;
+  transition: opacity var(--image-transition-normal) var(--image-easing-natural);
+}
+
+/* ===== TAMAÑOS ESTÁNDAR ===== */
+.image--xs {
+  width: 2rem;
+  height: 2rem;
+}
+
+.image--sm {
+  width: 3rem;
+  height: 3rem;
+}
+
+.image--md {
+  width: 4rem;
+  height: 4rem;
+}
+
+.image--lg {
+  width: 6rem;
+  height: 6rem;
+}
+
+.image--xl {
+  width: 8rem;
+  height: 8rem;
+}
+
+/* ===== VARIANTES SEMÁNTICAS ESTÁNDAR ===== */
+.image--primary {
+  border-color: var(--primary-300);
+  background-color: var(--primary-50);
+}
+
+.image--secondary {
+  border-color: var(--gray-300);
+  background-color: var(--gray-100);
+}
+
+.image--success {
+  border-color: var(--success-300);
+  background-color: var(--success-50);
+}
+
+.image--warning {
+  border-color: var(--warning-300);
+  background-color: var(--warning-50);
+}
+
+.image--danger {
+  border-color: var(--danger-300);
+  background-color: var(--danger-50);
+}
+
+.image--neutral {
+  border-color: var(--gray-200);
+  background-color: var(--gray-50);
+}
+
+/* ===== ROUNDED ESTÁNDAR ===== */
+.image--rounded-none {
+  border-radius: 0;
+}
+
+.image--rounded-xs {
+  border-radius: var(--rounded-xs);
+}
+
+.image--rounded-sm {
+  border-radius: var(--rounded-sm);
+}
+
+.image--rounded-md {
+  border-radius: var(--rounded-md);
+}
+
+.image--rounded-lg {
+  border-radius: var(--rounded-lg);
+}
+
+.image--rounded-xl {
+  border-radius: var(--rounded-xl);
+}
+
+.image--rounded-2xl {
+  border-radius: var(--rounded-2xl);
+}
+
+.image--rounded-3xl {
+  border-radius: var(--rounded-3xl);
+}
+
+.image--rounded-full {
+  border-radius: var(--rounded-full);
+}
+
+/* ===== ASPECT RATIOS ===== */
+.image--aspect-square {
+  aspect-ratio: 1/1;
+}
+
+.image--aspect-portrait {
+  aspect-ratio: 2/3;
+}
+
+.image--aspect-landscape {
+  aspect-ratio: 3/2;
+}
+
+.image--aspect-wide {
+  aspect-ratio: 16/9;
+}
+
+.image--aspect-ultrawide {
+  aspect-ratio: 21/9;
+}
+
+.image--aspect-golden {
+  aspect-ratio: 1.618/1;
+}
+
+/* ===== OBJECT FIT ===== */
+.image--object-fit-fill .image__element {
+  object-fit: fill;
+}
+
+.image--object-fit-cover .image__element {
+  object-fit: cover;
+}
+
+.image--object-fit-contain .image__element {
+  object-fit: contain;
+}
+
+.image--object-fit-scale-down .image__element {
+  object-fit: scale-down;
+}
+
+.image--object-fit-none .image__element {
+  object-fit: none;
+}
+
+/* ===== OBJECT POSITION ===== */
+.image--object-position-top .image__element {
+  object-position: top;
+}
+
+.image--object-position-center .image__element {
+  object-position: center;
+}
+
+.image--object-position-bottom .image__element {
+  object-position: bottom;
+}
+
+.image--object-position-left .image__element {
+  object-position: left;
+}
+
+.image--object-position-right .image__element {
+  object-position: right;
+}
+
+/* ===== ESTADOS INTERACTIVOS ===== */
+.image--clickable {
+  cursor: pointer;
+  transform: scale(1);
+  transition: transform var(--image-transition-fast) var(--image-easing-natural);
+}
+
+.image--clickable:hover {
+  transform: scale(1.02);
+  box-shadow: var(--shadow-md);
+}
+
+.image--clickable:active {
+  transform: scale(0.98);
+}
+
+.image--clickable:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+/* ===== ESTADOS DE CARGA ===== */
+.image--loading .image__container {
+  background-color: var(--image-loading-bg);
+  animation: imageLoading 1.5s ease-in-out infinite;
+}
+
+.image--loaded .image__element {
+  opacity: 1;
+  animation: imageLoaded var(--image-transition-normal) var(--image-easing-bounce);
+}
+
+.image--error {
+  border-color: var(--danger-300);
+  background-color: var(--danger-50);
+}
+
+/* ===== SISTEMA DE LOADING ESTÁNDAR ===== */
+.image--system-loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, var(--image-overlay-opacity));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image__system-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, var(--image-overlay-opacity));
+  z-index: 10;
+}
+
+.image__system-loading-spinner {
+  color: var(--primary-500);
+  font-size: 1.5rem;
+}
+
+/* ===== DISABLED ESTÁNDAR ===== */
+.image--disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+  filter: grayscale(50%);
+}
+
+.image--disabled.image--clickable {
+  cursor: not-allowed;
+  transform: none;
+}
+
+.image--disabled.image--clickable:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* ===== PLACEHOLDER ===== */
+.image__placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--gray-100);
+  color: var(--gray-500);
+  font-size: var(--font-size-sm);
+}
+
+/* ===== FALLBACK ===== */
+.image__fallback {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--gray-100);
+  color: var(--gray-500);
+}
+
+.image__fallback-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  text-align: center;
+}
+
+.image__fallback-text {
+  font-size: var(--font-size-xs);
+  color: var(--gray-400);
+}
+
+/* ===== SPINNER DE CARGA ===== */
+.image__loading-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+}
+
+.image__spinner-svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  animation: spin 1s linear infinite;
+}
+
+.image__spinner-circle {
+  fill: none;
+  stroke: var(--primary-500);
+  stroke-linecap: round;
+  stroke-dasharray: 31.416;
+  stroke-dashoffset: 31.416;
+  animation: spinner-stroke 2s ease-in-out infinite;
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes imageLoading {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes imageLoaded {
+  0% {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spinner-stroke {
+  0% {
+    stroke-dashoffset: 31.416;
+  }
+  50% {
+    stroke-dashoffset: 15.708;
+  }
+  100% {
+    stroke-dashoffset: 31.416;
+  }
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .image--clickable:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .image--clickable:active {
+    transform: scale(0.95);
+  }
+}
+
+/* ===== PREFERS-REDUCED-MOTION ===== */
+@media (prefers-reduced-motion: reduce) {
+  .image,
+  .image__element,
+  .image--clickable,
+  .image__loading-spinner,
+  .image__spinner-svg {
+    animation: none;
+    transition: none;
+  }
+  
+  .image--loaded .image__element {
+    animation: none;
+  }
+  
+  .image--loading .image__container {
+    animation: none;
+  }
+}
+
+/* ===== HIGH CONTRAST MODE ===== */
+@media (prefers-contrast: high) {
+  .image {
+    border-width: 2px;
+  }
+  
+  .image--primary {
+    border-color: var(--primary-600);
+  }
+  
+  .image--success {
+    border-color: var(--success-600);
+  }
+  
+  .image--warning {
+    border-color: var(--warning-600);
+  }
+  
+  .image--danger {
+    border-color: var(--danger-600);
+  }
+}

@@ -312,7 +312,17 @@ export function useStandardPropsV2(props, config = {}) {
         }
         
         // Si es string, crear icono del sistema
-        const finalIconSize = iconSize || tokens.size?.iconSize || '2.0rem';
+        // Mapear tamaños del componente a tamaños de icono apropiados
+        const sizeToIconSize = {
+          xs: 'xs',
+          sm: 'sm', 
+          md: 'md',
+          lg: 'lg',
+          xl: 'xl'
+        };
+        
+        const componentSize = propsWithDefaults.size || 'md';
+        const finalIconSize = iconSize || sizeToIconSize[componentSize] || 'md';
         
         // ✅ ARREGLO V2: Crear componente Icon real del sistema de diseño
         return React.createElement(Icon, {
@@ -336,7 +346,7 @@ export function useStandardPropsV2(props, config = {}) {
     
     // Helpers de iconos
     ...iconHelpers,
-    renderIcon: createIconRenderer('component', tokens.size?.iconSize),
+    renderIcon: createIconRenderer('component'), // ✅ CORREGIDO: Sin tamaño fijo, usa mapeo dinámico
     
     // Helpers de estado
     ...stateHelpers,

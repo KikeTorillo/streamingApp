@@ -81,9 +81,9 @@ const Badge = (props) => {
 
   // ✅ V2 DEBUGGING: Solo en desarrollo
   if (import.meta.env?.DEV && _debug) {
-    console.log('Badge V2 Debug:', {
-      size, variant, tokens, currentBreakpoint, _debug
-    });
+    //console.log('Badge V2 Debug:', {
+    //  size, variant, tokens, currentBreakpoint, _debug
+    //});
   }
 
   // Determinar el contenido final del badge

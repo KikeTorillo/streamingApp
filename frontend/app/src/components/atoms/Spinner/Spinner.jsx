@@ -45,8 +45,6 @@ function Spinner({
     loading,
     disabled,
     className,
-    generateClassName,
-    generateStyles,
     tokens
   } = useStandardPropsV2(restProps, {
     componentName: 'Spinner',
@@ -56,10 +54,7 @@ function Spinner({
     defaultRounded: 'full'
   });
   
-  // Evitar warning de unused vars
-  void generateStyles; void tokens;
-  
-  // ===== MAPEAR PROPS LEGACY CON DEPRECATION WARNINGS =====
+  // Mapear props legacy con deprecation warnings
   let finalVariant = variant;
   
   // Mapeo de color legacy → variant estándar

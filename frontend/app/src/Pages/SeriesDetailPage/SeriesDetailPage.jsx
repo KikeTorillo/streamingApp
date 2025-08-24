@@ -10,7 +10,7 @@ import { EmptyState } from '../../components/molecules/EmptyState/EmptyState';
 import { Container } from '../../components/atoms/Container/Container';
 import { Typography } from '../../components/atoms/Typography/Typography';
 import { FlexContainer } from '../../components/atoms/FlexContainer/FlexContainer';
-import { ContentImage } from '../../components/atoms/ContentImage/ContentImage';
+import { Image } from '../../components/atoms/Image/Image';
 
 // Servicios (necesitarás crearlos)
 import { getSerieByIdService } from '../../services/Series/getSerieByIdService';
@@ -260,14 +260,13 @@ function SeriesDetailPage() {
                             align="start"
                             wrap="wrap"
                         >
-                            <ContentImage
+                            <Image
                                 src={serie.cover_image}
                                 alt={`Carátula de ${serie.title}`}
-                                aspectRatio="2/3"
+                                aspectRatio="portrait"
                                 size="lg"
                                 rounded="lg"
-                                shadow="lg"
-                                contentType="series"
+                                loading="eager"
                                 placeholder="film"
                                 showFallback={true}
                                 fallbackUrl="https://via.placeholder.com/300x450?text=Serie"

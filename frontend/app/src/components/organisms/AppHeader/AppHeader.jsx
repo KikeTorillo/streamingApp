@@ -2,7 +2,6 @@
 import PropTypes from 'prop-types';
 import { Button } from '../../atoms/Button/Button';
 import { SearchBar } from '../../molecules/SearchBar/SearchBar';
-import { ThemeSelector } from '../../atoms/ThemeSelector';
 import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
 import { Typography } from '../../atoms/Typography/Typography';
 
@@ -107,9 +106,6 @@ function AppHeader({
           >
             Cerrar Sesión
           </Button>
-          <ThemeSelector
-            variant="neutral"
-          />
       </FlexContainer>
     </header>
   );

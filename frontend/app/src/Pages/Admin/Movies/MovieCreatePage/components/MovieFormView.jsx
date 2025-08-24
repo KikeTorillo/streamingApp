@@ -7,7 +7,7 @@ import { DynamicForm } from '../../../../../components/molecules/DynamicForm/Dyn
 import { Container } from '../../../../../components/atoms/Container/Container';
 import { Divider } from '../../../../../components/atoms/Divider/Divider';
 import { Button } from '../../../../../components/atoms/Button/Button';
-import { ContentImage } from '../../../../../components/atoms/ContentImage/ContentImage';
+import { Image } from '../../../../../components/atoms/Image/Image';
 import { Typography } from '../../../../../components/atoms/Typography/Typography';
 import { filterEmptyFields } from '../../../../../utils/formUtils';
 import { getImageTypeInfo, selectFinalImage } from '../../../../../utils/imageUtils';

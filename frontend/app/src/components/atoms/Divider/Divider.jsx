@@ -60,8 +60,6 @@ function Divider(props) {
     className,
     tokens,
     renderIcon,
-    generateClassName,
-    generateStyles,
     ...standardProps
   } = useStandardPropsV2(restProps, {
     componentName: 'Divider',
@@ -73,6 +71,11 @@ function Divider(props) {
   
   // ariaLabel para accesibilidad
   const ariaLabel = restProps.ariaLabel || (text ? `Separador con texto: ${text}` : 'Separador');
+  
+  // Determinar si hay iconos
+  const hasLeftIcon = Boolean(leftIcon);
+  const hasRightIcon = Boolean(rightIcon);
+  
   // Mapeo de props legacy para backward compatibility
   const finalSize = (() => {
     // Mapeo thickness -> size con deprecation warnings
@@ -115,21 +118,21 @@ function Divider(props) {
     ...standardProps
   };
   
-  // Evitar warning de unused vars
-  void tokens; // Design tokens disponibles para estilos dinámicos
-
-  // Determinar si hay iconos
-  const hasLeftIcon = Boolean(leftIcon);
-  const hasRightIcon = Boolean(rightIcon);
-
-  // Generar clases CSS con sistema V2
-  const dividerClasses = generateClassName('divider') + ' ' + [
+  // Generar clases CSS manualmente
+  const dividerClasses = [
+    'divider',
+    `divider--${finalSize}`,
+    `divider--${finalVariant}`,
+    `divider--rounded-${rounded}`,
     `divider--${orientation}`,
     `divider--variant-${dividerVariant}`,
     `divider--color-${finalVariant}`,
     text && orientation === 'horizontal' && 'divider--with-text',
     text && `divider--text-${textAlign}`,
-    (hasLeftIcon || hasRightIcon || leftIcon || rightIcon) && 'divider--with-icon'
+    (hasLeftIcon || hasRightIcon || leftIcon || rightIcon) && 'divider--with-icon',
+    loading && 'divider--loading',
+    disabled && 'divider--disabled',
+    className
   ].filter(Boolean).join(' ');
 
   // Estilos dinámicos
@@ -168,7 +171,7 @@ function Divider(props) {
     if (!loading) return null;
     return (
       <span className="divider__loading">
-        {renderIcon('loader')}
+        {renderIcon('loading')}
       </span>
     );
   };
@@ -198,7 +201,7 @@ function Divider(props) {
     >
       {loading && (
         <span className="divider__loading-overlay">
-          {renderIcon('loader')}
+          {renderIcon('loading')}
         </span>
       )}
     </div>

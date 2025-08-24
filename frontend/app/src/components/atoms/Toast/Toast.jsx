@@ -62,13 +62,8 @@ function Toast({
     loading,
     className,
     renderIcon,
-    tokens,
-    generateClassName,
-    generateStyles
+    tokens
   } = standardProps;
-  
-  // Evitar warning de unused vars
-  void generateStyles;
   
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -161,11 +156,16 @@ function Toast({
     return null;
   }
   
-  // Clases CSS con sistema V2
-  const toastClasses = generateClassName('toast') + ' ' + [
+  // Clases CSS manuales
+  const toastClasses = [
+    'toast',
+    `toast--${size}`,
+    `toast--${finalVariant}`,
+    `toast--rounded-${rounded}`,
     config.containerClass,
     `toast--${position}`,
-    isAnimating ? 'toast--visible' : 'toast--hidden'
+    isAnimating ? 'toast--visible' : 'toast--hidden',
+    className
   ].filter(Boolean).join(' ');
   
   return (

@@ -163,7 +163,7 @@ function Breadcrumb(props) {
           'data-breadcrumb-icon': true
         })}
         <span className="breadcrumb__item-text">{item.label}</span>
-        {loading && item.isActive && renderIcon('loader', undefined, undefined, {
+        {loading && item.isActive && renderIcon('loading', undefined, undefined, {
           className: 'breadcrumb__loading-icon breadcrumb__loading-icon--spinning',
           'data-breadcrumb-loading': true
         })}

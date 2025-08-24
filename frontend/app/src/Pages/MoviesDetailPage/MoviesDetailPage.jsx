@@ -7,7 +7,7 @@ import { AppHeader } from '../../components/organisms/AppHeader/AppHeader';
 import { FlexContainer } from '../../components/atoms/FlexContainer/FlexContainer';
 import { Typography } from '../../components/atoms/Typography/Typography';
 import { Container } from '../../components/atoms/Container/Container';
-import { ContentImage } from '../../components/atoms/ContentImage/ContentImage';
+import { Image } from '../../components/atoms/Image/Image';
 
 // Servicios
 import { getMovieByIdService } from '../../services/Movies/getMovieByIdService';
@@ -183,16 +183,13 @@ function MoviesDetailPage() {
                         align="start"
                         wrap="wrap"
                     >
-                        <ContentImage
+                        <Image
                             src={movie.cover_image}
                             alt={`Carátula de ${movie.title}`}
-                            aspectRatio="2/3"
+                            aspectRatio="portrait"
                             size="lg"
                             rounded="lg"
-                            shadow="lg"
-                            contentType="movie"
-                            placeholder="film"
-                            showFallback={true}
+                            loading="eager"
                             fallbackUrl="https://via.placeholder.com/300x450?text=Película"
                         />
                         <FlexContainer flex="1" minWidth="300px" direction="column">

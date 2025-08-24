@@ -65,8 +65,6 @@ function Link(props) {
     hasLeftIcon,
     hasRightIcon,
     ariaLabel,
-    generateClassName,
-    generateStyles,
     ...standardProps
   } = useInteractiveProps(restProps, {
     componentName: 'Link',
@@ -91,9 +89,6 @@ function Link(props) {
     'data-component': 'Link',
     ...standardProps
   };
-  
-  // Evitar warning de unused vars
-  void tokens; void generateStyles; // Design tokens disponibles para estilos dinámicos
   // Determinar contenido del enlace
   const linkContent = children || text;
 
@@ -109,11 +104,18 @@ function Link(props) {
   const finalTarget = target || (isExternal ? '_blank' : undefined);
   const finalRel = rel || (isExternal && finalTarget === '_blank' ? 'noopener noreferrer' : undefined);
 
-  // Generar clases CSS con sistema V2
-  const linkClasses = generateClassName('link') + ' ' + [
+  // Generar clases CSS manualmente
+  const linkClasses = [
+    'link',
+    `link--${size}`,
+    `link--${mappedVariant}`,
+    `link--rounded-${rounded}`,
     underline && 'link--underline',
     (hasLeftIcon || hasRightIcon) && 'link--with-icon',
-    (variant === 'inherit') && 'link--inherit' // Clase especial para variant inherit
+    (variant === 'inherit') && 'link--inherit', // Clase especial para variant inherit
+    loading && 'link--loading',
+    disabled && 'link--disabled',
+    className
   ].filter(Boolean).join(' ');
 
   // Props de accesibilidad mejoradas

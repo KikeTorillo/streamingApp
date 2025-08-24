@@ -297,7 +297,7 @@ const TextSelect = forwardRef(({
             {/* Overlay de loading usando sistema estándar */}
             {loading && (
                 <div className="text-select__loading-overlay">
-                    {renderIcon('loader')}
+                    {renderIcon('loading')}
                 </div>
             )}
         </div>

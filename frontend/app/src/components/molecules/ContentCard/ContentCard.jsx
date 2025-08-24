@@ -3,7 +3,7 @@ import { memo } from 'react';
 import PropTypes from 'prop-types';
 import { Card, CardBody, CardTitle, CardSubtitle } from '../../atoms/Card/Card';
 import { Badge } from '../../atoms/Badge/Badge';
-import { ContentImage } from '../../atoms/ContentImage/ContentImage';
+import { Image } from '../../atoms/Image/Image';
 import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
 import { useCardProps } from '../../../hooks/useCardProps-v2';
 import { INTERACTIVE_PROP_TYPES } from '../../../tokens/propHelpers';
@@ -15,7 +15,7 @@ import './ContentCard.css';
  * 
  * ✅ CARD SYSTEM V2 PERFECTO:
  * - Hook useCardProps-v2 con tokens especializados del Card System
- * - Card V2 + ContentImage V2 trabajando en perfecta armonía
+ * - Card V2 + Image V2 trabajando en perfecta armonía
  * - API unificada entre todos los componentes del Card System
  * - Dimensiones automáticas coordinadas
  * - Props consistentes y predecibles
@@ -143,7 +143,7 @@ function ContentCard(props) {
   };
 
   const handleImageError = () => {
-    // ContentImage V2 ya maneja los errores automáticamente
+    // Image V2 ya maneja los errores automáticamente
   };
 
   return (
@@ -167,18 +167,17 @@ function ContentCard(props) {
       style={generateStyles()}
       {...validDOMProps}
     >
-      {/* Contenedor de imagen con ContentImage V2 */}
+      {/* Contenedor de imagen con Image V2 */}
       <FlexContainer
         align="center"
         justify="center"
         className="content-card__image-container"
       >
-        <ContentImage
+        <Image
           src={cover}
           alt={`Carátula de ${title}`}
-          contentType={contentType} // ✅ V2: Auto desde Card System
-          imageLoading={loading ? "eager" : "lazy"}
-          loading={loading}
+          aspectRatio="portrait"
+          loading={loading ? "eager" : "lazy"}
           {...getImageProps()} // ✅ V2: Props automáticas del helper
           onError={handleImageError}
           className="content-card__image"

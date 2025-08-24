@@ -254,7 +254,7 @@ function Tabs(props) {
             {tab.badge}
           </span>
         )}
-        {loading && isActive && renderIcon('loader', {
+        {loading && isActive && renderIcon('loading', {
           className: 'tabs__loading-icon', 
           size: 'xs'
         })}

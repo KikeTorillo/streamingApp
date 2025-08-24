@@ -2,7 +2,7 @@
 import PropTypes from 'prop-types';
 import { Button } from '../../atoms/Button/Button';
 import { Badge } from '../../atoms/Badge/Badge';
-import { ContentImage } from '../../atoms/ContentImage/ContentImage';
+import { Image } from '../../atoms/Image/Image';
 import './EpisodeListItem.css';
 
 /**
@@ -99,11 +99,10 @@ const EpisodeListItem = ({
       {/* Thumbnail del episodio */}
       {showThumbnail && (
         <div className="episode-list-item__thumbnail">
-          <ContentImage
+          <Image
             src={cover}
             alt={`Thumbnail de ${episodeTitle}`}
-            aspectRatio="16/9"
-            contentType="episode"
+            aspectRatio="wide"
             loading={loading ? "eager" : "lazy"}
             rounded="sm"
             className="episode-list-item__image"

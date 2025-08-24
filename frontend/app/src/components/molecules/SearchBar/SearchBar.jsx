@@ -358,7 +358,7 @@ function SearchBar(props) {
     if (loadingSuggestions) {
       return (
         <div className="search-bar__dropdown-loading">
-          {renderIcon('loader')}
+          {renderIcon('loading')}
           <Typography size="sm" variant="neutral">
             Buscando sugerencias...
           </Typography>
