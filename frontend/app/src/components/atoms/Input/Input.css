@@ -56,6 +56,15 @@
   line-height: var(--line-height-normal);
 }
 
+/* ===== SISTEMA DE ROUNDED V2 - 9 OPCIONES ===== */
+.input-base--rounded-none {
+  border-radius: 0;
+}
+
+.input-base--rounded-xs {
+  border-radius: var(--radius-xs);
+}
+
 .input-base--rounded-sm {
   border-radius: var(--radius-sm);
 }
@@ -70,6 +79,14 @@
 
 .input-base--rounded-xl {
   border-radius: var(--radius-xl);
+}
+
+.input-base--rounded-2xl {
+  border-radius: var(--radius-2xl);
+}
+
+.input-base--rounded-3xl {
+  border-radius: var(--radius-3xl);
 }
 
 .input-base--rounded-full {
@@ -126,32 +143,45 @@
   color: var(--text-disabled);
 }
 
-/* ===== VARIANTES SEMÁNTICAS ===== */
-/* Default (ya definido en base) */
-.input-base--default {
+/* ===== VARIANTES SEMÁNTICAS V2 - 6 VARIANTES ESTÁNDAR ===== */
+
+/* Primary (Principal - Default) */
+.input-base--primary {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   border-color: var(--border-default);
 }
 
-/* Error */
-.input-base--error {
-  border-color: var(--color-danger);
-  background-color: var(--color-danger-light);
+.input-base--primary:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 0.3rem var(--shadow-primary);
+  outline-color: var(--color-primary);
 }
 
-.input-base--error:focus {
-  border-color: var(--color-danger);
-  box-shadow: 0 0 0 0.3rem var(--shadow-danger);
-  outline-color: var(--color-danger);
-}
-
-.input-base--error:hover:not(:disabled):not(:focus) {
-  border-color: var(--color-danger-hover);
+.input-base--primary:hover:not(:disabled):not(:focus) {
+  border-color: var(--color-primary-hover);
   box-shadow: var(--shadow-sm);
 }
 
-/* Success */
+/* Secondary (Secundario) */
+.input-base--secondary {
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+  border-color: var(--border-secondary);
+}
+
+.input-base--secondary:focus {
+  border-color: var(--color-secondary);
+  box-shadow: 0 0 0 0.3rem var(--shadow-secondary);
+  outline-color: var(--color-secondary);
+}
+
+.input-base--secondary:hover:not(:disabled):not(:focus) {
+  border-color: var(--color-secondary-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Success (Éxito) */
 .input-base--success {
   border-color: var(--color-success);
   background-color: var(--color-success-light);
@@ -168,7 +198,7 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* Warning */
+/* Warning (Advertencia) */
 .input-base--warning {
   border-color: var(--color-warning);
   background-color: var(--color-warning-light);
@@ -184,6 +214,68 @@
   border-color: var(--color-warning-hover);
   box-shadow: var(--shadow-sm);
 }
+
+/* Danger (Peligro/Error) */
+.input-base--danger {
+  border-color: var(--color-danger);
+  background-color: var(--color-danger-light);
+}
+
+.input-base--danger:focus {
+  border-color: var(--color-danger);
+  box-shadow: 0 0 0 0.3rem var(--shadow-danger);
+  outline-color: var(--color-danger);
+}
+
+.input-base--danger:hover:not(:disabled):not(:focus) {
+  border-color: var(--color-danger-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Neutral (Neutral) */
+.input-base--neutral {
+  background-color: var(--bg-neutral);
+  color: var(--text-neutral);
+  border-color: var(--border-neutral);
+}
+
+.input-base--neutral:focus {
+  border-color: var(--color-neutral);
+  box-shadow: 0 0 0 0.3rem var(--shadow-neutral);
+  outline-color: var(--color-neutral);
+}
+
+.input-base--neutral:hover:not(:disabled):not(:focus) {
+  border-color: var(--color-neutral-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ===== BACKWARD COMPATIBILITY V1 → V2 ===== */
+/* Mantener soporte para variantes legacy con deprecation warning */
+.input-base--default {
+  /* Mapear default → primary */
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border-color: var(--border-default);
+}
+
+.input-base--error {
+  /* Mapear error → danger */
+  border-color: var(--color-danger);
+  background-color: var(--color-danger-light);
+}
+
+.input-base--error:focus {
+  border-color: var(--color-danger);
+  box-shadow: 0 0 0 0.3rem var(--shadow-danger);
+  outline-color: var(--color-danger);
+}
+
+.input-base--error:hover:not(:disabled):not(:focus) {
+  border-color: var(--color-danger-hover);
+  box-shadow: var(--shadow-sm);
+}
+
 
 /* ===== ESTADOS ESPECÍFICOS ===== */
 /* Input con valor */
@@ -332,6 +424,37 @@
   width: 100%;
 }
 
+/* ===== SISTEMA DE WIDTH V2 ===== */
+.input-wrapper--full-width {
+  width: 100%;
+}
+
+.input-wrapper--auto {
+  width: auto;
+}
+
+.input-wrapper--fit-content {
+  width: fit-content;
+}
+
+.input-wrapper--min-content {
+  width: min-content;
+}
+
+.input-wrapper--max-content {
+  width: max-content;
+}
+
+/* Estados del input wrapper */
+.input-wrapper--disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.input-wrapper--loading {
+  position: relative;
+}
+
 .input-wrapper__icon {
   position: absolute;
   top: 50%;
@@ -406,9 +529,13 @@
   font-size: var(--component-font-lg);
 }
 
-/* Estados de iconos según variante */
-.input-wrapper--danger .input-wrapper__icon {
-  color: var(--color-danger);
+/* Estados de iconos según variante V2 */
+.input-wrapper--primary .input-wrapper__icon {
+  color: var(--color-primary);
+}
+
+.input-wrapper--secondary .input-wrapper__icon {
+  color: var(--color-secondary);
 }
 
 .input-wrapper--success .input-wrapper__icon {
@@ -417,6 +544,14 @@
 
 .input-wrapper--warning .input-wrapper__icon {
   color: var(--color-warning);
+}
+
+.input-wrapper--danger .input-wrapper__icon {
+  color: var(--color-danger);
+}
+
+.input-wrapper--neutral .input-wrapper__icon {
+  color: var(--color-neutral);
 }
 
 /* Iconos clickeables */

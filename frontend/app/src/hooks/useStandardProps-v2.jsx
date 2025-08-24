@@ -1,7 +1,7 @@
 // hooks/useStandardProps-v2.js
 // ===== HOOK ESTÁNDAR V2.0 - SISTEMA RESPONSIVE DE CLASE MUNDIAL =====
 
-import { useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { 
   DESIGN_TOKENS_V2,
   getComponentSizeTokens,
@@ -11,11 +11,25 @@ import {
   getResponsiveValue,
   tokensToStyles
 } from '../tokens/designTokens-v2.js';
+import { 
+  ANIMATION_TOKENS,
+  ANIMATION_CONTEXT_MAP,
+  getAnimationForComponent,
+  ANIMATION_CSS_VARS
+} from '../tokens/animationTokens.js';
+import {
+  ADAPTIVE_SIZE_PRESETS,
+  ADAPTIVE_SPACING_PRESETS,
+  resolveAdaptiveSize,
+  resolveAdaptiveSpacing,
+  getCurrentBreakpoint
+} from '../tokens/responsivePresets.js';
 import {
   validateStandardPropsV2,
   extractStandardPropsV2,
   getResponsiveValue as getResponsiveValueFromProps
 } from '../tokens/standardProps-v2.js';
+import { Icon } from '../components/atoms/Icon/Icon';
 
 /**
  * HOOK ESTÁNDAR V2.0 - RESPONSIVE + ESPECIALIZADO
@@ -56,21 +70,12 @@ export function useStandardPropsV2(props, config = {}) {
   useEffect(() => {
     if (!enableResponsive || typeof window === 'undefined') return;
 
-    const breakpoints = {
-      '2xl': 1536,
-      xl: 1280,
-      lg: 1024,
-      md: 768,
-      sm: 640,
-      base: 0
-    };
+    // ✅ RESPONSIVE INTELLIGENCE: Usar breakpoints optimizados
 
     const updateBreakpoint = () => {
       const width = window.innerWidth;
-      const breakpoint = Object.entries(breakpoints).find(
-        ([_, minWidth]) => width >= minWidth
-      )?.[0] || 'base';
-      
+      // ✅ RESPONSIVE INTELLIGENCE: Usar función optimizada
+      const breakpoint = getCurrentBreakpoint(width);
       setCurrentBreakpoint(breakpoint);
     };
 
@@ -117,10 +122,28 @@ export function useStandardPropsV2(props, config = {}) {
     return resolved;
   }, [standardProps, currentBreakpoint, enableResponsive]);
 
-  // ===== APLICAR DEFAULTS =====
+  // ===== APLICAR DEFAULTS + RESPONSIVE INTELLIGENCE =====
   const propsWithDefaults = useMemo(() => {
+    // ✅ RESPONSIVE INTELLIGENCE: Resolver presets adaptativos
+    const resolvedSize = resolveAdaptiveSize(
+      resolvedProps.size || defaultSize,
+      currentBreakpoint
+    );
+    
+    const resolvedPadding = resolvedProps.padding ? 
+      resolveAdaptiveSpacing(resolvedProps.padding, currentBreakpoint) : 
+      undefined;
+    
+    const resolvedGap = resolvedProps.gap ?
+      resolveAdaptiveSpacing(resolvedProps.gap, currentBreakpoint) :
+      undefined;
+    
+    const resolvedMargin = resolvedProps.margin ?
+      resolveAdaptiveSpacing(resolvedProps.margin, currentBreakpoint) :
+      undefined;
+    
     return {
-      size: resolvedProps.size || defaultSize,
+      size: resolvedSize,
       variant: resolvedProps.variant || defaultVariant,
       rounded: resolvedProps.rounded || defaultRounded,
       width: resolvedProps.width || 'auto',
@@ -128,9 +151,13 @@ export function useStandardPropsV2(props, config = {}) {
       loading: Boolean(resolvedProps.loading),
       className: resolvedProps.className || '',
       shadow: resolvedProps.shadow || 'none',
+      // ✅ ADAPTIVE SPACING: Props procesadas con intelligence
+      ...(resolvedPadding && { padding: resolvedPadding }),
+      ...(resolvedGap && { gap: resolvedGap }),
+      ...(resolvedMargin && { margin: resolvedMargin }),
       ...resolvedProps
     };
-  }, [resolvedProps, defaultSize, defaultVariant, defaultRounded]);
+  }, [resolvedProps, defaultSize, defaultVariant, defaultRounded, currentBreakpoint]);
 
   // ===== GENERAR TOKENS ESPECIALIZADOS =====
   const tokens = useMemo(() => {
@@ -182,6 +209,13 @@ export function useStandardPropsV2(props, config = {}) {
       if (spacing.right) spacingTokens.marginRight = getSpacingToken(getResponsiveValueFromProps(spacing.right, currentBreakpoint));
     }
 
+    // ✅ ANIMATION TOKENS V2: Micro-interactions automáticas
+    const animationTokens = ANIMATION_CONTEXT_MAP[componentName] || {
+      hover: `all ${ANIMATION_TOKENS.duration.fast} ${ANIMATION_TOKENS.easing.hover}`,
+      focus: `box-shadow ${ANIMATION_TOKENS.duration.normal} ${ANIMATION_TOKENS.easing.focus}`,
+      active: `transform ${ANIMATION_TOKENS.duration.instant} ${ANIMATION_TOKENS.easing.natural}`
+    };
+
     return {
       size: sizeTokens,
       variant: variantTokens,
@@ -189,7 +223,9 @@ export function useStandardPropsV2(props, config = {}) {
       boxShadow,
       width: widthToken,
       ...spacingTokens,
-      ...additionalTokens
+      ...additionalTokens,
+      // ✅ ANIMATION SYSTEM: Tokens automáticos
+      animation: animationTokens
     };
   }, [propsWithDefaults, componentType, currentBreakpoint]);
 
@@ -278,23 +314,14 @@ export function useStandardPropsV2(props, config = {}) {
         // Si es string, crear icono del sistema
         const finalIconSize = iconSize || tokens.size?.iconSize || '2.0rem';
         
-        return (
-          <span 
-            className={`icon icon--${iconName} icon--${iconType}`}
-            style={{
-              '--icon-size': finalIconSize,
-              width: 'var(--icon-size)',
-              height: 'var(--icon-size)',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-            aria-hidden="true"
-          >
-            {/* Implementación específica del sistema de iconos */}
-            {iconName}
-          </span>
-        );
+        // ✅ ARREGLO V2: Crear componente Icon real del sistema de diseño
+        return React.createElement(Icon, {
+          name: iconName,
+          size: finalIconSize,
+          variant: 'neutral',
+          contextSize: finalIconSize,
+          className: `icon__from-hook-v2 icon--${iconType}`
+        });
       };
     };
   }, [tokens]);

@@ -254,7 +254,15 @@
   background-color: var(--color-neutral);
 }
 
-/* BORDER RADIUS - Usando variables del sistema */
+/* ===== SISTEMA DE ROUNDED V2 - 9 OPCIONES ===== */
+.badge--rounded-none {
+  border-radius: 0;
+}
+
+.badge--rounded-xs {
+  border-radius: var(--radius-xs);
+}
+
 .badge--rounded-sm {
   border-radius: var(--radius-sm);
 }
@@ -269,6 +277,18 @@
 
 .badge--rounded-xl {
   border-radius: var(--radius-xl);
+}
+
+.badge--rounded-2xl {
+  border-radius: var(--radius-2xl);
+}
+
+.badge--rounded-3xl {
+  border-radius: var(--radius-3xl);
+}
+
+.badge--rounded-full {
+  border-radius: var(--radius-full);
 }
 
 /* ESTADOS INTERACTIVOS */

@@ -1,0 +1,283 @@
+/* components/molecules/ClusterLayout/ClusterLayout.css */
+/* LAYOUT PATTERNS - Cluster Layout con Responsive Automático */
+
+/* ===== BASE CLUSTER LAYOUT ===== */
+.cluster-layout {
+  /* Layout base */
+  box-sizing: border-box;
+  
+  /* Performance optimizations */
+  will-change: auto;
+  contain: layout;
+}
+
+/* ===== PATTERN SPECIFIC STYLES ===== */
+
+/* Table patterns con estilos específicos */
+.cluster-layout--tableActions {
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.cluster-layout--tableFilters {
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Cluster patterns con efectos visuales */
+.cluster-layout--clusterSpaceBetween {
+  width: 100%;
+}
+
+.cluster-layout--clusterCenter {
+  justify-content: center;
+}
+
+/* ===== DIRECTION MODIFIERS ===== */
+.cluster-layout--direction-row {
+  flex-direction: row;
+}
+
+.cluster-layout--direction-row-reverse {
+  flex-direction: row-reverse;
+}
+
+/* En mobile, clusters se vuelven column automáticamente */
+@media (max-width: 640px) {
+  .cluster-layout--pattern-cluster,
+  .cluster-layout--pattern-clusterSpaceBetween {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .cluster-layout--tableFilters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-sm);
+  }
+}
+
+/* ===== ALIGNMENT MODIFIERS ===== */
+.cluster-layout--align-start {
+  align-items: flex-start;
+}
+
+.cluster-layout--align-center {
+  align-items: center;
+}
+
+.cluster-layout--align-end {
+  align-items: flex-end;
+}
+
+.cluster-layout--align-stretch {
+  align-items: stretch;
+}
+
+.cluster-layout--align-baseline {
+  align-items: baseline;
+}
+
+/* ===== JUSTIFY MODIFIERS ===== */
+.cluster-layout--justify-start {
+  justify-content: flex-start;
+}
+
+.cluster-layout--justify-center {
+  justify-content: center;
+}
+
+.cluster-layout--justify-end {
+  justify-content: flex-end;
+}
+
+.cluster-layout--justify-between {
+  justify-content: space-between;
+}
+
+.cluster-layout--justify-around {
+  justify-content: space-around;
+}
+
+.cluster-layout--justify-evenly {
+  justify-content: space-evenly;
+}
+
+/* ===== WRAP BEHAVIOR ===== */
+.cluster-layout--wrap {
+  flex-wrap: wrap;
+}
+
+.cluster-layout:not(.cluster-layout--wrap) {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+/* Custom scrollbar para clusters sin wrap */
+.cluster-layout:not(.cluster-layout--wrap)::-webkit-scrollbar {
+  height: 4px;
+}
+
+.cluster-layout:not(.cluster-layout--wrap)::-webkit-scrollbar-track {
+  background: var(--surface-tertiary);
+  border-radius: 2px;
+}
+
+.cluster-layout:not(.cluster-layout--wrap)::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: 2px;
+}
+
+.cluster-layout:not(.cluster-layout--wrap)::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hover);
+}
+
+/* ===== RESPONSIVE ADAPTATIONS ===== */
+
+/* Mobile-first responsive behavior */
+@media (max-width: 640px) {
+  /* Table actions se mantienen horizontales en mobile */
+  .cluster-layout--tableActions {
+    flex-direction: row;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+  
+  /* Filters se vuelven columna completa */
+  .cluster-layout--tableFilters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  /* Space-between se convierte en normal stack */
+  .cluster-layout--clusterSpaceBetween {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: var(--spacing-md);
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .cluster-layout--tableFilters {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+}
+
+/* Desktop optimizations */
+@media (min-width: 1025px) {
+  .cluster-layout {
+    /* All patterns work as intended on desktop */
+  }
+  
+  .cluster-layout--tableActions {
+    min-width: fit-content;
+  }
+}
+
+/* ===== ESTADOS ===== */
+.cluster-layout--disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* ===== ACCESIBILIDAD ===== */
+
+/* Focus management para clusters interactivos */
+.cluster-layout:focus-within {
+  /* Visual improvement when contains focused elements */
+}
+
+/* Improved navigation for keyboard users */
+.cluster-layout--tableActions > *:focus,
+.cluster-layout--tableFilters > *:focus {
+  position: relative;
+  z-index: 1;
+}
+
+/* High contrast support */
+@media (prefers-contrast: high) {
+  .cluster-layout--tableFilters {
+    border-bottom-width: 2px;
+    border-bottom-color: CanvasText;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .cluster-layout,
+  .cluster-layout * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  .cluster-layout {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  
+  .cluster-layout--tableActions {
+    display: none; /* Hide actions in print */
+  }
+  
+  .cluster-layout--tableFilters {
+    display: none; /* Hide filters in print */
+  }
+}
+
+/* ===== DEBUG UTILITIES (Solo desarrollo) ===== */
+.cluster-layout[data-debug="true"] {
+  position: relative;
+  outline: 1px dashed rgba(0, 0, 255, 0.3);
+  background: rgba(0, 0, 255, 0.05);
+}
+
+.cluster-layout[data-debug="true"]::after {
+  content: 'Cluster: ' attr(data-pattern) ' | Gap: ' attr(data-gap) ' | Dir: ' attr(data-direction) ' | BP: ' attr(data-breakpoint);
+  position: absolute;
+  top: -1.5rem;
+  left: 0;
+  font-size: 1rem;
+  color: blue;
+  background: cyan;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.2rem;
+  font-family: monospace;
+  z-index: 9999;
+  white-space: nowrap;
+  font-weight: normal;
+}
+
+/* Highlight children in debug mode */
+.cluster-layout[data-debug="true"] > * {
+  outline: 1px solid rgba(255, 0, 255, 0.3);
+  background: rgba(255, 0, 255, 0.02);
+}
+
+/* ===== CHILDREN OPTIMIZATION ===== */
+
+/* Optimizar elementos flex dentro del cluster */
+.cluster-layout > * {
+  flex-shrink: 0; /* Prevent unwanted shrinking */
+}
+
+/* Elementos que deben crecer */
+.cluster-layout--tableFilters > input,
+.cluster-layout--tableFilters > .input-wrapper {
+  flex: 1;
+  min-width: 0; /* Allow shrinking if necessary */
+}
+
+/* Botones en clusters mantienen su tamaño */
+.cluster-layout > button,
+.cluster-layout > .btn {
+  flex-shrink: 0;
+}

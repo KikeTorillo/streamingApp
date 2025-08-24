@@ -227,7 +227,7 @@ export const Default = {
     placeholder: 'Ingresa tu texto aquí...',
     type: 'text',
     size: 'md',
-    variant: 'default',
+    variant: 'primary',
     rounded: 'md'
   }
 };
@@ -286,8 +286,8 @@ export const Variants = () => (
     padding: 'var(--space-md)'
   }}>
     <div style={{ textAlign: 'center' }}>
-      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Default</h4>
-      <Input variant="default" placeholder="Campo normal" />
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Primary</h4>
+      <Input variant="primary" placeholder="Campo principal" />
     </div>
     
     <div style={{ textAlign: 'center' }}>
@@ -301,8 +301,8 @@ export const Variants = () => (
     </div>
     
     <div style={{ textAlign: 'center' }}>
-      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Error</h4>
-      <Input variant="error" placeholder="Campo con error" />
+      <h4 style={{ marginBottom: 'var(--space-sm)' }}>Danger</h4>
+      <Input variant="danger" placeholder="Campo con error" />
     </div>
   </div>
 );

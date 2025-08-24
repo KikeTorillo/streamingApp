@@ -1,132 +1,115 @@
-// atoms/Input.jsx
+// src/components/atoms/Input/Input.jsx - V2 COMPLETO
 import { forwardRef } from 'react';
 import PropTypes from 'prop-types';
-import { createStandardIconRenderer } from '../../../utils/iconHelpers';
-import { validateStandardProps, STANDARD_PROP_TYPES } from '../../../tokens';
+import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
+import { extractDOMPropsV2 } from '../../../tokens/standardProps-v2.js';
+import { INTERACTIVE_PROP_TYPES } from '../../../tokens/propHelpers.js';
 import './Input.css';
 
 /**
- * Componente Input mejorado que sigue el sistema de diseño
- * Átomo base para campos de entrada de texto
+ * Input V2 - API LIMPIA SIN BACKWARD COMPATIBILITY
+ * 
+ * ✅ SISTEMA V2 PURO: useInteractiveProps + extractDOMPropsV2
+ * ✅ RESPONSIVE NATIVO: Breakpoints automáticos  
+ * ✅ ICONOS SIMPLIFICADOS: leftIcon/rightIcon únicamente
+ * ✅ PERFORMANCE: Memoización y CSS-first con tokens
+ * ✅ TYPE-SAFE: Validación automática en desarrollo
+ * ✅ API LIMPIA: Solo props V2, sin props deprecadas
  * 
  * @param {Object} props - Propiedades del componente
- * @param {'text'|'password'|'email'|'number'|'tel'|'url'|'search'|'date'|'time'|'datetime-local'} [props.type='text'] - Tipo de input
- * @param {'xs'|'sm'|'md'|'lg'|'xl'} [props.size='md'] - Tamaño del input
- * @param {'primary'|'secondary'|'success'|'warning'|'danger'|'neutral'} [props.variant='primary'] - Variante semántica (6 variantes estándar)
- * @param {'sm'|'md'|'lg'|'xl'|'full'} [props.rounded='md'] - Radio de bordes
- * @param {string} [props.className=''] - Clases CSS adicionales
+ * @param {'text'|'password'|'email'|'number'|'tel'|'url'|'search'|'date'|'time'|'datetime-local'} [props.type='text'] - Tipo de input HTML
  * @param {string} [props.value] - Valor controlado
  * @param {string} [props.defaultValue] - Valor por defecto (no controlado)
- * @param {function} [props.onChange] - Handler de cambio
- * @param {function} [props.onFocus] - Handler de focus
- * @param {function} [props.onBlur] - Handler de blur
  * @param {string} [props.placeholder] - Texto placeholder
- * @param {boolean} [props.disabled=false] - Si está deshabilitado
  * @param {boolean} [props.readOnly=false] - Si es solo lectura
  * @param {boolean} [props.required=false] - Si es requerido
  * @param {boolean} [props.autoFocus=false] - Si obtiene foco automáticamente
- * @param {boolean} [props.compact=false] - Padding horizontal reducido
- * @param {string|React.ReactNode} [props.leftIcon] - Icono a la izquierda del input
- * @param {string|React.ReactNode} [props.rightIcon] - Icono a la derecha del input
+ * @param {'xs'|'sm'|'md'|'lg'|'xl'} [props.size='md'] - Tamaño del input
+ * @param {'primary'|'secondary'|'success'|'warning'|'danger'|'neutral'} [props.variant='primary'] - Variante visual
+ * @param {'none'|'xs'|'sm'|'md'|'lg'|'xl'|'2xl'|'3xl'|'full'} [props.rounded='md'] - Radio de bordes
+ * @param {'auto'|'full'|'fit-content'|'min-content'|'max-content'} [props.width='auto'] - Ancho del input
+ * @param {boolean} [props.disabled=false] - Si está deshabilitado
+ * @param {boolean} [props.loading=false] - Estado de carga con spinner
+ * @param {string|React.ReactNode} [props.leftIcon] - Icono izquierdo
+ * @param {string|React.ReactNode} [props.rightIcon] - Icono derecho
+ * @param {function} [props.onChange] - Handler de cambio
+ * @param {function} [props.onFocus] - Handler de focus
+ * @param {function} [props.onBlur] - Handler de blur
  * @param {string} [props.ariaLabel] - Label para accesibilidad
- * @param {string} [props.ariaDescribedBy] - ID del elemento que describe el input
- * @param {string} [props.ariaErrorMessage] - ID del mensaje de error
- * @param {string} [props.autoComplete] - Valor autocomplete
- * @param {number|string} [props.maxLength] - Longitud máxima
- * @param {number|string} [props.minLength] - Longitud mínima
- * @param {string} [props.pattern] - Patrón regex para validación
- * @param {React.Ref} ref - Referencia al elemento input
+ * @param {string} [props.className=''] - Clases CSS adicionales
  */
 const Input = forwardRef((props, ref) => {
-  // ✅ VALIDAR PROPS ESTÁNDAR - Muestra deprecation warnings automáticamente  
-  const validatedProps = validateStandardProps(props, 'Input');
-
+  // ✅ V2 HOOK: Procesamiento completo de props
   const {
-    // Props estándar del sistema
-    size = 'md',
-    variant = 'primary', 
-    rounded = 'md',
-    disabled = false,
-    loading = false,
-    className = '',
-    leftIcon,
-    rightIcon,
-    onLeftIconClick,
-    onRightIconClick,
-    // Props específicas de Input
+    // Props procesadas con defaults
+    size, variant, rounded, width,
+    leftIcon, rightIcon,
+    
+    // Tokens especializados
+    tokens,
+    
+    // ✅ Sistema de iconos V2
+    renderIcon,
+    
+    // Helpers de estado  
+    isDisabled, isLoading,
+    
+    // Generadores
+    generateStyles,
+    
+    // Meta información
+    currentBreakpoint,
+    
+    // Debugging (solo desarrollo)
+    _debug
+  } = useInteractiveProps(props, {
+    componentName: 'Input',
+    defaultSize: 'md',
+    defaultVariant: 'primary'
+  });
+
+  // Props específicas de Input (no procesadas por hook)
+  const {
     type = 'text',
     value,
     defaultValue,
-    onChange,
-    onFocus,
-    onBlur,
     placeholder,
     readOnly = false,
     required = false,
     autoFocus = false,
-    compact = false,
-    width = 'md', // ✅ NUEVO: Sistema de width fijo como Select
+    onChange,
+    onFocus,
+    onBlur,
     ariaLabel,
     ariaDescribedBy,
     ariaErrorMessage,
     autoComplete,
     maxLength,
     minLength,
-    pattern,
-    ...restProps
-  } = validatedProps;
+    pattern
+  } = props;
 
-  // ⚠️ DEPRECATED VARIANTS WARNING
-  if (props.variant === 'default' || props.variant === 'error') {
-    console.warn(
-      `Input: Las variantes "default" y "error" están deprecadas.
-      Migración sugerida:
-      - variant="default" → variant="primary"
-      - variant="error" → variant="danger"
-      
-      Variantes estándar disponibles: primary, secondary, success, warning, danger, neutral`
-    );
+  // ✅ V2 DEBUGGING: Solo en desarrollo
+  if (import.meta.env?.DEV && _debug) {
+    console.log('Input V2 Debug:', {
+      size, variant, width, tokens, currentBreakpoint, _debug
+    });
   }
-  
-  // Función para renderizar iconos usando el sistema centralizado
-  const renderIcon = createStandardIconRenderer('input', size);
 
+  // ARIA Label inteligente
+  const finalAriaLabel = ariaLabel;
+  
   // Determinar si necesitamos wrapper para iconos
   const hasLeftIcon = Boolean(leftIcon);
   const hasRightIcon = Boolean(rightIcon);
-  const needsWrapper = hasLeftIcon || hasRightIcon || loading;
-
-  // Construir las clases CSS dinámicamente
-  const inputClasses = [
-    'input-base',
-    `input-base--${size}`,
-    variant !== 'primary' && `input-base--${variant}`,
-    rounded !== 'md' && `input-base--rounded-${rounded}`,
-    compact && 'input-base--compact',
-    hasLeftIcon && 'input-base--with-left-icon',
-    hasRightIcon && 'input-base--with-right-icon',
-    loading && 'input-base--loading',
-    !needsWrapper ? className : '' // Solo agregar className al input si no hay wrapper
-  ].filter(Boolean).join(' ');
-
-  // Clases para el wrapper (cuando tiene iconos)
-  const wrapperClasses = [
-    'input-wrapper',
-    `input-wrapper--width-${width}`, // ✅ NUEVO: Width fijo como Select
-    `input-wrapper--${size}`,
-    variant !== 'primary' && `input-wrapper--${variant}`,
-    rounded !== 'md' && `input-wrapper--rounded-${rounded}`,
-    disabled && 'input-wrapper--disabled',
-    loading && 'input-wrapper--loading',
-    needsWrapper ? className : '' // Agregar className al wrapper si existe
-  ].filter(Boolean).join(' ');
-
+  const needsWrapper = hasLeftIcon || hasRightIcon || isLoading;
+  
   // Props adicionales para accesibilidad
   const accessibilityProps = {
-    'aria-label': ariaLabel,
+    'aria-label': finalAriaLabel,
     'aria-describedby': ariaDescribedBy,
-    'aria-errormessage': (variant === 'danger' || props.variant === 'error') ? ariaErrorMessage : undefined,
-    'aria-invalid': (variant === 'danger' || props.variant === 'error') ? 'true' : undefined,
+    'aria-errormessage': variant === 'danger' ? ariaErrorMessage : undefined,
+    'aria-invalid': variant === 'danger' ? 'true' : undefined,
     'aria-required': required ? 'true' : undefined
   };
 
@@ -139,24 +122,61 @@ const Input = forwardRef((props, ref) => {
     autoComplete
   };
 
+  // ✅ GENERAR CLASES CSS TRADICIONALES (compatible con CSS actual)
+  const inputClasses = [
+    'input-base',
+    `input-base--${size}`,
+    `input-base--${variant}`,
+    rounded !== 'md' && `input-base--rounded-${rounded}`,
+    hasLeftIcon && 'input-base--with-left-icon',
+    hasRightIcon && 'input-base--with-right-icon',
+    isLoading && 'input-base--loading',
+    isDisabled && 'input-base--disabled',
+    !needsWrapper ? props.className : '' // Solo agregar className al input si no hay wrapper
+  ].filter(Boolean).join(' ');
+
+  // Clases para el wrapper (cuando tiene iconos)
+  const wrapperClasses = [
+    'input-wrapper',
+    `input-wrapper--${size}`,
+    `input-wrapper--${variant}`,
+    rounded !== 'md' && `input-wrapper--rounded-${rounded}`,
+    width === 'full' && 'input-wrapper--full-width',
+    isDisabled && 'input-wrapper--disabled',
+    isLoading && 'input-wrapper--loading',
+    needsWrapper ? props.className : '' // Agregar className al wrapper si existe
+  ].filter(Boolean).join(' ');
+
+  // ✅ PROPS MODIFICADAS: reemplazar className original con combinada
+  const propsWithFinalClassName = { 
+    ...props, 
+    className: needsWrapper ? wrapperClasses : inputClasses
+  };
+
   // Input base element
   const inputElement = (
     <input
+      {...extractDOMPropsV2(propsWithFinalClassName)}
       ref={ref}
       type={type}
       className={inputClasses}
+      style={{
+        // Aplicar algunos tokens V2 como fallback
+        ...(tokens.width && { width: tokens.width }),
+        ...generateStyles(),
+        ...props.style
+      }}
       value={value}
       defaultValue={defaultValue}
       onChange={onChange}
       onFocus={onFocus}
       onBlur={onBlur}
       placeholder={placeholder}
-      disabled={disabled}
+      disabled={isDisabled}
       readOnly={readOnly}
       autoFocus={autoFocus}
       {...accessibilityProps}
       {...validationProps}
-      {...restProps}
     />
   );
 
@@ -170,19 +190,7 @@ const Input = forwardRef((props, ref) => {
     <div className={wrapperClasses}>
       {/* Icono izquierdo */}
       {hasLeftIcon && (
-        <span 
-          className={`input-wrapper__icon input-wrapper__icon--left ${onLeftIconClick ? 'input-wrapper__icon--clickable' : ''}`}
-          onClick={onLeftIconClick}
-          onKeyDown={onLeftIconClick ? (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              onLeftIconClick(e);
-            }
-          } : undefined}
-          tabIndex={onLeftIconClick ? 0 : -1}
-          role={onLeftIconClick ? 'button' : undefined}
-          aria-label={onLeftIconClick ? 'Acción del icono izquierdo' : undefined}
-        >
+        <span className="input-wrapper__icon input-wrapper__icon--left">
           {renderIcon(leftIcon)}
         </span>
       )}
@@ -192,33 +200,18 @@ const Input = forwardRef((props, ref) => {
       
       {/* Icono derecho */}
       {hasRightIcon && (
-        <span 
-          className={`input-wrapper__icon input-wrapper__icon--right ${onRightIconClick ? 'input-wrapper__icon--clickable' : ''}`}
-          onClick={onRightIconClick}
-          onKeyDown={onRightIconClick ? (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              onRightIconClick(e);
-            }
-          } : undefined}
-          tabIndex={onRightIconClick ? 0 : -1}
-          role={onRightIconClick ? 'button' : undefined}
-          aria-label={onRightIconClick ? 'Limpiar búsqueda' : undefined}
-        >
+        <span className="input-wrapper__icon input-wrapper__icon--right">
           {renderIcon(rightIcon)}
         </span>
       )}
       
-      {/* Spinner de loading */}
-      {loading && (
+      {/* Loading spinner */}
+      {isLoading && (
         <span className="input-wrapper__spinner" aria-hidden="true">
           <svg className="input-wrapper__spinner-svg" viewBox="0 0 24 24">
             <circle 
               className="input-wrapper__spinner-circle" 
-              cx="12" 
-              cy="12" 
-              r="10" 
-              strokeWidth="2"
+              cx="12" cy="12" r="10" strokeWidth="2"
             />
           </svg>
         </span>
@@ -229,31 +222,33 @@ const Input = forwardRef((props, ref) => {
 
 Input.displayName = 'Input';
 
+// ✅ V2 PROPTYPES OPTIMIZADOS: Props Helpers System
 Input.propTypes = {
-  // ✅ PROPS ESTÁNDAR DEL SISTEMA
-  ...STANDARD_PROP_TYPES,
+  // ✅ PROPS HELPERS: Sistema centralizado (-80% código repetitivo)
+  ...INTERACTIVE_PROP_TYPES,
   
-  // ✅ PROPS ESPECÍFICAS DE INPUT
+  // Props específicas de Input únicamente
   type: PropTypes.oneOf(['text', 'password', 'email', 'number', 'tel', 'url', 'search', 'date', 'time', 'datetime-local']),
   value: PropTypes.string,
   defaultValue: PropTypes.string,
-  onChange: PropTypes.func,
-  onFocus: PropTypes.func,
-  onBlur: PropTypes.func,
   placeholder: PropTypes.string,
   readOnly: PropTypes.bool,
   required: PropTypes.bool,
   autoFocus: PropTypes.bool,
-  compact: PropTypes.bool,
-  ariaLabel: PropTypes.string,
   ariaDescribedBy: PropTypes.string,
   ariaErrorMessage: PropTypes.string,
   autoComplete: PropTypes.string,
   maxLength: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   minLength: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  pattern: PropTypes.string,
-  onLeftIconClick: PropTypes.func,
-  onRightIconClick: PropTypes.func
+  pattern: PropTypes.string
+};
+
+// ✅ V2 DEFAULT PROPS: Minimales (hook maneja la mayoría)
+Input.defaultProps = {
+  type: 'text',
+  readOnly: false,
+  required: false,
+  autoFocus: false
 };
 
 export { Input };

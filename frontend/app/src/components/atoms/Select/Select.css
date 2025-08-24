@@ -34,6 +34,37 @@
   width: 100%;
 }
 
+/* ===== SISTEMA DE WIDTH V2 ===== */
+.select-wrapper--full-width {
+  width: 100%;
+}
+
+.select-wrapper--auto {
+  width: auto;
+}
+
+.select-wrapper--fit-content {
+  width: fit-content;
+}
+
+.select-wrapper--min-content {
+  width: min-content;
+}
+
+.select-wrapper--max-content {
+  width: max-content;
+}
+
+/* Estados del select wrapper V2 */
+.select-wrapper--disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.select-wrapper--loading {
+  position: relative;
+}
+
 /* ===== SELECT BASE - ELEMENTO PRINCIPAL ===== */
 .select-base {
   /* Layout */
@@ -112,6 +143,14 @@
 }
 
 /* ===== BORDES - SIGUIENDO SISTEMA EST�NDAR ===== */
+.select-base--rounded-none {
+  border-radius: 0;
+}
+
+.select-base--rounded-xs {
+  border-radius: var(--radius-xs);
+}
+
 .select-base--rounded-sm {
   border-radius: var(--radius-sm);
 }
@@ -126,6 +165,14 @@
 
 .select-base--rounded-xl {
   border-radius: var(--radius-xl);
+}
+
+.select-base--rounded-2xl {
+  border-radius: var(--radius-2xl);
+}
+
+.select-base--rounded-3xl {
+  border-radius: var(--radius-3xl);
 }
 
 .select-base--rounded-full {

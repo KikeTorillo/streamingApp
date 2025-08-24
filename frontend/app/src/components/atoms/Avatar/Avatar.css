@@ -188,7 +188,7 @@
 }
 
 .avatar--neutral .avatar__fallback {
-  background: linear-gradient(135deg, var(--gray-400), var(--gray-500));
+  background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-muted));
   color: var(--text-primary);
 }
 

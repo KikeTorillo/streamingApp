@@ -241,6 +241,7 @@ function AdminLayout({
           "sidebar main"
         `}
       spacing="none"
+      variant="primary"
     >
 
       {/* ===== SIDEBAR ===== */}
