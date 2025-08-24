@@ -29,7 +29,6 @@ function FlexContainer(props) {
     disabled,
     loading,
     className,
-    generateStyles,
     ...standardProps
   } = useContainerProps(props, {
     componentName: 'FlexContainer',
@@ -78,13 +77,12 @@ function FlexContainer(props) {
     className
   ].filter(Boolean).join(' ');
 
-  // ✅ ESTILOS MANUALES - EVITAR generateStyles AUTOMÁTICO
+  // ✅ ESTILOS MANUALES - Solo estilos específicos de flexbox
   const flexStyles = {
     // Solo estilos específicos que necesitamos
     ...(spacing && { gap: `var(--space-${spacing})` }),
     ...(padding && { padding: `var(--space-${padding})` }),
     ...style // ✅ Combinar con estilos que vienen de props
-    // NO usar generateStyles para evitar estilos automáticos no deseados
   };
 
   // ✅ FILTRAR PROPS PARA DOM - Excluir TODAS las props específicas de FlexContainer

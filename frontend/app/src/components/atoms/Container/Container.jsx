@@ -31,7 +31,6 @@ function Container(props) {
     loading,
     className,
     tokens,
-    generateStyles,
     ...standardProps
   } = useContainerProps(props, {
     componentName: 'Container',
@@ -41,14 +40,13 @@ function Container(props) {
     enableResponsive: true
   });
 
-  // ✅ DEBUG: Log para identificar estilos automáticos
+  // ✅ DEBUG: Log para verificar configuración
   if (import.meta.env?.DEV && props.debug) {
     console.log('🐛 Container Debug:', {
       variant,
       finalSize,
       className,
-      tokens,
-      generateStylesExists: !!generateStyles
+      tokens
     });
   }
 
@@ -89,14 +87,14 @@ function Container(props) {
     className
   ].filter(Boolean).join(' ');
 
-  // ✅ ESTILOS MANUALES - EVITAR generateStyles AUTOMÁTICO
+  // ✅ ESTILOS MANUALES - Solo estilos especificos necesarios
   const containerStyles = {
     // Solo estilos específicos que necesitamos
     ...(spacing && { gap: `var(--space-${spacing})` }),
     ...(padding && { padding }),
     ...(props.area && { gridArea: props.area }),
     ...style // ✅ Estilos que vienen de props
-    // NO usar generateStyles para evitar estilos automáticos no deseados
+    // Aplicar solo estilos necesarios sin automatización
   };
 
   // ✅ FILTRAR PROPS PARA DOM

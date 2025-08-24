@@ -54,12 +54,6 @@ const Input = forwardRef((props, ref) => {
     // Helpers de estado  
     isDisabled, isLoading,
     
-    // Generadores
-    generateStyles,
-    
-    // Meta información
-    currentBreakpoint,
-    
     // Debugging (solo desarrollo)
     _debug
   } = useInteractiveProps(props, {
@@ -161,9 +155,8 @@ const Input = forwardRef((props, ref) => {
       type={type}
       className={inputClasses}
       style={{
-        // Aplicar algunos tokens V2 como fallback
+        // Aplicar tokens específicos necesarios
         ...(tokens.width && { width: tokens.width }),
-        ...generateStyles(),
         ...props.style
       }}
       value={value}

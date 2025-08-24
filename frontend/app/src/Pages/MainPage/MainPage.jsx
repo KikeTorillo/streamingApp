@@ -11,7 +11,7 @@ import { useCategories } from '../../app/context/CategoriesContext';
 import { transformMovieData } from '../../utils/movieDataTransformer';
 import { Button } from '../../components/atoms/Button/Button';
 import { AppHeader } from '../../components/organisms/AppHeader/AppHeader';
-import { FilterBar } from '../../components/molecules/FilterBar/FilterBar';
+// ✅ FilterBar integrado directamente en MainPage (solo se usa aquí)
 import { ContentCard } from '../../components/molecules/ContentCard/ContentCard';
 import { Container } from '../../components/atoms/Container/Container';
 import { Typography } from '../../components/atoms/Typography/Typography';
@@ -291,6 +291,79 @@ function MainPage() {
         </Container>
     );
 
+    // ===== FUNCIÓN HELPER PARA RENDERIZAR FILTER BAR =====
+    const renderFilterBar = () => (
+        <Container
+            variant="neutral"
+            size="full" 
+            padding="lg"
+        >
+            <FlexContainer justify="space-between" align="center" gap="lg" width="full">
+                {/* Estados de loading */}
+                {loadingCategories && (
+                    <FlexContainer
+                        align="center"
+                        justify="center"
+                        width="full"
+                    >
+                        <span>Cargando filtros...</span>
+                    </FlexContainer>
+                )}
+
+                {/* Contenido normal cuando no hay loading */}
+                {!loadingCategories && (
+                    <>
+                        {/* Categorías */}
+                        <FlexContainer
+                            wrap="wrap"
+                            spacing="sm"
+                            grow={true}
+                            align="center"
+                        >
+                            {mappedCategories.map(category => (
+                                <Button
+                                    key={category.value}
+                                    // ✅ VARIANTES ESTÁNDAR: Usar solo variantes del sistema de diseño
+                                    variant={selectedCategory === category.value ? 'primary' : 'secondary'}
+                                    size="md"
+                                    rounded="lg"
+                                    onClick={() => handleCategoryChange(category.value)}
+                                    disabled={loadingCategories}
+                                >
+                                    {category.label}
+                                </Button>
+                            ))}
+                        </FlexContainer>
+
+                        {/* Acciones - Botón condicional según permisos */}
+                        <FlexContainer shrink={false}>
+                            {isAdmin ? (
+                                <Button
+                                    variant="primary"
+                                    leftIcon="settings"
+                                    onClick={handleGoToAdmin}
+                                    rounded="lg"
+                                >
+                                    Admin Panel
+                                </Button>
+                            ) : (
+                                <Button
+                                    variant="secondary"
+                                    size="md"
+                                    leftIcon="upload"
+                                    onClick={() => showPermissionError('Solo los administradores pueden subir contenido')}
+                                    rounded="lg"
+                                >
+                                    Solicitar Acceso
+                                </Button>
+                            )}
+                        </FlexContainer>
+                    </>
+                )}
+            </FlexContainer>
+        </Container>
+    );
+
     // ===== INICIALIZAR CARGA DE DATOS =====
     useEffect(() => {
         if (user) {
@@ -332,34 +405,8 @@ function MainPage() {
                 size="lg"
             />
 
-            <FilterBar
-                categories={mappedCategories}
-                selectedCategory={selectedCategory}
-                onCategoryChange={handleCategoryChange}
-                loading={loadingCategories}
-                actions={
-                    // ✅ CAMBIO: Botón condicional según permisos
-                    isAdmin ? (
-                        <Button
-                            variant="primary"
-                            size="md"
-                            leftIcon="settings"
-                            onClick={handleGoToAdmin}
-                        >
-                            Admin Panel
-                        </Button>
-                    ) : (
-                        <Button
-                            variant="outline"
-                            size="md"
-                            leftIcon="upload"
-                            onClick={() => showPermissionError('Solo los administradores pueden subir contenido')}
-                        >
-                            Solicitar Acceso
-                        </Button>
-                    )
-                }
-            />
+            {/* ===== FILTER BAR INTEGRADO ===== */}
+            {renderFilterBar()}
 
             {/* ===== SECCIÓN DE PELÍCULAS INTEGRADA ===== */}
             {renderContentSection({

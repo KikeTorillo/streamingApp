@@ -97,6 +97,7 @@ function EmptyState({
         align="center"
         justify="center"
         variant="primary"
+        padding="lg"
       >
         {/* Ícono con sistema unificado */}
         <div className="empty-state__icon" style={{ fontSize: tokens?.size?.iconSize || 'var(--icon-size-xl)' }}>

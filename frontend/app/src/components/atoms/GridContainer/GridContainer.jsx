@@ -43,7 +43,6 @@ function GridContainer(props) {
     className,
     tokens,
     generateClassName,
-    generateStyles,
     currentBreakpoint,
     componentType,
     ...standardProps
@@ -102,7 +101,7 @@ function GridContainer(props) {
     dense && 'grid-container--dense'
   ].filter(Boolean).join(' ');
 
-  // ✅ ESTILOS MANUALES - EVITAR generateStyles AUTOMÁTICO
+  // ✅ ESTILOS MANUALES - Solo estilos específicos de grid
   const gridStyles = {
     // Solo estilos específicos de grid que necesitamos
     display: inline ? 'inline-grid' : 'grid',
@@ -146,7 +145,6 @@ function GridContainer(props) {
     
     // Combinar con estilos que vienen de props
     ...style
-    // NO usar generateStyles para evitar estilos automáticos no deseados
   };
 
   // ✅ PROCESAR CHILDREN CON GRID AREAS AUTOMÁTICAS
@@ -174,7 +172,6 @@ function GridContainer(props) {
     // Props del hook V2 que NO deben ir al DOM
     tokens,
     generateClassName,
-    generateStyles,
     currentBreakpoint,
     componentType
   });

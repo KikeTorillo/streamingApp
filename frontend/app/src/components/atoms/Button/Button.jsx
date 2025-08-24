@@ -49,13 +49,6 @@ function Button(props) {
     // Helpers de estado  
     isDisabled, isLoading, isInteractive,
     
-    // Generadores
-    generateClassName,
-    generateStyles,
-    
-    // Meta información
-    currentBreakpoint,
-    
     // Debugging (solo desarrollo)
     _debug
   } = useInteractiveProps(props, {
@@ -124,9 +117,8 @@ function Button(props) {
       {...extractDOMPropsV2(propsWithFinalClassName)}
       type={type}
       style={{
-        // Aplicar algunos tokens V2 como fallback
+        // Aplicar tokens específicos necesarios
         ...(tokens.width && { width: tokens.width }),
-        ...generateStyles(),
         ...props.style
       }}
       onClick={handleClick}
@@ -473,7 +465,7 @@ CAMBIOS REALIZADOS:
 ✅ Hook: validateStandardProps → useInteractiveProps
 ✅ DOM Props: manual → extractDOMPropsV2  
 ✅ CSS: Clases manuales → generateClassName()
-✅ Estilos: Hardcoded → generateStyles() + tokens
+✅ Estilos: CSS-first approach + tokens específicos
 ✅ Iconos: Sistema manual → renderIcon() integrado
 ✅ Props: API V2 limpia sin backward compatibility
 ✅ Responsive: Automático via hook
