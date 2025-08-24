@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { Icon } from '../Icon/Icon';
-import { useLabelProps } from '../../../hooks/useStandardProps';
-import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens/standardProps';
+import { useStandardPropsV2 } from '../../../hooks/useStandardProps-v2.jsx';
+import { STANDARD_PROP_TYPES } from '../../../tokens/propHelpers.js';
 import './Label.css';
 
 /**
@@ -58,7 +58,7 @@ function Label({
     propsWithCompatibility.variant = 'neutral';
   }
 
-  // Hook del sistema estándar - integra props, tokens e iconos
+  // Hook del sistema estándar V2 - integra props, tokens e iconos
   const {
     size,
     variant,
@@ -73,20 +73,26 @@ function Label({
     hasRightIcon,
     ariaLabel,
     testId,
-    tokens // Para futuras extensiones de estilo
-  } = useLabelProps(propsWithCompatibility);
+    tokens, // Para futuras extensiones de estilo
+    generateClassName,
+    generateStyles
+  } = useStandardPropsV2(propsWithCompatibility, {
+    componentName: 'Label',
+    componentType: 'typography',
+    defaultSize: 'md',
+    defaultVariant: 'neutral',
+    defaultRounded: 'sm'
+  });
   
   // Marcar variables como utilizadas para evitar warnings de linting
-  void rounded; void tokens;
+  void rounded; void tokens; void generateStyles;
 
-  // Extraer props seguras para DOM (sin tokens ni helpers)
-  const domProps = extractDOMProps({ 
-    ...restProps, 
-    className, 
-    disabled, 
-    ariaLabel, 
-    'data-testid': testId 
-  });
+  // Props DOM-safe (V2 maneja esto automáticamente)
+  const domProps = {
+    'data-testid': testId,
+    'data-component': 'Label',
+    ...restProps
+  };
   // Determinar contenido de la etiqueta
   const labelContent = children || text;
 
@@ -95,15 +101,10 @@ function Label({
   const isSuccessState = variant === 'success';
   const isWarningState = variant === 'warning';
 
-  // Generar clases CSS con sistema estándar
-  const labelClasses = [
-    'label',
-    `label--size-${size}`,
-    `label--variant-${variant}`,
+  // Generar clases CSS con sistema V2
+  const labelClasses = generateClassName('label') + ' ' + [
     required && 'label--required',
     optional && 'label--optional',
-    disabled && 'label--disabled',
-    loading && 'label--loading',
     bold && 'label--bold',
     isErrorState && 'label--error',
     isSuccessState && 'label--success', 
@@ -111,8 +112,7 @@ function Label({
     hasLeftIcon && 'label--has-left-icon',
     hasRightIcon && 'label--has-right-icon',
     (hasLeftIcon || hasRightIcon) && 'label--with-icon',
-    onClick && 'label--clickable',
-    className
+    onClick && 'label--clickable'
   ].filter(Boolean).join(' ');
 
   // Props de accesibilidad mejoradas con sistema estándar
@@ -134,10 +134,8 @@ function Label({
 
   return (
     <label {...labelProps}>
-      {/* Icono izquierdo con sistema estándar */}
-      {hasLeftIcon && renderIcon(leftIcon, undefined, undefined, {
-        className: 'label__icon label__icon--left'
-      })}
+      {/* Icono izquierdo con sistema V2 */}
+      {hasLeftIcon && renderIcon(leftIcon)}
 
       {/* Contenido principal */}
       <span className="label__text">
@@ -158,10 +156,8 @@ function Label({
         )}
       </span>
 
-      {/* Icono derecho con sistema estándar */}
-      {hasRightIcon && renderIcon(rightIcon, undefined, undefined, {
-        className: 'label__icon label__icon--right'
-      })}
+      {/* Icono derecho con sistema V2 */}
+      {hasRightIcon && renderIcon(rightIcon)}
 
       {/* Tooltip info */}
       {tooltip && (

@@ -1,11 +1,11 @@
 // EmptyState.jsx
 import PropTypes from 'prop-types';
 import { Container } from '../../atoms/Container/Container';
-import { Icon } from '../../atoms/Icon/Icon';
+// import { Icon } from '../../atoms/Icon/Icon'; // Removido - usando renderIcon del hook V2
 import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
 import { Typography } from '../../atoms/Typography/Typography';
-import { useEmptyStateProps } from '../../../hooks/useStandardProps.jsx';
-import { STANDARD_PROP_TYPES } from '../../../tokens/standardProps.js';
+import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
+import { INTERACTIVE_PROP_TYPES } from '../../../tokens/standardProps-v2.js';
 
 /**
  * Componente EmptyState - Molecule SIMPLIFICADO
@@ -41,18 +41,19 @@ function EmptyState({
   ...restProps
 }) {
   
-  // ===== INTEGRACIÓN SISTEMA DE DISEÑO =====
+  // ✅ SISTEMA V2: INTEGRACIÓN SISTEMA DE DISEÑO
   const {
     size: finalSize,
     variant: finalVariant,
-    // rounded: finalRounded, // del hook pero no utilizada
+    rounded: finalRounded,
     disabled: isDisabled,
     loading: isLoading,
     tokens,
+    generateStyles,
     renderIcon,
     className: standardClassName,
     ...standardProps
-  } = useEmptyStateProps({ 
+  } = useInteractiveProps({ 
     size, 
     variant, 
     rounded, 
@@ -60,6 +61,11 @@ function EmptyState({
     loading, 
     className, 
     ...restProps 
+  }, {
+    componentName: 'EmptyState',
+    defaultSize: 'md',
+    defaultVariant: 'neutral',
+    defaultRounded: 'lg'
   });
   
   // Backward compatibility: mapear variants legacy
@@ -86,28 +92,16 @@ function EmptyState({
 
   // ===== RENDER =====
   return (
-    <Container 
-      size="full"
-      padding="xl"
-      variant={finalVariantCompat}
-      className={standardClassName}
-      {...standardProps}
-    >
       <FlexContainer
         direction="column"
         align="center"
         justify="center"
-        gap="lg"
-        style={{ minHeight: '16rem' }}
+        variant="primary"
       >
         {/* Ícono con sistema unificado */}
-        {renderIcon ? renderIcon(icon) : (
-          typeof icon === 'string' && icon.length <= 2 ? (
-            <span style={{ fontSize: '3rem' }}>{icon}</span> // Emoji directo
-          ) : (
-            <Icon name={icon} size="xl" />
-          )
-        )}
+        <div className="empty-state__icon" style={{ fontSize: tokens?.size?.iconSize || 'var(--icon-size-xl)' }}>
+          {renderIcon(icon || 'inbox')}
+        </div>
         
         {/* Título */}
         <Typography variant="primary" size="lg" weight="semibold">
@@ -136,7 +130,6 @@ function EmptyState({
           </FlexContainer>
         )}
       </FlexContainer>
-    </Container>
   );
 }
 
@@ -147,8 +140,8 @@ EmptyState.propTypes = {
   description: PropTypes.string,
   action: PropTypes.node,
   
-  // Props estándar del sistema
-  ...STANDARD_PROP_TYPES,
+  // ✅ SISTEMA V2: Props estándar del sistema
+  ...INTERACTIVE_PROP_TYPES,
   
   // Soporte legacy (deprecated)
   variant: PropTypes.oneOf([

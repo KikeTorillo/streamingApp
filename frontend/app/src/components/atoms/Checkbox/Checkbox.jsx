@@ -1,7 +1,8 @@
 // components/atoms/Checkbox/Checkbox.jsx
 import PropTypes from 'prop-types';
-import { useStandardProps } from '../../../hooks/useStandardProps';
-import { STANDARD_PROP_TYPES } from '../../../tokens';
+import { useId } from 'react';
+import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
+import { INTERACTIVE_PROP_TYPES } from '../../../tokens/propHelpers.js';
 import './Checkbox.css';
 
 /**
@@ -35,9 +36,9 @@ import './Checkbox.css';
  * @param {string} [props.testId] - ID para testing
  */
 function Checkbox(props) {
-  // ✅ HOOK ESTÁNDAR: Sistema completo de props con tokens automáticos
-  const standardProps = useStandardProps(props, {
-    componentType: 'checkbox',
+  // ✅ HOOK ESTÁNDAR V2: Sistema completo de props con tokens automáticos
+  const standardProps = useInteractiveProps(props, {
+    componentName: 'Checkbox',
     defaultSize: 'md',
     defaultVariant: 'primary',
     defaultRounded: 'sm'
@@ -54,7 +55,9 @@ function Checkbox(props) {
     rightIcon,
     className,
     renderIcon,
-    // tokens, // del hook pero no implementado actualmente
+    tokens,
+    generateClassName,
+    generateStyles,
     // Props específicas de Checkbox
     checked = false,
     indeterminate = false,
@@ -70,7 +73,9 @@ function Checkbox(props) {
     testId,
     ...restProps
   } = { ...standardProps, ...props };
-  const inputId = id || `checkbox-${Math.random().toString(36).substring(2, 11)}`;
+  // ✅ SSR-SAFE ID: useId() en lugar de Math.random()
+  const generateId = useId();
+  const inputId = id || `checkbox-${generateId}`;
   
   // ✅ ESTADOS COMPUTADOS para mejor legibilidad
   const isDisabled = disabled || loading;
@@ -79,17 +84,10 @@ function Checkbox(props) {
   const showLeftIcon = Boolean(leftIcon);
   const showRightIcon = Boolean(rightIcon);
   
-  // ✅ CLASES CSS: Sistema estándar + backward compatibility
-  const checkboxClasses = [
-    'checkbox',
-    `checkbox--${size}`,
-    `checkbox--${variant}`,
-    `checkbox--rounded-${rounded}`,
+  // ✅ CLASES CSS V2: Sistema estándar + backward compatibility
+  const checkboxClasses = generateClassName('checkbox') + ' ' + [
     hasError && 'checkbox--error',
-    isDisabled && 'checkbox--disabled',
-    loading && 'checkbox--loading',
-    indeterminate && 'checkbox--indeterminate',
-    className
+    indeterminate && 'checkbox--indeterminate'
   ].filter(Boolean).join(' ');
 
   const containerClasses = [
@@ -198,10 +196,10 @@ function Checkbox(props) {
   );
 }
 
-// ✅ PROP TYPES: Sistema estándar + props específicas
+// ✅ PROP TYPES V2: Sistema estándar + props específicas
 Checkbox.propTypes = {
-  // Props estándar del sistema de diseño
-  ...STANDARD_PROP_TYPES,
+  // Props estándar del sistema de diseño V2
+  ...INTERACTIVE_PROP_TYPES,
   
   // Props específicas del Checkbox
   checked: PropTypes.bool,

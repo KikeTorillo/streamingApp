@@ -1,7 +1,9 @@
 // src/components/atoms/Spinner/Spinner.jsx
-// ✅ MIGRADO AL SISTEMA ESTÁNDAR DE DISEÑO
+// ✅ MIGRADO AL SISTEMA ESTÁNDAR DE DISEÑO V2
 import PropTypes from 'prop-types';
-import { validateStandardProps, STANDARD_PROP_TYPES } from '../../../tokens/standardProps';
+import { useStandardPropsV2 } from '../../../hooks/useStandardProps-v2.jsx';
+import { STANDARD_PROP_TYPES } from '../../../tokens/propHelpers.js';
+import { extractDOMPropsV2 } from '../../../tokens/standardProps-v2.js';
 import './Spinner.css';
 
 /**
@@ -23,14 +25,6 @@ import './Spinner.css';
  * Tamaños del sistema: xs(24px), sm(32px), md(48px), lg(64px), xl(80px)
  */
 function Spinner({
-  // ===== PROPS ESTÁNDAR DEL SISTEMA =====
-  size = 'md',           // 'xs', 'sm', 'md', 'lg', 'xl' - Tamaño del spinner
-  variant = 'primary',   // 'primary', 'secondary', 'success', 'warning', 'danger', 'neutral' - Esquema de colores
-  rounded = 'full',      // 'sm', 'md', 'lg', 'xl', 'full' - Radio de bordes (aplicable en pulse mode)
-  loading = true,        // Boolean - Si está activo (permite control externo)
-  disabled = false,      // Boolean - Si está deshabilitado
-  className = '',        // String - Clases CSS adicionales
-  
   // ===== PROPS ESPECÍFICOS DEL SPINNER =====
   spinnerVariant = 'circle', // 'circle', 'dots', 'pulse', 'bars' - Tipo de animación
   message = 'Cargando...', // Texto del mensaje
@@ -43,19 +37,36 @@ function Spinner({
   // Props adicionales
   ...restProps
 }) {
-  // ===== VALIDAR PROPS ESTÁNDAR =====
-  validateStandardProps({
-    size, variant, rounded, loading, disabled, className,
-    spinnerVariant, message, overlay, color,
-    ...restProps
-  }, 'Spinner');
+  // ===== HOOK ESTÁNDAR V2 =====
+  const {
+    size,
+    variant,
+    rounded,
+    loading,
+    disabled,
+    className,
+    generateClassName,
+    generateStyles,
+    tokens
+  } = useStandardPropsV2(restProps, {
+    componentName: 'Spinner',
+    componentType: 'container',
+    defaultSize: 'md',
+    defaultVariant: 'primary',
+    defaultRounded: 'full'
+  });
+  
+  // Evitar warning de unused vars
+  void generateStyles; void tokens;
   
   // ===== MAPEAR PROPS LEGACY CON DEPRECATION WARNINGS =====
   let finalVariant = variant;
   
   // Mapeo de color legacy → variant estándar
-  if (color) {
+  if (color && import.meta.env?.DEV) {
     console.warn('Spinner: prop "color" está deprecada. Usar "variant" en su lugar.');
+  }
+  if (color) {
     const colorToVariantMap = {
       'primary': 'primary',
       'secondary': 'secondary', 
@@ -66,6 +77,19 @@ function Spinner({
     finalVariant = colorToVariantMap[color] || 'primary';
   }
   
+  // ✅ FILTRAR PROPS ESPECÍFICAS - No van al DOM
+  const {
+    spinnerVariant: _spinnerVariant,
+    message: _message,
+    overlay: _overlay,
+    storybookPreview: _storybookPreview,
+    color: _color,
+    ...domSafeProps
+  } = restProps;
+
+  // ✅ EXTRAER PROPS DOM VÁLIDAS
+  const safeDOMProps = extractDOMPropsV2(domSafeProps);
+
   // Si está disabled o loading=false, no mostrar
   if (disabled || !loading) {
     return null;
@@ -116,7 +140,7 @@ function Spinner({
   // Modo Storybook Preview (sin overlay completo)
   if (storybookPreview) {
     return (
-      <div {...restProps} style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', padding: '2rem' }}>
+      <div {...safeDOMProps} style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', padding: '2rem' }}>
         <div>
           {renderSpinnerVariant()}
         </div>
@@ -131,7 +155,7 @@ function Spinner({
 
   // Modo normal - overlay completo
   return (
-    <div {...restProps} className={`spinner-overlay`}>
+    <div {...safeDOMProps} className={`spinner-overlay`}>
       <div className={`spinner-overlay__container spinner-overlay__container--variant-${finalVariant}`}>
         <div className="spinner-overlay__spinner">
           {renderSpinnerVariant()}

@@ -4,8 +4,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '../Button/Button';
-import { useToastProps } from '../../../hooks/useStandardProps';
-import { STANDARD_PROP_TYPES } from '../../../tokens/standardProps';
+import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
+import { INTERACTIVE_PROP_TYPES } from '../../../tokens/propHelpers.js';
 import './Toast.css';
 
 /**
@@ -46,8 +46,14 @@ function Toast({
   
   ...restProps
 }) {
-  // Integrar sistema estándar
-  const standardProps = useToastProps(restProps);
+  // Integrar sistema estándar V2
+  const standardProps = useInteractiveProps(restProps, {
+    componentName: 'Toast',
+    defaultSize: 'md',
+    defaultVariant: 'primary',
+    defaultRounded: 'md'
+  });
+  
   const {
     size,
     variant: propVariant,
@@ -56,8 +62,13 @@ function Toast({
     loading,
     className,
     renderIcon,
-    tokens
+    tokens,
+    generateClassName,
+    generateStyles
   } = standardProps;
+  
+  // Evitar warning de unused vars
+  void generateStyles;
   
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -150,17 +161,11 @@ function Toast({
     return null;
   }
   
-  // Clases CSS con sistema estándar
-  const toastClasses = [
-    'toast',
+  // Clases CSS con sistema V2
+  const toastClasses = generateClassName('toast') + ' ' + [
     config.containerClass,
     `toast--${position}`,
-    `toast--size-${size}`,
-    `toast--rounded-${rounded}`,
-    isAnimating ? 'toast--visible' : 'toast--hidden',
-    disabled && 'toast--disabled',
-    loading && 'toast--loading',
-    className
+    isAnimating ? 'toast--visible' : 'toast--hidden'
   ].filter(Boolean).join(' ');
   
   return (
@@ -172,11 +177,9 @@ function Toast({
       {...restProps}
     >
       <div className="toast__content">
-        {/* Icono usando sistema estándar */}
+        {/* Icono usando sistema V2 */}
         <div className={`toast__icon ${config.iconClass}`}>
-          {renderIcon(config.icon, getIconSize(size), undefined, {
-            'aria-label': finalVariant
-          })}
+          {renderIcon(config.icon)}
         </div>
         
         {/* Mensaje */}
@@ -272,8 +275,8 @@ function getIconSize(size) {
 }
 
 Toast.propTypes = {
-  // Props estándar del sistema
-  ...STANDARD_PROP_TYPES,
+  // Props estándar del sistema V2
+  ...INTERACTIVE_PROP_TYPES,
   
   // Props específicas de Toast
   isOpen: PropTypes.bool,

@@ -141,25 +141,7 @@
 }
 
 /* ===== TAMAÑOS USANDO SISTEMA ESTÁNDAR ===== */
-.grid-container--size-xs {
-  /* Reservado para futuras propiedades de tamaño */
-}
-
-.grid-container--size-sm {
-  /* Reservado para futuras propiedades de tamaño */
-}
-
-.grid-container--size-md {
-  /* Reservado para futuras propiedades de tamaño */
-}
-
-.grid-container--size-lg {
-  /* Reservado para futuras propiedades de tamaño */
-}
-
-.grid-container--size-xl {
-  /* Reservado para futuras propiedades de tamaño */
-}
+/* Clases de tamaño reservadas para extensiones futuras se removieron para evitar reglas vacías */
 
 /* ===== PADDING ESPECÍFICO (NUEVO) ===== */
 .grid-container--padding-none {
@@ -260,29 +242,11 @@
   }
 }
 
-/* ===== RESPONSIVE ADAPTATIONS ===== */
-/* Breakpoints para auto-fit responsivo */
+/* ===== RESPONSIVE ADAPTATIONS (DS Breakpoints) ===== */
+/* DS: sm 64rem (640px), md 76.8rem (768px), lg 102.4rem (1024px), xl 128rem (1280px) */
 
-/* Large Desktop (1200px+) - Mantener grid completo */
-@media (min-width: 120rem) {
-  .grid-container {
-    /* Configuración por defecto, no override necesario */
-  }
-}
-
-/* Desktop (768px - 1199px) - Reducir min-width ligeramente */
-@media (max-width: 119.9rem) and (min-width: 76.8rem) {
-  .grid-container {
-    /* Los grids auto-fit se adaptarán automáticamente */
-  }
-}
-
-/* Tablet (481px - 767px) - Forzar menos columnas */
-@media (max-width: 76.7rem) and (min-width: 48.1rem) {
-  .grid-container {
-    /* En tablet, reducir spacings grandes automáticamente */
-  }
-  
+/* Tablet (sm–md) - Reducir spacings grandes */
+@media (max-width: 102.3rem) and (min-width: 64.1rem) {
   .grid-container--gap-xl,
   .grid-container--gap-2xl,
   .grid-container--gap-3xl {
@@ -302,12 +266,8 @@
   }
 }
 
-/* Mobile (320px - 480px) - Grid a 1-2 columnas máximo */
-@media (max-width: 48rem) {
-  .grid-container {
-    /* Los auto-fit con min-width de 20rem se adaptarán a móvil automáticamente */
-  }
-  
+/* Mobile (≤ sm) - Grid a 1-2 columnas máximo */
+@media (max-width: 64rem) {
   /* Reducir spacings en móvil */
   .grid-container--gap-lg,
   .grid-container--gap-xl,
@@ -345,13 +305,13 @@
   gap: var(--space-lg);
 }
 
-@media (max-width: 76.7rem) {
+@media (max-width: 102.3rem) {
   .grid-container--dashboard {
     grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
   }
 }
 
-@media (max-width: 48rem) {
+@media (max-width: 64rem) {
   .grid-container--dashboard {
     grid-template-columns: 1fr;
   }
@@ -363,7 +323,7 @@
   gap: var(--space-md);
 }
 
-@media (max-width: 48rem) {
+@media (max-width: 64rem) {
   .grid-container--gallery {
     grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
     gap: var(--space-sm);
@@ -376,14 +336,14 @@
   gap: var(--space-xl);
 }
 
-@media (max-width: 76.7rem) {
+@media (max-width: 102.3rem) {
   .grid-container--cards {
     grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
     gap: var(--space-lg);
   }
 }
 
-@media (max-width: 48rem) {
+@media (max-width: 64rem) {
   .grid-container--cards {
     grid-template-columns: 1fr;
     gap: var(--space-md);
@@ -397,7 +357,7 @@
   align-items: start;
 }
 
-@media (max-width: 48rem) {
+@media (max-width: 64rem) {
   .grid-container--form {
     grid-template-columns: 1fr;
     gap: var(--space-md);
@@ -410,7 +370,7 @@
   gap: var(--space-md);
 }
 
-@media (max-width: 48rem) {
+@media (max-width: 64rem) {
   .grid-container--stats {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-sm);
@@ -424,11 +384,21 @@
   min-height: 100vh;
 }
 
-@media (max-width: 76.7rem) {
+@media (max-width: 102.3rem) {
   .grid-container--sidebar {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
     gap: var(--space-lg);
     min-height: auto;
   }
+}
+
+/* ===== VARIANTES SEMÁNTICAS ===== */
+
+/* ✅ NEUTRAL - Sin estilos de contenedor (transparente) */
+.grid-container--variant-neutral {
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
 }

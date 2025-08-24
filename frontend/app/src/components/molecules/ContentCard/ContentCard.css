@@ -1,14 +1,21 @@
-/* ===== CONTENT CARD COMPONENT - MOLÉCULA DEL SISTEMA ESTÁNDAR ===== */
-/* ContentCard.css - Composición sobre Card adaptativa */
+/* ===== CONTENT CARD COMPONENT - SISTEMA V2 ===== */
+/* ContentCard.css - Integración completa con Sistema de Diseño V2 */
 
 /* ===== CONTENEDOR PRINCIPAL ===== */
 .content-card {
-  /* Layout principal manejado por Card con FlexContainer */
+  /* ✅ V2: Layout manejado por generateStyles automático */
+  contain: content;
   
-  /* Los tamaños específicos se definen en las clases .content-card--size-* */
-  /* No usar fit-content para evitar que el texto afecte el ancho de la imagen */
+  /* ✅ MEJORA: Layout flex para mejor control */
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Usar toda la altura disponible del grid */
   
-  /* Transiciones heredadas de Card */
+  /* ✅ V2: Tokens automáticos del hook useInteractiveProps */
+  /* Los tamaños, colores y estados son inyectados automáticamente */
+  
+  /* Transiciones heredadas del Sistema V2 */
+  transition: var(--content-card-animation-hover, all 0.15s ease);
 }
 
 /* ===== CONTENEDOR DE IMAGEN ===== */
@@ -16,10 +23,12 @@
   /* Layout manejado por FlexContainer */
   position: relative;
   
-  /* Aspect ratio se maneja en ContentImage */
-  overflow: hidden;
+  /* ✅ FIX: Aspect ratio fijo para la imagen, pero permitir espacio para texto */
+  width: 100%;
+  aspect-ratio: 2 / 3; /* Carátulas de película estándar */
+  flex-shrink: 0; /* No permitir que se encoja */
   
-  /* Border radius heredado del contenedor Card */
+  overflow: hidden;
   border-radius: inherit;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
@@ -34,57 +43,82 @@
 /* ===== BADGE DE TIPO ===== */
 .content-card__type-badge {
   position: absolute;
-  top: var(--space-xs);
-  left: var(--space-xs);
+  /* ✅ V2: Usar tokens automáticos del sistema */
+  top: var(--content-card-spacing, var(--space-xs, 0.4rem));
+  left: var(--content-card-spacing, var(--space-xs, 0.4rem));
   z-index: 2;
 }
 
 /* ===== CONTENIDO DE TEXTO ===== */
-.content-card__content {
-  /* Layout manejado por CardBody con FlexContainer */
-  padding: var(--space-sm);
-  flex-grow: 1;
+.content-card__content,
+.content-card__info {
+  /* ✅ FIX: Garantizar espacio suficiente para el texto */
+  padding: var(--content-card-padding, var(--space-lg, 1.6rem));
+  flex-shrink: 0; /* No permitir que se encoja */
+  min-height: 10rem; /* Altura mínima AUMENTADA para texto completo */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  background: inherit; /* Heredar fondo de la Card */
+  
+  /* ✅ CONTRASTE: Asegurar legibilidad del texto */
+  color: var(--text-primary);
+  border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);
 }
 
 /* ===== TÍTULO ===== */
 .content-card__title {
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
-  color: var(--text-primary);
-  line-height: var(--line-height-tight);
-  margin: 0;
+  /* ✅ V2: Tipografía automática del sistema */
+  font-size: var(--content-card-font-size, var(--font-size-lg, 1.8rem));
+  font-weight: var(--content-card-font-weight, var(--font-weight-bold, 700));
+  color: var(--content-card-text-color, var(--text-primary));
+  line-height: var(--content-card-line-height, var(--line-height-tight, 1.3));
+  margin: 0 0 var(--space-xs) 0;
   
-  /* Truncar texto largo */
+  /* ✅ V2: Truncar texto usando line-clamp estándar */
   display: -webkit-box;
+  line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  
+  /* ✅ CONTRASTE MEJORADO: Mejor legibilidad */
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  letter-spacing: -0.01em;
 }
 
 /* ===== META INFORMACIÓN ===== */
 .content-card__meta {
   /* Layout manejado por FlexContainer */
+  display: block;
 }
 
 .content-card__category {
-  font-size: var(--font-size-sm);
-  color: var(--text-secondary);
-  font-weight: var(--font-weight-medium);
+  /* ✅ V2: Usar tokens automáticos del sistema */
+  font-size: var(--content-card-font-size-sm, var(--font-size-sm, 1.4rem));
+  color: var(--content-card-text-secondary, var(--text-secondary));
+  font-weight: var(--content-card-font-weight-medium, var(--font-weight-medium, 500));
+  /* ✅ CONTRASTE MEJORADO: Mejor legibilidad de texto secundario */
+  opacity: 0.85;
+  line-height: 1.4;
+  margin-bottom: var(--space-xs);
 }
 
 .content-card__details {
   /* Layout manejado por FlexContainer */
-  font-size: var(--font-size-sm);
-  color: var(--text-muted);
+  font-size: var(--content-card-font-size-sm, var(--font-size-sm, 1.4rem));
+  color: var(--content-card-text-muted, var(--text-tertiary));
+  /* ✅ MEJORA: Usar text-tertiary en lugar de text-muted para mejor contraste */
 }
 
 .content-card__year {
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--content-card-font-weight-medium, var(--font-weight-medium, 500));
 }
 
 .content-card__rating {
   /* Layout manejado por FlexContainer */
+  display: inline-flex;
 }
 
 .content-card__rating-star {
@@ -95,22 +129,23 @@
 .content-card__duration,
 .content-card__episodes {
   /* Layout manejado por FlexContainer */
+  display: inline-flex;
 }
 
 /* ===== VARIANTES SEMÁNTICAS ===== */
 /* Las variantes de Card manejan colores, ContentCard solo layout */
 
-/* ===== ESTADOS INTERACTIVOS ===== */
-/* Card maneja hover, focus, active. ContentCard solo refinamientos */
+/* ===== ESTADOS INTERACTIVOS V2 ===== */
+/* Sistema V2 maneja hover, focus, active automáticamente */
 
 .content-card .card--hoverable:hover .content-card__image {
   transform: scale(1.05);
-  transition: transform var(--transition-normal);
+  transition: transform var(--content-card-animation-hover, var(--transition-normal, 250ms ease));
 }
 
-/* ===== ESTADOS DEL SISTEMA ===== */
+/* ===== ESTADOS DEL SISTEMA V2 ===== */
 
-/* Estado de loading - Card maneja el shimmer, ContentCard el layout */
+/* Estado de loading - Sistema V2 maneja el shimmer automáticamente */
 .content-card .card--loading .content-card__image {
   opacity: 0.7;
   filter: blur(0.5px);
@@ -121,7 +156,7 @@
   opacity: 0.5;
 }
 
-/* Estado deshabilitado - Card maneja opacity, ContentCard refinamientos */
+/* Estado deshabilitado - Sistema V2 maneja opacity automáticamente */
 .content-card .card--disabled .content-card__image {
   filter: grayscale(100%);
 }
@@ -129,94 +164,43 @@
 /* ===== TAMAÑOS DE CONTENTCARD COORDINADOS CON CONTENTIMAGE ===== */
 /* ContentCard incluye espacio para imagen + texto + padding */
 
-/* ===== ANCHOS FIJOS PARA CONTENTCARD POR TAMAÑO ===== */
-/* Sobrescribir el fit-content de Card para anchos consistentes */
-
-/* ===== ANCHOS FIJOS CON ESPECIFICIDAD ALTA ===== */
-/* Usar .card.content-card para mayor especificidad que Card.css */
-
-/* Tamaño por defecto cuando no se especifica clase de tamaño */
-.card.content-card:not([class*="content-card--size"]) {
-  width: 16rem; /* md por defecto - igual que ContentImage md */
-}
-
-/* Tamaño compacto */
-.card.content-card.content-card--size-xs {
-  width: 16rem;
-}
+/* ===== SIZING V2 - TOKENS AUTOMÁTICOS ===== */
+/* ✅ V2: Sin clases fijas de tamaño, el sistema V2 inyecta todo automáticamente */
+/* Solo ajustes específicos que no puede manejar el sistema base */
 
 .content-card--size-xs .content-card__title {
-  font-size: var(--font-size-sm);
+  line-clamp: 1;
   -webkit-line-clamp: 1;
 }
 
-.content-card--size-xs .content-card__meta {
-  font-size: var(--font-size-xs);
-}
-
-/* Tamaño pequeño */
-.card.content-card.content-card--size-sm {
-  width: 20rem;
-}
-
-/* Tamaño medio */
-.card.content-card.content-card--size-md {
-  width: 24rem;
-}
-
-/* Tamaño grande */
-.card.content-card.content-card--size-lg {
-  width: 28rem;
-}
-
 .content-card--size-lg .content-card__title {
-  font-size: var(--font-size-lg);
+  line-clamp: 3;
   -webkit-line-clamp: 3;
-}
-
-/* Tamaño extra grande */
-.card.content-card.content-card--size-xl {
-  width: 32rem;
 }
 
 .content-card--size-xl .content-card__title {
-  font-size: var(--font-size-xl);
+  line-clamp: 3;
   -webkit-line-clamp: 3;
 }
 
-/* ===== RESPONSIVE DESIGN ===== */
+/* ===== RESPONSIVE DESIGN V2 ===== */
+/* ✅ V2: Sistema responsive automático, solo overrides específicos */
 
 @media (max-width: 768px) {
-  .content-card {
-    min-width: 6rem;
-    max-width: 16rem;
-  }
-  
   .content-card__title {
+    line-clamp: 1;
     -webkit-line-clamp: 1;
   }
 }
 
 @media (max-width: 480px) {
-  .content-card {
-    min-width: 5rem;
-    max-width: 14rem;
-  }
-  
   .content-card__content {
-    padding: var(--space-xs);
-  }
-  
-  .content-card__title {
-    font-size: var(--font-size-sm);
-  }
-  
-  .content-card__meta {
-    font-size: var(--font-size-xs);
+    padding: var(--content-card-padding-sm, var(--space-xs, 0.4rem));
   }
 }
 
-/* ===== ACCESIBILIDAD ===== */
+/* ===== ACCESIBILIDAD V2 ===== */
+/* ✅ V2: Sistema automático de reduced motion */
 
 @media (prefers-reduced-motion: reduce) {
   .content-card .card--hoverable:hover .content-card__image {
@@ -224,16 +208,17 @@
   }
 }
 
-/* ===== MODO OSCURO ===== */
+/* ===== MODO OSCURO V2 ===== */
+/* ✅ V2: Colores automáticos del sistema, solo overrides si es necesario */
 
 .dark .content-card__title {
-  color: var(--text-primary);
+  color: var(--content-card-text-color, var(--text-primary));
 }
 
 .dark .content-card__category {
-  color: var(--text-secondary);
+  color: var(--content-card-text-secondary, var(--text-secondary));
 }
 
 .dark .content-card__details {
-  color: var(--text-muted);
+  color: var(--content-card-text-muted, var(--text-muted));
 }

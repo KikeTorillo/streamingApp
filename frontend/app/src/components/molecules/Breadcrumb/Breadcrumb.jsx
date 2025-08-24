@@ -3,8 +3,8 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Button } from '../../atoms/Button/Button';
-import { useBreadcrumbProps } from '../../../hooks/useStandardProps';
-import { extractDOMProps, STANDARD_PROP_TYPES } from '../../../tokens/standardProps';
+import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
+import { extractDOMPropsV2, INTERACTIVE_PROP_TYPES } from '../../../tokens/standardProps-v2.js';
 import './Breadcrumb.css';
 
 /**
@@ -26,16 +26,12 @@ import './Breadcrumb.css';
  * ✅ Accesibilidad completa
  */
 function Breadcrumb(props) {
-  // Extraer props y aplicar sistema estándar
+  // ✅ SISTEMA V2: Extraer props específicas antes del hook
   const {
     // Configuración básica
     items = [],
     separator = '>',
     maxItems = 4,
-    
-    // Props estándar del sistema
-    size, variant, rounded, disabled, loading, className,
-    // leftIcon, rightIcon, // del hook pero no implementadas actualmente
     
     // Props específicos de Breadcrumb
     breadcrumbVariant = 'default', // Separar de variant semántica
@@ -57,15 +53,24 @@ function Breadcrumb(props) {
       icon: 'home'
     },
     
-    // Tokens y sistema integrado
-    tokens, renderIcon,
-    
-    // Props DOM
-    ...domProps
-  } = useBreadcrumbProps(props);
+    // Props restantes para el hook V2
+    ...restProps
+  } = props;
   
-  // Extraer solo props válidas para DOM
-  const validDOMProps = extractDOMProps(domProps);
+  // ✅ SISTEMA V2: Hook estándar para props del sistema de diseño
+  const {
+    size, variant, rounded, disabled, loading, className,
+    tokens, generateStyles, renderIcon,
+    ...standardProps
+  } = useInteractiveProps(restProps, {
+    componentName: 'Breadcrumb',
+    defaultSize: 'md',
+    defaultVariant: 'neutral',
+    defaultRounded: 'md'
+  });
+  
+  // ✅ SISTEMA V2: Extraer solo props válidas para DOM
+  const validDOMProps = extractDOMPropsV2(standardProps);
   
   // Estados internos memoizados
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -339,8 +344,8 @@ CollapsedDropdown.propTypes = {
 };
 
 Breadcrumb.propTypes = {
-  // Props estándar del sistema de diseño
-  ...STANDARD_PROP_TYPES,
+  // ✅ SISTEMA V2: Props estándar del sistema de diseño
+  ...INTERACTIVE_PROP_TYPES,
   
   // Configuración básica
   items: PropTypes.arrayOf(

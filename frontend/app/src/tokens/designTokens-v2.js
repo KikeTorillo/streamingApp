@@ -366,6 +366,7 @@ export const tokensToStyles = (tokens) => {
         iconSize: '--icon-size',
         borderRadius: 'borderRadius',
         minWidth: 'minWidth',
+  maxWidth: 'maxWidth',
         width: 'width',
         lineHeight: 'lineHeight',
         letterSpacing: 'letterSpacing',

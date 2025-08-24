@@ -92,9 +92,9 @@ function Button(props) {
 
   // ✅ V2 DEBUGGING: Solo en desarrollo
   if (import.meta.env?.DEV && _debug) {
-    console.log('Button V2 Debug:', {
-      size, variant, width, tokens, currentBreakpoint, _debug
-    });
+    //console.log('Button V2 Debug:', {
+    //  size, variant, width, tokens, currentBreakpoint, _debug
+    //});
   }
 
   // ✅ GENERAR CLASES CSS TRADICIONALES (compatible con CSS actual)

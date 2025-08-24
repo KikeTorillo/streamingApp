@@ -34,7 +34,7 @@ function PageLayout({
       {...restProps}
       direction="column"
       spacing="none"
-      variant="neutral"
+      variant="primary"
     >
       {/* Header Section */}
       {header && (

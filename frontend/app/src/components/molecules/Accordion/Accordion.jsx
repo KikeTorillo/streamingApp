@@ -2,9 +2,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 // import { Button } from '../../atoms/Button/Button'; // Removido - no usado actualmente
-import { Icon } from '../../atoms/Icon/Icon';
-import { useStandardProps } from '../../../hooks/useStandardProps';
-import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens/standardProps';
+// import { Icon } from '../../atoms/Icon/Icon'; // Removido - usando renderIcon del hook V2
+import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
+import { INTERACTIVE_PROP_TYPES, extractDOMPropsV2 } from '../../../tokens/standardProps-v2.js';
 import './Accordion.css';
 
 /**
@@ -59,7 +59,7 @@ function Accordion(props) {
     ...remainingProps
   } = props;
 
-  // Hook estándar para props del sistema de diseño
+  // ✅ SISTEMA V2: Hook estándar para props del sistema de diseño
   const {
     size,
     variant,
@@ -68,10 +68,11 @@ function Accordion(props) {
     loading,
     className,
     tokens,
-    // renderIcon, // No usado actualmente
+    generateStyles,
+    renderIcon,
     ...standardProps
-  } = useStandardProps(remainingProps, {
-    componentType: 'accordion',
+  } = useInteractiveProps(remainingProps, {
+    componentName: 'Accordion',
     defaultSize: 'md',
     defaultVariant: 'neutral', // Neutral es más apropiado para acordeones
     defaultRounded: 'md'
@@ -88,15 +89,17 @@ function Accordion(props) {
       };
       
       if (variantMapping[legacyVariant]) {
-        console.warn(`[Accordion] Prop 'variant="${legacyVariant}"' está deprecado. Usa 'variant="${variantMapping[legacyVariant]}"' en su lugar.`);
+        if (import.meta.env?.DEV) {
+          console.warn(`[Accordion] Prop 'variant="${legacyVariant}"' está deprecado. Usa 'variant="${variantMapping[legacyVariant]}"' en su lugar.`);
+        }
         return variantMapping[legacyVariant];
       }
     }
     return variant;
   }, [legacyVariant, variant]);
 
-  // Props DOM para el elemento raíz
-  const domProps = extractDOMProps(standardProps);
+  // ✅ SISTEMA V2: Props DOM para el elemento raíz
+  const domProps = extractDOMPropsV2(standardProps);
   
   // Estado para items abiertos
   const [openItems, setOpenItems] = useState(() => {
@@ -337,11 +340,9 @@ function Accordion(props) {
           <button {...buttonProps}>
             {/* Icono izquierdo opcional */}
             {item.icon && (
-              <Icon 
-                name={item.icon}
-                size={size === 'lg' ? 'md' : 'sm'}
-                className="accordion__item-icon"
-              />
+              <span className="accordion__item-icon">
+                {renderIcon(item.icon)}
+              </span>
             )}
             
             {/* Título */}
@@ -364,11 +365,9 @@ function Accordion(props) {
             )}
             
             {/* Icono de expand/collapse */}
-            <Icon 
-              name={currentIcon}
-              size={size === 'lg' ? 'md' : 'sm'}
-              className={`accordion__toggle-icon ${iconRotation}`}
-            />
+            <span className={`accordion__toggle-icon ${iconRotation}`}>
+              {renderIcon(currentIcon)}
+            </span>
           </button>
         </div>
         
@@ -420,12 +419,7 @@ function Accordion(props) {
       role="group"
       aria-label="Accordion"
       aria-busy={loading}
-      style={{
-        position: 'relative',
-        ...tokens.size,
-        ...tokens.variant,
-        borderRadius: tokens.rounded
-      }}
+      style={generateStyles()}
       {...domProps}
     >
       {items.map(renderAccordionItem)}
@@ -479,8 +473,8 @@ function AccordionItem({
 }
 
 Accordion.propTypes = {
-  // Props del sistema de diseño estándar
-  ...STANDARD_PROP_TYPES,
+  // ✅ SISTEMA V2: Props del sistema de diseño estándar
+  ...INTERACTIVE_PROP_TYPES,
   
   // Configuración básica de Accordion
   items: PropTypes.arrayOf(

@@ -1,10 +1,10 @@
-// Container.jsx - MIGRADO AL SISTEMA DE DISEÑO ESTÁNDAR
+// Container.jsx - MIGRADO A SISTEMA DE DISEÑO V2 (Compatibilidad preservada)
 
 /* eslint-disable react-refresh/only-export-components */
 
 import PropTypes from 'prop-types';
-import { useStandardProps } from '../../../hooks/useStandardProps';
-import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens';
+import { useContainerProps } from '../../../hooks/useStandardProps-v2.jsx';
+import { CONTAINER_PROP_TYPES, extractDOMPropsV2 } from '../../../tokens/standardProps-v2';
 import './Container.css';
 
 /**
@@ -23,35 +23,34 @@ import './Container.css';
  * - Deprecation warning para prop 'debug' (usar className en su lugar)
  */
 function Container(props) {
-  // ✅ MANEJAR TAMAÑOS ESPECÍFICOS DE CONTAINER ANTES DE useStandardProps
-  const { size: originalSize, ...propsForStandardHook } = props;
-  
-  // Container acepta tamaños adicionales: 'full'
-  const containerSpecificSizes = ['full'];
-  const isContainerSpecificSize = containerSpecificSizes.includes(originalSize);
-  
-  // Si es un tamaño específico de Container, usar 'xl' para useStandardProps (evitar warning)
-  const propsForHook = isContainerSpecificSize 
-    ? { ...propsForStandardHook, size: 'xl' }
-    : props;
-
-  // ✅ USAR HOOK ESTÁNDAR CON CONFIGURACIÓN ESPECÍFICA
+  // ✅ USAR HOOK ESPECIALIZADO PARA CONTENEDORES
   const {
-    size: standardSize,
+    size: finalSize,
     variant,
     disabled,
     loading,
     className,
+    tokens,
+    generateStyles,
     ...standardProps
-  } = useStandardProps(propsForHook, {
-    componentType: 'container',
+  } = useContainerProps(props, {
+    componentName: 'Container',
     defaultSize: 'md',
-    defaultVariant: 'neutral', // ✅ Neutral por defecto para layout
-    defaultRounded: 'none'      // ✅ Sin bordes por defecto para layout
+    defaultVariant: 'neutral', // ✅ Neutral por defecto (transparente)
+    defaultRounded: 'none',
+    enableResponsive: true
   });
 
-  // ✅ USAR EL TAMAÑO ORIGINAL SI ES ESPECÍFICO DE CONTAINER
-  const finalSize = isContainerSpecificSize ? originalSize : standardSize;
+  // ✅ DEBUG: Log para identificar estilos automáticos
+  if (import.meta.env?.DEV && props.debug) {
+    console.log('🐛 Container Debug:', {
+      variant,
+      finalSize,
+      className,
+      tokens,
+      generateStylesExists: !!generateStyles
+    });
+  }
 
   // ✅ EXTRAER PROPS ESPECÍFICAS DE CONTAINER
   const {
@@ -90,19 +89,18 @@ function Container(props) {
     className
   ].filter(Boolean).join(' ');
 
-  // ✅ ESTILOS AUTOMÁTICOS CON TOKENS (aplicados via CSS)
+  // ✅ ESTILOS MANUALES - EVITAR generateStyles AUTOMÁTICO
   const containerStyles = {
-    // Espaciado personalizado opcional
+    // Solo estilos específicos que necesitamos
     ...(spacing && { gap: `var(--space-${spacing})` }),
     ...(padding && { padding }),
-    // Estados
-    opacity: disabled ? '0.5' : '1',
-    pointerEvents: disabled ? 'none' : 'auto',
-    ...style // ✅ COMBINAR con estilos que vienen de props
+    ...(props.area && { gridArea: props.area }),
+    ...style // ✅ Estilos que vienen de props
+    // NO usar generateStyles para evitar estilos automáticos no deseados
   };
 
   // ✅ FILTRAR PROPS PARA DOM
-  const domProps = extractDOMProps(standardProps);
+  const domProps = extractDOMPropsV2({ ...standardProps, ...props });
 
   // ✅ CREAR ELEMENTO DINÁMICO
   const Element = as;
@@ -124,8 +122,8 @@ function Container(props) {
 }
 
 Container.propTypes = {
-  // ✅ PROPS ESTÁNDAR DEL SISTEMA DE DISEÑO
-  ...STANDARD_PROP_TYPES,
+  // ✅ PROPS ESTÁNDAR DEL SISTEMA DE DISEÑO V2 (especializadas para contenedor)
+  ...CONTAINER_PROP_TYPES,
   
   /**
    * Contenido del componente

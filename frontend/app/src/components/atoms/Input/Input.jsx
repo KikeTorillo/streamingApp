@@ -91,9 +91,9 @@ const Input = forwardRef((props, ref) => {
 
   // ✅ V2 DEBUGGING: Solo en desarrollo
   if (import.meta.env?.DEV && _debug) {
-    console.log('Input V2 Debug:', {
-      size, variant, width, tokens, currentBreakpoint, _debug
-    });
+    //console.log('Input V2 Debug:', {
+    //  size, variant, width, tokens, currentBreakpoint, _debug
+    //});
   }
 
   // ARIA Label inteligente

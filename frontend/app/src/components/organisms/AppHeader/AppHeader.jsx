@@ -16,26 +16,26 @@ function AppHeader({
   // Título de la app
   appTitle = 'StreamApp',
   onTitleClick = null,
-  
+
   // Usuario
   userName = null,
-  onLogout = () => {},
-  
+  onLogout = () => { },
+
   // Búsqueda
   searchValue = '',
-  onSearchChange = () => {},
+  onSearchChange = () => { },
   searchPlaceholder = 'Buscar películas, series...',
   showSearch = true,
-  
+
   // Estilos
   variant = 'primary',
   size = 'md',
-  
+
   // Props adicionales
   className = '',
   ...restProps
 }) {
-  
+
   // Clases CSS simplificadas (sin CSS file)
   const headerClasses = className;
 
@@ -56,19 +56,15 @@ function AppHeader({
 
   return (
     <header {...validDOMProps}>
-      <FlexContainer 
-        align="center" 
-        justify="space-between" 
+      <FlexContainer
+        align="center"
+        justify="space-between"
         spacing="lg"
         width="full"
         as="div"
         padding="lg"
       >
         {/* Brand/Logo */}
-        <FlexContainer 
-          align="center" 
-          shrink={false}
-        >
           <Typography
             as="h1"
             size="2xl"
@@ -78,34 +74,21 @@ function AppHeader({
           >
             {appTitle}
           </Typography>
-        </FlexContainer>
 
         {/* Búsqueda */}
         {showSearch && (
-          <FlexContainer 
-            grow 
-            justify="center"
-            style={{ maxWidth: '40rem' }}
-          >
-            <SearchBar
-              searchVariant="simple"
-              variant="primary"
-              placeholder={searchPlaceholder}
-              value={searchValue}
-              onChange={onSearchChange}
-              size={size === 'lg' ? 'lg' : 'md'}
-              width="full"
-            />
-          </FlexContainer>
+          <SearchBar
+            searchVariant="simple"
+            variant="neutral"
+            placeholder={searchPlaceholder}
+            value={searchValue}
+            onChange={onSearchChange}
+            size={size === 'lg' ? 'lg' : 'md'}
+            width="full"
+          />
         )}
 
         {/* Usuario */}
-        <FlexContainer 
-          align="center" 
-          spacing="md"
-          className="app-header__user"
-          shrink={false}
-        >
           {userName && (
             <Typography
               size="sm"
@@ -124,10 +107,9 @@ function AppHeader({
           >
             Cerrar Sesión
           </Button>
-          <ThemeSelector 
-            variant="neutral" 
+          <ThemeSelector
+            variant="neutral"
           />
-        </FlexContainer>
       </FlexContainer>
     </header>
   );

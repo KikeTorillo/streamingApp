@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
-import { useStandardProps } from '../../../hooks/useStandardProps.jsx';
-import { extractDOMProps, STANDARD_PROP_TYPES } from '../../../tokens/standardProps.js';
-import { createStandardIconRenderer } from '../../../utils/iconHelpers.js';
+import { useStandardPropsV2 } from '../../../hooks/useStandardProps-v2.jsx';
+import { STANDARD_PROP_TYPES } from '../../../tokens/propHelpers.js';
 import './Divider.css';
 
 /**
@@ -51,7 +50,7 @@ function Divider(props) {
     ...restProps
   } = props;
 
-  // Hook estándar con props del sistema
+  // Hook estándar V2 con props del sistema
   const {
     size,
     variant,
@@ -60,11 +59,17 @@ function Divider(props) {
     loading,
     className,
     tokens,
+    renderIcon,
+    generateClassName,
+    generateStyles,
     ...standardProps
-  } = useStandardProps(restProps);
-  
-  // Crear renderIcon para este componente
-  const renderIcon = createStandardIconRenderer('filterBar', size);
+  } = useStandardPropsV2(restProps, {
+    componentName: 'Divider',
+    componentType: 'container',
+    defaultSize: 'md',
+    defaultVariant: 'neutral',
+    defaultRounded: 'none'
+  });
   
   // ariaLabel para accesibilidad
   const ariaLabel = restProps.ariaLabel || (text ? `Separador con texto: ${text}` : 'Separador');
@@ -103,12 +108,12 @@ function Divider(props) {
     return variant;
   })();
   
-  // Props DOM-safe
-  const domProps = extractDOMProps({
-    className,
-    ariaLabel,
+  // Props DOM-safe (V2 maneja esto automáticamente)
+  const domProps = {
+    'data-testid': standardProps.testId,
+    'data-component': 'Divider',
     ...standardProps
-  });
+  };
   
   // Evitar warning de unused vars
   void tokens; // Design tokens disponibles para estilos dinámicos
@@ -117,20 +122,14 @@ function Divider(props) {
   const hasLeftIcon = Boolean(leftIcon);
   const hasRightIcon = Boolean(rightIcon);
 
-  // Generar clases CSS con sistema estándar
-  const dividerClasses = [
-    'divider',
+  // Generar clases CSS con sistema V2
+  const dividerClasses = generateClassName('divider') + ' ' + [
     `divider--${orientation}`,
     `divider--variant-${dividerVariant}`,
-    `divider--size-${finalSize}`,
     `divider--color-${finalVariant}`,
-    `divider--rounded-${rounded}`,
     text && orientation === 'horizontal' && 'divider--with-text',
     text && `divider--text-${textAlign}`,
-    disabled && 'divider--disabled',
-    loading && 'divider--loading',
-    (hasLeftIcon || hasRightIcon || leftIcon || rightIcon) && 'divider--with-icon',
-    className
+    (hasLeftIcon || hasRightIcon || leftIcon || rightIcon) && 'divider--with-icon'
   ].filter(Boolean).join(' ');
 
   // Estilos dinámicos
@@ -157,9 +156,9 @@ function Divider(props) {
     
     return (
       <span className="divider__text">
-        {(leftIcon && renderIcon(leftIcon, { className: "divider__icon divider__icon--left", size: 'xs' }))}
+        {(leftIcon && renderIcon(leftIcon))}
         <span className="divider__text-content">{text}</span>
-        {(rightIcon && renderIcon(rightIcon, { className: "divider__icon divider__icon--right", size: 'xs' }))}
+        {(rightIcon && renderIcon(rightIcon))}
       </span>
     );
   };
@@ -169,7 +168,7 @@ function Divider(props) {
     if (!loading) return null;
     return (
       <span className="divider__loading">
-        {renderIcon('loader', { className: 'divider__spinner', size: 'xs', spinning: true })}
+        {renderIcon('loader')}
       </span>
     );
   };
@@ -199,7 +198,7 @@ function Divider(props) {
     >
       {loading && (
         <span className="divider__loading-overlay">
-          {renderIcon('loader', { className: 'divider__spinner', size: 'xs', spinning: true })}
+          {renderIcon('loader')}
         </span>
       )}
     </div>

@@ -2,8 +2,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '../../atoms/Button/Button';
-import { useTabsProps } from '../../../hooks/useStandardProps';
-import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens/standardProps';
+import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
+import { INTERACTIVE_PROP_TYPES, extractDOMPropsV2 } from '../../../tokens/standardProps-v2.js';
 import './Tabs.css';
 
 /**
@@ -26,8 +26,13 @@ import './Tabs.css';
  * ✅ Accesibilidad WCAG 2.1 AA
  */
 function Tabs(props) {
-  // Usar hook especializado para props estándar
-  const standardProps = useTabsProps(props);
+  // ✅ SISTEMA V2: Hook estándar para props del sistema de diseño
+  const standardProps = useInteractiveProps(props, {
+    componentName: 'Tabs',
+    defaultSize: 'md',
+    defaultVariant: 'primary',
+    defaultRounded: 'md'
+  });
   
   // Backward compatibility: manejar variant legacy
   let actualTabsVariant = props.tabsVariant || 'line';
@@ -47,12 +52,13 @@ function Tabs(props) {
   }
   
   const {
-    // Props estándar del sistema de diseño
+    // ✅ SISTEMA V2: Props estándar del sistema de diseño
     size,
     rounded,
     disabled,
     loading,
     className,
+    generateStyles,
     renderIcon,
     
     // Props específicas de Tabs
@@ -74,8 +80,8 @@ function Tabs(props) {
   const variant = actualVariant;
   const tabsVariant = actualTabsVariant;
 
-  // Extraer props DOM-safe
-  const domProps = extractDOMProps(restProps);
+  // ✅ SISTEMA V2: Extraer props DOM-safe
+  const domProps = extractDOMPropsV2(restProps);
   
   // Referencias
   const tabsListRef = useRef(null);
@@ -362,8 +368,8 @@ function Tabs(props) {
 }
 
 Tabs.propTypes = {
-  // Props estándar del sistema de diseño
-  ...STANDARD_PROP_TYPES,
+  // ✅ SISTEMA V2: Props estándar del sistema de diseño
+  ...INTERACTIVE_PROP_TYPES,
   
   // Configuración básica
   tabs: PropTypes.arrayOf(

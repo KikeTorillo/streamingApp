@@ -17,7 +17,8 @@ html {
 /* Variables CSS principales - MODO CLARO POR DEFECTO */
 :root {
   /* === PALETA OCEANO MODERNO (Azul + Naranja) === */
-  /* Azules Oceano - Base principal */
+  /* Azules Oceano - Base principal CON PROGRESIÓN SUAVE */
+  --matcha-25: #f8fcff;    /* Azul blanquecino ultra suave */
   --matcha-50: #f0f9ff;    /* Blanco azulado muy suave */
   --matcha-100: #e0f2fe;   /* Azul muy muy claro */
   --matcha-200: #8ecae6;   /* Azul claro principal */
@@ -27,15 +28,17 @@ html {
   --matcha-600: #146b94;   /* Azul oscuro */
   --matcha-700: #023047;   /* Azul muy oscuro/marino */
   --matcha-800: #021e2f;   /* Azul profundo */
+  --matcha-850: #021a20;   /* Azul más profundo */
   --matcha-900: #011217;   /* Azul casi negro */
+  --matcha-950: #010d12;   /* Azul ultra oscuro */
   
-  /* Naranjas/Dorados - Acentos cálidos */
-  --accent-100: #fff8e1;   /* Crema dorada muy suave */
-  --accent-200: #ffecb3;   /* Dorado muy claro */
+  /* Naranjas/Dorados - Acentos cálidos EQUILIBRADOS */
+  --accent-100: #ffecd1;   /* Crema dorada muy suave - MÁS SUAVE */
+  --accent-200: #ffd89b;   /* Dorado muy claro - NUEVO TONO */
   --accent-300: #ffb703;   /* Amarillo/dorado principal */
-  --accent-400: #fb8500;   /* Naranja principal */
-  --accent-500: #e67700;   /* Naranja oscuro */
-  --accent-600: #cc6600;   /* Naranja muy oscuro */
+  --accent-400: #e67700;   /* Naranja equilibrado - MENOS SATURADO */
+  --accent-500: #cc6600;   /* Naranja oscuro */
+  --accent-600: #b85c00;   /* Naranja muy oscuro - NUEVO TONO */
 
   /* Neutros Sage - Grises cálidos minimalistas */
   --sage-50: #fafafa;      /* Blanco puro */
@@ -97,13 +100,13 @@ html {
   --yellow-800: #92400e;
   --yellow-900: #78350f;
 
-  /* === COLORES SEMÁNTICOS OCÉANO MODERNO === */
-  --color-primary: var(--matcha-400);      /* Azul medio principal */
-  --color-primary-hover: var(--matcha-600); /* Azul oscuro para hover */
+  /* === COLORES SEMÁNTICOS OCÉANO MODERNO EQUILIBRADOS === */
+  --color-primary: var(--matcha-600);      /* Azul oscuro para interacciones */
+  --color-primary-hover: var(--matcha-700); /* Azul marino para hover */
   --color-primary-light: var(--matcha-100); /* Azul muy claro para fondos */
-  --color-primary-dark: var(--matcha-700);  /* Azul marino para contraste */
+  --color-primary-dark: var(--matcha-800);  /* Azul profundo para contraste */
   
-  --color-secondary: var(--accent-400);    /* Naranja principal */
+  --color-secondary: var(--accent-400);    /* Naranja equilibrado */
   --color-secondary-hover: var(--accent-500); /* Naranja oscuro para hover */
   --color-secondary-light: var(--accent-100); /* Crema dorada para fondos */
   --color-secondary-dark: var(--accent-600);  /* Naranja muy oscuro */
@@ -113,46 +116,55 @@ html {
   --color-danger-light: var(--red-100);
   --color-danger-dark: var(--red-700);
   
-  --color-success: var(--matcha-500);      /* Azul medio oscuro para success */
-  --color-success-hover: var(--matcha-600); /* Azul oscuro para hover */
-  --color-success-light: var(--matcha-100); /* Azul muy claro para fondo */
-  --color-success-dark: var(--matcha-700);  /* Azul marino para contraste */
+  --color-success: var(--green-600);      /* Verde para success más contrastante */
+  --color-success-hover: var(--green-700); /* Verde oscuro para hover */
+  --color-success-light: var(--green-50); /* Verde muy claro para fondo */
+  --color-success-dark: var(--green-800);  /* Verde muy oscuro para contraste */
   
-  --color-warning: var(--accent-300);      /* Amarillo/dorado para warning */
-  --color-warning-hover: var(--accent-400); /* Naranja para hover */
-  --color-warning-light: var(--accent-100); /* Crema dorada para fondo */
-  --color-warning-dark: var(--accent-500);  /* Naranja oscuro para contraste */
+  --color-warning: var(--yellow-600);      /* Amarillo oscuro para warning */
+  --color-warning-hover: var(--yellow-700); /* Amarillo más oscuro para hover */
+  --color-warning-light: var(--yellow-50); /* Amarillo muy claro para fondo */
+  --color-warning-dark: var(--yellow-800);  /* Amarillo muy oscuro para contraste */
 
-  /* === COLORES DE FONDO === */
-  --bg-primary: #ffffff;
-  --bg-secondary: var(--gray-50);
-  --bg-tertiary: var(--gray-100);
-  --bg-muted: var(--gray-200);
-  --bg-disabled: var(--gray-100);
-  --bg-hover: var(--gray-50);
+  /* === SURFACE SYSTEM - ARMONÍA AUTOMÁTICA MEJORADA === */
+  /* Sistema de superficies con progresión coherente y contraste perfecto */
+  --surface-app: var(--matcha-50);        /* App background - azul muy claro */
+  --surface-container: var(--matcha-100); /* Secciones principales - azul claro */
+  --surface-card: #ffffff;                /* Cards y elementos - blanco puro para contraste */
+  --surface-elevated: #ffffff;            /* Modals, dropdowns - blanco puro */
+  --surface-overlay: rgba(1, 18, 23, 0.4); /* Overlays - azul oscuro translúcido */
+
+  /* === COLORES DE FONDO REDEFINIDOS MEJORADOS === */
+  --bg-app: var(--surface-app);
+  --bg-primary: var(--surface-card);        /* Blanco puro para máximo contraste */
+  --bg-secondary: var(--surface-container); /* Azul claro para secciones */
+  --bg-tertiary: var(--surface-elevated);   /* Blanco puro para elements elevated */
+  --bg-muted: var(--sage-200);              /* Gris para elementos deshabilitados */
+  --bg-disabled: var(--sage-100);
+  --bg-hover: var(--matcha-100);            /* Azul muy claro para hover */
   
-  /* === COLORES DE TEXTO === */
-  --text-primary: var(--gray-900);
-  --text-secondary: var(--gray-700);
-  --text-tertiary: var(--gray-600);
-  --text-muted: var(--gray-500);
-  --text-placeholder: var(--gray-400);
-  --text-disabled: var(--gray-400);
+  /* === COLORES DE TEXTO MEJORADOS === */
+  --text-primary: var(--matcha-900);    /* Azul muy oscuro para máximo contraste */
+  --text-secondary: var(--matcha-700);  /* Azul marino para texto secundario */
+  --text-tertiary: var(--matcha-600);   /* Azul oscuro para texto terciario */
+  --text-muted: var(--sage-500);       /* Gris medio para texto apagado */
+  --text-placeholder: var(--sage-500); /* Gris medio para placeholders (WCAG AA) */
+  --text-disabled: var(--sage-400);    /* Gris claro para texto deshabilitado */
   --text-white: #ffffff;
   --text-on-primary: #ffffff;
   --text-on-secondary: #ffffff;
   --text-on-danger: #ffffff;
   --text-on-success: #ffffff;
-  --text-on-warning: var(--gray-900);
+  --text-on-warning: var(--yellow-900); /* Texto oscuro sobre warning claro */
 
   /* === BORDES === */
-  --border-default: var(--gray-300);
-  --border-light: var(--gray-200);
-  --border-medium: var(--gray-400);
-  --border-dark: var(--gray-600);
-  --border-focus: var(--blue-500);
-  --border-primary: var(--blue-500);
-  --border-hover: var(--gray-400);
+  --border-default: var(--sage-300);    /* Gris neutro para bordes por defecto */
+  --border-light: var(--sage-200);      /* Gris muy claro para bordes suaves */
+  --border-medium: var(--sage-400);     /* Gris medio para bordes destacados */
+  --border-dark: var(--sage-600);       /* Gris oscuro para bordes fuertes */
+  --border-focus: var(--matcha-600);    /* Azul oscuro para focus (WCAG AA) */
+  --border-primary: var(--matcha-600);  /* Azul oscuro para bordes primary */
+  --border-hover: var(--sage-400);      /* Gris medio para hover en bordes */
 
   /* === ESPACIADO MINIMALISTA ZEN === */
   --space-xs: 0.6rem;   /* 6px - Más respiro */
@@ -299,13 +311,21 @@ html {
 
 /* === MODO OSCURO OCÉANO MODERNO === */
 .dark {
-  /* === FONDOS OPTIMIZADOS MODO OSCURO === */
-  --bg-primary: var(--matcha-900);     /* Azul casi negro - fondo principal */
-  --bg-secondary: var(--matcha-800);   /* Azul profundo - sidebar, cards */
-  --bg-tertiary: var(--matcha-700);    /* Azul marino - secciones */
-  --bg-muted: var(--matcha-700);       /* Azul marino - elementos deshabilitados */
-  --bg-disabled: var(--matcha-800);    /* Azul profundo - deshabilitado */
-  --bg-hover: rgba(33, 158, 188, 0.15); /* Azul medio translúcido para hover */
+  /* === SURFACE SYSTEM MODO OSCURO - PROGRESIÓN PROFUNDA === */
+  --surface-app: var(--matcha-950);       /* App background - azul ultra oscuro */
+  --surface-container: var(--matcha-900); /* Secciones principales - azul casi negro */
+  --surface-card: var(--matcha-850);      /* Cards y elementos - azul profundo */
+  --surface-elevated: var(--matcha-800);  /* Modals, dropdowns - azul profundo */
+  --surface-overlay: rgba(240, 249, 255, 0.1); /* Overlays - azul claro translúcido */
+
+  /* === FONDOS REDEFINIDOS MODO OSCURO === */
+  --bg-app: var(--surface-app);
+  --bg-primary: var(--surface-elevated);     /* Azul profundo para máximo contraste */
+  --bg-secondary: var(--surface-container);  /* Azul casi negro para secciones */
+  --bg-tertiary: var(--surface-card);       /* Azul profundo para cards */
+  --bg-muted: var(--matcha-700);            /* Azul marino para elementos deshabilitados */
+  --bg-disabled: var(--matcha-800);         /* Azul profundo para deshabilitado */
+  --bg-hover: rgba(33, 158, 188, 0.15);     /* Azul medio translúcido para hover */
   
   /* === TEXTOS OPTIMIZADOS MODO OSCURO === */
   --text-primary: var(--matcha-50);    /* Blanco azulado - títulos */
@@ -325,25 +345,25 @@ html {
   --border-primary: var(--matcha-200); /* Azul claro - primary */
   
   /* === COLORES SEMÁNTICOS MODO OSCURO === */
-  --color-primary: var(--matcha-200);       /* Azul claro más visible */
-  --color-primary-hover: var(--matcha-100); /* Azul muy claro para hover */
+  --color-primary: var(--matcha-300);       /* Azul claro medio más visible */
+  --color-primary-hover: var(--matcha-200); /* Azul claro para hover */
   --color-primary-light: var(--matcha-800); /* Azul profundo - fondo primary oscuro */
   --color-primary-dark: var(--matcha-100);  /* Azul muy claro - contraste */
   
-  --color-secondary: var(--accent-300);     /* Amarillo/dorado más visible */
-  --color-secondary-hover: var(--accent-200); /* Dorado claro para hover */
+  --color-secondary: var(--accent-400);     /* Naranja medio más visible */
+  --color-secondary-hover: var(--accent-300); /* Amarillo dorado para hover */
   --color-secondary-light: var(--matcha-800); /* Azul profundo - fondo secondary oscuro */
-  --color-secondary-dark: var(--accent-100); /* Crema dorada - contraste */
+  --color-secondary-dark: var(--accent-200); /* Dorado claro - contraste */
   
-  --color-success: var(--matcha-300);       /* Azul claro medio para success */
-  --color-success-hover: var(--matcha-200); /* Azul claro para hover */
-  --color-success-light: var(--matcha-800); /* Azul profundo - fondo success */
-  --color-success-dark: var(--matcha-100);  /* Azul muy claro - contraste */
+  --color-success: var(--green-400);       /* Verde claro para success */
+  --color-success-hover: var(--green-300); /* Verde más claro para hover */
+  --color-success-light: var(--green-900); /* Verde oscuro - fondo success */
+  --color-success-dark: var(--green-200);  /* Verde muy claro - contraste */
   
-  --color-warning: var(--accent-300);       /* Amarillo/dorado para warning */
-  --color-warning-hover: var(--accent-200); /* Dorado claro para hover */
-  --color-warning-light: var(--matcha-800); /* Azul profundo - fondo warning */
-  --color-warning-dark: var(--accent-100);  /* Crema dorada - contraste */
+  --color-warning: var(--yellow-400);      /* Amarillo claro para warning */
+  --color-warning-hover: var(--yellow-300); /* Amarillo más claro para hover */
+  --color-warning-light: var(--yellow-900); /* Amarillo oscuro - fondo warning */
+  --color-warning-dark: var(--yellow-200);  /* Amarillo muy claro - contraste */
   
   --color-danger-light: var(--red-900);     /* Rojo oscuro - fondo danger */
 
@@ -358,7 +378,7 @@ html {
 body {
   font-family: var(--font-family-base);
   color: var(--text-primary);
-  background-color: var(--bg-primary);
+  background-color: var(--bg-app);  /* ✅ SURFACE SYSTEM: Fondo de app armonioso */
   line-height: var(--line-height-normal);
   font-weight: var(--font-weight-normal);
   margin: 0;

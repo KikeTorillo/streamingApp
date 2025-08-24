@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useMovieNavigation } from '../../hooks/useMovieNavigation';
 import { Button } from '../../components/atoms/Button/Button';
-import { PageLayout } from '../../components/templates/PageLayout/PageLayout';
 import { AppHeader } from '../../components/organisms/AppHeader/AppHeader';
 import { FlexContainer } from '../../components/atoms/FlexContainer/FlexContainer';
 import { Typography } from '../../components/atoms/Typography/Typography';
@@ -118,9 +117,8 @@ function MoviesDetailPage() {
     // ===== VERIFICAR ERRORES =====
     if (movieError) {
         return (
-            <PageLayout
-                header={
-                    <AppHeader
+            <>
+                <AppHeader
                         appTitle="🎬 StreamApp"
                         onTitleClick={handleBackToMain}
                         userName={user?.userName || user?.username || user?.name || user?.email || 'Usuario'}
@@ -129,8 +127,6 @@ function MoviesDetailPage() {
                         variant="primary"
                         size="lg"
                     />
-                }
-            >
                 <FlexContainer justify="center" align="center">
                     <Container size="sm" textAlign="center">
                         <Typography variant="h2" size="lg" weight="semibold" color="danger">Error al cargar la película</Typography>
@@ -142,16 +138,15 @@ function MoviesDetailPage() {
                         </Button>
                     </Container>
                 </FlexContainer>
-            </PageLayout>
+            </>
         );
     }
 
     // ===== LOADING =====
     if (loadingMovie) {
         return (
-            <PageLayout
-                header={
-                    <AppHeader
+            <>
+            <AppHeader
                         appTitle="🎬 StreamApp"
                         onTitleClick={handleBackToMain}
                         userName={user?.userName || user?.username || user?.name || user?.email || 'Usuario'}
@@ -160,19 +155,16 @@ function MoviesDetailPage() {
                         variant="primary"
                         size="lg"
                     />
-                }
-            >
                 <FlexContainer justify="center" align="center">
                     <Typography variant="body" size="lg" color="muted">Cargando película...</Typography>
                 </FlexContainer>
-            </PageLayout>
+            </>
         );
     }
 
     return (
-        <PageLayout
-            header={
-                <AppHeader
+        <>
+        <AppHeader
                     appTitle="🎬 StreamApp"
                     onTitleClick={handleBackToMain}
                     userName={user?.userName || user?.username || user?.name || user?.email || 'Usuario'}
@@ -183,8 +175,6 @@ function MoviesDetailPage() {
                     variant="primary"
                     size="lg"
                 />
-            }
-        >
             <Container size="lg"  padding="lg">
                 {/* ===== INFORMACIÓN DE LA PELÍCULA ===== */}
                 {movie && (
@@ -288,7 +278,7 @@ function MoviesDetailPage() {
                     </FlexContainer>
                 )}
             </Container>
-        </PageLayout>
+        </>
     );
 }
 

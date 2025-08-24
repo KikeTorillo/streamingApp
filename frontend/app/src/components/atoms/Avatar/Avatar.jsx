@@ -1,8 +1,7 @@
 // src/components/atoms/Avatar/Avatar.jsx
 import PropTypes from 'prop-types';
-import { useAvatarProps } from '../../../hooks/useStandardProps.jsx';
-import { STANDARD_PROP_TYPES } from '../../../tokens/standardProps.js';
-import { createIconRenderer, COMPONENT_SIZE_MAPS } from '../../../utils/iconHelpers.js';
+import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
+import { INTERACTIVE_PROP_TYPES, extractDOMPropsV2 } from '../../../tokens/standardProps-v2.js';
 import './Avatar.css';
 
 /**
@@ -51,8 +50,14 @@ function Avatar(props) {
     rounded: props.rounded || (shape === 'circle' ? 'full' : shape === 'rounded' ? 'lg' : shape === 'square' ? 'md' : undefined)
   };
   
-  // Hook del sistema estándar
-  const avatarProps = useAvatarProps(mappedProps);
+  // Hook del sistema estándar V2
+  const avatarProps = useInteractiveProps(mappedProps, {
+    componentName: 'Avatar',
+    defaultSize: 'md',
+    defaultVariant: 'neutral',
+    defaultRounded: 'full'
+  });
+  
   const {
     size,
     variant,
@@ -60,7 +65,10 @@ function Avatar(props) {
     disabled,
     loading,
     className,
-    // renderIcon, tokens - del hook pero no implementadas actualmente
+    renderIcon,
+    tokens,
+    generateClassName,
+    generateStyles,
     ...restProps
   } = avatarProps;
   
@@ -73,17 +81,14 @@ function Avatar(props) {
     alt,
     fallbackIcon = 'user', // Por defecto usar icono del sistema
     onClick,
-    ariaLabel
+    ariaLabel,
+    ...remainingProps
   } = restProps;
+
+  // ✅ FILTRAR PROPS DOM - Solo props válidas van al DOM
+  const safeDOMProps = extractDOMPropsV2(remainingProps);
   
-  // Crear renderer de iconos para Avatar
-  const iconRenderer = createIconRenderer('sm', COMPONENT_SIZE_MAPS.avatar || {
-    xs: 'xs',
-    sm: 'xs', 
-    md: 'sm',
-    lg: 'md',
-    xl: 'lg'
-  });
+  // Usar renderIcon del hook V2 (más eficiente y consistente)
   // Generar iniciales del nombre
   const getInitials = (fullName) => {
     if (!fullName) return '';
@@ -110,18 +115,11 @@ function Avatar(props) {
     }
   }
   
-  // Construir clases CSS dinámicamente
-  const avatarClasses = [
-    'avatar',
-    `avatar--${size}`,
-    `avatar--${variant}`,
-    `avatar--${rounded}`, // Usar rounded en lugar de shape
+  // Construir clases CSS usando V2
+  const avatarClasses = generateClassName('avatar') + ' ' + [
     onClick && 'avatar--clickable',
-    loading && 'avatar--loading',
-    disabled && 'avatar--disabled',
     status && 'avatar--has-status',
-    badge && 'avatar--has-badge',
-    className
+    badge && 'avatar--has-badge'
   ].filter(Boolean).join(' ');
 
   // Determinar qué mostrar
@@ -169,7 +167,7 @@ function Avatar(props) {
       aria-label={finalAriaLabel}
       aria-disabled={disabled || loading}
       aria-busy={loading}
-      {...restProps}
+      {...safeDOMProps}
     >
       {/* Contenedor principal */}
       <div className="avatar__container">
@@ -188,7 +186,7 @@ function Avatar(props) {
           className="avatar__fallback"
           style={{ display: src ? 'none' : 'flex' }}
         >
-          {initials || iconRenderer(fallbackIcon, size, variant)}
+          {initials || renderIcon(fallbackIcon)}
         </div>
         
         {/* Spinner de loading */}
@@ -223,15 +221,14 @@ function Avatar(props) {
 }
 
 Avatar.propTypes = {
-  // Props estándar del sistema (heredadas de STANDARD_PROP_TYPES)
-  ...STANDARD_PROP_TYPES,
+  // Props estándar del sistema V2 (heredadas de INTERACTIVE_PROP_TYPES)
+  ...INTERACTIVE_PROP_TYPES,
   
   // Props específicas del Avatar
   src: PropTypes.string,
   name: PropTypes.string,
   status: PropTypes.oneOf(['online', 'offline', 'away', 'busy']),
   badge: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  onClick: PropTypes.func,
   alt: PropTypes.string,
   fallbackIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   

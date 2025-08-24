@@ -7,7 +7,8 @@ import { Button } from '../../atoms/Button/Button';
 import { FileInputField } from '../FileInputField/FileInputField';
 import { ImageCropField } from '../ImageCropField/ImageCropField';
 import { Checkbox } from '../../atoms/Checkbox/Checkbox';
-import { validateStandardProps, STANDARD_PROP_TYPES } from '../../../tokens/standardProps';
+import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
+import { INTERACTIVE_PROP_TYPES } from '../../../tokens/standardProps-v2.js';
 import './DynamicForm.css';
 
 /**
@@ -93,10 +94,12 @@ const DynamicForm = ({
   fieldRounded,
   submitIcon
 }) => {
-  // Validar props estándar
-  validateStandardProps({ 
-    size, variant, rounded, disabled, loading, className 
-  }, 'DynamicForm');
+  // Props estándar con Sistema V2
+  const sys = useInteractiveProps({ size, variant, rounded, disabled, loading, className }, {
+    componentName: 'DynamicForm',
+    defaultVariant: 'neutral'
+  });
+  const { size: sysSize, variant: sysVariant, rounded: sysRounded, disabled: sysDisabled, loading: sysLoading, className: sysClassName } = sys;
   
   // Backward compatibility warnings
   React.useEffect(() => {
@@ -115,8 +118,8 @@ const DynamicForm = ({
   }, [fieldSize, fieldRounded, submitIcon]);
   
   // Resolver props finales con backward compatibility
-  const finalSize = fieldSize || size;
-  const finalRounded = fieldRounded || rounded;
+  const finalSize = fieldSize || sysSize;
+  const finalRounded = fieldRounded || sysRounded;
   const finalSubmitLeftIcon = submitIcon || submitLeftIcon;
   // Estado del formulario con datos iniciales
   const [formData, setFormData] = useState(() => {
@@ -404,7 +407,7 @@ const DynamicForm = ({
             rounded={finalRounded}
             compact={compact}
             width="full"  // ✅ MIGRADO: fullWidth → width
-            variant={hasError ? 'danger' : variant}
+            variant={hasError ? 'danger' : sysVariant}
             autoComplete={fieldType === 'email' ? 'email' : fieldType === 'tel' ? 'tel' : undefined}
           />
         </div>
@@ -427,7 +430,7 @@ const DynamicForm = ({
             disabled={fieldDisabled}
             size={finalSize}
             rounded={finalRounded}
-            variant={hasError ? 'danger' : (field.variant || variant)}
+            variant={hasError ? 'danger' : (field.variant || sysVariant)}
             width="full"
             compact={compact}
             onChange={(e) => {
@@ -619,13 +622,13 @@ const DynamicForm = ({
   const formClasses = [
     'dynamic-form',
     `dynamic-form--size-${finalSize}`,
-    `dynamic-form--variant-${variant}`,
+  `dynamic-form--variant-${sysVariant}`,
     `dynamic-form--rounded-${finalRounded}`,
     `dynamic-form--spacing-${spacing}`,
-    loading && 'dynamic-form--loading',
-    disabled && 'dynamic-form--disabled',
+  sysLoading && 'dynamic-form--loading',
+  sysDisabled && 'dynamic-form--disabled',
     compact && 'dynamic-form--compact',
-    className
+  sysClassName
   ].filter(Boolean).join(' ');
 
   const gridClasses = [
@@ -662,13 +665,13 @@ const DynamicForm = ({
                   <Button
                     key={action.key || index}
                     type={action.type || 'button'}
-                    variant={action.variant || 'primary'}
+                    variant={action.variant || sysVariant || 'primary'}
                     size={action.size || submitSize}
                     rounded={action.rounded || submitRounded}
                     leftIcon={action.leftIcon}
                     rightIcon={action.rightIcon}
-                    loading={action.loading || loading}
-                    disabled={action.disabled || disabled}
+                    loading={action.loading || sysLoading}
+                    disabled={action.disabled || sysDisabled}
                     width="full"  // ✅ MIGRADO: fullWidth → width={action.fullWidth || submitFullWidth}
                     onClick={action.onClick}
                   >
@@ -680,13 +683,13 @@ const DynamicForm = ({
               // Comportamiento original (backward compatibility)
               <Button
                 type="submit"
-                variant={submitVariant}
+                variant={submitVariant || sysVariant}
                 size={submitSize}
                 rounded={submitRounded}
                 leftIcon={finalSubmitLeftIcon}
                 rightIcon={submitRightIcon}
-                loading={loading}
-                disabled={disabled}
+                loading={sysLoading}
+                disabled={sysDisabled}
                 width="full"  // ✅ MIGRADO: fullWidth → width={submitFullWidth}
               >
                 {submitText}
@@ -702,7 +705,7 @@ const DynamicForm = ({
 // Definir PropTypes con integración del sistema estándar
 DynamicForm.propTypes = {
   // Props estándar del sistema
-  ...STANDARD_PROP_TYPES,
+  ...INTERACTIVE_PROP_TYPES,
   
   // Props específicas de DynamicForm
   fields: PropTypes.arrayOf(

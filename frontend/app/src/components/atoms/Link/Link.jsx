@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
-import { useLinkProps } from '../../../hooks/useStandardProps.jsx';
-import { extractDOMProps } from '../../../tokens/standardProps.js';
+import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
+import { INTERACTIVE_PROP_TYPES } from '../../../tokens/propHelpers.js';
 import { Icon } from '../Icon/Icon';
 import './Link.css';
 
@@ -50,7 +50,7 @@ function Link(props) {
     ...restProps
   } = props;
 
-  // Hook especializado con props estándar
+  // Hook especializado V2 con props estándar
   const {
     size,
     variant,
@@ -61,13 +61,19 @@ function Link(props) {
     leftIcon,
     rightIcon,
     tokens,
-    // eslint-disable-next-line no-unused-vars
     renderIcon,
     hasLeftIcon,
     hasRightIcon,
     ariaLabel,
+    generateClassName,
+    generateStyles,
     ...standardProps
-  } = useLinkProps(restProps);
+  } = useInteractiveProps(restProps, {
+    componentName: 'Link',
+    defaultSize: 'md',
+    defaultVariant: 'primary',
+    defaultRounded: 'sm'
+  });
 
   // Mapeo de variantes legacy para backward compatibility
   const mappedVariant = (() => {
@@ -79,15 +85,15 @@ function Link(props) {
     return legacyMappings[variant] || variant;
   })();
 
-  // Props DOM-safe
-  const domProps = extractDOMProps({
-    className,
-    ariaLabel,
+  // Props DOM-safe (V2 maneja esto automáticamente)
+  const domProps = {
+    'data-testid': standardProps.testId,
+    'data-component': 'Link',
     ...standardProps
-  });
+  };
   
   // Evitar warning de unused vars
-  void tokens; // Design tokens disponibles para estilos dinámicos
+  void tokens; void generateStyles; // Design tokens disponibles para estilos dinámicos
   // Determinar contenido del enlace
   const linkContent = children || text;
 
@@ -103,18 +109,11 @@ function Link(props) {
   const finalTarget = target || (isExternal ? '_blank' : undefined);
   const finalRel = rel || (isExternal && finalTarget === '_blank' ? 'noopener noreferrer' : undefined);
 
-  // Generar clases CSS con sistema estándar
-  const linkClasses = [
-    'link',
-    `link--size-${size}`,
-    `link--variant-${mappedVariant}`,
-    `link--rounded-${rounded}`,
+  // Generar clases CSS con sistema V2
+  const linkClasses = generateClassName('link') + ' ' + [
     underline && 'link--underline',
-    disabled && 'link--disabled',
-    loading && 'link--loading',
     (hasLeftIcon || hasRightIcon) && 'link--with-icon',
-    (variant === 'inherit') && 'link--inherit', // Clase especial para variant inherit
-    className
+    (variant === 'inherit') && 'link--inherit' // Clase especial para variant inherit
   ].filter(Boolean).join(' ');
 
   // Props de accesibilidad mejoradas
@@ -134,24 +133,12 @@ function Link(props) {
     ...domProps
   };
 
-  // Función para renderizar el contenido con iconos
+  // Función para renderizar el contenido con iconos V2
   const renderContent = () => (
     <>
-      {leftIcon && (
-        <Icon 
-          name={leftIcon} 
-          size={size === 'xs' ? 'xs' : size === 'sm' ? 'xs' : 'sm'} 
-          className="link__icon link__icon--left" 
-        />
-      )}
+      {leftIcon && renderIcon(leftIcon)}
       <span className="link__text">{linkContent}</span>
-      {rightIcon && (
-        <Icon 
-          name={rightIcon} 
-          size={size === 'xs' ? 'xs' : size === 'sm' ? 'xs' : 'sm'} 
-          className="link__icon link__icon--right" 
-        />
-      )}
+      {rightIcon && renderIcon(rightIcon)}
     </>
   );
 
@@ -192,6 +179,9 @@ function Link(props) {
 }
 
 Link.propTypes = {
+  // Props estándar del sistema V2
+  ...INTERACTIVE_PROP_TYPES,
+  
   /** Ruta interna para React Router */
   to: PropTypes.string,
   
@@ -204,17 +194,8 @@ Link.propTypes = {
   /** Alternativa a children para texto simple */
   text: PropTypes.string,
   
-  /** Tamaño del enlace */
-  size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
-  
-  /** Variante visual del enlace */
+  /** Variante visual del enlace (incluye legacy) */
   variant: PropTypes.oneOf(['primary', 'secondary', 'danger', 'muted', 'inherit']),
-  
-  /** Icono izquierdo (nombre de Feather Icon) */
-  leftIcon: PropTypes.string,
-  
-  /** Icono derecho (nombre de Feather Icon) */
-  rightIcon: PropTypes.string,
   
   /** Forzar comportamiento de enlace externo */
   external: PropTypes.bool,
@@ -222,20 +203,11 @@ Link.propTypes = {
   /** Mostrar subrayado */
   underline: PropTypes.bool,
   
-  /** Estado deshabilitado */
-  disabled: PropTypes.bool,
-  
   /** Target del enlace */
   target: PropTypes.string,
   
   /** Rel del enlace */
-  rel: PropTypes.string,
-  
-  /** Label para accesibilidad */
-  ariaLabel: PropTypes.string,
-  
-  /** Clases CSS adicionales */
-  className: PropTypes.string
+  rel: PropTypes.string
 };
 
 export { Link };

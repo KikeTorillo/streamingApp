@@ -178,7 +178,7 @@ export function useStandardPropsV2(props, config = {}) {
         break;
       
       case 'container':
-        sizeTokens = { maxWidth: getContainerToken(size) };
+        sizeTokens = { maxWidth: getContainerToken(size), width: '100%' };
         break;
         
       default:

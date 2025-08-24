@@ -5,7 +5,8 @@ import { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '../../atoms/Button/Button';
 import { Icon } from '../../atoms/Icon/Icon';
-import { validateStandardProps, STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens';
+import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
+import { INTERACTIVE_PROP_TYPES, extractDOMPropsV2 } from '../../../tokens/standardProps-v2.js';
 import './Modal.css';
 
 /**
@@ -39,8 +40,12 @@ import './Modal.css';
  * @param {function} [props.onClosed] - Callback al cerrar completamente el modal
  */
 function Modal(props) {
-  // ✅ VALIDAR PROPS ESTÁNDAR - Muestra deprecation warnings automáticamente  
-  const validatedProps = validateStandardProps(props, 'Modal');
+  // ✅ SISTEMA V2
+  const standardProps = useInteractiveProps(props, {
+    componentName: 'Modal',
+    defaultVariant: 'neutral',
+    defaultSize: 'md'
+  });
 
   const {
     // Props estándar del sistema
@@ -73,8 +78,10 @@ function Modal(props) {
     onOpen = null,
     onClosed = null,
     
+    tokens,
+    generateStyles,
     ...restProps
-  } = validatedProps;
+  } = standardProps;
   
   const dialogRef = useRef(null);
   
@@ -156,8 +163,8 @@ function Modal(props) {
     className
   ].filter(Boolean).join(' ');
   
-  // ✅ EXTRAER DOM PROPS - Solo pasar props válidas de DOM
-  const domProps = extractDOMProps(restProps);
+  // ✅ EXTRAER DOM PROPS V2 - Solo pasar props válidas de DOM
+  const domProps = extractDOMPropsV2({ ...standardProps, ...props });
   
   // ✅ RENDERIZADO CONDICIONAL: Solo renderizar el <dialog> cuando isOpen es true
   // Esto evita problemas con el elemento <dialog> que puede interferir con otros controles
@@ -170,6 +177,7 @@ function Modal(props) {
       ref={dialogRef}
       {...domProps}
       className={modalClasses}
+      style={generateStyles()}
       onClose={handleDialogClose}
       onClick={handleBackdropClick}
       onKeyDown={handleKeyDown}
@@ -219,7 +227,7 @@ function Modal(props) {
 
 Modal.propTypes = {
   // ✅ PROPS ESTÁNDAR DEL SISTEMA
-  ...STANDARD_PROP_TYPES,
+  ...INTERACTIVE_PROP_TYPES,
   
   // ✅ PROPS ESPECÍFICAS DE MODAL
   isOpen: PropTypes.bool,

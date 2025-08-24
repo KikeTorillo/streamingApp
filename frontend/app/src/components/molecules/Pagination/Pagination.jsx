@@ -1,10 +1,11 @@
 // Pagination.jsx - Componente standalone para paginación
 import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
 import { Button } from '../../atoms/Button/Button';
 import { Select } from '../../atoms/Select/Select';
 import { Icon } from '../../atoms/Icon/Icon';
-import { useStandardProps } from '../../../hooks/useStandardProps';
-import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens/standardProps';
+import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
+import { INTERACTIVE_PROP_TYPES, extractDOMPropsV2 } from '../../../tokens/standardProps-v2.js';
 import './Pagination.css';
 
 /**
@@ -72,7 +73,7 @@ function Pagination(props) {
     ...restProps
   } = props;
 
-  // Hook estándar - Pagination es tipo navegación
+  // ✅ SISTEMA V2: Hook estándar - Pagination es tipo navegación
   const {
     size,
     variant, // Esta es la variante semántica estándar
@@ -82,17 +83,18 @@ function Pagination(props) {
     loading,
     className,
     tokens,
+    generateStyles,
     renderIcon,
     ...standardProps
-  } = useStandardProps(restProps, {
-    componentType: 'pagination',
+  } = useInteractiveProps(restProps, {
+    componentName: 'Pagination',
     defaultSize: 'md',
     defaultVariant: 'neutral',
     defaultRounded: 'md'
   });
 
-  // Props seguros para DOM
-  const domProps = extractDOMProps({
+  // ✅ SISTEMA V2: Props seguros para DOM
+  const domProps = extractDOMPropsV2({
     ...standardProps,
     disabled,
     className
@@ -142,21 +144,35 @@ function Pagination(props) {
     }
   };
   
-  // Detectar mobile (si window está disponible)
-  const isMobile = typeof window !== 'undefined' 
-    ? window.innerWidth < breakpoint 
-    : false;
+  // ✅ SSR-SAFE: Detectar mobile con useState/useEffect
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    // Solo ejecutar en el cliente
+    if (typeof window === 'undefined') return;
+
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < breakpoint);
+    };
+
+    // Verificar tamaño inicial
+    checkMobile();
+
+    // Agregar listener para cambios de tamaño
+    window.addEventListener('resize', checkMobile);
     
-  // eslint-disable-next-line no-unused-vars
-  const effectiveVariant = isMobile && variant === 'full' ? 'compact' : variant;
+    // Cleanup
+    return () => window.removeEventListener('resize', checkMobile);
+  }, [breakpoint]);
+    
+  // ✅ V2: Variable removida - no era necesaria después de migración
   
   // Mapear variante legacy para backward compatibility
   const effectivePaginationVariant = (() => {
     // Si se pasó la prop legacy variant directamente en props
     const legacyVariant = props.variant;
     if (legacyVariant && typeof legacyVariant === 'string' && ['full', 'simple', 'compact'].includes(legacyVariant)) {
-      if (typeof window !== 'undefined' && window.process?.env?.NODE_ENV === 'development') {
-         
+      if (import.meta.env?.DEV) {
         console.warn('⚠️ Pagination: prop "variant" está deprecada para variants de paginación. Usar "paginationVariant"');
       }
       return legacyVariant;
@@ -187,7 +203,7 @@ function Pagination(props) {
     <div 
       className={paginationClasses}
       style={{
-        borderRadius: tokens.rounded,
+        ...generateStyles(),
         ...domProps.style
       }}
       {...domProps}
@@ -228,10 +244,10 @@ function Pagination(props) {
             onClick={() => handlePageChange(1)}
             disabled={disabled || loading || isFirstPage}
             className="pagination__button pagination__button--first"
-            leftIcon={renderIcon ? renderIcon('chevron-left') : <Icon name="chevron-left" size="xs" />}
+            leftIcon={renderIcon('chevrons-left')}
             title={labels.first}
           >
-            {finalPaginationVariant === 'compact' ? '⏮️' : labels.first}
+            {finalPaginationVariant === 'compact' ? renderIcon('chevrons-left') : labels.first}
           </Button>
         )}
         
@@ -242,10 +258,10 @@ function Pagination(props) {
           onClick={() => handlePageChange(safeCurrentPage - 1)}
           disabled={disabled || loading || !canGoPrevious}
           className="pagination__button pagination__button--previous"
-          leftIcon={finalPaginationVariant !== 'compact' ? (renderIcon ? renderIcon('chevron-left') : <Icon name="chevron-left" size="xs" />) : null}
+          leftIcon={finalPaginationVariant !== 'compact' ? renderIcon('chevron-left') : null}
           title={labels.previous}
         >
-          {finalPaginationVariant === 'compact' ? '◀️' : labels.previous}
+          {finalPaginationVariant === 'compact' ? renderIcon('chevron-left') : labels.previous}
         </Button>
         
         {/* Información de página actual */}
@@ -260,9 +276,7 @@ function Pagination(props) {
             </span>
           )}
           
-          {loading && (
-            renderIcon ? renderIcon('loader') : <Icon name="loader" size="xs" className="pagination__loading-icon" />
-          )}
+          {loading && renderIcon('loader')}
         </div>
         
         {/* Botón Siguiente */}
@@ -272,10 +286,10 @@ function Pagination(props) {
           onClick={() => handlePageChange(safeCurrentPage + 1)}
           disabled={disabled || loading || !canGoNext}
           className="pagination__button pagination__button--next"
-          rightIcon={finalPaginationVariant !== 'compact' ? (renderIcon ? renderIcon('chevron-right') : <Icon name="chevron-right" size="xs" />) : null}
+          rightIcon={finalPaginationVariant !== 'compact' ? renderIcon('chevron-right') : null}
           title={labels.next}
         >
-          {finalPaginationVariant === 'compact' ? '▶️' : labels.next}
+          {finalPaginationVariant === 'compact' ? renderIcon('chevron-right') : labels.next}
         </Button>
         
         {/* Botón Última (solo full variant) */}
@@ -286,10 +300,10 @@ function Pagination(props) {
             onClick={() => handlePageChange(safeTotalPages)}
             disabled={disabled || loading || isLastPage}
             className="pagination__button pagination__button--last"
-            rightIcon={renderIcon ? renderIcon('chevron-right') : <Icon name="chevron-right" size="xs" />}
+            rightIcon={renderIcon('chevrons-right')}
             title={labels.last}
           >
-            {finalPaginationVariant === 'compact' ? '⏭️' : labels.last}
+            {finalPaginationVariant === 'compact' ? renderIcon('chevrons-right') : labels.last}
           </Button>
         )}
       </div>
@@ -298,8 +312,8 @@ function Pagination(props) {
 }
 
 Pagination.propTypes = {
-  // Props estándar del sistema de diseño
-  ...STANDARD_PROP_TYPES,
+  // ✅ SISTEMA V2: Props estándar del sistema de diseño
+  ...INTERACTIVE_PROP_TYPES,
   
   // Props específicas del componente
   // Navegación básica

@@ -16,7 +16,7 @@
   max-width: var(--card-max-width, 100%);
   
   /* Background del sistema de diseño */
-  background: var(--bg-primary);
+  background: var(--bg-tertiary);  /* ✅ SURFACE SYSTEM: Card background armonioso */
   
   /* Tipografía del sistema */
   font-family: var(--font-family-base);
@@ -60,33 +60,42 @@
 
 /* ===== VARIANTES SEMÁNTICAS DEL SISTEMA ===== */
 .card--variant-primary {
-  background: var(--bg-primary);
-  border: 0.1rem solid var(--color-primary-subtle, transparent);
+  background: var(--bg-primary);  /* ✅ Blanco puro para máximo contraste */
+  border: 0.1rem solid var(--color-primary);
+  box-shadow: var(--shadow-medium);
+  /* Cards primarias destacan con fondo blanco y borde azul */
 }
 
 .card--variant-secondary {
-  background: var(--bg-secondary);
-  border: 0.1rem solid var(--color-secondary-subtle, transparent);
+  background: var(--bg-tertiary);  /* ✅ Surface card para diferenciación */
+  border: 0.1rem solid var(--color-secondary);
+  box-shadow: var(--shadow-gentle);
+  /* Cards secundarias usan superficie de card con borde naranja */
 }
 
 .card--variant-success {
-  background: var(--bg-success-light, var(--bg-primary));
-  border: 0.1rem solid var(--color-success-subtle, transparent);
+  background: var(--color-success-light, var(--bg-primary));
+  border: 0.1rem solid var(--color-success);
+  color: var(--text-on-success);
 }
 
 .card--variant-warning {
-  background: var(--bg-warning-light, var(--bg-primary));
-  border: 0.1rem solid var(--color-warning-subtle, transparent);
+  background: var(--color-warning-light, var(--bg-primary));
+  border: 0.1rem solid var(--color-warning);
+  color: var(--text-on-warning);
 }
 
 .card--variant-danger {
-  background: var(--bg-danger-light, var(--bg-primary));
-  border: 0.1rem solid var(--color-danger-subtle, transparent);
+  background: var(--color-danger-light, var(--bg-primary));
+  border: 0.1rem solid var(--color-danger);
+  color: var(--text-on-danger);
 }
 
 .card--variant-neutral {
-  background: var(--bg-primary);
-  border: 0.1rem solid var(--border-default, transparent);
+  background: var(--bg-secondary);  /* ✅ Surface container neutral */
+  border: 0.1rem solid var(--border-default);
+  box-shadow: var(--shadow-sm);
+  /* Cards neutras usan superficie de contenedor */
 }
 
 /* ===== FULL WIDTH PARA FLEXBOX ===== */
@@ -138,7 +147,35 @@
   box-shadow: var(--shadow-xl);
 }
 
-/* ===== ESTADOS DEL SISTEMA ===== */
+/* ===== ESTADOS INTERACTIVOS MEJORADOS ===== */
+
+/* Estado hover para cards clickeables */
+.card--clickable:hover {
+  transform: translateY(-0.3rem) scale(1.02);
+  box-shadow: var(--shadow-strong);
+  transition: all var(--transition-normal);
+}
+
+.card--variant-primary.card--clickable:hover {
+  border-color: var(--color-primary-hover);
+  box-shadow: 0 8px 25px rgba(33, 158, 188, 0.15);
+}
+
+.card--variant-secondary.card--clickable:hover {
+  border-color: var(--color-secondary-hover);
+  box-shadow: 0 8px 25px rgba(230, 119, 0, 0.15);
+}
+
+/* Estado focus para accesibilidad */
+.card--clickable:focus {
+  outline: 0.2rem solid var(--color-primary);
+  outline-offset: 0.2rem;
+}
+
+/* Estado activo */
+.card--clickable:active {
+  transform: translateY(-0.1rem) scale(1.01);
+}
 
 /* Estado deshabilitado */
 .card--disabled {
@@ -146,8 +183,6 @@
   pointer-events: none;
   cursor: not-allowed;
 }
-
-/* Estado de loading */
 .card--loading {
   position: relative;
   overflow: hidden;

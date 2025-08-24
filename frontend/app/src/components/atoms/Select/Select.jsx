@@ -86,9 +86,9 @@ const Select = forwardRef((props, ref) => {
   } = props;
   // ✅ V2 DEBUGGING: Solo en desarrollo
   if (import.meta.env?.DEV && _debug) {
-    console.log('Select V2 Debug:', {
-      size, variant, width, tokens, currentBreakpoint, _debug
-    });
+    //console.log('Select V2 Debug:', {
+    //  size, variant, width, tokens, currentBreakpoint, _debug
+    //});
   }
 
   // ARIA Label inteligente

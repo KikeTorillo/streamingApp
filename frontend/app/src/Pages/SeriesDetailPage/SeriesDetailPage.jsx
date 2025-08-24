@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useMovieNavigation } from '../../hooks/useMovieNavigation';
 import { Button } from '../../components/atoms/Button/Button';
-import { PageLayout } from '../../components/templates/PageLayout/PageLayout';
 import { AppHeader } from '../../components/organisms/AppHeader/AppHeader';
 import { EpisodeListItem } from '../../components/molecules/EpisodeListItem/EpisodeListItem';
 import { SeasonSelector } from '../../components/molecules/SeasonSelector/SeasonSelector';
@@ -215,9 +214,8 @@ function SeriesDetailPage() {
     // ===== VERIFICAR ERRORES =====
     if (serieError) {
         return (
-            <PageLayout
-                header={
-                    <AppHeader
+            <>
+            <AppHeader
                         appTitle="🎬 StreamApp"
                         onTitleClick={handleBackToSeries}
                         userName={user?.userName || user?.username || user?.name || user?.email || 'Usuario'}
@@ -226,8 +224,6 @@ function SeriesDetailPage() {
                         variant="primary"
                         size="lg"
                     />
-                }
-            >
                 <FlexContainer justify="center" align="center">
                     <Container size="sm" textAlign="center">
                         <Typography variant="h2" size="lg" weight="semibold" color="danger">Error al cargar la serie</Typography>
@@ -239,14 +235,13 @@ function SeriesDetailPage() {
                         </Button>
                     </Container>
                 </FlexContainer>
-            </PageLayout>
+            </>
         );
     }
 
     return (
-        <PageLayout
-            header={
-                <AppHeader
+        <>
+        <AppHeader
                     appTitle="🎬 StreamApp"
                     onTitleClick={handleBackToSeries}
                     userName={user?.userName || user?.username || user?.name || user?.email || 'Usuario'}
@@ -257,8 +252,6 @@ function SeriesDetailPage() {
                     variant="primary"
                     size="lg"
                 />
-            }
-        >
             <Container size="lg" padding="lg">
                     {/* ===== INFORMACIÓN DE LA SERIE ===== */}
                     {serie && (
@@ -406,7 +399,7 @@ function SeriesDetailPage() {
                         )}
                     </Container>
                 </Container>
-            </PageLayout>
+            </>
         );
 }
 

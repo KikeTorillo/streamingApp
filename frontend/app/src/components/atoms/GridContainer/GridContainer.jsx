@@ -31,7 +31,7 @@ import './GridContainer.css';
  * </GridContainer>
  */
 function GridContainer(props) {
-  // ✅ USAR HOOK ESPECIALIZADO V2.0 PARA COMPONENTES CONTENEDORES
+  // ✅ USAR HOOK ESPECIALIZADO PARA CONTENEDORES
   const {
     size,
     variant,
@@ -50,7 +50,7 @@ function GridContainer(props) {
   } = useContainerProps(props, {
     componentName: 'GridContainer',
     defaultSize: 'lg',
-    defaultVariant: 'neutral',
+    defaultVariant: 'neutral', // ✅ Neutral para ser transparente
     enableResponsive: true
   });
 
@@ -102,8 +102,23 @@ function GridContainer(props) {
     dense && 'grid-container--dense'
   ].filter(Boolean).join(' ');
 
-  // ✅ GENERAR ESTILOS CSS CON GENERADOR V2.0 + ESPECÍFICOS DE GRID
-  const gridSpecificStyles = {
+  // ✅ ESTILOS MANUALES - EVITAR generateStyles AUTOMÁTICO
+  const gridStyles = {
+    // Solo estilos específicos de grid que necesitamos
+    display: inline ? 'inline-grid' : 'grid',
+    
+    // Gap desde hook o props
+    ...(effectiveGap && { gap: tokens?.gap || `var(--space-${effectiveGap})` }),
+    ...(columnGap && { columnGap: `var(--space-${columnGap})` }),
+    ...(rowGap && { rowGap: `var(--space-${rowGap})` }),
+    
+    // Padding desde hook o props
+    ...(effectivePadding && { padding: `var(--space-${effectivePadding})` }),
+    
+    // Alineación
+    alignItems: align,
+    justifyItems: justify,
+    
     // Configuración dinámica de columnas
     gridTemplateColumns: typeof columns === 'number' 
       ? `repeat(${columns}, 1fr)`
@@ -126,11 +141,13 @@ function GridContainer(props) {
     // Grid areas si se especifican
     ...(areas && { gridTemplateAreas: areas }),
     
+    // Dense packing
+    ...(dense && { gridAutoFlow: 'dense' }),
+    
     // Combinar con estilos que vienen de props
-    ...(style && typeof style === 'object' ? style : {})
+    ...style
+    // NO usar generateStyles para evitar estilos automáticos no deseados
   };
-
-  const gridStyles = generateStyles(gridSpecificStyles);
 
   // ✅ PROCESAR CHILDREN CON GRID AREAS AUTOMÁTICAS
   const processedChildren = areas ? 

@@ -366,3 +366,13 @@
   gap: var(--space-sm);
   margin-top: var(--space-md);
 }
+
+/* ===== VARIANTES SEMÁNTICAS ===== */
+
+/* ✅ NEUTRAL - Sin estilos de contenedor (transparente) */
+.flex-container--variant-neutral {
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}

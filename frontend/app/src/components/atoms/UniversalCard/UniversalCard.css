@@ -1,0 +1,264 @@
+/* ===== UNIVERSAL CARD COMPONENT - 100% REUTILIZABLE ===== */
+/* UniversalCard.css - Sistema independiente del dominio */
+
+/* ===== CONTENEDOR BASE ===== */
+.universal-card {
+  /* Layout base */
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  
+  /* Dimensiones desde tokens */
+  width: var(--card-width);
+  min-height: var(--card-min-height);
+  
+  /* Estética desde tokens */
+  background: var(--card-background);
+  border: var(--card-border);
+  border-radius: var(--card-border-radius);
+  box-shadow: var(--card-shadow);
+  
+  /* Backdrop filter para variante glass */
+  backdrop-filter: var(--card-backdrop-filter, none);
+  
+  /* Tipografía base */
+  font-family: var(--font-family-base, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  font-size: var(--card-font-size);
+  color: var(--text-primary);
+  
+  /* Transiciones suaves */
+  transition: all 150ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  
+  /* Box model */
+  box-sizing: border-box;
+}
+
+/* ===== ASPECT RATIO ===== */
+.universal-card--aspect-ratio {
+  height: auto;
+  aspect-ratio: var(--card-aspect-ratio);
+}
+
+/* Aspect ratios específicos */
+.universal-card--aspect-square { aspect-ratio: 1/1; }
+.universal-card--aspect-portrait { aspect-ratio: 2/3; }
+.universal-card--aspect-landscape { aspect-ratio: 3/2; }
+.universal-card--aspect-wide { aspect-ratio: 16/9; }
+.universal-card--aspect-ultrawide { aspect-ratio: 21/9; }
+.universal-card--aspect-golden { aspect-ratio: 1.618/1; }
+.universal-card--aspect-card { aspect-ratio: 5/7; }
+.universal-card--aspect-mobile { aspect-ratio: 9/16; }
+
+/* ===== TAMAÑOS ===== */
+.universal-card--size-xs { max-width: 8rem; }
+.universal-card--size-sm { max-width: 12rem; }
+.universal-card--size-md { max-width: 16rem; }
+.universal-card--size-lg { max-width: 20rem; }
+.universal-card--size-xl { max-width: 24rem; }
+.universal-card--size-full { 
+  width: 100%; 
+  max-width: none;
+}
+
+/* ===== VARIANTES VISUALES ===== */
+.universal-card--variant-flat {
+  /* Tokens aplicados desde CSS properties */
+  box-shadow: none;
+}
+
+.universal-card--variant-elevated {
+  /* Hover elevation para elevated */
+  box-shadow: var(--shadow-sm, 0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+.universal-card--variant-outlined {
+  /* Border styling */
+  border: 1px solid var(--border-default, rgba(0, 0, 0, 0.2));
+}
+
+.universal-card--variant-soft {
+  /* Soft background */
+  background: var(--bg-muted, rgba(0, 0, 0, 0.05));
+}
+
+.universal-card--variant-glass {
+  /* Glass morphism */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* ===== ESTADOS INTERACTIVOS ===== */
+.universal-card--clickable {
+  cursor: pointer;
+  outline: none;
+}
+
+.universal-card--clickable:hover:not(.universal-card--disabled):not(.universal-card--loading) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md, 0 10px 25px rgba(0, 0, 0, 0.15));
+}
+
+.universal-card--clickable:focus:not(.universal-card--disabled):not(.universal-card--loading) {
+  outline: 2px solid var(--color-primary-focus, #3b82f6);
+  outline-offset: 2px;
+}
+
+.universal-card--clickable:active:not(.universal-card--disabled):not(.universal-card--loading) {
+  transform: translateY(0);
+}
+
+/* ===== ESTADO DISABLED ===== */
+.universal-card--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none !important;
+}
+
+/* ===== ESTADO LOADING ===== */
+.universal-card--loading {
+  cursor: progress;
+  pointer-events: none;
+}
+
+.universal-card__loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.universal-card__loading-shimmer {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ===== CONTENIDO ===== */
+.universal-card__content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: var(--card-padding);
+  gap: var(--space-sm, 0.5rem);
+}
+
+/* ===== SUB-COMPONENTES ===== */
+.universal-card__header {
+  margin-bottom: var(--space-sm, 0.5rem);
+}
+
+.universal-card__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs, 0.25rem);
+}
+
+.universal-card__footer {
+  margin-top: auto;
+  padding-top: var(--space-sm, 0.5rem);
+  border-top: 1px solid var(--border-light, rgba(0, 0, 0, 0.1));
+}
+
+.universal-card__media {
+  position: relative;
+  overflow: hidden;
+  border-radius: inherit;
+  margin: calc(var(--card-padding) * -1);
+  margin-bottom: var(--space-sm, 0.5rem);
+}
+
+.universal-card__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.universal-card__title {
+  margin: 0;
+  font-size: 1.125em;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text-primary);
+}
+
+.universal-card__description {
+  margin: 0;
+  font-size: 0.875em;
+  line-height: 1.5;
+  color: var(--text-secondary, rgba(0, 0, 0, 0.7));
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .universal-card {
+    min-height: auto;
+  }
+  
+  .universal-card--size-xl,
+  .universal-card--size-lg {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+/* ===== REDUCED MOTION ===== */
+@media (prefers-reduced-motion: reduce) {
+  .universal-card,
+  .universal-card__loading-shimmer {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .universal-card--clickable:hover {
+    transform: none !important;
+  }
+}
+
+/* ===== HIGH CONTRAST ===== */
+@media (prefers-contrast: high) {
+  .universal-card {
+    border: 2px solid var(--text-primary);
+  }
+  
+  .universal-card--variant-glass {
+    backdrop-filter: none;
+    background: var(--bg-default);
+  }
+}
+
+/* ===== DARK MODE SUPPORT ===== */
+@media (prefers-color-scheme: dark) {
+  .universal-card__loading-overlay {
+    background: rgba(0, 0, 0, 0.8);
+  }
+  
+  .universal-card__loading-shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+  }
+}

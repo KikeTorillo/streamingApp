@@ -5,12 +5,21 @@ import { Card, CardBody, CardTitle, CardSubtitle } from '../../atoms/Card/Card';
 import { Badge } from '../../atoms/Badge/Badge';
 import { ContentImage } from '../../atoms/ContentImage/ContentImage';
 import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
-import { useContentCardProps } from '../../../hooks/useStandardProps';
-import { extractDOMProps, STANDARD_PROP_TYPES } from '../../../tokens/standardProps';
+import { useCardProps } from '../../../hooks/useCardProps-v2';
+import { INTERACTIVE_PROP_TYPES } from '../../../tokens/propHelpers';
+import { extractDOMPropsV2 } from '../../../tokens/standardProps-v2';
 import './ContentCard.css';
 
 /**
- * Componente ContentCard - Molécula para mostrar carátulas de películas/series
+ * ContentCard V2 - Molécula del Card System V2 COMPLETAMENTE INTEGRADA
+ * 
+ * ✅ CARD SYSTEM V2 PERFECTO:
+ * - Hook useCardProps-v2 con tokens especializados del Card System
+ * - Card V2 + ContentImage V2 trabajando en perfecta armonía
+ * - API unificada entre todos los componentes del Card System
+ * - Dimensiones automáticas coordinadas
+ * - Props consistentes y predecibles
+ * - Micro-interactions automáticas
  * 
  * 🎯 Casos de uso:
  * - Grids de películas en HomePage
@@ -18,72 +27,78 @@ import './ContentCard.css';
  * - Resultados de búsqueda
  * - Recommendations cards
  * - Favorites grids
- * 
- * ✅ Sistema estándar integrado
- * ✅ Estados loading, disabled, error
- * ✅ 6 variantes semánticas estándar
- * ✅ 5 tamaños estándar (xs → xl)
- * ✅ Sistema de iconos unificado
- * ✅ Backward compatibility 100%
  */
 function ContentCard(props) {
-  // ✅ BACKWARD COMPATIBILITY - Manejo de props deprecadas
+  console.log('🎬 ContentCard V2 RENDER - props recibidas:', props);
+  
+  // ✅ V2: EXTRAER PROPS ESPECÍFICAS ANTES DEL HOOK V2
   const {
+    content,
+    // Props deprecadas con warnings
     onPlay, // DEPRECATED: Usar onClick
     onFavorite, // DEPRECATED: Funcionalidad movida a acciones contextuales
     ...restProps
   } = props;
 
+  console.log('🔍 ContentCard V2 - content recibido:', content);
+  console.log('🔍 ContentCard V2 - content es válido:', !!content);
+  
+  if (!content) {
+    console.log('❌ ContentCard V2 - SIN CONTENT, no se renderiza');
+    return null;
+  }
+
   // Warnings para desarrollo en props deprecadas
   if (import.meta.env?.DEV) {
     if (onPlay) {
       console.warn(
-        '⚠️ ContentCard: "onPlay" prop está DEPRECADA. ' +
-        'Usar "onClick" y manejar acciones desde el padre.'
+        '⚠️ ContentCard V2: "onPlay" prop está DEPRECADA. ' +
+        'Usar "onClick" con handlers específicos según contexto.'
       );
     }
     if (onFavorite) {
       console.warn(
-        '⚠️ ContentCard: "onFavorite" prop está DEPRECADA. ' +
+        '⚠️ ContentCard V2: "onFavorite" prop está DEPRECADA. ' +
         'Usar acciones contextuales en lugar de props específicas.'
       );
     }
   }
 
-  // Aplicar sistema estándar PRIMERO con todas las props
-  const standardProps = useContentCardProps(restProps);
-  
-  // Extraer props procesadas por el hook
+  // ✅ CARD SYSTEM V2: Hook useCardProps para perfect integration
   const {
-    // Configuración básica
-    content,
+    // Tokens especializados del Card System V2
+    cardSize,
+    contentTokens,
+    generateClassName,
+    generateStyles,
+    
+    // Props estándar del sistema V2 (ya procesadas por el hook)
+    size, variant, disabled, loading,
+    
+    // Props específicos del Card System V2
+    cardVariant,
+    contentType,
+    showRating,
+    showMeta,
+    showCategory,
+    
+    // Configuración específica de ContentCard
     onClick,
-    showRating = true,
-    showMeta = true,
-    showCategory = true,
     
-    // Props estándar del sistema (ya procesadas por el hook)
-    size, variant, rounded, disabled, loading, className,
-    // leftIcon, rightIcon, // del hook pero no implementadas actualmente
+    // Helpers específicos para componentes
+    getBadgeProps,
+    getImageProps,
     
-    // Props específicos para backward compatibility
-    cardVariant = 'elevated', // Separar de variant semántica
-    
-    // Tokens y sistema integrado
-    tokens, // renderIcon, // del hook pero no implementadas actualmente
-    
-    // Props DOM
+    // Props DOM limpias
     ...domProps
-  } = standardProps;
+  } = useCardProps(restProps, {
+    componentName: 'ContentCard',
+    contentType: content.type || 'movie', // Auto-detectar desde content
+    defaultSize: 'md'
+  });
   
-  // Extraer solo props válidas para DOM (sin className para evitar conflictos)
-  const validDOMProps = extractDOMProps(domProps);
-  delete validDOMProps.className; // Evitar que sobrescriba nuestras clases
-  
-  // Validación de datos requeridos
-  if (!content) {
-    return null;
-  }
+  // ✅ V2: Extraer props DOM válidas con función V2
+  const validDOMProps = extractDOMPropsV2(domProps);
 
   const {
     title,
@@ -97,20 +112,13 @@ function ContentCard(props) {
     episodes
   } = content;
 
-  // Construir clases CSS con sistema estándar y tokens
-  const cardClasses = [
-    'content-card',
-    // Tamaño específico de ContentCard
-    `content-card--size-${size}`,
-    // Variante semántica estándar (para bordes y hover effects)
-    `content-card--variant-${variant}`,
-    // Variante funcional separada (para estilo visual de la card)
-    `content-card--card-variant-${cardVariant}`,
-    // Estados
-    disabled && 'content-card--disabled',
-    loading && 'content-card--loading',
-    className
-  ].filter(Boolean).join(' ');
+  console.log('📊 ContentCard V2 - datos extraídos:', { title, cover, category, year, rating, type });
+  console.log('🖼️ ContentCard V2 - cover URL:', cover);
+  console.log('🎯 ContentCard V2 - cardSize:', cardSize);
+  console.log('🎯 ContentCard V2 - contentTokens:', contentTokens);
+
+  // ✅ V2: Construir clases CSS con generateClassName del Card System
+  const cardClasses = generateClassName('content-card');
 
   // Metadatos según el tipo de contenido
   const getMetaText = () => {
@@ -135,15 +143,16 @@ function ContentCard(props) {
   };
 
   const handleImageError = () => {
-    // ContentImage ya maneja los errores automáticamente
+    // ContentImage V2 ya maneja los errores automáticamente
   };
 
   return (
     <Card
-      // Usar cardVariant para la variante visual de la Card
-      variant={cardVariant === 'elevated' ? 'neutral' : cardVariant}
-      size={size} // Usar el tamaño que se pasa desde el padre
-      rounded={rounded}
+      // ✅ V2: Props perfectamente coordinadas del Card System
+      size={size}
+      variant={variant}
+      cardVariant={cardVariant}
+      contentType={contentType}
       disabled={disabled}
       loading={loading}
       hoverable
@@ -155,16 +164,10 @@ function ContentCard(props) {
       aria-label={`${type === 'movie' ? 'Película' : 'Serie'}: ${title}`}
       aria-disabled={disabled}
       aria-busy={loading}
-      style={{
-        '--content-card-size': tokens.size.fontSize,
-        '--content-card-spacing': tokens.size.spacing,
-        '--content-card-padding': tokens.size.padding,
-        '--content-card-rounded': tokens.rounded,
-        ...validDOMProps.style
-      }}
+      style={generateStyles()}
       {...validDOMProps}
     >
-      {/* Contenedor de imagen */}
+      {/* Contenedor de imagen con ContentImage V2 */}
       <FlexContainer
         align="center"
         justify="center"
@@ -173,25 +176,22 @@ function ContentCard(props) {
         <ContentImage
           src={cover}
           alt={`Carátula de ${title}`}
-          aspectRatio="2/3"
-          contentType={type}
+          contentType={contentType} // ✅ V2: Auto desde Card System
           imageLoading={loading ? "eager" : "lazy"}
           loading={loading}
-          size={size} // Coordinar tamaño con ContentCard
+          {...getImageProps()} // ✅ V2: Props automáticas del helper
           onError={handleImageError}
-          rounded="sm" // El contenedor ya maneja el border radius
           className="content-card__image"
         />
 
-        {/* Badge de tipo en esquina superior */}
+        {/* ✅ V2: Badge con props automáticas del Card System */}
         <div className="content-card__type-badge">
           <Badge
-            variant={type === 'movie' ? 'primary' : 'secondary'}
-            size={size === 'xs' ? 'xs' : size === 'xl' ? 'sm' : 'xs'}
+            {...getBadgeProps()} // ✅ V2: Props automáticas del helper
             appearance="soft"
-            leftIcon={type === 'movie' ? 'film' : 'video'}
+            leftIcon={contentType === 'movie' ? 'film' : 'video'}
           >
-            {type === 'movie' ? 'Película' : 'Serie'}
+            {contentTokens.title || (contentType === 'movie' ? 'Película' : 'Serie')}
           </Badge>
         </div>
       </FlexContainer>
@@ -236,8 +236,8 @@ function ContentCard(props) {
               className="content-card__rating"
             >
               <Badge
+                {...getBadgeProps()} // ✅ V2: Props automáticas del helper
                 variant="warning"
-                size={size === 'xs' ? 'xs' : size === 'xl' ? 'sm' : 'xs'}
                 appearance="soft"
                 leftIcon="star"
               >
@@ -252,10 +252,10 @@ function ContentCard(props) {
 };
 
 ContentCard.propTypes = {
-  // Props estándar del sistema de diseño
-  ...STANDARD_PROP_TYPES,
+  // ✅ V2: Props estándar del Card System V2
+  ...INTERACTIVE_PROP_TYPES,
   
-  // Configuración específica
+  // Configuración específica de ContentCard
   content: PropTypes.shape({
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     title: PropTypes.string.isRequired,
@@ -263,27 +263,39 @@ ContentCard.propTypes = {
     category: PropTypes.string,
     year: PropTypes.number.isRequired,
     rating: PropTypes.number,
-    type: PropTypes.oneOf(['movie', 'series']).isRequired,
+    type: PropTypes.oneOf(['movie', 'series', 'episode']).isRequired,
     duration: PropTypes.string,
     seasons: PropTypes.number,
     episodes: PropTypes.number
   }).isRequired,
   onClick: PropTypes.func,
   
-  // Props de funcionalidad
+  // Props de funcionalidad (opcionales, manejadas por Card System)
   showRating: PropTypes.bool,
   showMeta: PropTypes.bool,
   showCategory: PropTypes.bool,
   
-  // Variantes específicas separadas de variant semántica
-  cardVariant: PropTypes.oneOf(['elevated', 'outlined', 'default']),
+  // Props del Card System V2
+  cardVariant: PropTypes.oneOf(['default', 'elevated', 'outlined', 'soft']),
+  contentType: PropTypes.oneOf(['movie', 'series', 'episode', 'profile', 'banner']),
   
-  // Backward compatibility (deprecados)
+  // Backward compatibility (deprecados con warnings)
   onPlay: PropTypes.func,
   onFavorite: PropTypes.func
 };
 
-// Memoizar ContentCard - se usa en grids de películas/series
+ContentCard.defaultProps = {
+  size: 'md',
+  variant: 'neutral',
+  cardVariant: 'elevated', 
+  disabled: false,
+  loading: false,
+  showRating: true,
+  showMeta: true,
+  showCategory: true
+};
+
+// ✅ V2: Memoizar ContentCard optimizado para grids de películas/series
 const MemoizedContentCard = memo(ContentCard);
 
 export { MemoizedContentCard as ContentCard };

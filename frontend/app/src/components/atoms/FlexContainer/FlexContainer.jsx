@@ -3,8 +3,8 @@
 /* eslint-disable react-refresh/only-export-components */
 
 import PropTypes from 'prop-types';
-import { useStandardProps } from '../../../hooks/useStandardProps';
-import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens';
+import { useContainerProps } from '../../../hooks/useStandardProps-v2.jsx';
+import { CONTAINER_PROP_TYPES, extractDOMPropsV2 } from '../../../tokens/standardProps-v2';
 import './FlexContainer.css';
 
 /**
@@ -22,19 +22,21 @@ import './FlexContainer.css';
  * - style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-md)' }}
  */
 function FlexContainer(props) {
-  // ✅ USAR HOOK ESTÁNDAR DEL SISTEMA
+  // ✅ USAR HOOK V2 ESPECIALIZADO PARA CONTENEDORES (layout)
   const {
     size,
     variant,
     disabled,
     loading,
     className,
+    generateStyles,
     ...standardProps
-  } = useStandardProps(props, {
-    componentType: 'flexcontainer',
+  } = useContainerProps(props, {
+    componentName: 'FlexContainer',
     defaultSize: 'md',
-    defaultVariant: 'neutral', // Neutral por defecto para layout
-    defaultRounded: 'none'
+    defaultVariant: 'neutral',
+    defaultRounded: 'none',
+    enableResponsive: true
   });
 
   // ✅ EXTRAER PROPS ESPECÍFICAS DE FLEXBOX
@@ -76,11 +78,13 @@ function FlexContainer(props) {
     className
   ].filter(Boolean).join(' ');
 
-  // ✅ ESTILOS DINÁMICOS MÍNIMOS (CSS maneja la mayoría)
+  // ✅ ESTILOS MANUALES - EVITAR generateStyles AUTOMÁTICO
   const flexStyles = {
-    opacity: disabled ? '0.5' : '1',
-    pointerEvents: disabled ? 'none' : 'auto',
-    ...style // ✅ COMBINAR con estilos que vienen de props
+    // Solo estilos específicos que necesitamos
+    ...(spacing && { gap: `var(--space-${spacing})` }),
+    ...(padding && { padding: `var(--space-${padding})` }),
+    ...style // ✅ Combinar con estilos que vienen de props
+    // NO usar generateStyles para evitar estilos automáticos no deseados
   };
 
   // ✅ FILTRAR PROPS PARA DOM - Excluir TODAS las props específicas de FlexContainer
@@ -104,7 +108,7 @@ function FlexContainer(props) {
     ...cleanStandardProps
   } = { ...standardProps, ...props };
   
-  const domProps = extractDOMProps(cleanStandardProps);
+  const domProps = extractDOMPropsV2(cleanStandardProps);
 
   // ✅ CREAR ELEMENTO DINÁMICO
   const Element = as;
@@ -126,8 +130,8 @@ function FlexContainer(props) {
 }
 
 FlexContainer.propTypes = {
-  // ✅ PROPS ESTÁNDAR DEL SISTEMA DE DISEÑO
-  ...STANDARD_PROP_TYPES,
+  // ✅ PROPS ESTÁNDAR DEL SISTEMA DE DISEÑO V2 (contenedores)
+  ...CONTAINER_PROP_TYPES,
   
   /**
    * Contenido del componente

@@ -1,8 +1,8 @@
 // src/components/atoms/FileInput/FileInput.jsx
 import { useState } from "react";
 import PropTypes from "prop-types";
-import { useFileInputProps } from '../../../hooks/useStandardProps.jsx';
-import { STANDARD_PROP_TYPES } from '../../../tokens/standardProps.js';
+import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
+import { INTERACTIVE_PROP_TYPES } from '../../../tokens/propHelpers.js';
 import "./FileInput.css";
 
 /**
@@ -58,7 +58,7 @@ function FileInput(props) {
     ...restProps
   } = props;
 
-  // Hook especializado con props estándar
+  // Hook especializado V2 con props estándar
   const {
     size,
     variant,
@@ -71,8 +71,16 @@ function FileInput(props) {
     renderIcon,
     hasLeftIcon,
     hasRightIcon,
-    ariaLabel
-  } = useFileInputProps(restProps);
+    ariaLabel,
+    generateClassName,
+    generateStyles,
+    tokens
+  } = useInteractiveProps(restProps, {
+    componentName: 'FileInput',
+    defaultSize: 'md',
+    defaultVariant: 'neutral',
+    defaultRounded: 'md'
+  });
 
   // Mapeo de variantes legacy para backward compatibility
   const mappedVariant = (() => {
@@ -106,21 +114,15 @@ function FileInput(props) {
   const errorId = errorText ? `${inputId}-error` : undefined;
   const describedBy = [helperId, errorId, ariaDescribedBy].filter(Boolean).join(' ') || undefined;
 
-  // Generar clases CSS con sistema estándar
+  // Generar clases CSS con sistema V2
   const wrapperClasses = [
     'file-input-wrapper',
     loading && 'file-input-wrapper--loading',
     className
   ].filter(Boolean).join(' ');
 
-  const inputClasses = [
-    'file-input',
-    `file-input--${size}`,
-    `file-input--${currentVariant}`,
-    `file-input--rounded-${rounded}`,
+  const inputClasses = generateClassName('file-input') + ' ' + [
     focused && 'file-input--focused',
-    disabled && 'file-input--disabled',
-    loading && 'file-input--loading',
     hasFiles && 'file-input--has-files'
   ].filter(Boolean).join(' ');
 
@@ -282,8 +284,8 @@ FileInput.propTypes = {
   onBlur: PropTypes.func,
   ariaDescribedBy: PropTypes.string,
   
-  // Props estándar del sistema de diseño
-  ...STANDARD_PROP_TYPES,
+  // Props estándar del sistema de diseño V2
+  ...INTERACTIVE_PROP_TYPES,
   
   // Backward compatibility - variantes legacy (con deprecation warnings)
   variant: PropTypes.oneOf([

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { memo } from 'react';
-import { useSkeletonProps } from '../../../hooks/useStandardProps.jsx';
-import { extractDOMProps, STANDARD_PROP_TYPES } from '../../../tokens/standardProps.js';
+import { useStandardPropsV2 } from '../../../hooks/useStandardProps-v2.jsx';
+import { STANDARD_PROP_TYPES } from '../../../tokens/propHelpers.js';
 import './Skeleton.css';
 
 /**
@@ -65,7 +65,7 @@ function Skeleton({
   style = {},
   ...restProps
 }) {
-  // Hook especializado para props estándar y tokens
+  // Hook especializado V2 para props estándar y tokens
   const {
     size: finalSize,
     variant: finalVariant,
@@ -73,15 +73,26 @@ function Skeleton({
     loading: finalLoading,
     disabled: finalDisabled,
     className: standardClassName,
-    tokens
-  } = useSkeletonProps({
+    tokens,
+    generateClassName,
+    generateStyles
+  } = useStandardPropsV2({
     size,
     variant,
     rounded,
     loading,
     disabled,
     className
+  }, {
+    componentName: 'Skeleton',
+    componentType: 'container',
+    defaultSize: 'md',
+    defaultVariant: 'neutral',
+    defaultRounded: 'md'
   });
+  
+  // Evitar warning de unused vars
+  void generateStyles;
   
   // Backward compatibility: detectar y mapear uso legacy
   let resolvedSkeletonVariant = skeletonVariant;
@@ -107,19 +118,16 @@ function Skeleton({
   // Control de animación: usar loading para controlar animación (nuevo) o animate (legacy)
   const shouldAnimate = finalLoading !== false ? finalLoading : animate;
   
-  // Extraer props DOM válidas
-  const domProps = extractDOMProps(restProps);
-  // Generar clases CSS con sistema estándar
-  const skeletonClasses = [
-    'skeleton',
+  // Props DOM-safe (V2 maneja esto automáticamente)
+  const domProps = {
+    'data-testid': restProps.testId,
+    'data-component': 'Skeleton',
+    ...restProps
+  };
+  // Generar clases CSS con sistema V2
+  const skeletonClasses = generateClassName('skeleton') + ' ' + [
     `skeleton--skeleton-variant-${resolvedSkeletonVariant}`, // Variante funcional
-    `skeleton--size-${finalSize}`, // Tamaño estándar
-    `skeleton--variant-${finalVariant}`, // Variante semántica
-    `skeleton--rounded-${resolvedRounded}`, // Radio estándar
-    shouldAnimate && 'skeleton--animate',
-    finalLoading && 'skeleton--loading',
-    finalDisabled && 'skeleton--disabled',
-    standardClassName
+    shouldAnimate && 'skeleton--animate'
   ].filter(Boolean).join(' ');
 
   // Estilos dinámicos con tokens del sistema
