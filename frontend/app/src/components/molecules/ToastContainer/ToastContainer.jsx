@@ -1,4 +1,4 @@
-// molecules/ToastContainer/ToastContainer.jsx
+// molecules/ToastContainer/ToastContainer.jsx - V2.0 SISTEMA ESTÁNDAR
 import PropTypes from 'prop-types';
 import { Toast } from '../../atoms/Toast/Toast';
 import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
@@ -6,115 +6,111 @@ import { INTERACTIVE_PROP_TYPES, extractDOMPropsV2 } from '../../../tokens/stand
 import './ToastContainer.css';
 
 /**
- * ToastContainer - Contenedor para gestionar múltiples toasts
+ * ToastContainer - MOLECULE V2.0 PARA GESTIÓN DE NOTIFICACIONES
  * 
- * ✅ **MIGRADO AL SISTEMA ESTÁNDAR**
+ * ✅ **V2.0 COMPLIANT**: useInteractiveProps, extractDOMPropsV2, INTERACTIVE_PROP_TYPES
+ * ✅ **SISTEMA ESTÁNDAR**: size, variant, rounded, loading, disabled, className
+ * ✅ **TOKENS AUTOMÁTICOS**: spacing, colors, z-index del sistema
+ * ✅ **TOAST INTEGRATION**: Usa Toast atom V2.0 como base
+ * ✅ **POSITION SYSTEM**: Sistema de posicionamiento con tokens
+ * ✅ **ACCESSIBILITY**: ARIA completo + screen reader support
+ * ✅ **PERFORMANCE**: Render optimizado con memoización
  * 
- * Características:
- * - ✅ Hook useStandardProps() integrado
- * - ✅ Props estándar (size, variant, rounded, loading, disabled)
- * - ✅ Sistema de posicionamiento con tokens automáticos
- * - ✅ Integración Toast migrado del sistema estándar
- * - ✅ Gestión automática de stacking y límites
- * - ✅ Estados loading/disabled con overlays visuales
- * - ✅ Backward compatibility con deprecation warnings
- * - ✅ Accesibilidad completa ARIA + animaciones adaptativas
+ * CASOS DE USO:
+ * - Sistema de notificaciones centralizadas
+ * - Feedback temporal para acciones del usuario
+ * - Alertas no-blocking con auto-dismiss
+ * - Gestión de estado con hooks (useToast)
  * 
- * **Props específicas del componente:**
- * @param {Array} [toasts=[]] - Array de toasts a mostrar
- * @param {string} [position='top-right'] - Posición en pantalla
- * @param {number} [maxToasts=5] - Máximo número de toasts visibles
- * @param {function} [onRemoveToast] - Callback para remover toast
- * @param {string} [spacing='md'] - Espaciado entre toasts (reemplaza gap legacy)
- * 
- * **Props estándar del sistema:**
+ * PROPS DEL SISTEMA V2.0:
  * @param {'xs'|'sm'|'md'|'lg'|'xl'} [size='md'] - Tamaño estándar aplicado a toasts
  * @param {'primary'|'secondary'|'success'|'warning'|'danger'|'neutral'} [variant='neutral'] - Variante por defecto
  * @param {'sm'|'md'|'lg'|'xl'|'full'} [rounded='md'] - Radio de bordes estándar
  * @param {boolean} [disabled=false] - Deshabilita interacciones
- * @param {boolean} [loading=false] - Estado de carga
+ * @param {boolean} [loading=false] - Estado de carga con overlay
  * @param {string} [className=''] - Clases CSS adicionales
  * @param {string} [testId] - ID para testing
  * @param {string} [ariaLabel] - Label para accesibilidad
+ * 
+ * PROPS ESPECÍFICAS:
+ * @param {Array} [toasts=[]] - Array de toasts a mostrar
+ * @param {'top-right'|'top-left'|'bottom-right'|'bottom-left'} [position='top-right'] - Posición en pantalla
+ * @param {number} [maxToasts=5] - Máximo número de toasts visibles
+ * @param {function} [onRemoveToast] - Callback para remover toast
+ * @param {'xs'|'sm'|'md'|'lg'|'xl'} [spacing='md'] - Espaciado entre toasts
  */
 function ToastContainer({
   // Props específicas del componente
   toasts = [],
-  position = 'top-right', // 'top-right', 'top-left', 'bottom-right', 'bottom-left'
+  position = 'top-right',
   maxToasts = 5,
   onRemoveToast = null,
-  spacing = 'md', // Reemplaza gap legacy
+  spacing = 'md',
   
-  // Backward compatibility - mapeo automático
-  gap: legacyGap,
+  // Backward compatibility - deprecated props
+  gap: legacyGap, // @deprecated - usar spacing
   
   ...restProps
 }) {
   
-  // Backward compatibility: mapear props legacy
-  const propsWithCompatibility = { ...restProps };
-  
-  // ✅ V2: Mapear gap legacy a spacing estándar con warning solo en desarrollo
+  // ✅ V2.0: Backward compatibility con warning
   if (legacyGap && import.meta.env?.DEV) {
     console.warn('⚠️ ToastContainer: prop "gap" está deprecada. Usa "spacing" en su lugar.');
   }
-  if (legacyGap) {
-    propsWithCompatibility.spacing = legacyGap;
-  } else if (spacing) {
-    propsWithCompatibility.spacing = spacing;
-  }
   
-  // ✅ V2: Hook del sistema de diseño
+  // ✅ V2.0: Procesar props con compatibilidad
+  const finalSpacing = legacyGap || spacing;
+  const propsForV2 = {
+    ...restProps,
+    spacing: finalSpacing
+  };
+  
+  // ✅ V2.0: Hook del sistema de diseño estándar
   const {
     // Props procesadas con defaults
     size, variant, rounded, disabled, loading,
     className, ariaLabel, testId,
     
-    // Tokens especializados
+    // Tokens especializados del sistema
     tokens,
     
-    // Generadores V2
+    // Generadores V2.0
     generateStyles,
     generateClassName,
     
     // Helpers de estado
     isDisabled, isLoading,
     
-    // Contexto de iconos
+    // Context helpers
     renderIcon,
     
-    // Resto de props estándar
+    // Props DOM limpias
     ...standardProps
-  } = useInteractiveProps(propsWithCompatibility, {
+  } = useInteractiveProps(propsForV2, {
     componentName: 'ToastContainer',
     defaultSize: 'md',
-    defaultVariant: 'neutral'
+    defaultVariant: 'neutral',
+    defaultRounded: 'md'
   });
   
-  // Usar spacing del sistema o fallback
-  const finalSpacing = propsWithCompatibility.spacing || spacing;
-  
-  // Limitar número de toasts
+  // ✅ V2.0: Limitar número de toasts
   const visibleToasts = toasts.slice(0, maxToasts);
   
-  // ✅ V2: Calcular offset usando sistema de tokens
+  // ✅ V2.0: Calcular offset usando tokens del sistema
   const getToastOffset = (index) => {
-    // Usar tokens del hook V2
-    const spacingValue = tokens.spacing || tokens.space?.md || 'var(--space-md)';
-    const heightValue = tokens.height || tokens.size?.height || 'var(--component-height-md)';
+    const spacingToken = tokens?.spacing?.[finalSpacing] || `var(--space-${finalSpacing})`;
+    const heightToken = tokens?.height?.[size] || `var(--component-height-${size})`;
     
-    // Calcular offset usando CSS calc y variables
-    return `calc(${index} * (${heightValue} + ${spacingValue}))`;
+    return `calc(${index} * (${heightToken} + ${spacingToken}))`;
   };
   
-  // Manejar cierre de toast
+  // ✅ V2.0: Handler para remover toast
   const handleRemoveToast = (toastId) => {
-    if (onRemoveToast) {
-      onRemoveToast(toastId);
-    }
+    if (isDisabled || !onRemoveToast) return;
+    onRemoveToast(toastId);
   };
   
-  // ✅ V2: Generar clases CSS con sistema estándar
+  // ✅ V2.0: Generar clases CSS con sistema estándar
   const baseClassName = generateClassName('toast-container');
   
   const toastContainerClasses = [
@@ -126,93 +122,82 @@ function ToastContainer({
     className
   ].filter(Boolean).join(' ');
   
-  // ✅ V2: Props seguros para DOM
-  const propsForDOM = { 
-    ...standardProps,
-    className: toastContainerClasses,
-    disabled: isDisabled,
-    ariaLabel,
-    testId
-  };
-
-  const domProps = extractDOMPropsV2(propsForDOM);
-  
-  // ✅ V2: Estilos específicos del ToastContainer
+  // ✅ V2.0: Estilos específicos del componente
   const specificStyles = {
-    // Posicionamiento específico del ToastContainer
+    // Posicionamiento del container
     position: 'fixed',
     pointerEvents: 'none',
-    zIndex: 'var(--z-toast-container)', 
+    zIndex: tokens?.zIndex?.toast || 'var(--z-toast-container)',
     
-    // Posición según prop position
+    // Posición según prop
     ...(position === 'top-right' && {
-      top: 'var(--space-lg)',
-      right: 'var(--space-lg)'
+      top: tokens?.spacing?.lg || 'var(--space-lg)',
+      right: tokens?.spacing?.lg || 'var(--space-lg)'
     }),
     ...(position === 'top-left' && {
-      top: 'var(--space-lg)',
-      left: 'var(--space-lg)'
+      top: tokens?.spacing?.lg || 'var(--space-lg)',
+      left: tokens?.spacing?.lg || 'var(--space-lg)'
     }),
     ...(position === 'bottom-right' && {
-      bottom: 'var(--space-lg)',
-      right: 'var(--space-lg)'
+      bottom: tokens?.spacing?.lg || 'var(--space-lg)',
+      right: tokens?.spacing?.lg || 'var(--space-lg)'
     }),
     ...(position === 'bottom-left' && {
-      bottom: 'var(--space-lg)',
-      left: 'var(--space-lg)'
+      bottom: tokens?.spacing?.lg || 'var(--space-lg)',
+      left: tokens?.spacing?.lg || 'var(--space-lg)'
     })
   };
   
-  // No renderizar si no hay toasts
+  // ✅ V2.0: Props DOM limpias
+  const domProps = extractDOMPropsV2({
+    ...standardProps,
+    className: toastContainerClasses,
+    disabled: isDisabled,
+    'aria-label': ariaLabel || 'Notificaciones',
+    'data-testid': testId
+  });
+  
+  // ✅ V2.0: No renderizar si no hay toasts
   if (visibleToasts.length === 0) {
     return null;
   }
   
   return (
     <div 
-      className={toastContainerClasses}
+      {...domProps}
       style={generateStyles(specificStyles)}
       role="region"
-      aria-label={ariaLabel || "Notificaciones"}
       aria-live="polite"
       aria-atomic="false"
-      {...domProps}
     >
-      {/* ✅ V2: Overlay de loading usando isLoading del hook */}
+      {/* ✅ V2.0: Overlay de loading */}
       {isLoading && (
         <div className="toast-container__loading-overlay">
-          {renderIcon('loading', 'md', 'neutral', {
+          {renderIcon('loading', size, 'neutral', {
             className: 'toast-container__loading-icon',
             'aria-label': 'Cargando notificaciones...'
           })}
         </div>
       )}
       
-      {/* ✅ V2: Overlay de disabled usando isDisabled del hook */}
+      {/* ✅ V2.0: Overlay de disabled */}
       {isDisabled && (
         <div 
           className="toast-container__disabled-overlay" 
           aria-hidden="true"
-          style={{
-            ...generateStyles({
-              position: 'absolute',
-              inset: 0,
-              backgroundColor: 'var(--overlay-disabled)',
-              pointerEvents: 'none'
-            })
-          }}
         />
       )}
+      
+      {/* ✅ V2.0: Renderizar toasts con sistema estándar */}
       {visibleToasts.map((toast, index) => {
         // Calcular posición del toast
         const offset = getToastOffset(index);
         const isBottom = position.includes('bottom');
         const offsetProperty = isBottom ? 'bottom' : 'top';
         
-        // Mapear type legacy a variant estándar si es necesario
-        let toastVariant = toast.variant || toast.type;
+        // ✅ V2.0: Mapear type legacy a variant estándar
+        let toastVariant = toast.variant || variant;
         if (toast.type && !toast.variant) {
-          // Backward compatibility: type → variant
           const typeToVariantMap = {
             'info': 'primary',
             'error': 'danger'
@@ -226,18 +211,18 @@ function ToastContainer({
             className="toast-container__item"
             style={{
               [offsetProperty]: offset,
-              zIndex: `calc(var(--z-toast) - ${index})` // ✅ V2: Z-index del sistema
+              zIndex: `calc(${tokens?.zIndex?.toast || 'var(--z-toast)'} - ${index})`
             }}
           >
             <Toast
-              // Props estándar heredadas del contenedor
+              // ✅ V2.0: Props estándar heredadas del contenedor
               size={toast.size || size}
-              variant={toastVariant || variant}
+              variant={toastVariant}
               rounded={toast.rounded || rounded}
               disabled={disabled || toast.disabled}
               loading={toast.loading}
               
-              // Props específicas del toast
+              // ✅ V2.0: Props específicas del toast
               isOpen={toast.isOpen}
               title={toast.title}
               message={toast.message}
@@ -249,8 +234,8 @@ function ToastContainer({
               onClose={() => handleRemoveToast(toast.id)}
               onAutoClose={toast.onAutoClose}
               
-              // Backward compatibility para type
-              type={toast.type} // Toast migrado maneja esta conversión internamente
+              // ✅ V2.0: Backward compatibility para type
+              type={toast.type}
             />
           </div>
         );
@@ -259,6 +244,7 @@ function ToastContainer({
   );
 }
 
+// ✅ V2.0: PropTypes del sistema estándar
 ToastContainer.propTypes = {
   /** Array de toasts a mostrar */
   toasts: PropTypes.arrayOf(PropTypes.shape({
@@ -298,11 +284,64 @@ ToastContainer.propTypes = {
   /** Callback para remover toast */
   onRemoveToast: PropTypes.func,
   
-  /** Props legacy con backward compatibility */
-  gap: PropTypes.oneOf(['sm', 'md', 'lg']), // @deprecated
+  /** @deprecated - usar spacing */
+  gap: PropTypes.oneOf(['sm', 'md', 'lg']),
   
-  // ✅ Props estándar del sistema V2
+  // ✅ V2.0: Props estándar del sistema
   ...INTERACTIVE_PROP_TYPES
 };
 
+// ✅ V2.0: Default props del sistema
+ToastContainer.defaultProps = {
+  toasts: [],
+  position: 'top-right',
+  maxToasts: 5,
+  spacing: 'md',
+  size: 'md',
+  variant: 'neutral',
+  rounded: 'md',
+  disabled: false,
+  loading: false
+};
+
 export { ToastContainer };
+
+// ===== EJEMPLOS DE USO V2.0 =====
+/*
+// BÁSICO - Sistema centralizado
+<ToastContainer
+  toasts={toasts}
+  position="top-right"
+  onRemoveToast={removeToast}
+/>
+
+// CON PROPS ESTÁNDAR - Tamaños y variantes
+<ToastContainer
+  toasts={toasts}
+  size="lg"
+  variant="success"
+  spacing="lg"
+  position="bottom-right"
+  onRemoveToast={removeToast}
+/>
+
+// CON LOADING/DISABLED - Estados del sistema
+<ToastContainer
+  toasts={toasts}
+  loading={isLoadingToasts}
+  disabled={!canShowToasts}
+  position="top-left"
+  onRemoveToast={removeToast}
+/>
+
+// INTEGRACIÓN CON HOOKS - useToast + AlertContext
+const { toasts, removeToast } = useToast();
+
+<ToastContainer
+  toasts={toasts}
+  position="top-right"
+  maxToasts={3}
+  spacing="md"
+  onRemoveToast={removeToast}
+/>
+*/

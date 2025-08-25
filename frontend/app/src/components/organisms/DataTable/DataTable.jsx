@@ -188,10 +188,10 @@ function DataTable(props) {
           <FlexContainer>
             <ActionsDropdown
               actions={actions}
+              triggerData={rowData}
               variant="secondary"
               size={size}
               disabled={loading || disabled}
-              data={rowData}
             />
           </FlexContainer>
         );

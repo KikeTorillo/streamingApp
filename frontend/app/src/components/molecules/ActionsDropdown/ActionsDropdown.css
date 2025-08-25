@@ -1,4 +1,4 @@
-/* ===== ACTIONS DROPDOWN COMPONENT - VERSIÓN CORREGIDA ===== */
+/* ===== ACTIONS DROPDOWN COMPONENT - V2.0 UNIVERSAL ===== */
 /* src/components/molecules/ActionsDropdown/ActionsDropdown.css */
 
 /* ===== CONTENEDOR PRINCIPAL ===== */
@@ -11,9 +11,14 @@
   z-index: 1;
 }
 
-/* IMPORTANTE: Cuando el dropdown está abierto, elevar todo el contenedor */
+/* ===== ESTADOS DEL DROPDOWN ===== */
 .actions-dropdown--open {
-  z-index: var(--z-dropdown);
+  z-index: var(--dropdown-z-index, var(--z-dropdown, 1000));
+}
+
+.actions-dropdown--disabled {
+  opacity: 0.6;
+  pointer-events: none;
 }
 
 /* ===== TRIGGER BUTTON ===== */
@@ -32,7 +37,7 @@
 
 /* Cuando el dropdown está abierto, el trigger tiene z-index más alto */
 .actions-dropdown--open .actions-dropdown__trigger {
-  z-index: calc(var(--z-dropdown) + 1);
+  z-index: calc(var(--dropdown-z-index, var(--z-dropdown, 1000)) + 1);
 }
 
 .actions-dropdown__trigger:hover:not(:disabled) {
@@ -173,6 +178,31 @@
   
   /* Estados de focus/hover */
   outline: none;
+}
+
+/* ===== TAMAÑOS DE ITEMS ===== */
+.actions-dropdown__item--xs {
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-xs);
+  gap: var(--space-xs);
+}
+
+.actions-dropdown__item--sm {
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-sm);
+  gap: var(--space-sm);
+}
+
+.actions-dropdown__item--md {
+  padding: var(--space-md) var(--space-lg);
+  font-size: var(--font-size-base);
+  gap: var(--space-sm);
+}
+
+.actions-dropdown__item--lg {
+  padding: var(--space-lg) var(--space-xl);
+  font-size: var(--font-size-lg);
+  gap: var(--space-md);
 }
 
 /* Estados del item */
@@ -346,11 +376,6 @@ table .actions-dropdown__menu,
 
 /* Móviles pequeños */
 @media (max-width: 480px) {
-  .actions-dropdown__menu {
-    /* CORRECCIÓN: Mantener posicionamiento como desktop, no centrar */
-    /* Eliminar centrado forzado para mantener consistencia */
-  }
-  
   /* Mantener transform-origin original según posición */
   .actions-dropdown__menu--bottom-right,
   .actions-dropdown__menu--bottom-left {
