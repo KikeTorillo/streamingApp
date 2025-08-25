@@ -1,8 +1,45 @@
 /* ===== DATATABLE - ESTILOS M�NIMOS CON SISTEMA DE DISE�O ===== */
 
+/* ===== CONTENEDOR CON OVERFLOW ===== */
+.data-table {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-default);
+}
+
+/* ===== WRAPPER PARA SCROLL HORIZONTAL ===== */
+.data-table__wrapper {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling en iOS */
+}
+
+/* ===== SCROLLBAR PERSONALIZADA ===== */
+.data-table__wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.data-table__wrapper::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+}
+
+.data-table__wrapper::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: var(--radius-sm);
+}
+
+.data-table__wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
+
 /* ===== TABLA BASE ===== */
 .data-table__table {
   width: 100%;
+  min-width: 700px; /* Ancho mínimo para evitar compresión excesiva */
   border-collapse: collapse;
   border-spacing: 0;
   font-family: var(--font-family-base);
@@ -19,6 +56,9 @@
   font-weight: var(--font-weight-semibold);
   color: var(--text-secondary);
   white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .data-table__th--sortable {
@@ -51,6 +91,23 @@
   border-bottom: 0.1rem solid var(--border-light);
   color: var(--text-primary);
   white-space: nowrap;
+  max-width: 200px; /* Prevenir celdas excesivamente anchas */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===== COLUMNAS ESPECÍFICAS ===== */
+.data-table__td:first-child {
+  min-width: 60px; /* ID column */
+}
+
+.data-table__td:nth-child(2) {
+  min-width: 80px; /* Image column */
+}
+
+.data-table__td:nth-child(3) {
+  min-width: 200px; /* Title column - más ancho para títulos */
+  max-width: 300px;
 }
 
 .data-table__row:hover .data-table__td {
@@ -115,4 +172,45 @@
 .data-table--compact .data-table__th,
 .data-table--compact .data-table__td {
   padding: var(--space-xs) var(--space-sm);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .data-table__table {
+    min-width: 600px; /* Reducir ancho mínimo en móviles */
+  }
+  
+  .data-table__th,
+  .data-table__td {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--font-size-xs);
+  }
+  
+  .data-table__td:nth-child(3) {
+    min-width: 150px; /* Reducir ancho mínimo del título en móviles */
+    max-width: 200px;
+  }
+  
+  /* Scrollbar más delgada en móviles */
+  .data-table__wrapper::-webkit-scrollbar {
+    height: 4px;
+  }
+}
+
+/* ===== INDICADOR DE SCROLL ===== */
+.data-table__wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 20px;
+  height: 100%;
+  background: linear-gradient(to left, var(--bg-primary), transparent);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.data-table__wrapper:hover::after {
+  opacity: 1;
 }

@@ -5,8 +5,8 @@ import { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Modal } from '../Modal/Modal';
 import { Button } from '../../atoms/Button/Button';
-import { Icon } from '../../atoms/Icon/Icon';
-import { validateStandardProps, STANDARD_PROP_TYPES } from '../../../tokens';
+import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
+import { INTERACTIVE_PROP_TYPES } from '../../../tokens/standardProps-v2.js';
 import './AlertModal.css'
 
 /**
@@ -36,19 +36,29 @@ import './AlertModal.css'
  * @param {string} [props.className=''] - Clases CSS adicionales
  */
 function AlertModal(props) {
-  // ✅ VALIDAR PROPS ESTÁNDAR - Muestra deprecation warnings automáticamente
-  const validatedProps = validateStandardProps(props, 'AlertModal');
+  // ✅ SISTEMA V2.0 - Hook estándar como Modal
+  const standardProps = useInteractiveProps(props, {
+    componentName: 'AlertModal',
+    defaultVariant: 'neutral',
+    defaultSize: 'sm' // AlertModal siempre usa tamaño pequeño
+  });
 
   const {
-    // Props estándar del sistema (size ignorado para auto-adaptación)
-    // eslint-disable-next-line no-unused-vars
-    size, // ← No usar size por defecto, sera ignorado
+    // Props estándar del sistema V2.0
+    size, // Obtenido del hook estándar
     variant,
     rounded = 'xl',
     disabled = false,
     loading = false,
     className = '',
+    renderIcon, // Hook estándar para iconos
+    tokens,
     
+    ...restProps
+  } = standardProps;
+  
+  // ✅ PROPS ESPECÍFICAS DE ALERTMODAL - Extraer directamente de props originales
+  const {
     // Control básico
     isOpen = false,
     onClose = null,
@@ -66,10 +76,8 @@ function AlertModal(props) {
     cancelText = 'Cancelar',
     
     // Configuración específica
-    closeOnBackdrop = true,
-    
-    ...restProps
-  } = validatedProps;
+    closeOnBackdrop = true
+  } = props;
   
   // ✅ CONFIGURACIÓN POR TIPO - Usando sistema de iconos Feather + variantes estándar
   const typeConfig = useMemo(() => ({
@@ -156,7 +164,7 @@ function AlertModal(props) {
         {/* Icono y mensaje */}
         <div className="alert-modal__message">
           <div className="alert-modal__icon" role="img" aria-label={type}>
-            <Icon name={config.icon} size="lg" variant={finalVariant} />
+            {renderIcon(config.icon, 'lg')}
           </div>
           <div 
             className="alert-modal__text"
@@ -208,10 +216,10 @@ function AlertModal(props) {
   );
 }
 
-// ✅ PROPTYPES CON STANDARD_PROP_TYPES
+// ✅ PROPTYPES CON INTERACTIVE_PROP_TYPES V2.0
 AlertModal.propTypes = {
-  // ✅ PROPS ESTÁNDAR DEL SISTEMA
-  ...STANDARD_PROP_TYPES,
+  // ✅ PROPS ESTÁNDAR DEL SISTEMA V2.0
+  ...INTERACTIVE_PROP_TYPES,
   
   // ✅ PROPS ESPECÍFICAS DE ALERT MODAL
   isOpen: PropTypes.bool,

@@ -30,9 +30,11 @@ const UNIVERSAL_ICON_MAP = {
   'search': { feather: 'FiSearch' },
   'menu': { feather: 'FiMenu' },
   'close': { feather: 'FiX' },
+  'x': { feather: 'FiX' }, // ✅ Alias para Modal close button
   'plus': { feather: 'FiPlus' },
   'edit': { feather: 'FiEdit3' },
   'delete': { feather: 'FiTrash2' },
+  'trash-2': { feather: 'FiTrash2' }, // ✅ Alias para AlertModal delete type
   'save': { feather: 'FiSave' },
   
   // User & Profile
@@ -49,10 +51,14 @@ const UNIVERSAL_ICON_MAP = {
   
   // Status & Notifications
   'success': { feather: 'FiCheckCircle' },
+  'check-circle': { feather: 'FiCheckCircle' }, // ✅ Alias para AlertModal success type
   'warning': { feather: 'FiAlertCircle' },
   'error': { feather: 'FiXCircle' },
+  'x-circle': { feather: 'FiXCircle' }, // ✅ Alias para AlertModal error type
   'info': { feather: 'FiInfo' },
+  'help-circle': { feather: 'FiHelpCircle' }, // ✅ Para AlertModal confirm type
   'loading': { feather: 'FiLoader' },
+  'lock': { feather: 'FiLock' }, // ✅ Para AlertModal permission type
   
   // Arrows & Navigation
   'arrow-left': { feather: 'FiArrowLeft' },

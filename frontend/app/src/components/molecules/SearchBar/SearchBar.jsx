@@ -2,7 +2,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { TextInput } from '../TextInput/TextInput';
-import { Icon } from '../../atoms/Icon/Icon';
 import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
 import { Typography } from '../../atoms/Typography/Typography';
 import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
@@ -79,7 +78,7 @@ function SearchBar(props) {
   //  V2: Hook del sistema de dise�o
   const {
     size, variant, rounded, disabled, loading: loadingProp, className,
-    generateStyles,
+    renderIcon,
     ...standardProps
   } = useInteractiveProps(restProps, {
     componentName: 'SearchBar',
@@ -440,7 +439,6 @@ function SearchBar(props) {
     <div 
       className={searchBarClasses} 
       ref={dropdownRef}
-      style={generateStyles()}
       {...domProps}
     >
       {/*  V2: TextInput del sistema */}

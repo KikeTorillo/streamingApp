@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { Icon } from '../Icon/Icon';
-import { useStandardPropsV2 } from '../../../hooks/useStandardProps-v2.jsx';
-import { STANDARD_PROP_TYPES } from '../../../tokens/propHelpers.js';
+import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
+import { INTERACTIVE_PROP_TYPES } from '../../../tokens/propHelpers.js';
 import './Label.css';
 
 /**
@@ -75,16 +75,15 @@ function Label({
     testId,
     tokens, // Para futuras extensiones de estilo
     generateClassName
-  } = useStandardPropsV2(propsWithCompatibility, {
+  } = useInteractiveProps(propsWithCompatibility, {
     componentName: 'Label',
-    componentType: 'typography',
     defaultSize: 'md',
     defaultVariant: 'neutral',
     defaultRounded: 'sm'
   });
   
   // Marcar variables como utilizadas para evitar warnings de linting
-  void rounded; void tokens; void generateStyles;
+  void rounded; void tokens;
 
   // Props DOM-safe (V2 maneja esto automáticamente)
   const domProps = {
@@ -198,7 +197,7 @@ Label.propTypes = {
   onClick: PropTypes.func,
   
   // Props estándar del sistema de diseño
-  ...STANDARD_PROP_TYPES
+  ...INTERACTIVE_PROP_TYPES
 };
 
 export { Label };

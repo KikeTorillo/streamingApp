@@ -60,7 +60,7 @@ function Breadcrumb(props) {
   // ✅ SISTEMA V2: Hook estándar para props del sistema de diseño
   const {
     size, variant, rounded, disabled, loading, className,
-    tokens, generateStyles, renderIcon,
+    tokens, renderIcon,
     ...standardProps
   } = useInteractiveProps(restProps, {
     componentName: 'Breadcrumb',

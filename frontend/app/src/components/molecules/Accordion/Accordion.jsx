@@ -68,7 +68,6 @@ function Accordion(props) {
     loading,
     className,
     tokens,
-    generateStyles,
     renderIcon,
     ...standardProps
   } = useInteractiveProps(remainingProps, {
@@ -419,7 +418,6 @@ function Accordion(props) {
       role="group"
       aria-label="Accordion"
       aria-busy={loading}
-      style={generateStyles()}
       {...domProps}
     >
       {items.map(renderAccordionItem)}

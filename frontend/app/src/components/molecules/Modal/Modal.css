@@ -4,64 +4,60 @@
 /* ===== RESET COMPLETO PARA <dialog> NATIVO ===== */
 dialog.modal,
 .modal {
-  /* Reset total de user agent styles del <dialog> */
-  all: unset !important;
+  /* ✅ RESPETAR COMPORTAMIENTO NATIVO DEL <dialog> */
+  /* ❌ NO usar all: unset - rompe el comportamiento nativo */
+  /* ❌ NO usar display: block - el <dialog> maneja su visibilidad */
   
-  /* Re-establecer display y position */
-  display: block !important;
-  position: fixed !important;
+  /* ✅ SOLO estilos de presentación */
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  outline: none;
   
-  /* Centrado perfecto usando translate */
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) scale(0.9) !important;
+  /* ✅ Sizing responsivo */
+  max-width: 95vw;
+  max-height: 95vh;
   
-  /* Reset espec�ficos cr�ticos */
-  padding: 0 !important;
-  margin: 0 !important;
-  border: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  outline: none !important;
+  /* ✅ Layout */
+  overflow: visible;
   
-  /* Sizing autom�tico */
-  width: auto !important;
-  height: auto !important;
-  min-width: 0 !important;
-  min-height: 0 !important;
-  max-width: 95vw !important;
-  max-height: 95vh !important;
+  /* ✅ Z-index del sistema */
+  z-index: var(--z-modal);
   
-  /* Layout */
-  overflow: visible !important;
-  
-  /* Z-index alto para estar sobre todo */
-  z-index: var(--z-modal) !important;
-  
-  /* Animation inicial */
-  opacity: 0;
+  /* ✅ Transitions suaves - solo cuando esté abierto */
   transition: opacity var(--transition-fast) ease, transform var(--transition-fast) ease;
 }
 
-/* Estado abierto del modal */
+/* ✅ Estado abierto del modal - Solo aplicar cuando [open] */
 dialog.modal[open],
 .modal[open] {
-  opacity: 1 !important;
-  transform: translate(-50%, -50%) scale(1) !important;
+  /* ✅ Centrado perfecto usando transform */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  
+  /* ✅ Visible y con animación */
+  opacity: 1;
+  
+  /* ✅ Display automático por <dialog> nativo */
+  /* No necesitamos display: block - el navegador lo maneja */
 }
 
 /* ===== BACKDROP DEL MODAL ===== */
 dialog.modal::backdrop,
 .modal::backdrop {
-  background: var(--backdrop-default) !important;
-  backdrop-filter: blur(4px) !important;
-  opacity: 0 !important;
-  transition: opacity var(--transition-fast) ease !important;
+  background: var(--backdrop-default);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity var(--transition-fast) ease;
 }
 
 dialog.modal[open]::backdrop,
 .modal[open]::backdrop {
-  opacity: 1 !important;
+  opacity: 1;
 }
 
 /* Backdrop para modales no cerrables */

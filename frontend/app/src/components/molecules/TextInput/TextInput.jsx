@@ -5,7 +5,8 @@ import { Input } from '../../atoms/Input/Input';
 import { Typography } from '../../atoms/Typography/Typography';
 import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
 import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
-import { INTERACTIVE_PROP_TYPES, extractDOMPropsV2 } from '../../../tokens/standardProps-v2.js';
+import { extractDOMPropsV2 } from '../../../tokens/standardProps-v2.js';
+import { INTERACTIVE_PROP_TYPES } from '../../../tokens/propHelpers.js';
 import './TextInput.css';
 
 /**
@@ -50,7 +51,6 @@ const TextInput = forwardRef((props, ref) => {
   //  V2: Hook del sistema de dise�o
   const {
     size, variant, rounded, disabled, loading, className,
-    generateStyles,
     ...standardProps
   } = useInteractiveProps(restProps, {
     componentName: 'TextInput',
@@ -80,7 +80,7 @@ const TextInput = forwardRef((props, ref) => {
   };
   
   // IDs �nicos para accesibilidad
-  const inputId = restProps.id || `textinput-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const inputId = restProps.id || `textinput-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
   const helperTextId = helperText ? `${inputId}-helper` : undefined;
   const errorTextId = errorText ? `${inputId}-error` : undefined;
   
@@ -113,7 +113,6 @@ const TextInput = forwardRef((props, ref) => {
   return (
     <div 
       className={wrapperClasses}
-      style={generateStyles()}
     >
       {/* Label */}
       {label && (

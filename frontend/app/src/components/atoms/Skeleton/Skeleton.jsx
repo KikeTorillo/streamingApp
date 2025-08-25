@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { memo } from 'react';
-import { useStandardPropsV2 } from '../../../hooks/useStandardProps-v2.jsx';
-import { STANDARD_PROP_TYPES } from '../../../tokens/propHelpers.js';
+import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
+import { INTERACTIVE_PROP_TYPES } from '../../../tokens/propHelpers.js';
 import './Skeleton.css';
 
 /**
@@ -74,7 +74,7 @@ function Skeleton({
     disabled: finalDisabled,
     className: standardClassName,
     tokens
-  } = useStandardPropsV2({
+  } = useInteractiveProps({
     size,
     variant,
     rounded,
@@ -83,7 +83,6 @@ function Skeleton({
     className
   }, {
     componentName: 'Skeleton',
-    componentType: 'container',
     defaultSize: 'md',
     defaultVariant: 'neutral',
     defaultRounded: 'md'
@@ -199,7 +198,7 @@ function Skeleton({
 
 Skeleton.propTypes = {
   // Props estándar del sistema
-  ...STANDARD_PROP_TYPES,
+  ...INTERACTIVE_PROP_TYPES,
   
   /** Tipo funcional de skeleton (separado de variant semántica) */
   skeletonVariant: PropTypes.oneOf(['text', 'avatar', 'image', 'card', 'custom']),
@@ -253,17 +252,17 @@ Skeleton.Card = memo(function SkeletonCard({ ...props }) {
 // PropTypes para componentes de conveniencia
 Skeleton.Text.propTypes = {
   lines: PropTypes.number,
-  ...STANDARD_PROP_TYPES
+  ...INTERACTIVE_PROP_TYPES
 };
 
-Skeleton.Avatar.propTypes = STANDARD_PROP_TYPES;
+Skeleton.Avatar.propTypes = INTERACTIVE_PROP_TYPES;
 
 Skeleton.Image.propTypes = {
   aspectRatio: PropTypes.string,
-  ...STANDARD_PROP_TYPES
+  ...INTERACTIVE_PROP_TYPES
 };
 
-Skeleton.Card.propTypes = STANDARD_PROP_TYPES;
+Skeleton.Card.propTypes = INTERACTIVE_PROP_TYPES;
 
 // Optimizar performance con memoización
 const MemoizedSkeleton = memo(Skeleton);

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import { useStandardPropsV2 } from '../../../hooks/useStandardProps-v2.jsx';
-import { STANDARD_PROP_TYPES } from '../../../tokens/propHelpers.js';
+import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
+import { INTERACTIVE_PROP_TYPES } from '../../../tokens/propHelpers.js';
 import './Divider.css';
 
 /**
@@ -61,9 +61,8 @@ function Divider(props) {
     tokens,
     renderIcon,
     ...standardProps
-  } = useStandardPropsV2(restProps, {
+  } = useInteractiveProps(restProps, {
     componentName: 'Divider',
-    componentType: 'container',
     defaultSize: 'md',
     defaultVariant: 'neutral',
     defaultRounded: 'none'
@@ -243,7 +242,7 @@ Divider.propTypes = {
   style: PropTypes.object,
   
   // Props estándar del sistema de diseño
-  ...STANDARD_PROP_TYPES
+  ...INTERACTIVE_PROP_TYPES
 };
 
 export { Divider };

@@ -58,7 +58,6 @@ function Tabs(props) {
     disabled,
     loading,
     className,
-    generateStyles,
     renderIcon,
     
     // Props específicas de Tabs

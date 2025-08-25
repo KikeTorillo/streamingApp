@@ -49,7 +49,6 @@ function EmptyState({
     disabled: isDisabled,
     loading: isLoading,
     tokens,
-    generateStyles,
     renderIcon,
     className: standardClassName,
     ...standardProps

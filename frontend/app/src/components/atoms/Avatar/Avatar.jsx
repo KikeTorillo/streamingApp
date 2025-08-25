@@ -1,7 +1,8 @@
 // src/components/atoms/Avatar/Avatar.jsx
 import PropTypes from 'prop-types';
 import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
-import { INTERACTIVE_PROP_TYPES, extractDOMPropsV2 } from '../../../tokens/standardProps-v2.js';
+import { INTERACTIVE_PROP_TYPES } from '../../../tokens/propHelpers.js';
+import { extractDOMPropsV2 } from '../../../tokens/standardProps-v2.js';
 import './Avatar.css';
 
 /**

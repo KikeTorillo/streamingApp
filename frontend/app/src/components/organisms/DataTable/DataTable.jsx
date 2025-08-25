@@ -311,8 +311,9 @@ function DataTable(props) {
         </FlexContainer>
       )}
 
-      {/* ===== TABLA ===== */}
-      <table className="data-table__table">
+      {/* ===== TABLA CON WRAPPER PARA SCROLL ===== */}
+      <div className="data-table__wrapper">
+        <table className="data-table__table">
         {/* ===== HEADER CON COMPONENTE BUTTON ===== */}
         <thead>
           {table.getHeaderGroups().map(headerGroup => (
@@ -438,7 +439,8 @@ function DataTable(props) {
             ))
           )}
         </tbody>
-      </table>
+        </table>
+      </div>
 
       {/* ===== PAGINACIÓN CON COMPONENTE BUTTON ===== */}
       {!loading && !error && data.length > 0 && (

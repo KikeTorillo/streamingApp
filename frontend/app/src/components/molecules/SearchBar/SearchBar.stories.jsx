@@ -162,7 +162,7 @@ Esta variante mantiene **100% retrocompatibilidad** con el uso actual en AppHead
 export const Compact = {
   name: '🔄 Compact (Espacios Reducidos)',
   args: {
-    variant: 'compact',
+    searchVariant: 'simple',
     placeholder: 'Buscar...',
     size: 'sm',
     fullWidth: false
@@ -191,7 +191,8 @@ Ideal para:
 export const Advanced = {
   name: '✨ Advanced (Todas las funciones)',
   args: {
-    variant: 'advanced',
+    searchVariant: 'advanced',
+    variant: 'primary',
     placeholder: 'Buscar películas, series, actores...',
     size: 'lg',
     enableHistory: true,
@@ -235,7 +236,8 @@ export const Advanced = {
 export const AdvancedWithLoading = {
   name: '✨ Advanced con Loading',
   args: {
-    variant: 'advanced',
+    searchVariant: 'advanced',
+    variant: 'primary',
     placeholder: 'Buscando contenido...',
     loading: true,
     loadingSuggestions: true,
@@ -260,7 +262,8 @@ export const AdvancedWithLoading = {
 export const AdvancedWithError = {
   name: '✨ Advanced con Error',
   args: {
-    variant: 'advanced', 
+    searchVariant: 'advanced',
+    variant: 'primary', 
     placeholder: 'Buscar contenido...',
     error: 'Error al conectar con el servidor. Verifica tu conexión.',
     showSuggestions: true
@@ -315,7 +318,8 @@ export const Sizes = {
 export const FullWidth = {
   name: '📱 Full Width (Responsive)',
   args: {
-    variant: 'advanced',
+    searchVariant: 'advanced',
+    variant: 'primary',
     placeholder: 'Búsqueda full width...',
     fullWidth: true,
     size: 'md',
@@ -346,7 +350,8 @@ export const FullWidth = {
 export const MainPageUseCase = {
   name: '🎯 Caso: MainPage',
   args: {
-    variant: 'advanced',
+    searchVariant: 'advanced',
+    variant: 'primary',
     placeholder: 'Buscar películas y series...',
     size: 'lg',
     fullWidth: true,
@@ -454,7 +459,8 @@ export const AppHeaderMigration = {
 export const AdminPanelUseCase = {
   name: '🎯 Caso: Admin Panel',
   args: {
-    variant: 'advanced',
+    searchVariant: 'advanced',
+    variant: 'primary',
     placeholder: 'Buscar usuarios, películas, series...',
     size: 'md',
     enableHistory: true,
@@ -495,7 +501,8 @@ export const AdminPanelUseCase = {
 export const Playground = {
   name: '🧪 Playground Interactivo',
   args: {
-    variant: 'advanced',
+    searchVariant: 'advanced',
+    variant: 'primary',
     placeholder: 'Prueba todas las funciones...',
     size: 'lg',
     enableHistory: true,

@@ -56,6 +56,12 @@ function Modal(props) {
     loading = false,
     className = '',
     
+    tokens,
+    ...restProps
+  } = standardProps;
+  
+  // ✅ PROPS ESPECÍFICAS DE MODAL - Extraer directamente de props originales
+  const {
     // Control básico
     isOpen = false,
     onClose = null,
@@ -76,11 +82,8 @@ function Modal(props) {
     
     // Callbacks
     onOpen = null,
-    onClosed = null,
-    
-    tokens,
-    ...restProps
-  } = standardProps;
+    onClosed = null
+  } = props;
   
   const dialogRef = useRef(null);
   
@@ -162,14 +165,13 @@ function Modal(props) {
     className
   ].filter(Boolean).join(' ');
   
-  // ✅ EXTRAER DOM PROPS V2 - Solo pasar props válidas de DOM
-  const domProps = extractDOMPropsV2({ ...standardProps, ...props });
+  // ✅ PATRÓN ESTÁNDAR MOLECULES V2.0 - Props DOM filtering
+  // 1. Usar extractDOMPropsV2 como base (filtra props del sistema de diseño)
+  // 2. Pasar solo restProps (ya excluye props específicas del Modal arriba)
+  const domProps = extractDOMPropsV2(restProps);
   
-  // ✅ RENDERIZADO CONDICIONAL: Solo renderizar el <dialog> cuando isOpen es true
-  // Esto evita problemas con el elemento <dialog> que puede interferir con otros controles
-  if (!isOpen) {
-    return null;
-  }
+  // ✅ RENDERIZADO SIEMPRE: El <dialog> debe estar siempre en el DOM para que el ref funcione
+  // La visibilidad se controla via showModal()/close() en el useEffect
   
   return (
     <dialog

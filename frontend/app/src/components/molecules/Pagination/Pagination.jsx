@@ -1,40 +1,39 @@
-// Pagination.jsx - Componente standalone para paginación
+// ===== PAGINATION MOLECULE - SISTEMA ESTÁNDAR V2.0 =====
+
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
+
+// Componentes del sistema de diseño
 import { Button } from '../../atoms/Button/Button';
 import { Select } from '../../atoms/Select/Select';
-import { Icon } from '../../atoms/Icon/Icon';
+import { Typography } from '../../atoms/Typography/Typography';
+import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
+
+// Sistema estándar de props y tokens
 import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
 import { INTERACTIVE_PROP_TYPES, extractDOMPropsV2 } from '../../../tokens/standardProps-v2.js';
+
 import './Pagination.css';
 
 /**
- * Componente Pagination Standalone - Molécula del Design System
+ * Pagination Molecule - Sistema de navegación por páginas
+ * 
+ * ✅ SISTEMA ESTÁNDAR V2.0: Props estándar (size, variant, rounded, loading, disabled)
+ * ✅ COMPOSICIÓN PURA: Solo atoms del sistema (Button, Select, Typography, FlexContainer)
+ * ✅ CSS MANUAL: Sin generateStyles() - Solo design tokens
+ * ✅ UNIVERSAL: Útil para cualquier contenido paginado
  * 
  * 🎯 Casos de uso:
- * - MainPage grid de películas/series
- * - SearchResults lista de resultados  
- * - CategoryPage movies por categoría
- * - UserFavorites lista de favoritos
+ * - MainPage: Grid de películas/series
+ * - SearchResults: Lista de resultados
+ * - CategoryPage: Movies por categoría  
+ * - UserFavorites: Lista de favoritos
  * - Cualquier contenido paginado NO tabular
  * 
- * ✅ INDEPENDIENTE de TanStack Table
- * ✅ API simple e intuitiva (1-based pages)
- * ✅ Mobile-first responsive
- * ✅ Sistema de diseño estándar integrado
- * 
- * ❌ NO usar para DataTable (ya tiene TanStack pagination)
- * 
- * @param {Object} props - Props del componente
- * @param {number} props.currentPage - Página actual (1-based)
- * @param {number} props.totalPages - Total de páginas
- * @param {Function} props.onPageChange - Callback de cambio de página
- * @param {number} props.totalItems - Total de elementos
- * @param {number} props.itemsPerPage - Elementos por página
- * @param {Function} props.onItemsPerPageChange - Callback cambio tamaño página
+ * ❌ NO usar para DataTable (ya tiene TanStack pagination integrada)
  */
 function Pagination(props) {
-  // Extraer props específicas del componente
+  // ===== EXTRAER PROPS ESPECÍFICAS =====
   const {
     // Navegación básica (requerida)
     currentPage = 1,
@@ -47,14 +46,10 @@ function Pagination(props) {
     onItemsPerPageChange = null,
     itemsPerPageOptions = [10, 25, 50, 100],
     
-    // Personalización (ahora usa paginationVariant para evitar conflicto)
-    paginationVariant = 'full', // full, simple, compact
+    // Personalización de layout
     showInfo = true,
     showSizeSelector = true,
     showFirstLast = true,
-    
-    // Responsive
-    breakpoint = 768,
     
     // Personalización de textos
     labels = {
@@ -73,17 +68,15 @@ function Pagination(props) {
     ...restProps
   } = props;
 
-  // ✅ SISTEMA V2: Hook estándar - Pagination es tipo navegación
+  // ===== SISTEMA ESTÁNDAR V2.0 =====
   const {
     size,
-    variant, // Esta es la variante semántica estándar
-    // eslint-disable-next-line no-unused-vars
+    variant,
     rounded,
     disabled,
     loading,
     className,
     tokens,
-    generateStyles,
     renderIcon,
     ...standardProps
   } = useInteractiveProps(restProps, {
@@ -93,249 +86,207 @@ function Pagination(props) {
     defaultRounded: 'md'
   });
 
-  // ✅ SISTEMA V2: Props seguros para DOM
-  const domProps = extractDOMPropsV2({
-    ...standardProps,
-    disabled,
-    className
-  });
-  
-  // Validaciones
-  const safeTotalPages = Math.max(1, totalPages);
-  const safeCurrentPage = Math.max(1, Math.min(currentPage, safeTotalPages));
-  
-  // Calcular información de elementos
+  // ===== FILTRAR PROPS PARA DOM =====
+  const domProps = extractDOMPropsV2(standardProps);
+
+  // ===== VALIDACIÓN DE DATOS =====
+  const validCurrentPage = Math.max(1, Math.min(currentPage, totalPages));
+  const canGoPrevious = validCurrentPage > 1;
+  const canGoNext = validCurrentPage < totalPages;
+
+  // ===== INFORMACIÓN DE ITEMS =====
   const startItem = totalItems && itemsPerPage 
-    ? (safeCurrentPage - 1) * itemsPerPage + 1
+    ? ((validCurrentPage - 1) * itemsPerPage) + 1 
     : null;
-    
-  const endItem = totalItems && itemsPerPage
-    ? Math.min(safeCurrentPage * itemsPerPage, totalItems)
+  const endItem = totalItems && itemsPerPage 
+    ? Math.min(validCurrentPage * itemsPerPage, totalItems) 
     : null;
-  
-  // Estados de navegación
-  const canGoPrevious = safeCurrentPage > 1;
-  const canGoNext = safeCurrentPage < safeTotalPages;
-  const isFirstPage = safeCurrentPage === 1;
-  const isLastPage = safeCurrentPage === safeTotalPages;
-  
-  // Handlers de navegación
+
+  // ===== HANDLERS =====
   const handlePageChange = (newPage) => {
     if (disabled || loading) return;
-    
-    const targetPage = Math.max(1, Math.min(newPage, safeTotalPages));
-    if (targetPage !== safeCurrentPage) {
-      onPageChange(targetPage);
+    if (newPage >= 1 && newPage <= totalPages && newPage !== validCurrentPage) {
+      onPageChange(newPage);
     }
   };
-  
-  const handleItemsPerPageChange = (newItemsPerPage) => {
+
+  const handleSizeChange = (newSize) => {
     if (disabled || loading || !onItemsPerPageChange) return;
-    
-    onItemsPerPageChange(Number(newItemsPerPage));
-    
-    // Recalcular página actual para mantener posición aproximada
-    if (totalItems && itemsPerPage) {
-      const currentFirstItem = (safeCurrentPage - 1) * itemsPerPage;
-      const newPage = Math.floor(currentFirstItem / newItemsPerPage) + 1;
-      handlePageChange(newPage);
-    } else {
-      handlePageChange(1); // Reset a primera página
-    }
+    onItemsPerPageChange(Number(newSize));
   };
-  
-  // ✅ SSR-SAFE: Detectar mobile con useState/useEffect
-  const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => {
-    // Solo ejecutar en el cliente
-    if (typeof window === 'undefined') return;
-
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < breakpoint);
-    };
-
-    // Verificar tamaño inicial
-    checkMobile();
-
-    // Agregar listener para cambios de tamaño
-    window.addEventListener('resize', checkMobile);
-    
-    // Cleanup
-    return () => window.removeEventListener('resize', checkMobile);
-  }, [breakpoint]);
-    
-  // ✅ V2: Variable removida - no era necesaria después de migración
-  
-  // Mapear variante legacy para backward compatibility
-  const effectivePaginationVariant = (() => {
-    // Si se pasó la prop legacy variant directamente en props
-    const legacyVariant = props.variant;
-    if (legacyVariant && typeof legacyVariant === 'string' && ['full', 'simple', 'compact'].includes(legacyVariant)) {
-      if (import.meta.env?.DEV) {
-        console.warn('⚠️ Pagination: prop "variant" está deprecada para variants de paginación. Usar "paginationVariant"');
-      }
-      return legacyVariant;
-    }
-    return paginationVariant;
-  })();
-
-  // Detectar mobile y ajustar variante
-  const finalPaginationVariant = isMobile && effectivePaginationVariant === 'full' ? 'compact' : effectivePaginationVariant;
-
-  // Construir clases CSS usando sistema estándar
+  // ===== CLASES CSS MANUALES =====
   const paginationClasses = [
     'pagination',
-    `pagination--pagination-variant-${finalPaginationVariant}`,
-    `pagination--size-${size}`,
-    `pagination--variant-${variant}`,
+    `pagination--${size}`,
+    `pagination--${variant}`,
+    `pagination--rounded-${rounded}`,
     disabled && 'pagination--disabled',
     loading && 'pagination--loading',
     className
   ].filter(Boolean).join(' ');
-  
-  // Si solo hay una página, no mostrar paginación (opcional)
-  if (safeTotalPages <= 1 && finalPaginationVariant !== 'full') {
-    return null;
+
+  // ===== RENDER CONDICIONAL PARA CASOS SIMPLES =====
+  if (totalPages <= 1) {
+    return showInfo && totalItems && itemsPerPage ? (
+      <FlexContainer
+        className={paginationClasses}
+        align="center"
+        justify="center"
+        spacing="md"
+        {...domProps}
+      >
+        <Typography variant="body" size="sm" color="muted">
+          {labels.showing} {totalItems} {labels.results}
+        </Typography>
+      </FlexContainer>
+    ) : null;
   }
-  
+
+  // ===== RENDER PRINCIPAL =====
   return (
-    <div 
+    <FlexContainer
       className={paginationClasses}
-      style={{
-        ...generateStyles(),
-        ...domProps.style
-      }}
+      direction="column"
+      spacing="md"
+      align="center"
       {...domProps}
     >
-      {/* Información de elementos (solo variant full y simple) */}
-      {finalPaginationVariant !== 'compact' && showInfo && totalItems && itemsPerPage && (
-        <div className="pagination__info">
-          <span className="pagination__info-text">
+      {/* ===== INFORMACIÓN DE ITEMS ===== */}
+      {showInfo && totalItems && itemsPerPage && (
+        <FlexContainer
+          align="center"
+          justify="center"
+          spacing="md"
+          wrap="wrap"
+        >
+          <Typography variant="body" size="sm" color="muted">
             {labels.showing} {startItem} {labels.to} {endItem} {labels.of} {totalItems} {labels.results}
-          </span>
+          </Typography>
           
-          {/* Selector de items por página */}
-          {showSizeSelector && onItemsPerPageChange && finalPaginationVariant === 'full' && (
-            <div className="pagination__size-selector">
+          {/* Selector de tamaño de página */}
+          {showSizeSelector && onItemsPerPageChange && (
+            <FlexContainer align="center" spacing="sm">
+              <Typography variant="body" size="sm" color="muted">
+                {labels.itemsPerPage}:
+              </Typography>
               <Select
                 value={itemsPerPage}
-                onChange={(e) => handleItemsPerPageChange(e.target.value)}
-                size={size === 'lg' ? 'md' : 'sm'}
+                onChange={(e) => handleSizeChange(e.target.value)}
+                size="sm"
+                variant={variant}
                 disabled={disabled || loading}
                 options={itemsPerPageOptions.map(option => ({
                   value: option,
-                  label: `${option} ${labels.itemsPerPage}`
+                  label: String(option)
                 }))}
-                className="pagination__size-select"
+                width="auto"
               />
-            </div>
+            </FlexContainer>
           )}
-        </div>
+        </FlexContainer>
       )}
-      
-      {/* Controles de navegación */}
-      <div className="pagination__controls">
-        {/* Botón Primera (solo full variant) */}
-        {finalPaginationVariant === 'full' && showFirstLast && (
+
+      {/* ===== CONTROLES DE NAVEGACIÓN ===== */}
+      <FlexContainer
+        align="center"
+        justify="center"
+        spacing="sm"
+        wrap="wrap"
+      >
+        {/* Botón Primera Página */}
+        {showFirstLast && (
           <Button
-            variant="outline"
+            variant="secondary"
             size={size}
             onClick={() => handlePageChange(1)}
-            disabled={disabled || loading || isFirstPage}
-            className="pagination__button pagination__button--first"
-            leftIcon={renderIcon('chevrons-left')}
-            title={labels.first}
+            disabled={!canGoPrevious || disabled || loading}
+            leftIcon="skip-back"
+            aria-label={labels.first}
           >
-            {finalPaginationVariant === 'compact' ? renderIcon('chevrons-left') : labels.first}
+            {labels.first}
           </Button>
         )}
-        
-        {/* Botón Anterior */}
+
+        {/* Botón Página Anterior */}
         <Button
-          variant="outline"
+          variant="secondary"
           size={size}
-          onClick={() => handlePageChange(safeCurrentPage - 1)}
-          disabled={disabled || loading || !canGoPrevious}
-          className="pagination__button pagination__button--previous"
-          leftIcon={finalPaginationVariant !== 'compact' ? renderIcon('chevron-left') : null}
-          title={labels.previous}
+          onClick={() => handlePageChange(validCurrentPage - 1)}
+          disabled={!canGoPrevious || disabled || loading}
+          leftIcon="chevron-left"
+          aria-label={labels.previous}
         >
-          {finalPaginationVariant === 'compact' ? renderIcon('chevron-left') : labels.previous}
+          {labels.previous}
         </Button>
-        
+
         {/* Información de página actual */}
-        <div className="pagination__current">
-          {finalPaginationVariant === 'compact' ? (
-            <span className="pagination__current-compact">
-              {safeCurrentPage}/{safeTotalPages}
-            </span>
-          ) : (
-            <span className="pagination__current-full">
-              {labels.page} <strong>{safeCurrentPage}</strong> {labels.of} <strong>{safeTotalPages}</strong>
-            </span>
-          )}
-          
-          {loading && renderIcon('loading')}
-        </div>
-        
-        {/* Botón Siguiente */}
+        <FlexContainer align="center" spacing="xs">
+          <Typography variant="body" size="sm" weight="medium">
+            {labels.page} {validCurrentPage} {labels.of} {totalPages}
+          </Typography>
+        </FlexContainer>
+
+        {/* Botón Página Siguiente */}
         <Button
-          variant="outline"
+          variant="secondary"
           size={size}
-          onClick={() => handlePageChange(safeCurrentPage + 1)}
-          disabled={disabled || loading || !canGoNext}
-          className="pagination__button pagination__button--next"
-          rightIcon={finalPaginationVariant !== 'compact' ? renderIcon('chevron-right') : null}
-          title={labels.next}
+          onClick={() => handlePageChange(validCurrentPage + 1)}
+          disabled={!canGoNext || disabled || loading}
+          rightIcon="chevron-right"
+          aria-label={labels.next}
         >
-          {finalPaginationVariant === 'compact' ? renderIcon('chevron-right') : labels.next}
+          {labels.next}
         </Button>
-        
-        {/* Botón Última (solo full variant) */}
-        {finalPaginationVariant === 'full' && showFirstLast && (
+
+        {/* Botón Última Página */}
+        {showFirstLast && (
           <Button
-            variant="outline"
+            variant="secondary"
             size={size}
-            onClick={() => handlePageChange(safeTotalPages)}
-            disabled={disabled || loading || isLastPage}
-            className="pagination__button pagination__button--last"
-            rightIcon={renderIcon('chevrons-right')}
-            title={labels.last}
+            onClick={() => handlePageChange(totalPages)}
+            disabled={!canGoNext || disabled || loading}
+            rightIcon="skip-forward"
+            aria-label={labels.last}
           >
-            {finalPaginationVariant === 'compact' ? renderIcon('chevrons-right') : labels.last}
+            {labels.last}
           </Button>
         )}
-      </div>
-    </div>
+      </FlexContainer>
+
+      {/* ===== OVERLAY DE LOADING ===== */}
+      {loading && (
+        <div className="pagination__loading-overlay">
+          <div className="pagination__loading-spinner">
+            {renderIcon('loader')}
+          </div>
+        </div>
+      )}
+    </FlexContainer>
   );
 }
 
+// ===== PROPTYPES =====
 Pagination.propTypes = {
-  // ✅ SISTEMA V2: Props estándar del sistema de diseño
+  // ===== PROPS ESTÁNDAR =====
   ...INTERACTIVE_PROP_TYPES,
-  
-  // Props específicas del componente
+
   // Navegación básica
   currentPage: PropTypes.number,
-  totalPages: PropTypes.number.isRequired,
-  onPageChange: PropTypes.func.isRequired,
-  
+  totalPages: PropTypes.number,
+  onPageChange: PropTypes.func,
+
   // Información detallada
   totalItems: PropTypes.number,
   itemsPerPage: PropTypes.number,
   onItemsPerPageChange: PropTypes.func,
   itemsPerPageOptions: PropTypes.arrayOf(PropTypes.number),
-  
-  // Personalización específica de paginación
-  paginationVariant: PropTypes.oneOf(['full', 'simple', 'compact']),
+
+  // Personalización de layout
   showInfo: PropTypes.bool,
   showSizeSelector: PropTypes.bool,
   showFirstLast: PropTypes.bool,
-  
-  // Responsive
-  breakpoint: PropTypes.number,
-  
+
   // Personalización de textos
   labels: PropTypes.shape({
     first: PropTypes.string,

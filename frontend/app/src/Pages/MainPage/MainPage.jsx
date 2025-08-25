@@ -126,29 +126,19 @@ function MainPage() {
      * Manejar logout
      * Ejecuta el servicio de logout que limpia sesión y redirige
      */
-    const handleLogout = async () => {
-        try {
-            // Mostrar mensaje de confirmación usando nuestro sistema
-            showConfirm(
-                '¿Estás seguro de que quieres cerrar sesión?',
-                async () => {
-                    await logoutService();
-                    // logoutService ya maneja la redirección automáticamente
-                },
-                {
-                    title: 'Confirmar logout',
-                    confirmText: 'Cerrar sesión',
-                    cancelText: 'Cancelar'
-                }
-            );
-        } catch {
-            // En caso de error, forzar limpieza y redirigir
-            sessionStorage.removeItem('sessionUser');
-            window.location.href = '/login';
-        }
-    };
-
-    /**
+  const handleLogout = () => {
+    showConfirm(
+      '¿Estás seguro de que quieres cerrar sesión?',
+      () => {
+        logoutService();
+      },
+      {
+        title: 'Confirmar logout',
+        confirmText: 'Cerrar sesión',
+        cancelText: 'Cancelar'
+      }
+    );
+  };    /**
      * Manejar búsqueda
      */
     const handleSearchChange = (e) => {
