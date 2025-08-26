@@ -5,7 +5,8 @@ import { useState, useEffect, useRef, memo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '../../atoms/Button/Button';
 import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
-import { extractDOMPropsV2, INTERACTIVE_PROP_TYPES } from '../../../tokens/standardProps';
+import { extractDOMPropsV2 } from '../../../tokens/standardProps-v2.js';
+import { INTERACTIVE_PROP_TYPES } from '../../../tokens/propHelpers.js';
 import './ActionsDropdown.css';
 
 /**

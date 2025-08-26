@@ -1,0 +1,604 @@
+/* src/components/atoms/TextArea/TextArea.css - SISTEMA V2.0 COMPLETO */
+
+/* ===== VARIABLES CSS DEL SISTEMA ===== */
+
+.textarea-wrapper {
+  /* Variables base heredadas del sistema Input */
+  --textarea-height-xs: 2.5rem;         /* 40px - Mínimo para 2 líneas */
+  --textarea-height-sm: 3.5rem;         /* 56px - Para 3 líneas */
+  --textarea-height-md: 4.5rem;         /* 72px - Para 4 líneas (DEFAULT) */
+  --textarea-height-lg: 6rem;           /* 96px - Para 6 líneas */
+  --textarea-height-xl: 8rem;           /* 128px - Para 8 líneas */
+  
+  /* Padding interno por tamaño */
+  --textarea-padding-xs: 0.5rem;        /* 8px */
+  --textarea-padding-sm: 0.625rem;      /* 10px */
+  --textarea-padding-md: 0.75rem;       /* 12px */
+  --textarea-padding-lg: 1rem;          /* 16px */
+  --textarea-padding-xl: 1.25rem;       /* 20px */
+  
+  /* Font sizes por tamaño */
+  --textarea-font-xs: 0.75rem;          /* 12px */
+  --textarea-font-sm: 0.875rem;         /* 14px */
+  --textarea-font-md: 1rem;             /* 16px - DEFAULT */
+  --textarea-font-lg: 1.125rem;         /* 18px */
+  --textarea-font-xl: 1.25rem;          /* 20px */
+  
+  /* Line heights apropiados */
+  --textarea-line-height: 1.5;          /* 150% - Óptimo para legibilidad */
+  
+  /* Bordes redondeados */
+  --textarea-radius-xs: 0.25rem;        /* 4px */
+  --textarea-radius-sm: 0.375rem;       /* 6px */
+  --textarea-radius-md: 0.5rem;         /* 8px */
+  --textarea-radius-lg: 0.75rem;        /* 12px */
+  --textarea-radius-xl: 1rem;           /* 16px */
+  --textarea-radius-2xl: 1.5rem;        /* 24px */
+  --textarea-radius-3xl: 2rem;          /* 32px */
+  --textarea-radius-full: 9999px;       /* Completamente redondeado */
+  
+  /* Transiciones */
+  --textarea-transition-fast: 0.15s ease-out;
+  --textarea-transition-normal: 0.3s ease-out;
+  
+  /* Espaciado para iconos */
+  --textarea-icon-size: 1.25rem;        /* 20px - Tamaño estándar iconos */
+  --textarea-icon-offset: 0.75rem;      /* 12px - Separación del borde */
+  --textarea-icon-padding: 2.5rem;      /* 40px - Padding cuando hay icono */
+  
+  /* Contador de caracteres */
+  --textarea-counter-font-size: 0.75rem;
+  --textarea-counter-height: 1.5rem;
+  --textarea-counter-margin: 0.5rem;
+}
+
+/* ===== ESTRUCTURA BASE ===== */
+
+.textarea-wrapper {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+}
+
+.textarea-wrapper--with-icons {
+  /* Cuando hay iconos, el wrapper maneja el posicionamiento */
+}
+
+.textarea-wrapper--with-counter {
+  /* Espacio adicional para el contador */
+  margin-bottom: var(--textarea-counter-margin);
+}
+
+.textarea {
+  /* Reset básico */
+  appearance: none;
+  border: 1px solid var(--color-neutral-300);
+  outline: none;
+  font-family: inherit;
+  
+  /* Layout básico */
+  width: 100%;
+  min-height: var(--textarea-height-md);
+  resize: vertical; /* DEFAULT */
+  
+  /* Tipografía */
+  font-size: var(--textarea-font-md);
+  line-height: var(--textarea-line-height);
+  color: var(--color-neutral-900);
+  
+  /* Espaciado */
+  padding: var(--textarea-padding-md);
+  
+  /* Visual */
+  background-color: var(--color-white);
+  border-radius: var(--textarea-radius-md);
+  
+  /* Transiciones suaves */
+  transition: 
+    border-color var(--textarea-transition-fast),
+    box-shadow var(--textarea-transition-fast),
+    background-color var(--textarea-transition-fast);
+  
+  /* Placeholder styling */
+  &::placeholder {
+    color: var(--color-neutral-500);
+    opacity: 1; /* Firefox fix */
+  }
+  
+  /* Scroll behavior */
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-neutral-300) transparent;
+}
+
+/* Webkit scrollbar styling */
+.textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+.textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.textarea::-webkit-scrollbar-thumb {
+  background-color: var(--color-neutral-300);
+  border-radius: 4px;
+}
+
+.textarea::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-neutral-400);
+}
+
+/* ===== TAMAÑOS ===== */
+
+.textarea--xs {
+  min-height: var(--textarea-height-xs);
+  font-size: var(--textarea-font-xs);
+  padding: var(--textarea-padding-xs);
+  border-radius: var(--textarea-radius-xs);
+}
+
+.textarea--sm {
+  min-height: var(--textarea-height-sm);
+  font-size: var(--textarea-font-sm);
+  padding: var(--textarea-padding-sm);
+  border-radius: var(--textarea-radius-sm);
+}
+
+.textarea--md {
+  min-height: var(--textarea-height-md);
+  font-size: var(--textarea-font-md);
+  padding: var(--textarea-padding-md);
+  border-radius: var(--textarea-radius-md);
+}
+
+.textarea--lg {
+  min-height: var(--textarea-height-lg);
+  font-size: var(--textarea-font-lg);
+  padding: var(--textarea-padding-lg);
+  border-radius: var(--textarea-radius-lg);
+}
+
+.textarea--xl {
+  min-height: var(--textarea-height-xl);
+  font-size: var(--textarea-font-xl);
+  padding: var(--textarea-padding-xl);
+  border-radius: var(--textarea-radius-xl);
+}
+
+/* ===== VARIANTES SEMÁNTICAS ===== */
+
+.textarea--primary {
+  border-color: var(--color-primary-300);
+  
+  &:focus {
+    border-color: var(--color-primary-500);
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-500-rgb), 0.1);
+  }
+}
+
+.textarea--secondary {
+  border-color: var(--color-secondary-300);
+  
+  &:focus {
+    border-color: var(--color-secondary-500);
+    box-shadow: 0 0 0 3px rgba(var(--color-secondary-500-rgb), 0.1);
+  }
+}
+
+.textarea--success {
+  border-color: var(--color-success-300);
+  background-color: rgba(var(--color-success-50-rgb), 0.5);
+  
+  &:focus {
+    border-color: var(--color-success-500);
+    box-shadow: 0 0 0 3px rgba(var(--color-success-500-rgb), 0.1);
+  }
+}
+
+.textarea--warning {
+  border-color: var(--color-warning-300);
+  background-color: rgba(var(--color-warning-50-rgb), 0.5);
+  
+  &:focus {
+    border-color: var(--color-warning-500);
+    box-shadow: 0 0 0 3px rgba(var(--color-warning-500-rgb), 0.1);
+  }
+}
+
+.textarea--danger {
+  border-color: var(--color-danger-300);
+  background-color: rgba(var(--color-danger-50-rgb), 0.5);
+  
+  &:focus {
+    border-color: var(--color-danger-500);
+    box-shadow: 0 0 0 3px rgba(var(--color-danger-500-rgb), 0.1);
+  }
+}
+
+.textarea--neutral {
+  border-color: var(--color-neutral-300);
+  
+  &:focus {
+    border-color: var(--color-neutral-500);
+    box-shadow: 0 0 0 3px rgba(var(--color-neutral-500-rgb), 0.1);
+  }
+}
+
+/* ===== BORDES REDONDEADOS PERSONALIZADOS ===== */
+
+.textarea--rounded-none { border-radius: 0; }
+.textarea--rounded-xs { border-radius: var(--textarea-radius-xs); }
+.textarea--rounded-sm { border-radius: var(--textarea-radius-sm); }
+.textarea--rounded-md { border-radius: var(--textarea-radius-md); }
+.textarea--rounded-lg { border-radius: var(--textarea-radius-lg); }
+.textarea--rounded-xl { border-radius: var(--textarea-radius-xl); }
+.textarea--rounded-2xl { border-radius: var(--textarea-radius-2xl); }
+.textarea--rounded-3xl { border-radius: var(--textarea-radius-3xl); }
+.textarea--rounded-full { border-radius: var(--textarea-radius-full); }
+
+/* ===== ANCHO ===== */
+
+.textarea--full-width {
+  width: 100%;
+}
+
+/* ===== CONTROL DE RESIZE ===== */
+
+.textarea--resize-both { resize: both; }
+.textarea--resize-horizontal { resize: horizontal; }
+.textarea--resize-vertical { resize: vertical; }
+.textarea--resize-none { resize: none; }
+
+/* ===== AUTO-RESIZE ===== */
+
+.textarea--auto-resize {
+  resize: none; /* Desactivar resize manual cuando es automático */
+  overflow-y: hidden; /* Ocultar scroll vertical */
+  transition: height var(--textarea-transition-normal);
+}
+
+/* ===== ICONOS ===== */
+
+.textarea-wrapper--with-icons {
+  position: relative;
+}
+
+.textarea__icon {
+  position: absolute;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: var(--textarea-icon-size);
+  height: var(--textarea-icon-size);
+  color: var(--color-neutral-500);
+  pointer-events: none;
+  z-index: 2;
+  
+  /* Posición vertical: alineado con la primera línea de texto */
+  top: var(--textarea-padding-md);
+}
+
+.textarea__icon--left {
+  left: var(--textarea-icon-offset);
+}
+
+.textarea__icon--right {
+  right: var(--textarea-icon-offset);
+}
+
+/* Padding cuando hay iconos */
+.textarea--with-icons.textarea--xs { 
+  padding-left: var(--textarea-icon-padding);
+}
+
+.textarea--with-icons.textarea--sm { 
+  padding-left: var(--textarea-icon-padding);
+}
+
+.textarea--with-icons.textarea--md { 
+  padding-left: var(--textarea-icon-padding);
+}
+
+.textarea--with-icons.textarea--lg { 
+  padding-left: calc(var(--textarea-icon-padding) + 0.5rem);
+}
+
+.textarea--with-icons.textarea--xl { 
+  padding-left: calc(var(--textarea-icon-padding) + 1rem);
+}
+
+/* Ajuste de iconos según tamaño */
+.textarea--xs ~ .textarea__icon { top: var(--textarea-padding-xs); }
+.textarea--sm ~ .textarea__icon { top: var(--textarea-padding-sm); }
+.textarea--md ~ .textarea__icon { top: var(--textarea-padding-md); }
+.textarea--lg ~ .textarea__icon { top: var(--textarea-padding-lg); }
+.textarea--xl ~ .textarea__icon { top: var(--textarea-padding-xl); }
+
+/* ===== ESTADOS ===== */
+
+/* Hover */
+.textarea:hover:not(:disabled):not(:focus) {
+  border-color: var(--color-neutral-400);
+}
+
+/* Focus */
+.textarea:focus {
+  /* Estados específicos por variante definidos arriba */
+}
+
+/* ReadOnly */
+.textarea--readonly {
+  background-color: var(--color-neutral-50);
+  cursor: default;
+}
+
+.textarea--readonly:focus {
+  box-shadow: none;
+}
+
+/* Disabled */
+.textarea--disabled {
+  background-color: var(--color-neutral-100);
+  border-color: var(--color-neutral-200);
+  color: var(--color-neutral-400);
+  cursor: not-allowed;
+  resize: none;
+}
+
+.textarea--disabled::placeholder {
+  color: var(--color-neutral-400);
+}
+
+/* Loading */
+.textarea--loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.textarea__loading-spinner {
+  position: absolute;
+  top: var(--textarea-padding-md);
+  right: var(--textarea-icon-offset);
+  width: var(--textarea-icon-size);
+  height: var(--textarea-icon-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+.textarea__spinner-svg {
+  width: 100%;
+  height: 100%;
+  animation: spin 1s linear infinite;
+}
+
+.textarea__spinner-circle {
+  fill: none;
+  stroke: var(--color-primary-500);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 31.416;
+  stroke-dashoffset: 15.708;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ===== CONTADOR DE CARACTERES ===== */
+
+.textarea__char-count {
+  position: absolute;
+  bottom: calc(-1 * var(--textarea-counter-height) - 2px);
+  right: 0;
+  display: flex;
+  align-items: center;
+  height: var(--textarea-counter-height);
+  font-size: var(--textarea-counter-font-size);
+  font-weight: 500;
+  color: var(--color-neutral-600);
+  user-select: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.textarea__char-current {
+  color: inherit;
+}
+
+.textarea__char-separator {
+  margin: 0 0.125rem;
+  color: var(--color-neutral-400);
+}
+
+.textarea__char-max {
+  color: var(--color-neutral-500);
+}
+
+/* Estados del contador */
+.textarea__char-count--warning {
+  color: var(--color-warning-600);
+}
+
+.textarea__char-count--warning .textarea__char-current {
+  color: var(--color-warning-700);
+  font-weight: 600;
+}
+
+.textarea__char-count--error {
+  color: var(--color-danger-600);
+}
+
+.textarea__char-count--error .textarea__char-current {
+  color: var(--color-danger-700);
+  font-weight: 600;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Mobile optimization */
+@media (max-width: 640px) {
+  .textarea {
+    /* Tamaños ligeramente más grandes en móvil para mejor usabilidad */
+    --textarea-font-xs: 0.875rem;       /* 14px (era 12px) */
+    --textarea-font-sm: 1rem;           /* 16px (era 14px) - Previene zoom iOS */
+    --textarea-font-md: 1rem;           /* 16px - Mantiene */
+    --textarea-font-lg: 1.125rem;       /* 18px - Mantiene */
+    --textarea-font-xl: 1.25rem;        /* 20px - Mantiene */
+    
+    /* Padding más generoso para touch targets */
+    --textarea-padding-xs: 0.75rem;     /* 12px (era 8px) */
+    --textarea-padding-sm: 1rem;        /* 16px (era 10px) */
+    --textarea-padding-md: 1rem;        /* 16px (era 12px) */
+    --textarea-padding-lg: 1.25rem;     /* 20px (era 16px) */
+    --textarea-padding-xl: 1.5rem;      /* 24px (era 20px) */
+  }
+  
+  /* Mínimo height aumentado para mejor UX móvil */
+  .textarea--xs { min-height: 3rem; }   /* 48px (era 40px) */
+  .textarea--sm { min-height: 4rem; }   /* 64px (era 56px) */
+  
+  /* Contador más visible en móvil */
+  .textarea__char-count {
+    font-size: 0.875rem;                /* 14px (era 12px) */
+    bottom: calc(-1.75rem - 2px);       /* Más espacio */
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .textarea {
+    /* Ajustes intermedios para tablet */
+    --textarea-padding-md: 0.875rem;    /* 14px - Entre móvil y desktop */
+    --textarea-padding-lg: 1.125rem;    /* 18px */
+  }
+}
+
+/* ===== ACCESSIBILITY ===== */
+
+/* Respeto por prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .textarea {
+    transition: none;
+  }
+  
+  .textarea__loading-spinner .textarea__spinner-svg {
+    animation: none;
+  }
+  
+  .textarea--auto-resize {
+    transition: none;
+  }
+}
+
+/* Alto contraste */
+@media (prefers-contrast: high) {
+  .textarea {
+    border-width: 2px;
+    border-color: var(--color-neutral-800);
+  }
+  
+  .textarea:focus {
+    border-color: var(--color-primary-700);
+    box-shadow: 0 0 0 3px var(--color-primary-200);
+  }
+  
+  .textarea--disabled {
+    border-style: dashed;
+    opacity: 0.7;
+  }
+  
+  .textarea__char-count {
+    font-weight: 600;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .textarea {
+    background-color: var(--color-neutral-800);
+    border-color: var(--color-neutral-600);
+    color: var(--color-neutral-100);
+  }
+  
+  .textarea::placeholder {
+    color: var(--color-neutral-400);
+  }
+  
+  .textarea:hover:not(:disabled):not(:focus) {
+    border-color: var(--color-neutral-500);
+  }
+  
+  .textarea--readonly {
+    background-color: var(--color-neutral-700);
+  }
+  
+  .textarea--disabled {
+    background-color: var(--color-neutral-900);
+    border-color: var(--color-neutral-700);
+    color: var(--color-neutral-500);
+  }
+  
+  .textarea__icon {
+    color: var(--color-neutral-400);
+  }
+  
+  .textarea__char-count {
+    color: var(--color-neutral-300);
+  }
+  
+  /* Scrollbar dark mode */
+  .textarea {
+    scrollbar-color: var(--color-neutral-600) transparent;
+  }
+  
+  .textarea::-webkit-scrollbar-thumb {
+    background-color: var(--color-neutral-600);
+  }
+  
+  .textarea::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-neutral-500);
+  }
+}
+
+/* ===== UTILITIES ===== */
+
+/* Compact variant */
+.textarea--compact {
+  --textarea-padding-md: 0.5rem;
+  --textarea-font-md: 0.875rem;
+  min-height: 3rem;
+}
+
+/* Full height variant */
+.textarea--full-height {
+  height: 100%;
+  min-height: 100%;
+}
+
+/* No resize variant */
+.textarea--no-resize {
+  resize: none;
+}
+
+/* Monospace for code */
+.textarea--monospace {
+  font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+/* Large text variant */
+.textarea--large-text {
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+/* Focus ring enhancement */
+.textarea:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}

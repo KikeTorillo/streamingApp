@@ -21,9 +21,10 @@ import { Label } from '../../atoms/Label/Label';
 import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
 import { Typography } from '../../atoms/Typography/Typography';
 
-// Sistema estándar de props y tokens
-import { useDataTableProps } from '../../../hooks/useStandardProps';
-import { extractDOMProps, STANDARD_PROP_TYPES } from '../../../tokens/standardProps';
+// ✅ V2: Sistema estándar de props y tokens
+import { useContainerProps } from '../../../hooks/useStandardProps-v2.jsx';
+import { extractDOMPropsV2 } from '../../../tokens/standardProps-v2.js';
+import { CONTAINER_PROP_TYPES } from '../../../tokens/propHelpers.js';
 
 import './DataTable.css';
 import { Container } from '../../atoms/Container/Container';
@@ -46,16 +47,22 @@ function useDebounce(value, delay) {
 }
 
 /**
- * DataTable - Organismo completo para mostrar datos tabulares
+ * DataTable - Organismo V2 completo para mostrar datos tabulares
  * 
- * ✅ SISTEMA ESTÁNDAR: Props estándar (size, variant, rounded, loading, disabled)
- * ✅ TOKENS AUTOMÁTICOS: Spacing, colores, tipografía del sistema
+ * ✅ SISTEMA V2: Props estándar V2 (size, variant, rounded, loading, disabled)
+ * ✅ HOOKS V2: useContainerProps + extractDOMPropsV2 
+ * ✅ TOKENS AUTOMÁTICOS: Spacing, colores, tipografía del sistema V2
  * ✅ COMPONENTES MIGRADOS: Button, TextInput, Select, EmptyState integrados
  * ✅ BACKWARD COMPATIBILITY: Mapping automático variant legacy
+ * ⚠️  EXCEPCIÓN HTML: Usa table/thead/tbody por necesidad semántica (React-Table)
  */
 function DataTable(props) {
-  // ===== SISTEMA ESTÁNDAR DE PROPS =====
-  const standardProps = useDataTableProps(props);
+  // ✅ V2: SISTEMA ESTÁNDAR DE PROPS
+  const standardProps = useContainerProps(props, {
+    componentName: 'DataTable',
+    defaultSize: 'full',
+    defaultVariant: 'neutral'
+  });
   const {
     size,
     variant,
@@ -105,8 +112,8 @@ function DataTable(props) {
     ...restProps
   } = componentProps;
 
-  // ===== FILTRAR PROPS PARA DOM =====
-  const domProps = extractDOMProps(restProps);
+  // ✅ V2: FILTRAR PROPS PARA DOM
+  const domProps = extractDOMPropsV2(restProps);
 
   // ===== BACKWARD COMPATIBILITY =====
   // Separar claramente variant (sistema) vs tableVariant (tabla)
@@ -524,8 +531,8 @@ function DataTable(props) {
 }
 
 DataTable.propTypes = {
-  // ===== PROPS ESTÁNDAR =====
-  ...STANDARD_PROP_TYPES,
+  // ✅ V2: PROPS ESTÁNDAR
+  ...CONTAINER_PROP_TYPES,
 
   // Props de datos
   data: PropTypes.array,

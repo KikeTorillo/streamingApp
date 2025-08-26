@@ -1,0 +1,429 @@
+/* components/atoms/Radio/Radio.css */
+/* ===== RADIO COMPONENT - SISTEMA DE DISEÑO V2.0 ===== */
+
+/* ✅ SISTEMA DE DISEÑO V2.0:
+ * - 6 variantes semánticas (primary, secondary, success, warning, danger, neutral)
+ * - 5 tamaños estándar (xs, sm, md, lg, xl)
+ * - Estados loading con spinner integrado
+ * - Design tokens automáticos
+ * - Sistema de iconos unificado
+ * - Touch targets optimizados para móvil
+ * - Accesibilidad WCAG AA completa
+ */
+
+.radio-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  font-family: var(--font-family-base);
+}
+
+.radio-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  position: relative;
+  cursor: pointer;
+}
+
+/* ===== INPUT NATIVO (OCULTO PERO FUNCIONAL) ===== */
+.radio {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  /* El input debe poder recibir eventos para que sea clickeable */
+}
+
+/* ===== RADIO VISUAL PERSONALIZADO + VARIANTES ESTÁNDAR ===== */
+.radio-custom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.2rem solid var(--border-default);
+  background-color: var(--bg-primary);
+  transition: all var(--transition-normal);
+  flex-shrink: 0;
+  position: relative;
+  cursor: pointer;
+  z-index: 1;
+  /* Radio buttons siempre círculos perfectos */
+  border-radius: 50%;
+}
+
+/* ===== TAMAÑOS ESTÁNDAR UNIVERSALES ===== */
+/* Los tamaños se aplican al contenedor, no al radio individual */
+.radio-container--xs .radio-custom {
+  width: 1.4rem;
+  height: 1.4rem;
+  border-width: 0.15rem;
+}
+
+.radio-container--sm .radio-custom {
+  width: 1.6rem;
+  height: 1.6rem;
+  border-width: 0.175rem;
+}
+
+.radio-container--md .radio-custom {
+  width: 2rem;
+  height: 2rem;
+  border-width: 0.2rem;
+}
+
+.radio-container--lg .radio-custom {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-width: 0.225rem;
+}
+
+.radio-container--xl .radio-custom {
+  width: 2.8rem;
+  height: 2.8rem;
+  border-width: 0.25rem;
+}
+
+/* ===== DOT INTERNO (INDICADOR CHECKED) ===== */
+.radio-dot {
+  width: 50%;
+  height: 50%;
+  border-radius: 50%;
+  background-color: var(--color-white);
+  transform: scale(0);
+  transition: transform var(--transition-normal);
+}
+
+/* ===== ESTADOS CHECKED ===== */
+.radio:checked + .radio-custom .radio-dot {
+  transform: scale(1);
+}
+
+/* ===== VARIANTES SEMÁNTICAS ESTÁNDAR ===== */
+
+/* Primary (Azul oceánico) */
+.radio-container--primary .radio:checked + .radio-custom {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.radio-container--primary .radio:not(:checked) + .radio-custom:hover {
+  border-color: var(--color-primary-light);
+}
+
+/* Secondary (Naranja/dorado) */
+.radio-container--secondary .radio:checked + .radio-custom {
+  background-color: var(--color-secondary);
+  border-color: var(--color-secondary);
+}
+
+.radio-container--secondary .radio:not(:checked) + .radio-custom:hover {
+  border-color: var(--color-secondary-light);
+}
+
+/* Success (Verde/azul) */
+.radio-container--success .radio:checked + .radio-custom {
+  background-color: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.radio-container--success .radio:not(:checked) + .radio-custom:hover {
+  border-color: var(--color-success-light);
+}
+
+/* Warning (Amarillo/dorado) */
+.radio-container--warning .radio:checked + .radio-custom {
+  background-color: var(--color-warning);
+  border-color: var(--color-warning);
+}
+
+.radio-container--warning .radio:not(:checked) + .radio-custom:hover {
+  border-color: var(--color-warning-light);
+}
+
+.radio-container--warning .radio-dot {
+  background-color: var(--color-warning-contrast, #000);
+}
+
+/* Danger (Rojo) */
+.radio-container--danger .radio:checked + .radio-custom {
+  background-color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+.radio-container--danger .radio:not(:checked) + .radio-custom:hover {
+  border-color: var(--color-danger-light);
+}
+
+/* Neutral (Gris - DEFAULT) */
+.radio-container--neutral .radio:checked + .radio-custom {
+  background-color: var(--color-neutral);
+  border-color: var(--color-neutral);
+}
+
+.radio-container--neutral .radio:not(:checked) + .radio-custom:hover {
+  border-color: var(--color-neutral-light);
+}
+
+/* ===== ESTADOS INTERACTIVOS ===== */
+
+/* Focus */
+.radio:focus + .radio-custom {
+  outline: 0.2rem solid var(--color-primary-light);
+  outline-offset: 0.2rem;
+}
+
+.radio:focus-visible + .radio-custom {
+  outline: 0.2rem solid var(--color-primary);
+  outline-offset: 0.2rem;
+}
+
+/* Hover */
+.radio:not(:disabled):not(:checked) + .radio-custom:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.1);
+}
+
+/* Active */
+.radio:not(:disabled) + .radio-custom:active {
+  transform: scale(0.95);
+}
+
+/* ===== ESTADOS DISABLED ===== */
+.radio-container--disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.radio-container--disabled .radio-wrapper {
+  cursor: not-allowed;
+}
+
+.radio-container--disabled .radio-custom {
+  cursor: not-allowed;
+  background-color: var(--bg-disabled);
+  border-color: var(--border-disabled);
+}
+
+.radio-container--disabled .radio:checked + .radio-custom {
+  background-color: var(--bg-disabled);
+  border-color: var(--border-disabled);
+}
+
+.radio-container--disabled .radio-dot {
+  background-color: var(--text-disabled);
+}
+
+/* ===== ESTADOS LOADING ===== */
+.radio-container--loading .radio-wrapper {
+  cursor: wait;
+}
+
+.radio-container--loading .radio-custom {
+  cursor: wait;
+}
+
+/* ===== SPINNER LOADING ===== */
+.radio-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60%;
+  height: 60%;
+}
+
+.radio-spinner-circle {
+  width: 100%;
+  height: 100%;
+  border: 0.15rem solid transparent;
+  border-top: 0.15rem solid currentColor;
+  border-radius: 50%;
+  animation: radio-spin 1s linear infinite;
+}
+
+@keyframes radio-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ===== LABEL Y TEXTO ===== */
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  cursor: pointer;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--text-primary);
+  user-select: none;
+}
+
+.radio-container--disabled .radio-label {
+  cursor: not-allowed;
+  color: var(--text-disabled);
+}
+
+.radio-label-text {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+}
+
+.radio-required {
+  color: var(--color-danger);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ===== ICONOS EN LABEL ===== */
+.radio-label-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.radio-label-icon--left {
+  order: -1;
+}
+
+.radio-label-icon--right {
+  order: 1;
+}
+
+/* ===== HELPER TEXT ===== */
+.radio-helper {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin-left: calc(var(--space-sm) + 2rem); /* Alinear con el texto del label */
+  line-height: var(--line-height-tight);
+}
+
+.radio-loading-text {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ===== ERROR MESSAGE ===== */
+.radio-error {
+  font-size: var(--font-size-sm);
+  color: var(--color-danger);
+  margin-left: calc(var(--space-sm) + 2rem); /* Alinear con el texto del label */
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-medium);
+  animation: radio-error-fade-in 0.2s ease-out;
+}
+
+@keyframes radio-error-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== ERROR STATE ===== */
+.radio-container .radio--error + .radio-custom {
+  border-color: var(--color-danger);
+}
+
+.radio-container .radio--error:checked + .radio-custom {
+  background-color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+.radio-container .radio--error:focus + .radio-custom {
+  outline-color: var(--color-danger-light);
+}
+
+/* ===== RESPONSIVE Y MOBILE ===== */
+
+/* Touch targets móvil (mínimo 44px según WCAG) */
+@media (hover: none) and (pointer: coarse) {
+  .radio-wrapper {
+    min-height: 4.4rem;
+    align-items: center;
+  }
+  
+  .radio-custom {
+    min-width: 4.4rem;
+    min-height: 4.4rem;
+    padding: var(--space-sm);
+  }
+  
+  .radio-container--xs .radio-custom {
+    min-width: 4.4rem;
+    min-height: 4.4rem;
+    width: 4.4rem;
+    height: 4.4rem;
+  }
+  
+  .radio-container--sm .radio-custom {
+    min-width: 4.4rem;
+    min-height: 4.4rem;
+    width: 4.4rem;
+    height: 4.4rem;
+  }
+  
+  /* md, lg, xl mantienen sus tamaños naturales en móvil */
+}
+
+/* ===== ACCESSIBILITY ===== */
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .radio-custom {
+    border-width: 0.3rem;
+  }
+  
+  .radio:checked + .radio-custom {
+    border-width: 0.3rem;
+  }
+  
+  .radio-dot {
+    background-color: CanvasText;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .radio-custom,
+  .radio-dot,
+  .radio-spinner-circle {
+    transition: none;
+    animation: none;
+  }
+  
+  .radio:not(:disabled):not(:checked) + .radio-custom:hover {
+    transform: none;
+  }
+  
+  .radio:not(:disabled) + .radio-custom:active {
+    transform: none;
+  }
+  
+  .radio-error {
+    animation: none;
+  }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  .radio-container {
+    break-inside: avoid;
+  }
+  
+  .radio-custom {
+    border: 0.1rem solid #000;
+    background: transparent;
+  }
+  
+  .radio:checked + .radio-custom {
+    background: #000;
+  }
+  
+  .radio-dot {
+    background: #fff;
+  }
+}

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
 import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
+import { extractDOMPropsV2 } from '../../../tokens/standardProps-v2.js';
 import { INTERACTIVE_PROP_TYPES } from '../../../tokens/propHelpers.js';
 import { Icon } from '../Icon/Icon';
 import './Link.css';
@@ -83,26 +84,46 @@ function Link(props) {
     return legacyMappings[variant] || variant;
   })();
 
-  // Props DOM-safe (V2 maneja esto automáticamente)
-  const domProps = {
-    'data-testid': standardProps.testId,
-    'data-component': 'Link',
-    ...standardProps
-  };
+  // ✅ V2 PROPS DOM-SAFE: Usar extractDOMPropsV2 para filtrar props del sistema
   // Determinar contenido del enlace
   const linkContent = children || text;
 
+  // ✅ LÓGICA MEJORADA: href vs to según contrato del plan
+  // href = Enlaces externos o absolutos
+  // to = Enlaces internos (React Router)
+  // Uno de los dos debe estar presente
+  
+  const isExternalUrl = (url) => {
+    if (!url) return false;
+    return url.startsWith('http://') || 
+           url.startsWith('https://') || 
+           url.startsWith('mailto:') || 
+           url.startsWith('tel:') ||
+           url.startsWith('//'); // Protocol-relative URLs
+  };
+
   // Auto-detectar si es enlace externo
-  const isExternal = external || 
-    (href && (href.startsWith('http://') || href.startsWith('https://') || href.startsWith('mailto:') || href.startsWith('tel:'))) ||
-    (to && (to.startsWith('http://') || to.startsWith('https://')));
+  const isExternal = external || isExternalUrl(href) || isExternalUrl(to);
 
-  // Determinar URL final
+  // Determinar URL final y tipo de enlace
   const finalUrl = href || to;
+  const shouldUseRouterLink = !isExternal && to && !href;
 
-  // Auto-configurar target y rel para enlaces externos
+  // ✅ SEGURIDAD MEJORADA: Auto-configurar target y rel
   const finalTarget = target || (isExternal ? '_blank' : undefined);
-  const finalRel = rel || (isExternal && finalTarget === '_blank' ? 'noopener noreferrer' : undefined);
+  
+  // Configurar rel de seguridad para enlaces externos con target=_blank
+  let finalRel = rel;
+  if (!finalRel && isExternal && finalTarget === '_blank') {
+    // noopener: previene acceso a window.opener
+    // noreferrer: previene envío del referrer header
+    finalRel = 'noopener noreferrer';
+  }
+  
+  // Si el usuario especifica target=_blank manualmente, asegurar rel seguro
+  if (!rel && finalTarget === '_blank' && !finalRel) {
+    finalRel = 'noopener noreferrer';
+  }
 
   // Generar clases CSS manualmente
   const linkClasses = [
@@ -114,25 +135,31 @@ function Link(props) {
     (hasLeftIcon || hasRightIcon) && 'link--with-icon',
     (variant === 'inherit') && 'link--inherit', // Clase especial para variant inherit
     loading && 'link--loading',
-    disabled && 'link--disabled',
-    className
+    disabled && 'link--disabled'
   ].filter(Boolean).join(' ');
 
-  // Props de accesibilidad mejoradas
-  const accessibilityProps = {
+  // ✅ COMBINAR CLASES: Sistema + Usuario
+  const finalClassName = [linkClasses, className]
+    .filter(Boolean).join(' ');
+
+  // ✅ PROPS MODIFICADAS: reemplazar className original con combinada
+  const propsWithFinalClassName = { 
+    ...props, 
+    className: finalClassName 
+  };
+
+  // ✅ V2 PROPS DOM-SAFE: Props comunes filtradas y seguras
+  const baseDOMProps = extractDOMPropsV2(propsWithFinalClassName);
+  
+  const commonProps = {
+    ...baseDOMProps,
+    target: finalTarget,
+    rel: finalRel,
     'aria-label': ariaLabel,
     'aria-disabled': disabled || loading ? 'true' : undefined,
     'aria-busy': loading ? 'true' : undefined,
-    'tabIndex': disabled || loading ? -1 : undefined
-  };
-
-  // Props comunes para ambos tipos de enlace
-  const commonProps = {
-    className: linkClasses,
-    target: finalTarget,
-    rel: finalRel,
-    ...accessibilityProps,
-    ...domProps
+    'tabIndex': disabled || loading ? -1 : undefined,
+    'data-component': 'Link'
   };
 
   // Función para renderizar el contenido con iconos V2
@@ -144,7 +171,9 @@ function Link(props) {
     </>
   );
 
-  // Si está deshabilitado, renderizar como span
+  // ✅ RENDERIZADO MEJORADO: Flujo claro según tipo de enlace
+  
+  // Si está deshabilitado, siempre renderizar como span
   if (disabled) {
     return (
       <span {...commonProps}>
@@ -153,17 +182,8 @@ function Link(props) {
     );
   }
 
-  // Si es enlace externo o href absoluto, usar anchor tag
-  if (isExternal || href) {
-    return (
-      <a href={finalUrl} {...commonProps}>
-        {renderContent()}
-      </a>
-    );
-  }
-
-  // Si es enlace interno, usar React Router Link
-  if (to) {
+  // Si debe usar React Router Link (enlace interno con to)
+  if (shouldUseRouterLink) {
     return (
       <RouterLink to={to} {...commonProps}>
         {renderContent()}
@@ -171,8 +191,19 @@ function Link(props) {
     );
   }
 
+  // Si tiene URL (externa o href), usar anchor tag
+  if (finalUrl) {
+    return (
+      <a href={finalUrl} {...commonProps}>
+        {renderContent()}
+      </a>
+    );
+  }
+
   // Fallback: renderizar como span si no hay URL
-  console.warn('Link component: No "to" or "href" prop provided');
+  if (import.meta.env?.DEV) {
+    console.warn('Link component: No "to" or "href" prop provided');
+  }
   return (
     <span {...commonProps}>
       {renderContent()}

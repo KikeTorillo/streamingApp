@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
+import { extractDOMPropsV2 } from '../../../tokens/standardProps-v2.js';
 import { INTERACTIVE_PROP_TYPES } from '../../../tokens/propHelpers.js';
 import './Divider.css';
 
@@ -71,15 +72,16 @@ function Divider(props) {
   // ariaLabel para accesibilidad
   const ariaLabel = restProps.ariaLabel || (text ? `Separador con texto: ${text}` : 'Separador');
   
-  // Determinar si hay iconos
-  const hasLeftIcon = Boolean(leftIcon);
-  const hasRightIcon = Boolean(rightIcon);
-  
-  // Mapeo de props legacy para backward compatibility
+  // ✅ MAPEO LEGACY MEJORADO: Props deprecadas con warnings consistentes V2
   const finalSize = (() => {
     // Mapeo thickness -> size con deprecation warnings
     if (thickness) {
-      console.warn(`Divider: prop 'thickness' está deprecated. Usar 'size' en su lugar. thickness='${thickness}' -> size='${thickness === 'thin' ? 'xs' : thickness === 'thick' ? 'lg' : 'md'}'`);
+      if (import.meta.env?.DEV) {
+        console.warn(
+          `Divider V2: prop 'thickness' deprecada. ` +
+          `Usar 'size'. thickness='${thickness}' -> size='${thickness === 'thin' ? 'xs' : thickness === 'thick' ? 'lg' : 'md'}'`
+        );
+      }
       if (thickness === 'thin') return 'xs';
       if (thickness === 'thick') return 'lg';
       return 'md';
@@ -87,7 +89,12 @@ function Divider(props) {
     
     // Mapeo spacing -> size con deprecation warnings  
     if (spacing) {
-      console.warn(`Divider: prop 'spacing' está deprecated. Usar 'size' en su lugar. spacing='${spacing}' -> size='${spacing}'`);
+      if (import.meta.env?.DEV) {
+        console.warn(
+          `Divider V2: prop 'spacing' deprecada. ` +
+          `Usar 'size'. spacing='${spacing}' -> size='${spacing}'`
+        );
+      }
       return spacing;
     }
     
@@ -97,7 +104,21 @@ function Divider(props) {
   // Mapeo de colores legacy para backward compatibility
   const finalVariant = (() => {
     if (color) {
-      console.warn(`Divider: prop 'color' está deprecated. Usar 'variant' en su lugar.`);
+      if (import.meta.env?.DEV) {
+        const colorMappings = {
+          'muted': 'neutral',
+          'light': 'neutral', 
+          'primary': 'primary',
+          'secondary': 'secondary',
+          'danger': 'danger'
+        };
+        const newVariant = colorMappings[color] || variant;
+        console.warn(
+          `Divider V2: prop 'color' deprecada. ` +
+          `Usar 'variant'. color='${color}' -> variant='${newVariant}'`
+        );
+      }
+      
       const colorMappings = {
         'muted': 'neutral',
         'light': 'neutral', 
@@ -110,13 +131,6 @@ function Divider(props) {
     return variant;
   })();
   
-  // Props DOM-safe (V2 maneja esto automáticamente)
-  const domProps = {
-    'data-testid': standardProps.testId,
-    'data-component': 'Divider',
-    ...standardProps
-  };
-  
   // Generar clases CSS manualmente
   const dividerClasses = [
     'divider',
@@ -128,11 +142,20 @@ function Divider(props) {
     `divider--color-${finalVariant}`,
     text && orientation === 'horizontal' && 'divider--with-text',
     text && `divider--text-${textAlign}`,
-    (hasLeftIcon || hasRightIcon || leftIcon || rightIcon) && 'divider--with-icon',
+    (leftIcon || rightIcon) && 'divider--with-icon',
     loading && 'divider--loading',
-    disabled && 'divider--disabled',
-    className
+    disabled && 'divider--disabled'
   ].filter(Boolean).join(' ');
+
+  // ✅ COMBINAR CLASES: Sistema + Usuario
+  const finalClassName = [dividerClasses, className]
+    .filter(Boolean).join(' ');
+
+  // ✅ PROPS MODIFICADAS: reemplazar className original con combinada
+  const propsWithFinalClassName = { 
+    ...props, 
+    className: finalClassName 
+  };
 
   // Estilos dinámicos
   const dynamicStyles = {
@@ -142,14 +165,17 @@ function Divider(props) {
     })
   };
 
-  // Props de accesibilidad mejoradas
-  const accessibilityProps = {
+  // ✅ V2 PROPS DOM-SAFE: Props comunes filtradas y seguras
+  const baseDOMProps = extractDOMPropsV2(propsWithFinalClassName);
+  
+  const commonProps = {
+    ...baseDOMProps,
     role: text ? 'separator' : 'presentation',
     'aria-label': ariaLabel || (text ? `Separador: ${text}` : undefined),
     'aria-orientation': orientation,
     'aria-disabled': disabled || loading ? 'true' : undefined,
     'aria-busy': loading ? 'true' : undefined,
-    ...domProps
+    'data-component': 'Divider'
   };
 
   // Función para renderizar contenido con iconos
@@ -179,9 +205,8 @@ function Divider(props) {
   if (orientation === 'horizontal' && (text || loading)) {
     return (
       <div 
-        className={dividerClasses}
         style={dynamicStyles}
-        {...accessibilityProps}
+        {...commonProps}
       >
         <span className="divider__line divider__line--before"></span>
         {renderTextContent()}
@@ -194,9 +219,8 @@ function Divider(props) {
   // Divider simple (horizontal sin texto o vertical)
   return (
     <div 
-      className={dividerClasses}
       style={dynamicStyles}
-      {...accessibilityProps}
+      {...commonProps}
     >
       {loading && (
         <span className="divider__loading-overlay">

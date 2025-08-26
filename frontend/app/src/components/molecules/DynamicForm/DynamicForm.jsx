@@ -7,8 +7,12 @@ import { Button } from '../../atoms/Button/Button';
 import { FileInputField } from '../FileInputField/FileInputField';
 import { ImageCropField } from '../ImageCropField/ImageCropField';
 import { Checkbox } from '../../atoms/Checkbox/Checkbox';
+import { Radio } from '../../atoms/Radio/Radio';
+import { TextArea } from '../../atoms/TextArea/TextArea';
+import { Label } from '../../atoms/Label/Label';
 import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
-import { INTERACTIVE_PROP_TYPES } from '../../../tokens/standardProps-v2.js';
+import { extractDOMPropsV2 } from '../../../tokens/standardProps-v2.js';
+import { INTERACTIVE_PROP_TYPES } from '../../../tokens/propHelpers.js';
 import './DynamicForm.css';
 
 /**
@@ -529,36 +533,32 @@ const DynamicForm = ({
       );
     }
 
-    // Para campos radio
+    // ✅ V2 FIXED: Para campos radio - usar átomo Radio
     if (fieldType === 'radio') {
       return (
         <div key={index} className={fieldClasses.join(' ')}>
-          <label className="dynamic-form__label">
-            {fieldLabel}
-            {fieldRequired && <span style={{ color: 'var(--color-danger)' }}> *</span>}
-          </label>
+          <Label 
+            text={fieldLabel}
+            required={fieldRequired}
+            size={finalSize}
+            variant={hasError ? 'danger' : sysVariant}
+          />
           <div className="dynamic-form__radio-container">
             {fieldOptions.map((option, optIndex) => (
-              <div key={optIndex} className="dynamic-form__radio-item">
-                <input
-                  id={`${fieldName}_${optIndex}`}
-                  type="radio"
-                  name={fieldName}
-                  className="dynamic-form__radio"
-                  value={typeof option === 'string' ? option : option.value}
-                  checked={formData[fieldName] === (typeof option === 'string' ? option : option.value)}
-                  onChange={(e) => handleFieldChange(fieldName, e.target.value)}
-                  onBlur={() => handleFieldBlur(fieldName)}
-                  required={fieldRequired}
-                  disabled={fieldDisabled}
-                />
-                <label
-                  htmlFor={`${fieldName}_${optIndex}`}
-                  className="dynamic-form__radio-label"
-                >
-                  {typeof option === 'string' ? option : option.label}
-                </label>
-              </div>
+              <Radio
+                key={optIndex}
+                id={`${fieldName}_${optIndex}`}
+                name={fieldName}
+                value={typeof option === 'string' ? option : option.value}
+                checked={formData[fieldName] === (typeof option === 'string' ? option : option.value)}
+                onChange={(e) => handleFieldChange(fieldName, e.target.value)}
+                onBlur={() => handleFieldBlur(fieldName)}
+                required={fieldRequired}
+                disabled={fieldDisabled}
+                label={typeof option === 'string' ? option : option.label}
+                size={finalSize}
+                variant={hasError ? 'danger' : sysVariant}
+              />
             ))}
           </div>
           {hasError && (
@@ -575,41 +575,29 @@ const DynamicForm = ({
       );
     }
 
-    // Para campos textarea - mantener como está por ahora
+    // ✅ V2 FIXED: Para campos textarea - usar átomo TextArea
     if (fieldType === 'textarea') {
       return (
         <div key={index} className={fieldClasses.join(' ')}>
-          <label htmlFor={fieldName} className="dynamic-form__label">
-            {fieldLabel}
-            {fieldRequired && <span style={{ color: 'var(--color-danger)' }}> *</span>}
-          </label>
-          <textarea
-            id={fieldName}
-            className="dynamic-form__textarea"
+          <TextArea
+            name={fieldName}
+            label={fieldLabel}
+            placeholder={fieldPlaceholder}
             value={formData[fieldName] || ''}
             onChange={(e) => handleFieldChange(fieldName, e.target.value)}
             onBlur={() => handleFieldBlur(fieldName)}
-            placeholder={fieldPlaceholder}
             required={fieldRequired}
             disabled={fieldDisabled}
-            rows={4}
+            errorText={hasError ? fieldError : ''}
+            helperText={!hasError ? fieldHelperText : ''}
             maxLength={fieldMaxLength}
+            showCharCount={fieldShowCharCount}
+            size={finalSize}
+            rounded={finalRounded}
+            variant={hasError ? 'danger' : sysVariant}
+            width="full"
+            rows={field.rows || 4}
           />
-          {fieldMaxLength && fieldShowCharCount && (
-            <div className="dynamic-form__char-count">
-              {(formData[fieldName] || '').length}/{fieldMaxLength}
-            </div>
-          )}
-          {hasError && (
-            <span className="dynamic-form__error-message" role="alert">
-              {fieldError}
-            </span>
-          )}
-          {!hasError && fieldHelperText && (
-            <span className="dynamic-form__helper-text">
-              {fieldHelperText}
-            </span>
-          )}
         </div>
       );
     }
@@ -622,14 +610,29 @@ const DynamicForm = ({
   const formClasses = [
     'dynamic-form',
     `dynamic-form--size-${finalSize}`,
-  `dynamic-form--variant-${sysVariant}`,
+    `dynamic-form--variant-${sysVariant}`,
     `dynamic-form--rounded-${finalRounded}`,
     `dynamic-form--spacing-${spacing}`,
-  sysLoading && 'dynamic-form--loading',
-  sysDisabled && 'dynamic-form--disabled',
-    compact && 'dynamic-form--compact',
-  sysClassName
+    sysLoading && 'dynamic-form--loading',
+    sysDisabled && 'dynamic-form--disabled',
+    compact && 'dynamic-form--compact'
   ].filter(Boolean).join(' ');
+
+  // ✅ COMBINAR CLASES: Sistema + Usuario
+  const finalClassName = [formClasses, sysClassName].filter(Boolean).join(' ');
+
+  // ✅ PROPS MODIFICADAS: solo props que pueden ir al DOM
+  const propsWithFinalClassName = { 
+    size, variant, rounded, disabled, loading, className: finalClassName
+  };
+
+  // ✅ V2 PROPS DOM-SAFE: Props filtradas y seguras
+  const baseDOMProps = extractDOMPropsV2(propsWithFinalClassName);
+  
+  const commonProps = {
+    ...baseDOMProps,
+    'data-component': 'DynamicForm'
+  };
 
   const gridClasses = [
     'dynamic-form__grid',
@@ -638,7 +641,7 @@ const DynamicForm = ({
   ].join(' ');
 
   return (
-    <div className={formClasses}>
+    <div {...commonProps}>
       {fields.length === 0 ? (
         <div className="dynamic-form__empty-message">
           No hay campos definidos para este formulario.
@@ -672,7 +675,7 @@ const DynamicForm = ({
                     rightIcon={action.rightIcon}
                     loading={action.loading || sysLoading}
                     disabled={action.disabled || sysDisabled}
-                    width="full"  // ✅ MIGRADO: fullWidth → width={action.fullWidth || submitFullWidth}
+                    width={action.fullWidth || submitFullWidth ? "full" : "auto"}  // ✅ MIGRADO: fullWidth → width
                     onClick={action.onClick}
                   >
                     {action.text || action.children}
@@ -690,7 +693,7 @@ const DynamicForm = ({
                 rightIcon={submitRightIcon}
                 loading={sysLoading}
                 disabled={sysDisabled}
-                width="full"  // ✅ MIGRADO: fullWidth → width={submitFullWidth}
+                width={submitFullWidth ? "full" : "auto"}  // ✅ MIGRADO: fullWidth → width
               >
                 {submitText}
               </Button>
