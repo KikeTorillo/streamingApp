@@ -2,12 +2,11 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useMovieNavigation } from '../../hooks/useMovieNavigation';
-import { Button } from '../../components/atoms/Button/Button';
+// ✅ DESIGN SYSTEM - LIBRERÍA REUTILIZABLE
+import { Button, FlexContainer, Typography, Container, Image } from '../../../design-system';
+
+// ✅ COMPONENTES ESPECÍFICOS STREAMING
 import { AppHeader } from '../../components/organisms/AppHeader/AppHeader';
-import { FlexContainer } from '../../components/atoms/FlexContainer/FlexContainer';
-import { Typography } from '../../components/atoms/Typography/Typography';
-import { Container } from '../../components/atoms/Container/Container';
-import { Image } from '../../components/atoms/Image/Image';
 
 // Servicios
 import { getMovieByIdService } from '../../services/Movies/getMovieByIdService';

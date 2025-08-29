@@ -3,10 +3,10 @@
 
 import { useEffect } from 'react';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
-import { Container } from '../../../../components/atoms/Container/Container';
+import { Container } from '../../../../../design-system';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
 import { ProgressModal } from "../../../../components/molecules/ProgressModal/ProgressModal";
-import { Typography } from '../../../../components/atoms/Typography/Typography';
+import { Typography } from '../../../../../design-system';
 import { useFormNavigation } from "../../../../hooks/useFormNavigation";
 import { useSuccessRedirect } from "../../../../hooks/useSuccessRedirect";
 

@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
-import { Button } from '../../../components/atoms/Button/Button';
-import { Typography } from '../../../components/atoms/Typography/Typography';
+import { Button, Typography } from '../../../../design-system';
 
 /**
  * VideoPlayerErrorScreen - Componente para mostrar pantallas de error

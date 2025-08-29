@@ -4,13 +4,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
-import { DataTable } from '../../../../components/organisms/DataTable/DataTable';
-import { Button } from '../../../../components/atoms/Button/Button';
-import { Badge } from '../../../../components/atoms/Badge/Badge';
-import { Select } from '../../../../components/atoms/Select/Select';
-import { Label } from '../../../../components/atoms/Label/Label';
-import { Typography } from '../../../../components/atoms/Typography/Typography';
-import { Container } from '../../../../components/atoms/Container/Container';
+import { Button, Badge, Select, Label, Typography, DataTable } from '../../../../../design-system';
 
 // Context y servicios
 import { useEpisodes } from '../../../../app/context/EpisodesContext';

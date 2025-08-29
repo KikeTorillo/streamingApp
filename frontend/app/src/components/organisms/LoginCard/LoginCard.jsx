@@ -1,11 +1,7 @@
 // components/organisms/LoginCard/LoginCard.jsx
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Card, CardHeader, CardBody, CardFooter, CardTitle } from '../../atoms/Card/Card';
-import { TextInput } from '../../molecules/TextInput/TextInput';
-import { Button } from '../../atoms/Button/Button';
-import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
-import { Typography } from '../../atoms/Typography/Typography';
+import { Card, CardHeader, CardBody, CardFooter, CardTitle, TextInput, Button, FlexContainer, Typography } from '../../../../design-system';
 
 /**
  * Componente de inicio de sesión usando el sistema de diseño

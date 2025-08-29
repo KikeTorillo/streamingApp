@@ -4,8 +4,7 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import Cropper from 'react-easy-crop';
-import { Modal } from '../Modal/Modal';
-import { Button } from '../../atoms/Button/Button';
+import { Modal, Button } from '../../../../design-system';
 import './ImageCropperModal.css';
 
 // ===== FUNCIONES AUXILIARES PARA CROPPING =====

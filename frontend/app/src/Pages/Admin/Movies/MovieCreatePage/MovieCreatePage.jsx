@@ -5,7 +5,6 @@ import { useState } from 'react';
 
 // ===== LAYOUTS Y COMPONENTES =====
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
-import { Container } from '../../../../components/atoms/Container/Container';
 
 // ===== COMPONENTES ESPECÍFICOS =====
 import { TMDBSearchView } from '../../../../components/organisms/TMDBSearchView/TMDBSearchView';

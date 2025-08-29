@@ -1,8 +1,6 @@
 // molecules/EpisodeListItem/EpisodeListItem.jsx
 import PropTypes from 'prop-types';
-import { Button } from '../../atoms/Button/Button';
-import { Badge } from '../../atoms/Badge/Badge';
-import { Image } from '../../atoms/Image/Image';
+import { Button, Badge, Image } from '../../../../design-system';
 import './EpisodeListItem.css';
 
 /**

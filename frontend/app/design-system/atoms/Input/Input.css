@@ -1,0 +1,732 @@
+/* ===== INPUT COMPONENT - HOMOLOGADO CON VARIABLES CENTRALIZADAS ===== */
+/* Input.css - Actualizado para usar las variables del app.css */
+
+/* Clase base del input - Usando variables del sistema */
+.input-base {
+  display: block;
+  width: 100%; 
+  max-width: 100%; /* ✅ Evitar desbordamiento del contenedor padre */
+  position: relative;
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-normal);
+  /* Colores se definen por variantes, no en base */
+  border: 0.1rem solid transparent; /* Base transparente, variantes definen color */
+  border-radius: var(--radius-md);
+  /* background-color y color se definen por variantes */
+  transition: all var(--transition-normal);
+  outline: none;
+  appearance: none;
+  box-sizing: border-box; /* ✅ Incluir padding y border en el cálculo del width */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  min-width: 0; /* ✅ Permitir que se reduzca en contenedores flex */
+}
+
+/* ===== TAMAÑOS FIJOS ESTÁNDAR - INSPIRADO EN LAS MEJORES LIBRERÍAS ===== */
+.input-base--xs {
+  height: 3.2rem;                          /* 32px - Altura fija */
+  padding: 0.6rem 1.2rem;                  /* Padding proporcional */
+  font-size: 1.3rem;                       /* 13px - Legible */
+  line-height: 1.4;
+  min-width: 12rem;                        /* 120px - Mínimo usable */
+}
+
+.input-base--sm {
+  height: 4.0rem;                          /* 40px - Altura fija */
+  padding: 0.8rem 1.6rem;                  /* Padding proporcional */
+  font-size: 1.4rem;                       /* 14px */
+  line-height: 1.4;
+  min-width: 15rem;                        /* 150px - Mínimo usable */
+}
+
+.input-base--md {
+  height: 4.8rem;                          /* 48px - Altura fija */
+  padding: 1.2rem 1.6rem;                  /* Padding estándar */
+  font-size: 1.6rem;                       /* 16px - Evita zoom iOS */
+  line-height: 1.5;
+  min-width: 20rem;                        /* 200px - Mínimo usable */
+}
+
+.input-base--lg {
+  height: 5.6rem;                          /* 56px - Altura fija */
+  padding: 1.4rem 2.0rem;                  /* Padding amplio */
+  font-size: 1.8rem;                       /* 18px */
+  line-height: 1.5;
+  min-width: 25rem;                        /* 250px - Mínimo usable */
+}
+
+.input-base--xl {
+  height: 6.4rem;                          /* 64px - Altura fija */
+  padding: 1.6rem 2.4rem;                  /* Padding hero */
+  font-size: 2.0rem;                       /* 20px */
+  line-height: 1.5;
+  min-width: 30rem;                        /* 300px - Mínimo usable */
+}
+
+/* ===== SISTEMA DE ROUNDED V2 - 9 OPCIONES ===== */
+.input-base--rounded-none {
+  border-radius: 0;
+}
+
+.input-base--rounded-xs {
+  border-radius: var(--radius-xs);
+}
+
+.input-base--rounded-sm {
+  border-radius: var(--radius-sm);
+}
+
+.input-base--rounded-md {
+  border-radius: var(--radius-md);
+}
+
+.input-base--rounded-lg {
+  border-radius: var(--radius-lg);
+}
+
+.input-base--rounded-xl {
+  border-radius: var(--radius-xl);
+}
+
+.input-base--rounded-2xl {
+  border-radius: var(--radius-2xl);
+}
+
+.input-base--rounded-3xl {
+  border-radius: var(--radius-3xl);
+}
+
+.input-base--rounded-full {
+  border-radius: var(--radius-full);
+}
+
+/* ===== ESTADOS INTERACTIVOS - Mejorados con variables del sistema ===== */
+.input-base:hover:not(:disabled):not(:focus) {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+.input-base:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 0.3rem var(--shadow-focus);
+  outline: 0.2rem solid var(--border-focus);
+  outline-offset: 0.2rem;
+  z-index: 1;
+}
+
+.input-base:disabled {
+  background-color: var(--bg-disabled);
+  color: var(--text-disabled);
+  cursor: not-allowed;
+  border-color: var(--border-default);
+  opacity: 0.6;
+}
+
+.input-base:read-only {
+  background-color: var(--bg-muted);
+  color: var(--text-secondary);
+  cursor: default;
+  border-color: var(--border-default);
+}
+
+.input-base:read-only:focus {
+  box-shadow: 0 0 0 0.3rem var(--shadow-muted);
+  border-color: var(--border-secondary);
+  outline-color: var(--border-secondary);
+}
+
+/* ===== PLACEHOLDER - Mejorado ===== */
+.input-base::placeholder {
+  color: var(--text-placeholder);
+  opacity: 1;
+  transition: opacity var(--transition-fast);
+}
+
+.input-base:focus::placeholder {
+  opacity: 0.6;
+}
+
+.input-base:disabled::placeholder {
+  color: var(--text-disabled);
+}
+
+/* ===== VARIANTES SEMÁNTICAS V2 - 6 VARIANTES ESTÁNDAR ===== */
+
+/* Primary (Principal - Default) */
+.input-base--primary {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border-color: var(--border-default);
+}
+
+.input-base--primary:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 0.3rem var(--shadow-primary);
+  outline-color: var(--color-primary);
+}
+
+.input-base--primary:hover:not(:disabled):not(:focus) {
+  border-color: var(--color-primary-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Secondary (Secundario) */
+.input-base--secondary {
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+  border-color: var(--border-secondary);
+}
+
+.input-base--secondary:focus {
+  border-color: var(--color-secondary);
+  box-shadow: 0 0 0 0.3rem var(--shadow-secondary);
+  outline-color: var(--color-secondary);
+}
+
+.input-base--secondary:hover:not(:disabled):not(:focus) {
+  border-color: var(--color-secondary-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Success (Éxito) */
+.input-base--success {
+  border-color: var(--color-success);
+  background-color: var(--color-success-light);
+}
+
+.input-base--success:focus {
+  border-color: var(--color-success);
+  box-shadow: 0 0 0 0.3rem var(--shadow-success);
+  outline-color: var(--color-success);
+}
+
+.input-base--success:hover:not(:disabled):not(:focus) {
+  border-color: var(--color-success-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Warning (Advertencia) */
+.input-base--warning {
+  border-color: var(--color-warning);
+  background-color: var(--color-warning-light);
+}
+
+.input-base--warning:focus {
+  border-color: var(--color-warning);
+  box-shadow: 0 0 0 0.3rem var(--shadow-warning);
+  outline-color: var(--color-warning);
+}
+
+.input-base--warning:hover:not(:disabled):not(:focus) {
+  border-color: var(--color-warning-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Danger (Peligro/Error) */
+.input-base--danger {
+  border-color: var(--color-danger);
+  background-color: var(--color-danger-light);
+}
+
+.input-base--danger:focus {
+  border-color: var(--color-danger);
+  box-shadow: 0 0 0 0.3rem var(--shadow-danger);
+  outline-color: var(--color-danger);
+}
+
+.input-base--danger:hover:not(:disabled):not(:focus) {
+  border-color: var(--color-danger-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Neutral (Neutral) */
+.input-base--neutral {
+  background-color: var(--bg-neutral);
+  color: var(--text-neutral);
+  border-color: var(--border-neutral);
+}
+
+.input-base--neutral:focus {
+  border-color: var(--color-neutral);
+  box-shadow: 0 0 0 0.3rem var(--shadow-neutral);
+  outline-color: var(--color-neutral);
+}
+
+.input-base--neutral:hover:not(:disabled):not(:focus) {
+  border-color: var(--color-neutral-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ===== VARIANTES LEGACY ELIMINADAS ===== */
+/* Ya no se soportan .input-base--default ni .input-base--error */
+
+
+/* ===== ESTADOS ESPECÍFICOS ===== */
+/* Input con valor */
+.input-base:not(:placeholder-shown) {
+  background-color: var(--bg-primary);
+}
+
+/* Input requerido */
+.input-base:required:invalid:not(:focus):not(:placeholder-shown) {
+  border-color: var(--color-danger);
+}
+
+.input-base:required:valid:not(:focus):not(:placeholder-shown) {
+  border-color: var(--color-success);
+}
+
+/* ===== PADDING PARA ICONOS - PROPORCIONAL A LOS TAMAÑOS FIJOS ===== */
+.input-base--with-left-icon {
+  padding-left: 3.6rem;        /* Espacio estándar para icono */
+}
+
+.input-base--with-right-icon {
+  padding-right: 3.6rem;       /* Espacio estándar para icono */
+}
+
+/* Ajustes de padding por tamaño con iconos - PROPORCIONAL */
+.input-base--xs.input-base--with-left-icon {
+  padding-left: 3.2rem;        /* 32px - Proporcional a altura 32px */
+}
+
+.input-base--xs.input-base--with-right-icon {
+  padding-right: 3.2rem;
+}
+
+.input-base--sm.input-base--with-left-icon {
+  padding-left: 3.4rem;        /* 34px - Proporcional a altura 40px */
+}
+
+.input-base--sm.input-base--with-right-icon {
+  padding-right: 3.4rem;
+}
+
+.input-base--md.input-base--with-left-icon {
+  padding-left: 3.6rem;        /* 36px - Proporcional a altura 48px */
+}
+
+.input-base--md.input-base--with-right-icon {
+  padding-right: 3.6rem;
+}
+
+.input-base--lg.input-base--with-left-icon {
+  padding-left: 4.0rem;        /* 40px - Proporcional a altura 56px */
+}
+
+.input-base--lg.input-base--with-right-icon {
+  padding-right: 4.0rem;
+}
+
+.input-base--xl.input-base--with-left-icon {
+  padding-left: 4.4rem;        /* 44px - Proporcional a altura 64px */
+}
+
+.input-base--xl.input-base--with-right-icon {
+  padding-right: 4.4rem;
+}
+
+/* ===== RESPONSIVE - ÁREA TÁCTIL MÓVIL ===== */
+@media (max-width: 768px) {
+  /* Asegurar área táctil mínima en móviles (44px) */
+  .input-base--xs,
+  .input-base--sm {
+    min-height: 4.4rem;                         /* 44px mínimo - Área táctil */
+    font-size: max(1.6rem, 16px);               /* Evitar zoom en iOS */
+  }
+  
+  /* Los tamaños más grandes ya tienen suficiente área táctil */
+  .input-base--lg {
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--font-size-base);
+    min-height: var(--component-height-lg);     /* Mantener 56px */
+  }
+  
+  .input-base--xl {
+    padding: var(--space-md) var(--space-lg);
+    font-size: var(--font-size-lg);
+    min-height: var(--component-height-xl);     /* Mantener 56px */
+  }
+  
+  /* Evitar zoom en iOS - área táctil crítica */
+  .input-base {
+    font-size: max(var(--font-size-base), 1.6rem);
+  }
+}
+
+@media (max-width: 480px) {
+  /* En móviles muy pequeños, priorizar usabilidad */
+  .input-base--lg,
+  .input-base--xl {
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--font-size-base);
+    /* Mantener altura estándar para consistencia */
+    min-height: var(--component-height-lg);
+  }
+}
+
+/* ===== ACCESIBILIDAD ===== */
+@media (prefers-reduced-motion: reduce) {
+  .input-base {
+    transition: none;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .input-base {
+    border-width: 0.2rem;
+  }
+  
+  .input-base:focus {
+    outline-width: 0.3rem;
+  }
+}
+
+/* ===== MODO OSCURO ===== */
+.dark .input-base {
+  background-color: var(--bg-primary);
+  border-color: var(--border-default);
+  color: var(--text-primary);
+}
+
+.dark .input-base:disabled {
+  background-color: var(--bg-disabled);
+  color: var(--text-disabled);
+  border-color: var(--border-default);
+}
+
+.dark .input-base:focus {
+  box-shadow: 0 0 0 0.3rem var(--shadow-focus);
+}
+
+/* Clase forzada para modo oscuro con prefers-color-scheme */
+@media (prefers-color-scheme: dark) {
+  .input-base:focus {
+    box-shadow: 0 0 0 0.3rem var(--shadow-focus);
+  }
+}
+
+/* ===== WRAPPER PARA ICONOS - MEJORADO PARA RESPONSIVE ===== */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%; /* Comportamiento por defecto */
+  max-width: 100%; /* ✅ Respetar contenedor padre */
+  box-sizing: border-box; /* ✅ Incluir padding y border */
+  min-width: 0; /* ✅ Permitir reducción en flex containers */
+}
+
+/* El input dentro del wrapper debe ocupar todo el espacio disponible */
+.input-wrapper .input-base {
+  flex: 1; /* ✅ Ocupar espacio disponible menos iconos */
+  min-width: 0; /* ✅ Permitir reducción */
+  width: auto; /* ✅ Override del width 100% base cuando está en wrapper */
+}
+
+/* ===== SISTEMA DE WIDTH V2 - MEJORADO CON TAMAÑOS FIJOS ESTÁNDAR ===== */
+
+/* Tamaños fijos estándar - PREDECIBLES Y CONSISTENTES */
+.input-wrapper--w-xs,
+.input-base--w-xs {
+  width: 12rem;                            /* 120px - Muy pequeño */
+}
+
+.input-wrapper--w-sm,
+.input-base--w-sm {
+  width: 20rem;                            /* 200px - Pequeño */
+}
+
+.input-wrapper--w-md,
+.input-base--w-md {
+  width: 30rem;                            /* 300px - Estándar */
+}
+
+.input-wrapper--w-lg,
+.input-base--w-lg {
+  width: 40rem;                            /* 400px - Grande */
+}
+
+.input-wrapper--w-xl,
+.input-base--w-xl {
+  width: 50rem;                            /* 500px - Extra grande */
+}
+
+/* Full width - 100% del contenedor padre */
+.input-wrapper--full-width,
+.input-base--full-width {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Auto width - Se ajusta al contenido pero respeta el contenedor */
+.input-wrapper--auto,
+.input-base--auto {
+  width: auto;
+  max-width: 100%; /* ✅ No desbordarse del contenedor */
+  flex-shrink: 1; /* ✅ Permitir reducirse en flex containers */
+}
+
+/* Fit content - Solo el ancho necesario para el contenido */
+.input-wrapper--fit-content,
+.input-base--fit-content {
+  width: fit-content;
+  max-width: 100%; /* ✅ Respetar límites del contenedor */
+}
+
+/* Min content - Ancho mínimo posible */
+.input-wrapper--min-content,
+.input-base--min-content {
+  width: min-content;
+  max-width: 100%;
+}
+
+/* Max content - Ancho máximo del contenido */
+.input-wrapper--max-content,
+.input-base--max-content {
+  width: max-content;
+  max-width: 100%; /* ✅ Evitar desbordamiento */
+}
+
+/* ===== CLASES RESPONSIVE ADICIONALES ===== */
+
+/* Para contenedores muy pequeños */
+@media (max-width: 480px) {
+  .input-base,
+  .input-wrapper {
+    min-width: 0; /* ✅ Permitir reducción extrema en móviles */
+  }
+  
+  /* En móvil, auto debería comportarse más como fit-content */
+  .input-base--auto,
+  .input-wrapper--auto {
+    width: 100%;
+    max-width: none; /* En móvil ocupar todo el ancho disponible */
+  }
+}
+
+/* Utility class para forzar responsive en cualquier tamaño */
+.input-base--responsive,
+.input-wrapper--responsive {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+/* Estados del input wrapper - Solo para casos específicos */
+.input-wrapper--disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.input-wrapper__icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  pointer-events: none;
+  z-index: 2;
+  transition: color var(--transition-normal);
+}
+
+.input-wrapper__icon--left {
+  left: var(--space-md);
+}
+
+.input-wrapper__icon--right {
+  right: var(--space-md);
+}
+
+/* Ajustes de posición de iconos por tamaño */
+.input-wrapper--xs .input-wrapper__icon--left {
+  left: var(--space-sm);
+}
+
+.input-wrapper--xs .input-wrapper__icon--right {
+  right: var(--space-sm);
+}
+
+.input-wrapper--sm .input-wrapper__icon--left {
+  left: var(--space-md);
+}
+
+.input-wrapper--sm .input-wrapper__icon--right {
+  right: var(--space-md);
+}
+
+.input-wrapper--md .input-wrapper__icon--left {
+  left: var(--space-lg);
+}
+
+.input-wrapper--md .input-wrapper__icon--right {
+  right: var(--space-lg);
+}
+
+.input-wrapper--lg .input-wrapper__icon--left,
+.input-wrapper--xl .input-wrapper__icon--left {
+  left: var(--space-xl);
+}
+
+.input-wrapper--lg .input-wrapper__icon--right,
+.input-wrapper--xl .input-wrapper__icon--right {
+  right: var(--space-xl);
+}
+
+/* Tamaños de iconos por tamaño del wrapper */
+.input-wrapper--xs .input-wrapper__icon {
+  font-size: var(--component-font-xs);
+}
+
+.input-wrapper--sm .input-wrapper__icon {
+  font-size: var(--component-font-sm);
+}
+
+.input-wrapper--md .input-wrapper__icon {
+  font-size: var(--component-font-md);
+}
+
+.input-wrapper--lg .input-wrapper__icon,
+.input-wrapper--xl .input-wrapper__icon {
+  font-size: var(--component-font-lg);
+}
+
+/* Estados de iconos según variante V2 */
+.input-wrapper--primary .input-wrapper__icon {
+  color: var(--color-primary);
+}
+
+.input-wrapper--secondary .input-wrapper__icon {
+  color: var(--color-secondary);
+}
+
+.input-wrapper--success .input-wrapper__icon {
+  color: var(--color-success);
+}
+
+.input-wrapper--warning .input-wrapper__icon {
+  color: var(--color-warning);
+}
+
+.input-wrapper--danger .input-wrapper__icon {
+  color: var(--color-danger);
+}
+
+.input-wrapper--neutral .input-wrapper__icon {
+  color: var(--color-neutral);
+}
+
+/* Iconos clickeables */
+.input-wrapper__icon--clickable {
+  cursor: pointer;
+  pointer-events: auto;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-normal);
+  padding: var(--space-xs);
+}
+
+.input-wrapper__icon--clickable:hover {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  /* Solo escalar, mantener centrado vertical */
+  transform: translateY(-50%) scale(1.1);
+}
+
+.input-wrapper__icon--clickable:focus {
+  outline: 0.2rem solid var(--border-focus);
+  outline-offset: 0.2rem;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  /* Mantener centrado vertical en focus */
+  transform: translateY(-50%);
+}
+
+.input-wrapper__icon--clickable:active {
+  transform: translateY(-50%) scale(0.95);
+  background-color: var(--bg-tertiary);
+}
+
+/* Área táctil mínima para móviles */
+@media (max-width: 768px) {
+  .input-wrapper__icon--clickable {
+    min-width: var(--touch-target-min);
+    min-height: var(--touch-target-min);
+    padding: var(--space-sm);
+    margin: calc(-1 * var(--space-sm));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* Spinner de loading */
+.input-wrapper__spinner {
+  position: absolute;
+  right: var(--space-md);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+.input-wrapper__spinner-svg {
+  width: 1.6rem;
+  height: 1.6rem;
+  animation: spin 1s linear infinite;
+}
+
+.input-wrapper__spinner-circle {
+  fill: none;
+  stroke: var(--border-focus);
+  stroke-linecap: round;
+  stroke-dasharray: 31.4;
+  stroke-dashoffset: 15.7;
+  animation: dash 1.5s ease-in-out infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -124;
+  }
+}
+
+/* ===== HERRAMIENTAS DE DEBUGGING ===== */
+/* Solo activo cuando se agrega clase .debug-heights al body */
+.debug-heights .input-base {
+  outline: 2px dashed green !important;
+  outline-offset: -2px;
+}
+
+.debug-heights .input-base::after {
+  content: 'Input: ' attr(class);
+  position: absolute;
+  top: -2rem;
+  left: 0;
+  background: green;
+  color: white;
+  font-size: 1rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.2rem;
+  z-index: 1000;
+  white-space: nowrap;
+  font-family: monospace;
+}

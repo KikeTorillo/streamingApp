@@ -4,11 +4,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
-import { DataTable } from '../../../../components/organisms/DataTable/DataTable';
-import { Button } from '../../../../components/atoms/Button/Button';
-import { Badge } from '../../../../components/atoms/Badge/Badge';
-import { Image } from '../../../../components/atoms/Image/Image';
-import { Typography } from '../../../../components/atoms/Typography/Typography';
+import { DataTable, Button, Badge, Image, Typography } from '../../../../../design-system';
 // Contexto de series
 import { useSeries } from '../../../../app/context/SeriesContext';
 

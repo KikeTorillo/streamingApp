@@ -1,736 +1,205 @@
-/* ===== VARIABLES CSS - SISTEMA DE DISEÑO COMPLETO ===== */
-/* src/app/App.css - Versión actualizada con variables centralizadas de altura */
+/* ===== APP.CSS - VARIABLES DEL SISTEMA DE DISEÑO V2.0 ===== */
+/* Solo variables necesarias para el design-system */
+/* Construido específicamente para Input y componentes V2.0 */
 
-/* Reset básico */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-size: 1.6rem; /* 16px con sistema 62.5% */
-}
-
-/* Configuración base de HTML */
-html {
-  font-size: 62.5%; /* 1rem = 10px */
-}
-
-/* Variables CSS principales - MODO CLARO POR DEFECTO */
 :root {
-  /* === PALETA OCEANO MODERNO (Azul + Naranja) === */
-  /* Azules Oceano - Base principal CON PROGRESIÓN SUAVE */
-  --matcha-25: #f8fcff;    /* Azul blanquecino ultra suave */
-  --matcha-50: #f0f9ff;    /* Blanco azulado muy suave */
-  --matcha-100: #e0f2fe;   /* Azul muy muy claro */
-  --matcha-200: #8ecae6;   /* Azul claro principal */
-  --matcha-300: #6bb6c7;   /* Azul claro medio */
-  --matcha-400: #219ebc;   /* Azul medio principal */
-  --matcha-500: #1a7ea8;   /* Azul medio oscuro */
-  --matcha-600: #146b94;   /* Azul oscuro */
-  --matcha-700: #023047;   /* Azul muy oscuro/marino */
-  --matcha-800: #021e2f;   /* Azul profundo */
-  --matcha-850: #021a20;   /* Azul más profundo */
-  --matcha-900: #011217;   /* Azul casi negro */
-  --matcha-950: #010d12;   /* Azul ultra oscuro */
+  /* ===== PALETA BASE - COLORES PRIMITIVOS DARK THEME ===== */
   
-  /* Naranjas/Dorados - Acentos cálidos EQUILIBRADOS */
-  --accent-100: #ffecd1;   /* Crema dorada muy suave - MÁS SUAVE */
-  --accent-200: #ffd89b;   /* Dorado muy claro - NUEVO TONO */
-  --accent-300: #ffb703;   /* Amarillo/dorado principal */
-  --accent-400: #e67700;   /* Naranja equilibrado - MENOS SATURADO */
-  --accent-500: #cc6600;   /* Naranja oscuro */
-  --accent-600: #b85c00;   /* Naranja muy oscuro - NUEVO TONO */
+  /* Grises Neutrales Oscuros */
+  --gray-50: #18181b;    /* Casi negro para fondos */
+  --gray-100: #27272a;   /* Negro suave para cards */
+  --gray-200: #3f3f46;   /* Gris oscuro para bordes */
+  --gray-300: #52525b;   /* Gris medio para separadores */
+  --gray-400: #71717a;   /* Gris claro para texto disabled */
+  --gray-500: #a1a1aa;   /* Gris claro para texto secundario */
+  --gray-600: #d4d4d8;   /* Gris muy claro para texto */
+  --gray-700: #e4e4e7;   /* Casi blanco para texto principal */
+  --gray-800: #f4f4f5;   /* Blanco suave */
+  --gray-900: #fafafa;   /* Blanco puro */
 
-  /* Neutros Sage - Grises cálidos minimalistas */
-  --sage-50: #fafafa;      /* Blanco puro */
-  --sage-100: #f4f4f5;     /* Gris muy claro */
-  --sage-200: #e4e4e7;     /* Gris claro */
-  --sage-300: #d1d5db;     /* Gris medio */
-  --sage-400: #9ca3af;     /* Gris */
-  --sage-500: #6b7280;     /* Gris oscuro */
-  --sage-600: #4b5563;     /* Gris muy oscuro */
-  --sage-700: #374151;     /* Casi negro */
+  /* Verde (Success) - Más vibrante para dark */
+  --green-50: #0f1912;   /* Verde muy oscuro */
+  --green-100: #1a2e20;  /* Verde oscuro para fondos */
+  --green-200: #166534;  /* Verde medio oscuro */
+  --green-300: #15803d;  /* Verde balanceado */
+  --green-400: #16a34a;  /* Verde claro */
+  --green-500: #22c55e;  /* Color principal success - más vibrante */
+  --green-600: #4ade80;  /* Verde muy claro */
+  --green-700: #86efac;  /* Verde claro suave */
+  --green-800: #bbf7d0;  /* Verde muy claro */
 
-  /* Mapeo para compatibilidad con componentes existentes */
-  --blue-500: var(--matcha-400);  /* Azul medio principal */
-  --blue-600: var(--matcha-600);  /* Azul oscuro */
-  --gray-50: var(--sage-50);
-  --gray-100: var(--sage-100);
-  --gray-200: var(--sage-200);
-  --gray-300: var(--sage-300);
-  --gray-400: var(--sage-400);
-  --gray-500: var(--sage-500);
-  --gray-600: var(--sage-600);
-  --gray-700: var(--sage-700);
-  --gray-800: var(--matcha-800);
-  --gray-900: var(--matcha-900);
+  /* Amarillo (Warning) - Ajustado para dark */
+  --yellow-50: #1c1500;   /* Amarillo muy oscuro */
+  --yellow-100: #322800;  /* Amarillo oscuro para fondos */
+  --yellow-200: #b45309;  /* Amarillo medio oscuro */
+  --yellow-300: #d97706;  /* Amarillo balanceado */
+  --yellow-400: #f59e0b;  /* Amarillo claro */
+  --yellow-500: #fbbf24;  /* Color principal warning - más visible */
+  --yellow-600: #fcd34d;  /* Amarillo muy claro */
+  --yellow-700: #fde68a;  /* Amarillo claro suave */
 
-  /* Rojos - Para botones de peligro */
-  --red-50: #fef2f2;
-  --red-100: #fee2e2;
-  --red-200: #fecaca;
-  --red-300: #fca5a5;
-  --red-400: #f87171;
-  --red-500: #ef4444;   /* Danger principal */
-  --red-600: #dc2626;   /* Danger hover */
-  --red-700: #b91c1c;
-  --red-800: #991b1b;
-  --red-900: #7f1d1d;
+  /* Rojo (Danger) - Más suave para dark */
+  --red-50: #1f1315;     /* Rojo muy oscuro */
+  --red-100: #2d1b1f;    /* Rojo oscuro para fondos */
+  --red-200: #b91c1c;    /* Rojo medio oscuro */
+  --red-300: #dc2626;    /* Rojo balanceado */
+  --red-400: #ef4444;    /* Rojo claro */
+  --red-500: #f87171;    /* Color principal danger - más suave */
+  --red-600: #fca5a5;    /* Rojo muy claro */
+  --red-700: #fecaca;    /* Rojo claro suave */
 
-  /* Verdes - Para botones de éxito */
-  --green-50: #f0fdf4;
-  --green-100: #dcfce7;
-  --green-200: #bbf7d0;
-  --green-300: #86efac;
-  --green-400: #4ade80;
-  --green-500: #22c55e;  /* Success principal */
-  --green-600: #16a34a;  /* Success hover */
-  --green-700: #15803d;
-  --green-800: #166534;
-  --green-900: #14532d;
+  /* Azul (Primary) - Más brillante para dark */
+  --blue-50: #0f1729;    /* Azul muy oscuro */
+  --blue-100: #1e293b;   /* Azul oscuro para fondos */
+  --blue-200: #1e40af;   /* Azul medio oscuro */
+  --blue-300: #1d4ed8;   /* Azul balanceado */
+  --blue-400: #2563eb;   /* Azul claro */
+  --blue-500: #3b82f6;   /* Color principal primary - brillante */
+  --blue-600: #60a5fa;   /* Azul muy claro */
+  --blue-700: #93c5fd;   /* Azul claro suave */
+  --blue-800: #bfdbfe;   /* Azul muy claro */
 
-  /* Amarillos - Para advertencias */
-  --yellow-50: #fefce8;
-  --yellow-100: #fef3c7;
-  --yellow-200: #fde68a;
-  --yellow-300: #fcd34d;
-  --yellow-400: #fbbf24;
-  --yellow-500: #f59e0b;  /* Warning principal */
-  --yellow-600: #d97706;  /* Warning hover */
-  --yellow-700: #b45309;
-  --yellow-800: #92400e;
-  --yellow-900: #78350f;
+  /* Slate (Secondary) - Ajustado para dark */
+  --slate-50: #0f172a;   /* Slate muy oscuro */
+  --slate-100: #1e293b;  /* Slate oscuro para fondos */
+  --slate-200: #334155;  /* Slate medio oscuro */
+  --slate-300: #475569;  /* Slate balanceado */
+  --slate-400: #64748b;  /* Slate claro */
+  --slate-500: #94a3b8;  /* Color principal secondary - más claro */
+  --slate-600: #cbd5e1;  /* Slate muy claro */
+  --slate-700: #e2e8f0;  /* Slate claro suave */
+  --slate-800: #f1f5f9;  /* Slate muy claro */
 
-  /* === COLORES SEMÁNTICOS OCÉANO MODERNO EQUILIBRADOS === */
-  --color-primary: var(--matcha-600);      /* Azul oscuro para interacciones */
-  --color-primary-hover: var(--matcha-700); /* Azul marino para hover */
-  --color-primary-light: var(--matcha-100); /* Azul muy claro para fondos */
-  --color-primary-dark: var(--matcha-800);  /* Azul profundo para contraste */
+  /* ===== VARIABLES BASE PARA INPUT ===== */
   
-  --color-secondary: var(--accent-400);    /* Naranja equilibrado */
-  --color-secondary-hover: var(--accent-500); /* Naranja oscuro para hover */
-  --color-secondary-light: var(--accent-100); /* Crema dorada para fondos */
-  --color-secondary-dark: var(--accent-600);  /* Naranja muy oscuro */
+  /* Typography */
+  --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
   
-  --color-danger: var(--red-500);
-  --color-danger-hover: var(--red-600);
-  --color-danger-light: var(--red-100);
-  --color-danger-dark: var(--red-700);
+  /* Font Sizes */
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
   
-  --color-success: var(--green-600);      /* Verde para success más contrastante */
-  --color-success-hover: var(--green-700); /* Verde oscuro para hover */
-  --color-success-light: var(--green-50); /* Verde muy claro para fondo */
-  --color-success-dark: var(--green-800);  /* Verde muy oscuro para contraste */
-  
-  --color-warning: var(--yellow-600);      /* Amarillo oscuro para warning */
-  --color-warning-hover: var(--yellow-700); /* Amarillo más oscuro para hover */
-  --color-warning-light: var(--yellow-50); /* Amarillo muy claro para fondo */
-  --color-warning-dark: var(--yellow-800);  /* Amarillo muy oscuro para contraste */
-
-  /* === SURFACE SYSTEM - ARMONÍA AUTOMÁTICA MEJORADA === */
-  /* Sistema de superficies con progresión coherente y contraste perfecto */
-  --surface-app: var(--matcha-50);        /* App background - azul muy claro */
-  --surface-container: var(--matcha-100); /* Secciones principales - azul claro */
-  --surface-card: #ffffff;                /* Cards y elementos - blanco puro para contraste */
-  --surface-elevated: #ffffff;            /* Modals, dropdowns - blanco puro */
-  --surface-overlay: rgba(1, 18, 23, 0.4); /* Overlays - azul oscuro translúcido */
-
-  /* === COLORES DE FONDO REDEFINIDOS MEJORADOS === */
-  --bg-app: var(--surface-app);
-  --bg-primary: var(--surface-card);        /* Blanco puro para máximo contraste */
-  --bg-secondary: var(--surface-container); /* Azul claro para secciones */
-  --bg-tertiary: var(--surface-elevated);   /* Blanco puro para elements elevated */
-  --bg-muted: var(--sage-200);              /* Gris para elementos deshabilitados */
-  --bg-disabled: var(--sage-100);
-  --bg-hover: var(--matcha-100);            /* Azul muy claro para hover */
-  
-  /* === COLORES DE TEXTO MEJORADOS === */
-  --text-primary: var(--matcha-900);    /* Azul muy oscuro para máximo contraste */
-  --text-secondary: var(--matcha-700);  /* Azul marino para texto secundario */
-  --text-tertiary: var(--matcha-600);   /* Azul oscuro para texto terciario */
-  --text-muted: var(--sage-500);       /* Gris medio para texto apagado */
-  --text-placeholder: var(--sage-500); /* Gris medio para placeholders (WCAG AA) */
-  --text-disabled: var(--sage-400);    /* Gris claro para texto deshabilitado */
-  --text-white: #ffffff;
-  --text-on-primary: #ffffff;
-  --text-on-secondary: #ffffff;
-  --text-on-danger: #ffffff;
-  --text-on-success: #ffffff;
-  --text-on-warning: var(--yellow-900); /* Texto oscuro sobre warning claro */
-
-  /* === BORDES === */
-  --border-default: var(--sage-300);    /* Gris neutro para bordes por defecto */
-  --border-light: var(--sage-200);      /* Gris muy claro para bordes suaves */
-  --border-medium: var(--sage-400);     /* Gris medio para bordes destacados */
-  --border-dark: var(--sage-600);       /* Gris oscuro para bordes fuertes */
-  --border-focus: var(--matcha-600);    /* Azul oscuro para focus (WCAG AA) */
-  --border-primary: var(--matcha-600);  /* Azul oscuro para bordes primary */
-  --border-hover: var(--sage-400);      /* Gris medio para hover en bordes */
-
-  /* === ESPACIADO MINIMALISTA ZEN === */
-  --space-xs: 0.6rem;   /* 6px - Más respiro */
-  --space-sm: 1.2rem;   /* 12px - Espaciado suave */
-  --space-md: 1.8rem;   /* 18px - Separación elegante */
-  --space-lg: 2.4rem;   /* 24px - Respiración amplia */
-  --space-xl: 3.6rem;   /* 36px - Espaciado generoso */
-  --space-2xl: 4.8rem;  /* 48px - Separación importante */
-  --space-3xl: 7.2rem;  /* 72px - Espaciado dramático */
-  --space-4xl: 9.6rem;  /* 96px - Ultra espacioso */
-
-  /* === TIPOGRAFÍA === */
-  --font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-family-mono: 'Fira Code', 'Courier New', monospace;
-  
-  /* Tamaños elegantes minimalistas */
-  --font-size-xs: 1.3rem;   /* 13px - Más legible */
-  --font-size-sm: 1.5rem;   /* 15px - Suave */
-  --font-size-base: 1.7rem; /* 17px - Base elegante */
-  --font-size-md: 1.9rem;   /* 19px - Intermedio */
-  --font-size-lg: 2.1rem;   /* 21px - Grande suave */
-  --font-size-xl: 2.5rem;   /* 25px - Título menor */
-  --font-size-2xl: 3.1rem;  /* 31px - Título medio */
-  --font-size-3xl: 3.7rem;  /* 37px - Título grande */
-  --font-size-4xl: 4.9rem;  /* 49px - Hero title */
-  
-  /* Pesos más suaves y minimalistas */
-  --font-weight-light: 300;    /* Ultraligero */
-  --font-weight-normal: 400;   /* Normal */
-  --font-weight-medium: 500;   /* Medio suave */
-  --font-weight-semibold: 600; /* Semi-bold elegante */
-  --font-weight-bold: 700;     /* Bold para acentos */
-  
+  /* Line Heights */
   --line-height-tight: 1.25;
   --line-height-normal: 1.5;
-  --line-height-relaxed: 1.75;
-
-  /* === BORDER RADIUS ORGÁNICO === */
-  --radius-soft: 0.6rem;   /* 6px - Suave */
-  --radius-medium: 1.2rem; /* 12px - Medio orgánico */
-  --radius-large: 1.8rem;  /* 18px - Grande elegante */
-  --radius-xl: 2.4rem;     /* 24px - Extra grande */
-  --radius-2xl: 3.0rem;    /* 30px - Muy redondeado */
-  --radius-full: 9999px;   /* Círculo completo */
+  --line-height-relaxed: 1.625;
   
-  /* Mapeo para compatibilidad */
-  --radius-sm: var(--radius-soft);
-  --radius-md: var(--radius-medium);
-  --radius-lg: var(--radius-large);
-
-  /* === SOMBRAS MINIMALISTAS === */
-  --shadow-soft: 0 1px 3px rgba(47, 133, 90, 0.05);      /* Sombra suave con tinte matcha */
-  --shadow-gentle: 0 4px 6px rgba(47, 133, 90, 0.05);    /* Sombra gentil */
-  --shadow-medium: 0 10px 15px rgba(47, 133, 90, 0.08);  /* Sombra media */
-  --shadow-strong: 0 20px 25px rgba(47, 133, 90, 0.1);   /* Sombra fuerte */
-  --shadow-none: none;
+  /* Border Radius */
+  --radius-none: 0;
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+  --radius-full: 9999px;
   
-  /* Mapeo para compatibilidad */
-  --shadow-sm: var(--shadow-soft);
-  --shadow-md: var(--shadow-gentle);
-  --shadow-lg: var(--shadow-medium);
-  --shadow-xl: var(--shadow-strong);
-
-  /* === TRANSICIONES === */
+  /* Spacing System */
+  --space-xs: 0.25rem;   /* 4px */
+  --space-sm: 0.5rem;    /* 8px */
+  --space-md: 0.75rem;   /* 12px */
+  --space-lg: 1rem;      /* 16px */
+  --space-xl: 1.5rem;    /* 24px */
+  --space-2xl: 2rem;     /* 32px */
+  
+  /* Touch Targets (Mobile) */
+  --touch-target-min: 2.75rem;  /* 44px - Mínimo WCAG para área táctil */
+  
+  /* Transitions */
   --transition-fast: 0.15s ease-in-out;
   --transition-normal: 0.2s ease-in-out;
   --transition-slow: 0.3s ease-in-out;
-
-  /* === Z-INDEX === */
-  --z-dropdown: 1000;
-  --z-sticky: 1020;
-  --z-fixed: 1030;
-  --z-modal-backdrop: 1040;
-  --z-modal: 1050;
-  --z-popover: 1060;
-  --z-tooltip: 1070;
-  --z-toast: 1080;
-
-  /* ===== 🆕 VARIABLES CENTRALIZADAS DE ALTURA - HOMOLOGACIÓN PERFECTA ===== */
-  /* Alturas estándar para todos los componentes de input */
-  --component-height-xs: 2.8rem;  /* 28px */
-  --component-height-sm: 3.2rem;  /* 32px */
-  --component-height-md: 4.0rem;  /* 40px */
-  --component-height-lg: 5.6rem;  /* 56px - TAMAÑO ESTÁNDAR PRINCIPAL */
-  --component-height-xl: 5.6rem;  /* 56px - Igual que lg para consistencia */
   
-  /* Padding estándar por tamaño */
-  --component-padding-xs: var(--space-xs) var(--space-sm);     /* 4px 8px */
-  --component-padding-sm: var(--space-sm) var(--space-md);     /* 8px 16px */
-  --component-padding-md: var(--space-sm) var(--space-md);     /* 8px 16px */
-  --component-padding-lg: var(--space-md) var(--space-xl);     /* 16px 24px */
-  --component-padding-xl: var(--space-md) var(--space-2xl);    /* 16px 32px */
+  /* Component Sizing */
+  --component-height-xs: 2rem;
+  --component-height-sm: 2.25rem;
+  --component-height-md: 2.5rem;
+  --component-height-lg: 2.75rem;
+  --component-height-xl: 3rem;
   
-  /* Font sizes por tamaño de componente */
-  --component-font-xs: var(--font-size-xs);     /* 12px */
-  --component-font-sm: var(--font-size-sm);     /* 14px */
-  --component-font-md: var(--font-size-base);   /* 16px */
-  --component-font-lg: var(--font-size-lg);     /* 20px */
-  --component-font-xl: var(--font-size-xl);     /* 24px */
+  --component-padding-xs: 0.25rem 0.5rem;
+  --component-padding-sm: 0.375rem 0.75rem;
+  --component-padding-md: 0.5rem 1rem;
+  --component-padding-lg: 0.625rem 1.25rem;
+  --component-padding-xl: 0.75rem 1.5rem;
   
-  /* Área táctil móvil mínima */
-  --touch-target-min: 4.4rem;  /* 44px - Estándar de accesibilidad */
+  --component-font-xs: 0.75rem;
+  --component-font-sm: 0.875rem;
+  --component-font-md: 1rem;
+  --component-font-lg: 1.125rem;
+  --component-font-xl: 1.25rem;
+
+  /* ===== VARIANTES SEMÁNTICAS DEL DESIGN-SYSTEM V2.0 - DARK THEME ===== */
   
-  /* Espaciado entre componentes en formularios */
-  --form-field-gap: var(--space-lg);      /* 16px entre campos */
-  --form-section-gap: var(--space-xl);    /* 24px entre secciones */
-
-  /* === ASPECT RATIOS === */
-  --aspect-square: 1 / 1;
-  --aspect-video: 16 / 9;
-  --aspect-photo: 4 / 3;
-  --aspect-card: 2 / 3;
+  /* PRIMARY - Azul */
+  --color-primary: var(--blue-500);
+  --color-primary-hover: var(--blue-400);
+  --bg-primary: var(--gray-50);        /* Fondo oscuro */
+  --text-primary: var(--gray-700);     /* Texto claro */
+  --border-primary: var(--blue-500);
+  --shadow-primary: rgba(59, 130, 246, 0.4);  /* Sombra más visible en dark */
   
-  /* === CONTENEDOR === */
-  --container-max-width: 120rem; /* 1200px */
+  /* SECONDARY - Slate/Gris */
+  --color-secondary: var(--slate-500);
+  --color-secondary-hover: var(--slate-400);
+  --bg-secondary: var(--slate-50);     /* Fondo slate oscuro */
+  --text-secondary: var(--slate-600);  /* Texto slate claro */
+  --border-secondary: var(--slate-300);
+  --shadow-secondary: rgba(148, 163, 184, 0.3);
   
-  /* === GRID BREAKPOINTS === */
-  --breakpoint-sm: 640px;
-  --breakpoint-md: 768px;
-  --breakpoint-lg: 1024px;
-  --breakpoint-xl: 1280px;
-  --breakpoint-2xl: 1536px;
-
-  /* === ICON SIZES === */
-  --icon-size-xs: 1.2rem;   /* 12px */
-  --icon-size-sm: 1.6rem;   /* 16px */
-  --icon-size-md: 2.0rem;   /* 20px */
-  --icon-size-lg: 2.4rem;   /* 24px */
-  --icon-size-xl: 3.2rem;   /* 32px */
-
-  /* === PALETA TIERRA - SEGUNDA OPCIÓN === */
-  --tierra-50: #fefae0;    /* Crema suave tierra */
-  --tierra-100: #f7f3d6;   /* Beige muy claro */
-  --tierra-200: #e8ddb5;   /* Beige claro */
-  --tierra-300: #dda15e;   /* Dorado tierra */
-  --tierra-400: #bc6c25;   /* Naranja tierra */
-  --tierra-500: #606c38;   /* Verde tierra principal */
-  --tierra-600: #4a5429;   /* Verde tierra oscuro */
-  --tierra-700: #283618;   /* Verde muy oscuro */
-  --tierra-800: #1f2a13;   /* Verde profundo */
-  --tierra-900: #15200e;   /* Verde casi negro */
-
-}
-
-/* === MODO OSCURO OCÉANO MODERNO === */
-.dark {
-  /* === SURFACE SYSTEM MODO OSCURO - PROGRESIÓN PROFUNDA === */
-  --surface-app: var(--matcha-950);       /* App background - azul ultra oscuro */
-  --surface-container: var(--matcha-900); /* Secciones principales - azul casi negro */
-  --surface-card: var(--matcha-850);      /* Cards y elementos - azul profundo */
-  --surface-elevated: var(--matcha-800);  /* Modals, dropdowns - azul profundo */
-  --surface-overlay: rgba(240, 249, 255, 0.1); /* Overlays - azul claro translúcido */
-
-  /* === FONDOS REDEFINIDOS MODO OSCURO === */
-  --bg-app: var(--surface-app);
-  --bg-primary: var(--surface-elevated);     /* Azul profundo para máximo contraste */
-  --bg-secondary: var(--surface-container);  /* Azul casi negro para secciones */
-  --bg-tertiary: var(--surface-card);       /* Azul profundo para cards */
-  --bg-muted: var(--matcha-700);            /* Azul marino para elementos deshabilitados */
-  --bg-disabled: var(--matcha-800);         /* Azul profundo para deshabilitado */
-  --bg-hover: rgba(33, 158, 188, 0.15);     /* Azul medio translúcido para hover */
+  /* SUCCESS - Verde */
+  --color-success: var(--green-500);
+  --color-success-hover: var(--green-400);
+  --color-success-light: var(--green-100);  /* Verde oscuro para fondos */
+  --bg-success: var(--green-100);      /* Fondo verde oscuro */
+  --text-success: var(--green-600);    /* Texto verde claro */
+  --border-success: var(--green-500);
+  --shadow-success: rgba(34, 197, 94, 0.3);
   
-  /* === TEXTOS OPTIMIZADOS MODO OSCURO === */
-  --text-primary: var(--matcha-50);    /* Blanco azulado - títulos */
-  --text-secondary: var(--matcha-100); /* Azul muy claro - texto normal */
-  --text-tertiary: var(--matcha-200);  /* Azul claro - texto secundario */
-  --text-muted: var(--matcha-300);     /* Azul claro medio - texto apagado */
-  --text-placeholder: var(--matcha-400); /* Azul medio - placeholders */
-  --text-disabled: var(--matcha-500);  /* Azul medio oscuro - deshabilitado */
+  /* WARNING - Amarillo */
+  --color-warning: var(--yellow-500);
+  --color-warning-hover: var(--yellow-400);
+  --color-warning-light: var(--yellow-100);  /* Amarillo oscuro para fondos */
+  --bg-warning: var(--yellow-100);     /* Fondo amarillo oscuro */
+  --text-warning: var(--yellow-600);   /* Texto amarillo claro */
+  --border-warning: var(--yellow-500);
+  --shadow-warning: rgba(251, 191, 36, 0.3);
   
-  /* === BORDES OPTIMIZADOS MODO OSCURO === */
-  --border-default: var(--matcha-600); /* Azul oscuro - bordes por defecto */
-  --border-light: var(--matcha-700);   /* Azul marino - bordes suaves */
-  --border-medium: var(--matcha-500);  /* Azul medio oscuro - bordes destacados */
-  --border-dark: var(--matcha-400);    /* Azul medio - bordes oscuros */
-  --border-hover: var(--matcha-400);   /* Azul medio - hover en bordes */
-  --border-focus: var(--matcha-200);   /* Azul claro - focus */
-  --border-primary: var(--matcha-200); /* Azul claro - primary */
+  /* DANGER - Rojo */
+  --color-danger: var(--red-500);
+  --color-danger-hover: var(--red-400);
+  --color-danger-light: var(--red-100);    /* Rojo oscuro para fondos */
+  --bg-danger: var(--red-100);         /* Fondo rojo oscuro */
+  --text-danger: var(--red-600);       /* Texto rojo claro */
+  --border-danger: var(--red-500);
+  --shadow-danger: rgba(248, 113, 113, 0.3);
   
-  /* === COLORES SEMÁNTICOS MODO OSCURO === */
-  --color-primary: var(--matcha-300);       /* Azul claro medio más visible */
-  --color-primary-hover: var(--matcha-200); /* Azul claro para hover */
-  --color-primary-light: var(--matcha-800); /* Azul profundo - fondo primary oscuro */
-  --color-primary-dark: var(--matcha-100);  /* Azul muy claro - contraste */
+  /* NEUTRAL - Gris */
+  --color-neutral: var(--gray-500);
+  --color-neutral-hover: var(--gray-400);
+  --bg-neutral: var(--gray-50);        /* Fondo gris oscuro */
+  --text-neutral: var(--gray-600);     /* Texto gris claro */
+  --border-neutral: var(--gray-300);
+  --shadow-neutral: rgba(161, 161, 170, 0.3);
+
+  /* ===== VARIABLES ADICIONALES PARA INPUT - DARK THEME ===== */
+  --border-default: var(--gray-300);      /* Borde gris oscuro por defecto */
+  --text-placeholder: var(--gray-400);    /* Placeholder gris medio */
+  --bg-disabled: var(--gray-100);         /* Fondo disabled oscuro */
+  --text-disabled: var(--gray-400);       /* Texto disabled gris medio */
   
-  --color-secondary: var(--accent-400);     /* Naranja medio más visible */
-  --color-secondary-hover: var(--accent-300); /* Amarillo dorado para hover */
-  --color-secondary-light: var(--matcha-800); /* Azul profundo - fondo secondary oscuro */
-  --color-secondary-dark: var(--accent-200); /* Dorado claro - contraste */
-  
-  --color-success: var(--green-400);       /* Verde claro para success */
-  --color-success-hover: var(--green-300); /* Verde más claro para hover */
-  --color-success-light: var(--green-900); /* Verde oscuro - fondo success */
-  --color-success-dark: var(--green-200);  /* Verde muy claro - contraste */
-  
-  --color-warning: var(--yellow-400);      /* Amarillo claro para warning */
-  --color-warning-hover: var(--yellow-300); /* Amarillo más claro para hover */
-  --color-warning-light: var(--yellow-900); /* Amarillo oscuro - fondo warning */
-  --color-warning-dark: var(--yellow-200);  /* Amarillo muy claro - contraste */
-  
-  --color-danger-light: var(--red-900);     /* Rojo oscuro - fondo danger */
+  /* Variables adicionales para fondo global */
+  --bg-app: var(--gray-50);               /* Fondo principal de la app */
+  --bg-card: var(--gray-100);             /* Fondo de cards/contenedores */
+  --text-primary-app: var(--gray-700);    /* Texto principal de la app */
+  --text-secondary-app: var(--gray-500);  /* Texto secundario de la app */
 
-  /* === SOMBRAS MODO OSCURO OCÉANO === */
-  --shadow-soft: 0 1px 3px rgba(1, 18, 23, 0.4);       /* Sombra suave azul oscuro */
-  --shadow-gentle: 0 4px 6px rgba(1, 18, 23, 0.5);     /* Sombra gentil azul oscuro */
-  --shadow-medium: 0 10px 15px rgba(1, 18, 23, 0.6);   /* Sombra media azul oscuro */
-  --shadow-strong: 0 20px 25px rgba(1, 18, 23, 0.7);   /* Sombra fuerte azul oscuro */
 }
-
-/* ===== ESTILOS BASE DEL BODY ===== */
-body {
-  font-family: var(--font-family-base);
-  color: var(--text-primary);
-  background-color: var(--bg-app);  /* ✅ SURFACE SYSTEM: Fondo de app armonioso */
-  line-height: var(--line-height-normal);
-  font-weight: var(--font-weight-normal);
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* ===== HEADERS DE PÁGINA ===== */
-.page-header {
-  text-align: center;
-  margin-bottom: var(--space-2xl);
-  padding-bottom: var(--space-xl);
-  border-bottom: 0.1rem solid var(--border-default);
-}
-
-.page-title {
-  margin: 0 0 var(--space-sm) 0;
-  font-size: var(--font-size-3xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--text-primary);
-  line-height: var(--line-height-tight);
-}
-
-.page-description {
-  margin: 0;
-  font-size: var(--font-size-lg);
-  color: var(--text-secondary);
-  line-height: var(--line-height-normal);
-}
-
-/* ===== BOTONES PRINCIPALES DE NAVEGACIÓN ===== */
-.nav-buttons {
-  display: flex;
-  gap: var(--space-md);
-  margin-bottom: var(--space-xl);
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-/* ===== MENSAJES DE ESTADO ===== */
-.status-message {
-  padding: var(--space-lg);
-  border-radius: var(--radius-md);
-  border: 0.1rem solid transparent;
-  margin-bottom: var(--space-lg);
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-md);
-  font-family: var(--font-family-base);
-  position: relative;
-  animation: slideInDown 0.3s ease-out;
-}
-
-.status-message__icon {
-  flex-shrink: 0;
-  font-size: var(--font-size-lg);
-  line-height: 1;
-}
-
-.status-message__content {
-  flex: 1;
-  min-width: 0;
-}
-
-.status-message__content h4,
-.status-message__content h3 {
-  margin: 0 0 var(--space-xs) 0;
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-bold);
-}
-
-.status-message__content p {
-  margin: 0;
-  font-size: var(--font-size-sm);
-  color: var(--text-secondary);
-}
-
-.status-message__close {
-  flex-shrink: 0;
-  margin-left: var(--space-sm);
-  background: none;
-  border: none;
-  color: inherit;
-  cursor: pointer;
-  padding: var(--space-xs);
-  border-radius: var(--radius-sm);
-  transition: background-color var(--transition-normal);
-  opacity: 0.7;
-}
-
-.status-message__close:hover {
-  opacity: 1;
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
-.status-message__redirect {
-  flex-shrink: 0;
-  margin-left: var(--space-md);
-  font-size: var(--font-size-xs);
-  font-style: italic;
-  color: var(--text-muted);
-  animation: pulse 1s infinite;
-}
-
-/* ===== VARIANTES DE ESTADO ===== */
-.status-message--error {
-  background-color: var(--color-danger-light);
-  border-color: var(--color-danger);
-  color: var(--color-danger-dark);
-}
-
-.status-message--success {
-  background-color: var(--color-success-light);
-  border-color: var(--color-success);
-  color: var(--color-success-dark);
-}
-
-.status-message--warning {
-  background-color: var(--color-warning-light);
-  border-color: var(--color-warning);
-  color: var(--color-warning-dark);
-}
-
-.status-message--info {
-  background-color: var(--color-primary-light);
-  border-color: var(--color-primary);
-  color: var(--color-primary-dark);
-}
-
-/* ===== HEADERS DE FORMULARIO ===== */
-.form-header {
-  margin-bottom: var(--space-xl);
-  text-align: center;
-}
-
-.form-title {
-  margin: 0 0 var(--space-sm) 0;
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--text-primary);
-  line-height: var(--line-height-tight);
-}
-
-.form-description {
-  margin: 0;
-  font-size: var(--font-size-base);
-  color: var(--text-secondary);
-  line-height: var(--line-height-normal);
-}
-
-/* ===== ESTADO DE FORMULARIO EXITOSO ===== */
-.form--success {
-  opacity: 0.8;
-  pointer-events: none;
-}
-
-/* ===== CLASES UTILITARIAS PARA HOMOLOGACIÓN ===== */
-/* Usar cuando hay problemas de alineación específicos */
-.component-height-xs { min-height: var(--component-height-xs) !important; }
-.component-height-sm { min-height: var(--component-height-sm) !important; }
-.component-height-md { min-height: var(--component-height-md) !important; }
-.component-height-lg { min-height: var(--component-height-lg) !important; }
-.component-height-xl { min-height: var(--component-height-xl) !important; }
-
-/* Clase de emergencia para homologación forzada */
-.force-input-height-lg {
-  min-height: var(--component-height-lg) !important;
-  padding: var(--component-padding-lg) !important;
-  font-size: var(--component-font-lg) !important;
-  line-height: var(--line-height-normal) !important;
-  box-sizing: border-box !important;
-}
-
-/* ===== HERRAMIENTAS DE DEBUGGING ===== */
-/* Activar con clase .debug-heights en el body */
-.debug-heights input,
-.debug-heights select,
-.debug-heights .file-input__button,
-.debug-heights .button {
-  outline: 2px solid red !important;
-  outline-offset: -2px !important;
-  position: relative !important;
-}
-
-/* Grid de referencia para verificar alturas */
-.height-grid {
-  background-image: 
-    linear-gradient(to bottom, transparent 55px, red 56px, transparent 57px);
-  background-size: 100% 56px;
-  background-repeat: repeat-y;
-}
-
-/* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 768px) {
-  .nav-buttons {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  /* Asegurar área táctil mínima en móviles */
-  .component-height-xs,
-  .component-height-sm {
-    min-height: var(--touch-target-min) !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .page-title {
-    font-size: var(--font-size-2xl);
-  }
-  
-  .page-description {
-    font-size: var(--font-size-base);
-  }
-}
-
-/* ===== ANIMACIONES ===== */
-@keyframes slideInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-/* ===== ACCESIBILIDAD ===== */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-@media (prefers-contrast: high) {
-  :root {
-    --border-default: var(--gray-600);
-    --shadow-sm: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 0.4rem 0.6rem rgba(0, 0, 0, 0.3);
-  }
-}
-
-/* ===== PRINT STYLES ===== */
-@media print {  
-  .nav-buttons,
-  .status-message__close {
-    display: none;
-  }
-}
-/* ===== TEMA TIERRA - SEGUNDA OPCIÓN DE PALETA ===== */
-
-.palette-tierra {
-  /* Colores semánticos tema tierra */
-  --color-primary: var(--tierra-500);      /* Verde tierra principal */
-  --color-primary-hover: var(--tierra-600); /* Verde tierra oscuro */
-  --color-primary-light: var(--tierra-50);  /* Crema tierra */
-  --color-primary-dark: var(--tierra-700);  /* Verde muy oscuro */
-  
-  --color-secondary: var(--tierra-300);     /* Dorado tierra */
-  --color-secondary-hover: var(--tierra-400); /* Naranja tierra */
-  --color-secondary-light: var(--tierra-100); /* Beige muy claro */
-  --color-secondary-dark: var(--tierra-600);  /* Verde tierra oscuro */
-  
-  /* === FONDOS OPTIMIZADOS TEMA TIERRA === */
-  --bg-primary: var(--tierra-50);           /* Crema suave - fondo principal */
-  --bg-secondary: var(--tierra-100);        /* Beige muy claro - sidebar, cards */
-  --bg-tertiary: var(--tierra-200);         /* Beige claro - secciones */
-  --bg-muted: var(--tierra-200);            /* Beige claro - elementos deshabilitados */
-  --bg-disabled: var(--tierra-100);         /* Beige muy claro - deshabilitado */
-  --bg-hover: var(--tierra-100);            /* Beige muy claro - hover suave */
-  
-  /* === TEXTOS OPTIMIZADOS TEMA TIERRA === */
-  --text-primary: var(--tierra-800);        /* Verde profundo - títulos */
-  --text-secondary: var(--tierra-700);      /* Verde muy oscuro - texto normal */
-  --text-tertiary: var(--tierra-600);       /* Verde tierra oscuro - texto secundario */
-  --text-muted: var(--tierra-500);          /* Verde tierra principal - texto apagado */
-  --text-placeholder: var(--tierra-400);    /* Naranja tierra - placeholders */
-  --text-disabled: var(--tierra-400);       /* Naranja tierra - deshabilitado */
-  
-  /* === BORDES OPTIMIZADOS TEMA TIERRA === */
-  --border-default: var(--tierra-300);      /* Dorado tierra - bordes por defecto */
-  --border-light: var(--tierra-200);        /* Beige claro - bordes suaves */
-  --border-medium: var(--tierra-400);       /* Naranja tierra - bordes destacados */
-  --border-dark: var(--tierra-500);         /* Verde tierra - bordes oscuros */
-  --border-hover: var(--tierra-400);        /* Naranja tierra - hover en bordes */
-  --border-focus: var(--tierra-500);        /* Verde tierra - focus */
-  --border-primary: var(--tierra-500);      /* Verde tierra - primary */
-  
-  /* === ESTADOS INTERACTIVOS MEJORADOS === */
-  /* Hovers más suaves y naturales */
-  --bg-hover: rgba(221, 161, 94, 0.1);      /* Dorado tierra translúcido */
-  
-  /* === SOMBRAS CON TINTE TIERRA === */
-  --shadow-soft: 0 1px 3px rgba(96, 108, 56, 0.08);      /* Sombra suave tierra */
-  --shadow-gentle: 0 4px 6px rgba(96, 108, 56, 0.1);     /* Sombra gentil tierra */
-  --shadow-medium: 0 10px 15px rgba(96, 108, 56, 0.12);  /* Sombra media tierra */
-  --shadow-strong: 0 20px 25px rgba(96, 108, 56, 0.15);  /* Sombra fuerte tierra */
-  
-  transition: background-color var(--transition-normal), color var(--transition-normal);
-}
-
-.palette-tierra.dark {
-  /* === FONDOS OPTIMIZADOS MODO OSCURO TIERRA === */
-  --bg-primary: var(--tierra-900);          /* Verde casi negro - fondo principal */
-  --bg-secondary: var(--tierra-800);        /* Verde profundo - sidebar, cards */
-  --bg-tertiary: var(--tierra-700);         /* Verde muy oscuro - secciones */
-  --bg-muted: var(--tierra-700);            /* Verde muy oscuro - elementos deshabilitados */
-  --bg-disabled: var(--tierra-800);         /* Verde profundo - deshabilitado */
-  --bg-hover: rgba(221, 161, 94, 0.15);     /* Dorado tierra translúcido más visible */
-  
-  /* === TEXTOS OPTIMIZADOS MODO OSCURO TIERRA === */
-  --text-primary: var(--tierra-50);         /* Crema suave - títulos */
-  --text-secondary: var(--tierra-100);      /* Beige muy claro - texto normal */
-  --text-tertiary: var(--tierra-200);       /* Beige claro - texto secundario */
-  --text-muted: var(--tierra-300);          /* Dorado tierra - texto apagado */
-  --text-placeholder: var(--tierra-400);    /* Naranja tierra - placeholders */
-  --text-disabled: var(--tierra-500);       /* Verde tierra - deshabilitado */
-  
-  /* === BORDES OPTIMIZADOS MODO OSCURO TIERRA === */
-  --border-default: var(--tierra-600);      /* Verde tierra oscuro - bordes por defecto */
-  --border-light: var(--tierra-700);        /* Verde muy oscuro - bordes suaves */
-  --border-medium: var(--tierra-500);       /* Verde tierra principal - bordes destacados */
-  --border-dark: var(--tierra-400);         /* Naranja tierra - bordes oscuros */
-  --border-hover: var(--tierra-400);        /* Naranja tierra - hover en bordes */
-  --border-focus: var(--tierra-300);        /* Dorado tierra - focus */
-  --border-primary: var(--tierra-300);      /* Dorado tierra - primary */
-  
-  /* === COLORES SEMÁNTICOS MODO OSCURO === */
-  --color-primary: var(--tierra-400);       /* Naranja tierra más visible */
-  --color-primary-hover: var(--tierra-300); /* Dorado tierra para hover */
-  --color-primary-light: var(--tierra-800); /* Verde profundo - fondo primary oscuro */
-  --color-primary-dark: var(--tierra-200);  /* Beige claro - contraste */
-  
-  --color-secondary: var(--tierra-300);     /* Dorado tierra */
-  --color-secondary-hover: var(--tierra-200); /* Beige claro para hover */
-  --color-secondary-light: var(--tierra-800); /* Verde profundo - fondo secondary oscuro */
-  --color-secondary-dark: var(--tierra-100); /* Beige muy claro - contraste */
-  
-  /* === SOMBRAS MODO OSCURO TIERRA === */
-  --shadow-soft: 0 1px 3px rgba(21, 32, 14, 0.4);       /* Sombra suave oscura */
-  --shadow-gentle: 0 4px 6px rgba(21, 32, 14, 0.5);     /* Sombra gentil oscura */
-  --shadow-medium: 0 10px 15px rgba(21, 32, 14, 0.6);   /* Sombra media oscura */
-  --shadow-strong: 0 20px 25px rgba(21, 32, 14, 0.7);   /* Sombra fuerte oscura */
-}
-

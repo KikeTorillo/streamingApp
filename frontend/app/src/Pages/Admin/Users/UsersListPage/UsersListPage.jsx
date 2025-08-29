@@ -4,10 +4,7 @@
 import { useEffect, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
-import { DataTable } from '../../../../components/organisms/DataTable/DataTable';
-import { Button } from '../../../../components/atoms/Button/Button';
-import { Badge } from '../../../../components/atoms/Badge/Badge';
-import { Typography } from '../../../../components/atoms/Typography/Typography';
+import { Button, Badge, Typography, DataTable } from '../../../../../design-system';
 import { useUsers } from '../../../../app/context/UserContext';
 import { useAlertContext } from '../../../../app/context/AlertContext';
 

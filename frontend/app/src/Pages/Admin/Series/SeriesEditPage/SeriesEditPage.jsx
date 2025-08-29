@@ -5,12 +5,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
-import { Button } from '../../../../components/atoms/Button/Button';
-import { Container } from '../../../../components/atoms/Container/Container';
-import { Divider } from '../../../../components/atoms/Divider/Divider';
-import { Badge } from '../../../../components/atoms/Badge/Badge';
-import { Image } from '../../../../components/atoms/Image/Image';
-import { Typography } from '../../../../components/atoms/Typography/Typography';
+import { Button, Container, Divider, Badge, Typography } from '../../../../../design-system';
+
 
 // Contexto
 import { useSeries } from '../../../../app/context/SeriesContext';

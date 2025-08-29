@@ -4,12 +4,7 @@
 import { useEffect, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
-import { DataTable } from '../../../../components/organisms/DataTable/DataTable';
-import { Button } from '../../../../components/atoms/Button/Button';
-import { Badge } from '../../../../components/atoms/Badge/Badge';
-import { Image } from '../../../../components/atoms/Image/Image';
-import { FlexContainer } from '../../../../components/atoms/FlexContainer/FlexContainer';
-import { Typography } from '../../../../components/atoms/Typography/Typography';
+import { Button, Badge, Image, FlexContainer, Typography, DataTable } from '../../../../../design-system';
 import { useMovies } from '../../../../app/context/MoviesContext';
 import { useMovieNavigation } from '../../../../hooks/useMovieNavigation';
 

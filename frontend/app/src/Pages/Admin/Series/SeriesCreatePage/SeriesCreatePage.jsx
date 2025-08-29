@@ -5,15 +5,13 @@ import { useState } from 'react';
 
 // ===== LAYOUTS Y COMPONENTES =====
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
-import { Container } from '../../../../components/atoms/Container/Container';
-
 // ===== COMPONENTES ESPECÍFICOS =====
 import { TMDBSearchView } from '../../../../components/organisms/TMDBSearchView/TMDBSearchView';
 import { SeriesFormView } from './components/SeriesFormView';
 
 // ===== CONTEXTO Y HOOKS =====
 import { useSeries } from '../../../../app/context/SeriesContext';
-import { Spinner } from "../../../../components/atoms/Spinner/Spinner";
+import { Spinner } from "../../../../../design-system";
 import { useCategories } from "../../../../hooks/useCategories";
 import { useFormNavigation } from "../../../../hooks/useFormNavigation";
 import { useSuccessRedirect } from "../../../../hooks/useSuccessRedirect";

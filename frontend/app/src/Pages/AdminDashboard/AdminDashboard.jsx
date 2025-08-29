@@ -4,15 +4,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../components/templates/AdminLayout/AdminLayout';
-import { FlexContainer } from '../../components/atoms/FlexContainer/FlexContainer';
-import { Typography } from '../../components/atoms/Typography/Typography';
+import { FlexContainer, Typography, Button, Icon, Container, EmptyState, Skeleton } from '../../../design-system';
 import { StatsCard } from '../../components/molecules/StatsCard/StatsCard';
-import { Button } from '../../components/atoms/Button/Button';
-import { Skeleton } from '../../components/atoms/Skeleton/Skeleton';
-import { EmptyState } from '../../components/molecules/EmptyState/EmptyState';
-import { Icon } from '../../components/atoms/Icon/Icon';
-import { Container } from '../../components/atoms/Container/Container';
-
 // Importar servicios para datos reales
 import { getUsersService } from '../../services/Users/getUsersService';
 import { getMoviesService } from '../../services/Movies/getMoviesService';

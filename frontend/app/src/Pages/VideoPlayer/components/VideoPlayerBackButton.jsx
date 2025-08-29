@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Button } from '../../../components/atoms/Button/Button';
+import { Button } from '../../../../design-system';
 
 /**
  * VideoPlayerBackButton - Botón de navegación para regresar

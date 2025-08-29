@@ -1,7 +1,6 @@
 // molecules/SeasonSelector/SeasonSelector.jsx
 import PropTypes from 'prop-types';
-import { Select } from '../../atoms/Select/Select';
-import { Badge } from '../../atoms/Badge/Badge';
+import { Select, Badge } from '../../../../design-system';
 import './SeasonSelector.css';
 
 /**

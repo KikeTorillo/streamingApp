@@ -1,12 +1,7 @@
 // ===== STATS CARD MOLECULE =====
 // src/components/molecules/StatsCard/StatsCard.jsx
 import PropTypes from 'prop-types';
-import { Card } from '../../atoms/Card/Card';
-import { Icon } from '../../atoms/Icon/Icon';
-import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
-import { Typography } from '../../atoms/Typography/Typography';
-import { useStandardProps } from '../../../hooks/useStandardProps';
-import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens/standardProps';
+import { Card, Icon, Typography, INTERACTIVE_PROP_TYPES, extractDOMPropsV2, FlexContainer, useInteractiveProps} from '../../../../design-system';
 import './StatsCard.css';
 
 /**
@@ -75,11 +70,10 @@ function StatsCard(props) {
     className,
     // tokens, renderIcon - disponibles del hook
     ...standardProps
-  } = useStandardProps(restProps, {
-    componentType: 'card',
+  } = useInteractiveProps(restProps, {
+    componentName: 'StatsCard',
     defaultSize: 'md',
-    defaultVariant: 'neutral',
-    defaultRounded: 'lg'
+    defaultVariant: 'neutral'
   });
 
   // ===== MANEJO DE BACKWARD COMPATIBILITY =====
@@ -107,7 +101,7 @@ function StatsCard(props) {
   }
 
   // Props seguros para DOM
-  const domProps = extractDOMProps({
+  const domProps = extractDOMPropsV2({
     ...standardProps,
     id,
     disabled,
@@ -300,7 +294,7 @@ function StatsCard(props) {
 
 StatsCard.propTypes = {
   // Props estándar del sistema de diseño
-  ...STANDARD_PROP_TYPES,
+  ...INTERACTIVE_PROP_TYPES,
   
   // Props específicas del componente
   title: PropTypes.string,

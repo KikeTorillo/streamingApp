@@ -1,9 +1,7 @@
 // AppHeader.jsx
 import PropTypes from 'prop-types';
-import { Button } from '../../atoms/Button/Button';
-import { SearchBar } from '../../molecules/SearchBar/SearchBar';
-import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
-import { Typography } from '../../atoms/Typography/Typography';
+import { Button, TextInput, FlexContainer, Typography } from '../../../../design-system';
+
 
 /**
  * Componente AppHeader - Organism
@@ -64,48 +62,44 @@ function AppHeader({
         padding="lg"
       >
         {/* Brand/Logo */}
-          <Typography
-            as="h1"
-            size="2xl"
-            weight="bold"
-            color="light"
-            onClick={onTitleClick}
-          >
-            {appTitle}
-          </Typography>
+        <Typography
+          as="h1"
+          size="2xl"
+          weight="bold"
+          color="light"
+          onClick={onTitleClick}
+        >
+          {appTitle}
+        </Typography>
 
         {/* Búsqueda */}
         {showSearch && (
-          <SearchBar
-            searchVariant="simple"
+          <TextInput
+            leftIcon="search"
             variant="neutral"
             placeholder={searchPlaceholder}
             value={searchValue}
             onChange={onSearchChange}
             size={size === 'lg' ? 'lg' : 'md'}
-            width="full"
+            className="app-header__search"
           />
         )}
-
-        {/* Usuario */}
-          {userName && (
-            <Typography
-              size="sm"
-              weight="medium"
-              color="light"
-              className="app-header__welcome"
-            >
-              ¡Hola, {userName}!
-            </Typography>
-          )}
-          <Button
-            variant="secondary"
-            size={size === 'lg' ? 'md' : 'sm'}
-            onClick={onLogout}
-            className="logout-button"
-          >
-            Cerrar Sesión
-          </Button>
+        <Typography
+          size="sm"
+          weight="medium"
+          color="light"
+          className="app-header__welcome"
+        >
+          ¡Hola, {userName}!
+        </Typography>
+        <Button
+          variant="secondary"
+          size={size === 'lg' ? 'md' : 'sm'}
+          onClick={onLogout}
+          className="logout-button"
+        >
+          Cerrar Sesión
+        </Button>
       </FlexContainer>
     </header>
   );

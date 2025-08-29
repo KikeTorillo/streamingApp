@@ -2,15 +2,14 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useMovieNavigation } from '../../hooks/useMovieNavigation';
-import { Button } from '../../components/atoms/Button/Button';
-import { AppHeader } from '../../components/organisms/AppHeader/AppHeader';
+import { Button } from '../../../design-system/atoms/Button/Button';
 import { EpisodeListItem } from '../../components/molecules/EpisodeListItem/EpisodeListItem';
 import { SeasonSelector } from '../../components/molecules/SeasonSelector/SeasonSelector';
-import { EmptyState } from '../../components/molecules/EmptyState/EmptyState';
-import { Container } from '../../components/atoms/Container/Container';
-import { Typography } from '../../components/atoms/Typography/Typography';
-import { FlexContainer } from '../../components/atoms/FlexContainer/FlexContainer';
-import { Image } from '../../components/atoms/Image/Image';
+import { EmptyState } from '../../../design-system/molecules/EmptyState/EmptyState';
+import { Container } from '../../../design-system/atoms/Container/Container';
+import { Typography } from '../../../design-system/atoms/Typography/Typography';
+import { FlexContainer } from '../../../design-system/atoms/FlexContainer/FlexContainer';
+import { Image } from '../../../design-system/atoms/Image/Image';
 
 // Servicios (necesitarás crearlos)
 import { getSerieByIdService } from '../../services/Series/getSerieByIdService';
@@ -215,15 +214,7 @@ function SeriesDetailPage() {
     if (serieError) {
         return (
             <>
-            <AppHeader
-                        appTitle="🎬 StreamApp"
-                        onTitleClick={handleBackToSeries}
-                        userName={user?.userName || user?.username || user?.name || user?.email || 'Usuario'}
-                        showSearch={false}
-                        onLogout={handleLogout}
-                        variant="primary"
-                        size="lg"
-                    />
+            
                 <FlexContainer justify="center" align="center">
                     <Container size="sm" textAlign="center">
                         <Typography variant="h2" size="lg" weight="semibold" color="danger">Error al cargar la serie</Typography>
@@ -241,17 +232,7 @@ function SeriesDetailPage() {
 
     return (
         <>
-        <AppHeader
-                    appTitle="🎬 StreamApp"
-                    onTitleClick={handleBackToSeries}
-                    userName={user?.userName || user?.username || user?.name || user?.email || 'Usuario'}
-                    showSearch={false}
-                    showBackButton
-                    onBackClick={handleBackToSeries}
-                    onLogout={handleLogout}
-                    variant="primary"
-                    size="lg"
-                />
+       
             <Container size="lg" padding="lg">
                     {/* ===== INFORMACIÓN DE LA SERIE ===== */}
                     {serie && (

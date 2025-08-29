@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Typography } from '../../../components/atoms/Typography/Typography';
+import { Typography } from '../../../../design-system';
 
 /**
  * VideoPlayerLoadingScreen - Componente para mostrar pantalla de carga

@@ -1,32 +1,32 @@
 import { useRoutes } from "react-router-dom";
 import PropTypes from 'prop-types';
 
-// Páginas del panel de administración
-import { AdminDashboard } from "../../Pages/AdminDashboard/AdminDashboard";
+// Páginas del panel de administración - TEMPORALMENTE COMENTADAS PARA DEBUG
+// import { AdminDashboard } from "../../Pages/AdminDashboard/AdminDashboard";
 
-// Users
-import { UsersListPage } from "../../Pages/Admin/Users/UsersListPage/UsersListPage";
-import { UserCreatePage } from "../../Pages/Admin/Users/UserCreatePage/UserCreatePage";
-import { UserEditPage } from "../../Pages/Admin/Users/UserEditPage/UserEditPage";
+// Users - COMENTADO
+// import { UsersListPage } from "../../Pages/Admin/Users/UsersListPage/UsersListPage";
+// import { UserCreatePage } from "../../Pages/Admin/Users/UserCreatePage/UserCreatePage";
+// import { UserEditPage } from "../../Pages/Admin/Users/UserEditPage/UserEditPage";
 
-// Categories
-import { CategoryCreatePage } from "../../Pages/Admin/Categories/CategoryCreatePage/CategoryCreatePage";
-import { CategoriesListPage } from "../../Pages/Admin/Categories/CategoriesListPage/CategoriesListPage";
+// Categories - COMENTADO
+// import { CategoryCreatePage } from "../../Pages/Admin/Categories/CategoryCreatePage/CategoryCreatePage";
+// import { CategoriesListPage } from "../../Pages/Admin/Categories/CategoriesListPage/CategoriesListPage";
 
-// Movies
-import { MoviesListPage } from "../../Pages/Admin/Movies/MoviesListPage/MoviesListPage";
-import { MovieCreatePage } from "../../Pages/Admin/Movies/MovieCreatePage/MovieCreatePage";
-import { MovieEditPage } from "../../Pages/Admin/Movies/MovieEditPage/MovieEditPage";
+// Movies - COMENTADO
+// import { MoviesListPage } from "../../Pages/Admin/Movies/MoviesListPage/MoviesListPage";
+// import { MovieCreatePage } from "../../Pages/Admin/Movies/MovieCreatePage/MovieCreatePage";
+// import { MovieEditPage } from "../../Pages/Admin/Movies/MovieEditPage/MovieEditPage";
 
-// Series
-import { SeriesListPage } from '../../Pages/Admin/Series/SeriesListPage/SeriesListPage';
-import { SeriesCreatePage } from '../../Pages/Admin/Series/SeriesCreatePage/SeriesCreatePage';
-import { SeriesEditPage } from '../../Pages/Admin/Series/SeriesEditPage/SeriesEditPage';
+// Series - COMENTADO
+// import { SeriesListPage } from '../../Pages/Admin/Series/SeriesListPage/SeriesListPage';
+// import { SeriesCreatePage } from '../../Pages/Admin/Series/SeriesCreatePage/SeriesCreatePage';
+// import { SeriesEditPage } from '../../Pages/Admin/Series/SeriesEditPage/SeriesEditPage';
 
-// Episodes
-import { EpisodesListPage } from '../../Pages/Admin/Episodes/EpisodesListPage/EpisodesListPage';
-import { EpisodesCreatePage } from '../../Pages/Admin/Episodes/EpisodesCreatePage/EpisodesCreatePage';
-import { EpisodeEditPage } from '../../Pages/Admin/Episodes/EpisodeEditPage/EpisodeEditPage';
+// Episodes - COMENTADO
+// import { EpisodesListPage } from '../../Pages/Admin/Episodes/EpisodesListPage/EpisodesListPage';
+// import { EpisodesCreatePage } from '../../Pages/Admin/Episodes/EpisodesCreatePage/EpisodesCreatePage';
+// import { EpisodeEditPage } from '../../Pages/Admin/Episodes/EpisodeEditPage/EpisodeEditPage';
 
 /**
  * Componente de protección de rutas admin
@@ -90,141 +90,48 @@ AdminRoute.propTypes = {
 };
 
 /**
- * AdminRoutes - Configuración de todas las rutas del panel de administración
+ * AdminRoutes - TEMPORALMENTE DESHABILITADO PARA DEBUG
  * 
- * Este componente maneja todas las rutas que empiezan con /admin/*
- * y está protegido por AdminRoute para verificar permisos.
+ * Todas las rutas admin están comentadas para aislar errores del design-system.
+ * Solo se muestran Login y MainPage hasta resolver el problema de Avatar.
  */
 export function AdminRoutes() {
   const routes = useRoutes([
-    // Dashboard principal
+    // Placeholder temporal para debug
     {
-      path: "/",
+      path: "*",
       element: (
         <AdminRoute>
-          <AdminDashboard />
-        </AdminRoute>
-      )
-    },
-
-    // ===== GESTIÓN DE USUARIOS =====
-    {
-      path: "/users",
-      element: (
-        <AdminRoute>
-          <UsersListPage />
-        </AdminRoute>
-      )
-    },
-    {
-      path: "/users/create",
-      element: (
-        <AdminRoute>
-          <UserCreatePage />
-        </AdminRoute>
-      )
-    },
-    {
-      path: "/users/edit/:id",
-      element: (
-        <AdminRoute>
-          <UserEditPage />
-        </AdminRoute>
-      )
-    },
-
-    // ===== GESTIÓN DE CATEGORÍAS =====
-    {
-      path: "/categories",
-      element: (
-        <AdminRoute>
-          <CategoriesListPage />
-        </AdminRoute>
-      )
-    },
-    {
-      path: "/categories/create",
-      element: (
-        <AdminRoute>
-          <CategoryCreatePage />
-        </AdminRoute>
-      )
-    },
-
-    // ===== GESTIÓN DE PELÍCULAS =====
-    {
-      path: "/movies",
-      element: (
-        <AdminRoute>
-          <MoviesListPage />
-        </AdminRoute>
-      )
-    },
-    {
-      path: "/movies/create",
-      element: (
-        <AdminRoute>
-          <MovieCreatePage />
-        </AdminRoute>
-      )
-    },
-    {
-      path: "/movies/edit/:id",
-      element: (
-        <AdminRoute>
-          <MovieEditPage />
-        </AdminRoute>
-      )
-    },
-
-    // ===== GESTIÓN DE SERIES =====
-    {
-      path: "/series",
-      element: (
-        <AdminRoute>
-          <SeriesListPage />
-        </AdminRoute>
-      )
-    },
-    {
-      path: "/series/create",
-      element: (
-        <AdminRoute>
-          <SeriesCreatePage />
-        </AdminRoute>
-      )
-    },
-    {
-      path: "/series/edit/:id",
-      element: (
-        <AdminRoute>
-          <SeriesEditPage />
-        </AdminRoute>
-      )
-    },
-
-    // ===== GESTIÓN DE EPISODES =====
-    {
-      path: "/episodes",
-      element: (
-        <AdminRoute>
-          <EpisodesListPage />
-        </AdminRoute>
-      )
-    },
-    {
-      path: "/episodes/create",
-      element: (
-        <AdminRoute>
-          <EpisodesCreatePage />
-        </AdminRoute>
-      )
-    },
-    {
-      path: "/episodes/edit/:id",
-      element: (
-        <AdminRoute>
-          <EpisodeEditPage />
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '100vh',
+            padding: '2rem',
+            textAlign: 'center',
+            fontFamily: 'var(--font-family-base)'
+          }}>
+            <h1 style={{ fontSize: '2rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
+              🚧 Área Admin Temporalmente Deshabilitada
+            </h1>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
+              Las páginas de administración están comentadas para debugging del sistema de diseño.
+            </p>
+            <button
+              onClick={() => window.location.href = '/main-page'}
+              style={{
+                padding: '1rem 2rem',
+                backgroundColor: 'var(--color-primary)',
+                color: 'white',
+                border: 'none',
+                borderRadius: 'var(--radius-md)',
+                cursor: 'pointer'
+              }}
+            >
+              Volver a Inicio
+            </button>
+          </div>
         </AdminRoute>
       )
     }

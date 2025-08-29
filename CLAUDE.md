@@ -6,10 +6,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Principio de Consistencia
 - **FUNDAMENTAL**: SIEMPRE buscar y mantener la consistencia en el código
-- **OBLIGATORIO**: Antes de implementar cualquier funcionalidad, revisar cómo está implementada en componentes similares
-- **OBLIGATORIO**: Seguir exactamente los mismos patrones, estructura y flujo que componentes existentes
-- **OBLIGATORIO**: Si hay diferencias, investigar el motivo antes de crear inconsistencias
-- **EJEMPLO**: MovieCreatePage, SeriesCreatePage y EpisodesCreatePage deben seguir el mismo patrón de hooks, procesamiento de datos y manejo de estados
 
 ### Idioma
 - **OBLIGATORIO**: Todos los comentarios, mensajes de commit, documentación y comunicación con el usuario DEBEN ser en ESPAÑOL
@@ -18,160 +14,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **PROHIBIDO**: Responder en inglés al usuario mexicano
 
 ### Sistema de Diseño - Uso Obligatorio
-- **FUNDAMENTAL**: SIEMPRE usar componentes del sistema de diseño `@kike-dev/contextual-ui`
-- **PROHIBIDO**: Crear componentes custom sin justificación específica del dominio
-- **PROHIBIDO**: Usar HTML nativo (div, button, input) cuando existe componente del sistema
-- **PROHIBIDO**: Usar iconos externos o crear SVGs custom sin autorización
-- **OBLIGATORIO**: Usar sistema de iconos contextual integrado (`leftIcon`, `rightIcon`)
-- **OBLIGATORIO**: Usar hooks estándar (`useStandardProps`, `useButtonProps`, etc.)
-- **OBLIGATORIO**: Seguir props API unificada (size, variant, rounded, disabled, loading)
+- **FUNDAMENTAL**: SIEMPRE usar componentes de `/frontend/app/design-system/`
+- **OBLIGATORIO**: Consultar `/frontend/app/design-system/README.md` para API completa
+- **PROHIBIDO**: HTML nativo cuando existe componente del sistema
 
-#### ✅ **Patrones Correctos del Sistema:**
-```javascript
-// ✅ CORRECTO: Componentes del sistema
-import { Button, Badge, Input } from '../components/atoms/';
-<Button leftIcon="plus" variant="primary" size="lg">Crear</Button>
-<Badge variant="success" size="sm">Activo</Badge>
-<Input leftIcon="search" placeholder="Buscar..." />
-
-// ✅ CORRECTO: Hooks del sistema
-const { size, variant, tokens, renderIcon } = useButtonProps(props);
-```
-
-#### ❌ **Patrones PROHIBIDOS:**
-```javascript
-// ❌ PROHIBIDO: HTML nativo
-<button className="custom-btn">Click</button>
-<div className="custom-card">Content</div>
-
-// ❌ PROHIBIDO: Iconos externos
-import { FaUser } from 'react-icons/fa';
-<SomeExternalIcon />
-
-// ❌ PROHIBIDO: Props inconsistentes  
-<CustomButton type="large" color="blue" rounded />
-
-// ❌ PROHIBIDO: Estilos inline sin tokens
-<div style={{ padding: '20px', color: '#blue' }}>
-```
-
-#### 🎯 **Excepciones Permitidas:**
-- **Componentes de dominio específico**: VideoPlayer, TMDBSearchView, etc.
-- **Páginas específicas**: Solo cuando componen componentes del sistema
-- **Lógica de negocio**: Hooks específicos del proyecto (useAuth, useMovies)
-- **Layouts específicos**: Cuando extienden templates base del sistema
-
-#### 🔍 **Verificación Obligatoria:**
-Antes de crear cualquier componente, verificar:
-1. ¿Existe ya en el sistema de diseño?
-2. ¿Puede componerse con componentes existentes?
-3. ¿Es específico del dominio streaming o genérico?
-4. ¿Sigue la API de props estándar?
-
-#### 📚 **Storybook - Documentación Obligatoria:**
-- **OBLIGATORIO**: Verificar en http://localhost:6006 antes de usar cualquier componente
-- **OBLIGATORIO**: Solo usar componentes que tengan .stories.jsx completado
-- **PROHIBIDO**: Usar componentes sin documentación en Storybook
-- **OBLIGATORIO**: Al crear componentes nuevos, crear .stories.jsx ANTES de usar
-
-```bash
-# Verificar Storybook antes de desarrollo
-npm run storybook  # http://localhost:6006
-
-# Verificar que el componente tiene stories completas
-ls frontend/app/src/components/atoms/Button/Button.stories.jsx
-```
-
-#### 🎯 **Flujo de Trabajo Obligatorio:**
-1. **BUSCAR**: ¿Existe el componente en Storybook?
-2. **VERIFICAR**: ¿Tiene todas las variantes documentadas?
-3. **USAR**: Import y uso según documentación de Storybook
-4. **COMPONER**: Combinar componentes existentes antes de crear nuevos
-
-### Sistema de Iconos - Reglas Arquitecturales
-
-#### 🔧 **REGLA FUNDAMENTAL: Separación por Responsabilidad**
-
-**COMPONENTES BASE (átomos/moléculas) = renderIcon**
-- **QUÉ**: Componentes que forman parte del design system (`@kike-dev/contextual-ui`)
-- **CUÁNDO**: Button, Input, Badge, Card, Modal - componentes reutilizables de la librería
-- **POR QUÉ**: Consistencia automática según contexto y tamaño del componente
-
-```javascript
-// ✅ CORRECTO: En componentes base de la librería
-const Button = ({ leftIcon, rightIcon, size }) => {
-  const renderIcon = createStandardIconRenderer('button', size);
-  return (
-    <button>
-      {leftIcon && renderIcon(leftIcon)}    // Auto-contextual según size
-      {children}
-      {rightIcon && renderIcon(rightIcon)}  // Auto-contextual según size
-    </button>
-  );
-};
-```
-
-**COMPONENTES APLICACIÓN (organismos/páginas) = Icon directo**
-- **QUÉ**: Componentes que USAN el design system (aplicaciones, páginas, modales específicos)
-- **CUÁNDO**: AlertModal, EditModal, UserProfile, Dashboard - casos específicos de negocio
-- **POR QUÉ**: Control total sobre cada icono específico, fácil debugging
-
-```javascript
-// ✅ CORRECTO: En componentes de aplicación
-<div className="alert-modal__icon">
-  <Icon name="warning" size="lg" variant="danger" />  // Control específico
-</div>
-
-// ✅ CORRECTO: Usando componentes base con props simples
-<Button leftIcon="save" size="lg">Guardar</Button>
-```
-
-#### 📋 **Clasificación de Componentes:**
-
-**Componentes BASE (renderIcon):**
-- `Button` ✅ - Átomo reutilizable
-- `Input` ✅ - Átomo reutilizable  
-- `Badge` ✅ - Átomo reutilizable
-- `Card` ✅ - Molécula reutilizable
-- `Modal` ✅ - Molécula base reutilizable
-
-**Componentes APLICACIÓN (Icon directo):**
-- `AlertModal` ✅ - Caso específico de confirmación
-- `EditModal` ✅ - Caso específico de edición
-- `UserProfile` ✅ - Página específica
-- `MoviesListPage` ✅ - Página específica
-- Cualquier página/organismo del dominio streaming
-
-#### ❌ **Errores Comunes:**
-```javascript
-// ❌ MAL: renderIcon en componente de aplicación (overkill)
-const AlertModal = () => {
-  const renderIcon = createStandardIconRenderer('alert-modal', 'md');
-  return <div>{renderIcon('warning')}</div>; // Innecesariamente complejo
-};
-
-// ✅ BIEN: Icon directo en componente de aplicación
-const AlertModal = () => {
-  return <Icon name="warning" size="lg" variant="danger" />; // Simple y claro
-};
-```
-
-#### 🎯 **Beneficios de esta Arquitectura:**
-
-**Para la librería:**
-- **Consistencia automática** en componentes base
-- **API simple** para usuarios finales
-- **Mantenimiento centralizado** de contextos de iconos
-
-**Para desarrolladores:**
-- **Fácil de entender**: "Usa Icon cuando necesites control específico"
-- **Fácil de debuggear**: Icon directo es transparente
-- **Flexibilidad total**: Control completo sobre iconos específicos
-
-#### 🔍 **Verificación Rápida:**
-**Pregunta**: ¿Este componente será reutilizado en múltiples proyectos?
-- **SÍ** → Componente BASE → usar `renderIcon`
-- **NO** → Componente APLICACIÓN → usar `Icon` directo
 
 ## Comandos Clave
 
@@ -240,9 +86,9 @@ pg-kik config                                      # Ver configuración
 
 ### Patrones de Desarrollo
 - **Backend**: MVC Pattern (Routes → Services → Models) + JWT Auth
-- **Frontend**: Atomic Design (atoms → molecules → organisms → templates)
+- **Frontend**: Usar componentes del design-system + componentes específicos del dominio
 - **Estado**: React Context API organizado por dominio
-- **Estilos**: CSS modules + Design System variables
+- **Estilos**: Solo tokens del design-system, evitar CSS custom
 - **APIs**: Servicios organizados por dominio
 
 ## Contextos Especializados para Claude
@@ -268,7 +114,6 @@ pg-kik config                                      # Ver configuración
 - categoriesService, usersService, userPreferencesService
 
 ### 🎨 Frontend - Contextos Adicionales
-- **Design System**: [.claude/contexts/design-system-context.md](./.claude/contexts/design-system-context.md)
 - **Dynamic Forms**: [.claude/contexts/dynamicform-context.md](./.claude/contexts/dynamicform-context.md)
 - **Database Schema**: [.claude/contexts/database-context.md](./.claude/contexts/database-context.md)
 
@@ -353,88 +198,13 @@ const preferences = {
 
 **❌ PROHIBIDO**: Usar snake_case en frontend o mixing de convenciones
 
-## Principio de "Crear vs Usar" (Build vs Buy)
-
-### Framework de Evaluación para Dependencias Externas
-
-**FILOSOFÍA**: Priorizar creaciones propias para el design system y componentes base reutilizables entre proyectos, pero ser pragmático con librerías complejas.
-
-### Matriz de Decisión
-```
-              │ Complejo │ Simple  
-──────────────┼─────────┼────────
-Crítico       │  Usar   │ Crear  
-              │         │        
-No Crítico    │  Usar   │ Crear  
-```
-
-### 🟢 SIEMPRE crear propio (Prioridad Alta)
-- **Design System & Componentes Base**: Button, Input, Card, Modal, Layout
-- **Business Logic específico**: Hooks (useAuth, useMovies), Services del dominio
-- **Templates reutilizables**: AdminLayout, PlayerLayout, componentes del proyecto
-- **RAZÓN**: Base para todos los futuros proyectos, control total, ventaja competitiva
-
-### 🟡 EVALUAR y consultar (Pregunta: "¿Qué opinas?")
-- **Criterios para evaluar**:
-  - ¿Cuánto tiempo tomaría crear vs usar?
-  - ¿Es crítico para el negocio?
-  - ¿Qué tan complejo es mantenerlo?
-  - ¿Se puede integrar con nuestro design system?
-
-### 🔴 USAR librerías existentes (Cuando Claude recomienda)
-- **Video players**: Video.js, HLS.js (años de optimización, cross-browser)
-- **Date/time**: dayjs, date-fns (timezone, localization complexity)
-- **Crypto/security**: bcrypt, JWT libraries (security-critical)
-- **File processing**: FFmpeg, Sharp (performance-critical)
-- **Complex animations**: Framer Motion (physics, timing)
-
-### Proceso de Evaluación (5 minutos)
-1. **Investigación**: ¿Existe librería madura? (GitHub stars, mantenimiento)
-2. **Proof of Concept**: ¿Funciona básico en 30 min?
-3. **Integración**: ¿Se integra con nuestro design system?
-4. **Decisión**: Si los 3 pasos funcionan → Usar librería
-
-### Señales para Consultar a Claude
-- ⏰ "Esto me está tomando más tiempo del esperado"
-- 🤔 "Siento que estoy reinventando algo"
-- 🔥 "Hay muchas librerías para esto, no sé cuál usar"
-- 🎯 "¿Vale la pena el esfuerzo vs el resultado?"
-
-### Red Flags para NO reinventar
-- **"Es solo un div que..."** → Probablemente es más complejo
-- **"En 2 días lo hago"** → Probablemente tomará 2 semanas  
-- **"Total, es solo JavaScript"** → Cross-browser compatibility
-- **"Así tenemos control total"** → Y responsabilidad total de bugs
-
-### Golden Rule
-> **"Crear design system propio + usar librerías inteligentemente = máxima productividad"**
-
-### Roadmap Evolutivo
-1. **MVP**: Usar librerías + componentes básicos propios
-2. **Optimización**: Extraer design system reutilizable
-3. **Maduración**: Sistema de componentes entre proyectos
-4. **Especialización**: Componentes custom solo cuando sea necesario
 
 ## Frontend Specialist - Contexto Específico del Proyecto
 
-### 🎨 **REGLA FUNDAMENTAL: Sistema de Diseño Primero**
-**ANTES de cualquier desarrollo frontend, SIEMPRE:**
-1. **Revisar Storybook**: http://localhost:6006 para ver componentes disponibles
-2. **Usar componentes del sistema**: NUNCA crear HTML nativo si existe componente
-3. **Seguir patrones existentes**: Revisar páginas similares antes de implementar
-4. **Verificar hooks disponibles**: useAuth, useStandardProps, etc.
-
-```javascript
-// ✅ OBLIGATORIO: Patrón correcto
-import { Button, Card, Input } from '../../../components/atoms/';
-import { DynamicForm } from '../../../components/molecules/';
-import { useButtonProps } from '../../../hooks/useStandardProps';
-
-// ❌ PROHIBIDO: HTML nativo o librerías externas
-import { Button } from 'antd';  // ❌ 
-<button>Click</button>          // ❌
-<div className="custom-card">   // ❌
-```
+### 🎨 **WORKFLOW OBLIGATORIO: Design-System First**
+1. **CONSULTAR PRIMERO**: `/frontend/app/design-system/README.md` - Documentación completa
+2. **VERIFICAR STORYBOOK**: http://localhost:6006 - Componentes disponibles  
+3. **USAR SISTEMA**: NUNCA HTML nativo si existe componente
 
 ### Contextos React Disponibles
 - **AuthContext**: Autenticación (user, isAuthenticated, login/logout)
@@ -474,23 +244,6 @@ import { Button } from 'antd';  // ❌
 **OBLIGATORIO**: Solo usar componentes con .stories.jsx:
 - Verificar en http://localhost:6006 antes de usar cualquier componente
 - Todos los componentes nuevos DEBEN tener stories antes de ser usables
-
-### Para Frontend Specialist - Flujo de Trabajo
-
-**🎯 WORKFLOW OBLIGATORIO - Sistema de Diseño Primero:**
-
-1. **ANTES de CUALQUIER código**: Verificar en Storybook (http://localhost:6006)
-2. **ANTES de crear componentes**: Buscar en sistema de diseño existente
-3. **ANTES de usar HTML nativo**: Verificar si existe componente (`<button>` → `<Button>`)
-4. **ANTES de usar contextos**: Verificar hooks disponibles (useAuth, useUsers, etc.)
-5. **ANTES de crear servicios**: Revisar servicios existentes en misma carpeta
-6. **ANTES de definir estilos**: Usar tokens del design system ÚNICAMENTE
-
-**❌ PASOS PROHIBIDOS:**
-- Crear `<div>`, `<button>`, `<input>` si existe componente del sistema
-- Usar `style={{}}` con valores hardcoded
-- Importar librerías externas de UI (Material-UI, Ant Design, etc.)
-- Crear iconos SVG custom sin autorización
 
 ### Ejemplos de Consistencia Requerida
 - Si trabajas en UsersCreatePage, revisar MoviesCreatePage y SeriesCreatePage
@@ -538,60 +291,13 @@ import { Button } from 'antd';  // ❌
 - `/frontend/app/src/services/Episodes/getEpisodesService.js`
 - `/frontend/app/src/services/Categories/getCategoriesService.js`
 
-### Componentes (Atomic Design)
-- `/frontend/app/src/components/atoms/Button/Button.jsx`
-- `/frontend/app/src/components/molecules/DynamicForm/DynamicForm.jsx`
-- `/frontend/app/src/components/organisms/DataTable/DataTable.jsx`
-- `/frontend/app/src/components/templates/AdminLayout/AdminLayout.jsx`
 
-## Metodología de Exploración para Frontend Specialist
+## Metodología de Exploración
+**SIEMPRE explorar antes de modificar** - usar Glob y Grep para encontrar rutas reales.
 
-### PASO 1: EXPLORAR ANTES DE MODIFICAR
-**OBLIGATORIO**: Usar herramientas de exploración antes de asumir rutas
-
-```bash
-# Encontrar archivos por patrón
-Glob pattern="**/*EpisodesListPage*"
-Glob pattern="**/*Context*"
-
-# Buscar por contenido específico  
-Grep pattern="useEpisodes" path="frontend/app/src"
-Grep pattern="selectedSerieId" output_mode="files_with_matches"
-```
-
-### PASO 2: VERIFICAR ESTRUCTURA REAL
-1. **Siempre usar Glob primero** para encontrar archivos existentes
-2. **Leer archivos completos** para entender la implementación actual
-3. **Identificar patrones** en archivos similares (Movies, Series, Users)
-4. **Verificar imports** para confirmar rutas reales
-
-### PASO 3: IMPLEMENTAR SIGUIENDO PATRONES
-1. **Buscar implementaciones similares** en otros contextos
-2. **Mantener consistencia** con patrones existentes
-3. **Verificar que los cambios funcionan** con la estructura real
-
-### Ejemplos de Exploración Correcta
-
-#### ✅ **CORRECTO - Explorar primero:**
-```bash
-Glob pattern="**/*EpisodesContext*"
-# Resultado: /frontend/app/src/app/context/EpisodesContext.jsx
-
-Read path="/frontend/app/src/app/context/EpisodesContext.jsx"
-# Verificar estructura antes de modificar
-```
-
-#### ❌ **INCORRECTO - Asumir rutas:**
-```bash
-Edit path="/pages/admin/episodes/EpisodesListPage.jsx"
-# Error: archivo no existe en esa ruta
-```
-
-### Rutas Comunes que Causan Errores
+### Rutas Comunes
 - ❌ `/pages/` → ✅ `/Pages/` (PascalCase)
 - ❌ `/context/` → ✅ `/app/context/` (subcarpeta app)
-- ❌ `/hooks/` → ✅ `/hooks/` (correcto, pero verificar imports)
-- ❌ Minúsculas → ✅ PascalCase en nombres de componentes
 
 ## Compatibilidad Móvil y Progressive Web App (PWA)
 
@@ -620,3 +326,79 @@ Edit path="/pages/admin/episodes/EpisodesListPage.jsx"
 - **Lazy Loading**: Cargar contenido bajo demanda
 - **Battery Optimization**: Minimizar consumo en animaciones
 - **Responsive Components**: DataTable → Cards, Navigation → Hamburger
+
+---
+
+## 🔧 **MEJORAS Y MODIFICACIONES PERMITIDAS AL DESIGN-SYSTEM**
+
+### **⚠️ REGLA PARA MODIFICACIÓN DE LA LIBRERÍA**
+
+**PRINCIPIO**: La librería del design-system (`/frontend/app/design-system/`) puede ser modificada **SOLO cuando sea estrictamente necesario** para mejorar la librería misma, y debe ser documentado en este archivo.
+
+### **✅ MODIFICACIONES PERMITIDAS:**
+
+#### **Criterios para Modificar la Librería:**
+1. **Mejora de API**: Agregar props que faltan y son universalmente útiles
+2. **Corrección de bugs**: Solucionar problemas de funcionalidad
+3. **Performance**: Optimizaciones que benefician a todos los proyectos
+4. **Accesibilidad**: Mejoras de accesibilidad universal
+5. **Consistencia**: Homologar APIs entre componentes similares
+
+#### **🆕 MODIFICACIONES REALIZADAS Y JUSTIFICADAS:**
+
+**📅 [2025-01-28] - Migración de IconProvider**
+- **QUÉ**: Cambio de src/providers/IconProvider a design-system/providers/IconProvider
+- **POR QUÉ**: El IconProvider debe ser parte de la librería reutilizable
+- **IMPACTO**: Positivo - Sistema de iconos unificado para todos los proyectos
+
+**📅 [2025-01-28] - Limpieza de providers obsoletos**
+- **QUÉ**: Eliminación de src/providers/ completo
+- **POR QUÉ**: Duplicación eliminada, solo design-system como fuente de verdad
+- **IMPACTO**: Positivo - Arquitectura más limpia
+
+#### **🔮 FUTURAS MODIFICACIONES CONSIDERADAS:**
+
+**Próximas mejoras identificadas pero NO implementadas aún:**
+- **Container.minHeight prop**: Agregar soporte nativo para `minHeight="100vh"`
+- **FlexContainer.maxWidth prop**: Agregar soporte nativo para `maxWidth="400px"`
+- **Icon.refresh prop**: Agregar iconos faltantes (refresh-cw, arrow-left, etc.)
+
+### **❌ MODIFICACIONES NO PERMITIDAS:**
+
+#### **Lo que NO se debe modificar:**
+- **Lógica específica de streaming**: No agregar props específicos del dominio
+- **Estilos hardcodeados**: No agregar colores/estilos específicos del proyecto
+- **Dependencias específicas**: No agregar librerías que solo usa streaming app
+- **Breaking changes**: No remover props existentes sin deprecation period
+
+### **📝 PROCESO PARA MODIFICAR LA LIBRERÍA:**
+
+#### **ANTES de modificar design-system:**
+1. **Justificar**: ¿Es una mejora universal o específica del proyecto?
+2. **Documentar**: Anotar en este archivo la razón y el impacto
+3. **Validar**: ¿Beneficia a futuros proyectos que usen la librería?
+4. **Implementar**: Hacer el cambio mínimo necesario
+5. **Actualizar**: Modificar README.md del design-system con la nueva API
+
+#### **Ejemplo de modificación válida:**
+```javascript
+// ✅ VÁLIDO: Mejora universal
+// Agregar prop minHeight a Container porque es universalmente útil
+<Container minHeight="100vh" />
+
+// ❌ NO VÁLIDO: Específico del dominio
+// Agregar prop streamingMode a Container (específico de streaming)
+<Container streamingMode="movies" />
+```
+
+### **🎯 GOLDEN RULE PARA MODIFICACIONES:**
+
+> **"Si el cambio beneficia a CUALQUIER proyecto que use la librería → SÍ modificar"**  
+> **"Si el cambio solo beneficia a streaming app → NO modificar, usar workaround"**
+
+### **📊 TRACKING DE MODIFICACIONES:**
+Todas las modificaciones a design-system deben documentarse aquí con:
+- Fecha
+- Descripción del cambio  
+- Justificación
+- Impacto esperado

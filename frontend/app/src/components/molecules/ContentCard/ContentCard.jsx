@@ -1,13 +1,19 @@
 // molecules/ContentCard/ContentCard.jsx
 import { memo } from 'react';
 import PropTypes from 'prop-types';
-import { Card, CardBody, CardTitle, CardSubtitle } from '../../atoms/Card/Card';
-import { Badge } from '../../atoms/Badge/Badge';
-import { Image } from '../../atoms/Image/Image';
-import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
-import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
-import { INTERACTIVE_PROP_TYPES } from '../../../tokens/standardProps-v2.js';
-import { extractDOMPropsV2 } from '../../../tokens/standardProps-v2';
+// ✅ DESIGN SYSTEM - LIBRERÍA REUTILIZABLE
+import { 
+  Card, 
+  CardBody, 
+  CardTitle, 
+  CardSubtitle,
+  Badge,
+  Image,
+  FlexContainer,
+  useInteractiveProps,
+  INTERACTIVE_PROP_TYPES,
+  extractDOMPropsV2
+} from '../../../../design-system';
 import './ContentCard.css';
 
 /**
@@ -29,7 +35,6 @@ import './ContentCard.css';
  * - Favorites grids
  */
 function ContentCard(props) {
-  console.log('🎬 ContentCard V2 RENDER - props recibidas:', props);
   
   // ✅ V2: EXTRAER PROPS ESPECÍFICAS ANTES DEL HOOK V2
   const {
@@ -42,8 +47,7 @@ function ContentCard(props) {
 
   // ✅ V2: Hook estándar del sistema de diseño - ANTES de cualquier return
   const {
-    size, variant, rounded, disabled, loading, className,
-    ...standardProps
+    size, variant, rounded, disabled, loading, className
   } = useInteractiveProps(restProps, {
     componentName: 'ContentCard',
     defaultSize: 'md',
@@ -51,8 +55,6 @@ function ContentCard(props) {
   });
   
   // Validaciones después del hook
-  console.log('🔍 ContentCard V2 - content recibido:', content);
-  console.log('🔍 ContentCard V2 - content es válido:', !!content);
   
   if (!content) {
     console.log('❌ ContentCard V2 - SIN CONTENT, no se renderiza');
@@ -75,19 +77,7 @@ function ContentCard(props) {
     }
   }
   
-  // Extraer props específicas de ContentCard de props originales
-  const {
-    onClick,
-    showRating = true,
-    showMeta = true,
-    showCategory = true,
-    cardVariant = 'elevated',
-    contentType = content?.type || 'movie'
-  } = props;
-  
-  // ✅ V2: Extraer props DOM válidas con función V2
-  const validDOMProps = extractDOMPropsV2(standardProps);
-
+  // Extraer datos del content después de validación
   const {
     title,
     cover,
@@ -99,23 +89,17 @@ function ContentCard(props) {
     seasons,
     episodes
   } = content;
-
-  console.log('📊 ContentCard V2 - datos extraídos:', { title, cover, category, year, rating, type });
-  console.log('🖼️ ContentCard V2 - cover URL:', cover);
-  console.log('🎯 ContentCard V2 - size:', size);
-  console.log('🎯 ContentCard V2 - contentType:', contentType);
-
-  // ✅ V2: Construir clases CSS manualmente
-  const cardClasses = [
-    'content-card',
-    `content-card--${size}`,
-    `content-card--${variant}`,
-    `content-card--${cardVariant}`,
-    `content-card--${contentType}`,
-    disabled && 'content-card--disabled',
-    loading && 'content-card--loading',
-    className
-  ].filter(Boolean).join(' ');
+  
+  // Extraer props específicas de ContentCard de props originales
+  const {
+    onClick,
+    showRating = true,
+    showMeta = true,
+    showCategory = true,
+    cardVariant = 'elevated',
+    contentType = content?.type || 'movie'
+  } = props;
+  
 
   // Metadatos según el tipo de contenido
   const getMetaText = () => {
@@ -142,43 +126,57 @@ function ContentCard(props) {
   const handleImageError = () => {
     // Image V2 ya maneja los errores automáticamente
   };
+  
+  // ✅ V2: Construir clases CSS usando patrón estándar del sistema
+  const cardClasses = [
+    'content-card',
+    `content-card--${size}`,
+    `content-card--${variant}`,
+    `content-card--${cardVariant}`,
+    `content-card--${contentType}`,
+    disabled && 'content-card--disabled',
+    loading && 'content-card--loading',
+    className
+  ].filter(Boolean).join(' ');
 
+  // ✅ V2: Preparar props para Card - usar restProps en lugar de re-filtrar
+  const cardProps = {
+    ...restProps,
+    size,
+    variant,
+    rounded,
+    disabled,
+    loading,
+    onClick: handleCardClick,
+    className: cardClasses,
+    tabIndex: disabled ? -1 : 0,
+    role: "button",
+    'aria-label': `${type === 'movie' ? 'Película' : 'Serie'}: ${title}`,
+    'aria-disabled': disabled,
+    'aria-busy': loading
+  };
+
+  // Renderizar ContentCard con sistema V2.0
+  
   return (
-    <Card
-      // ✅ V2: Props estándar del sistema
-      size={size}
-      variant={variant}
-      rounded={rounded}
-      disabled={disabled}
-      loading={loading}
-      onClick={handleCardClick}
-      className={cardClasses}
-      tabIndex={disabled ? -1 : 0}
-      role="button"
-      aria-label={`${type === 'movie' ? 'Película' : 'Serie'}: ${title}`}
-      aria-disabled={disabled}
-      aria-busy={loading}
-      {...validDOMProps}
-    >
-      {/* Contenedor de imagen con Image V2 */}
-      <FlexContainer
-        align="center"
-        justify="center"
-        className="content-card__image-container"
-      >
+    <Card {...cardProps}>
+      {/* Contenedor de imagen */}
+      <div className="content-card__image-container" style={{ position: 'relative', aspectRatio: '2/3', overflow: 'hidden' }}>
         <Image
           src={cover}
           alt={`Carátula de ${title}`}
           aspectRatio="portrait"
-          loading={loading ? "eager" : "lazy"}
+          lazy={!loading}
           size={size}
           variant={variant}
           onError={handleImageError}
+          onLoad={() => {}}
           className="content-card__image"
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
 
-        {/* ✅ V2: Badge con props automáticas del Card System */}
-        <div className="content-card__type-badge">
+        {/* Badge de tipo */}
+        <div className="content-card__type-badge" style={{ position: 'absolute', top: '8px', left: '8px', zIndex: 2 }}>
           <Badge
             size={size === 'xs' ? 'xs' : 'sm'}
             variant="primary"
@@ -187,7 +185,7 @@ function ContentCard(props) {
             {contentType === 'movie' ? 'Película' : 'Serie'}
           </Badge>
         </div>
-      </FlexContainer>
+      </div>
 
       {/* Información del contenido */}
       <CardBody className="content-card__info">
@@ -201,43 +199,24 @@ function ContentCard(props) {
           </CardSubtitle>
         )}
 
-        {/* Metadatos y rating */}
-        <FlexContainer
-          direction="row"
-          align="center"
-          gap="xs"
-          className="content-card__details"
-        >
-          <FlexContainer direction="column" gap="2xs" className="content-card__meta">
-            {showMeta && (
-              <FlexContainer
-                direction="row"
-                align="center"
-                gap="2xs"
-                className="content-card__duration"
-              >
-                {getMetaText()}
-              </FlexContainer>
-            )}
-          </FlexContainer>
+        {/* Metadatos simples */}
+        <div className="content-card__details">
+          {showMeta && (
+            <span className="content-card__duration">
+              {getMetaText()}
+            </span>
+          )}
           
           {showRating && rating && (
-            <FlexContainer
-              direction="row"
-              align="center"
-              gap="2xs"
-              className="content-card__rating"
+            <Badge
+              size={size === 'xs' ? 'xs' : 'sm'}
+              variant="warning"
+              leftIcon="star"
             >
-              <Badge
-                size={size === 'xs' ? 'xs' : 'sm'}
-                variant="warning"
-                leftIcon="star"
-              >
-                {rating}
-              </Badge>
-            </FlexContainer>
+              {rating}
+            </Badge>
           )}
-        </FlexContainer>
+        </div>
       </CardBody>
     </Card>
   );

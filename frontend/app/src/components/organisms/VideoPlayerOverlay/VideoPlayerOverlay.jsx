@@ -1,7 +1,6 @@
 import { useState, useCallback, forwardRef, useImperativeHandle } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '../../atoms/Button/Button';
-import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
+import { Button, FlexContainer } from '../../../../design-system';
 
 const VideoPlayerOverlay = forwardRef(({ 
   onSkipBack, 

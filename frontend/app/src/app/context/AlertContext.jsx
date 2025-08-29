@@ -5,8 +5,7 @@
 
 import { createContext, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { AlertModal } from '../../components/molecules/AlertModal/AlertModal';
-import { ToastContainer } from '../../components/molecules/ToastContainer/ToastContainer';
+import { AlertModal, ToastContainer } from '../../../design-system';
 import { useAlert } from '../../hooks/useAlert';
 import { useToast } from '../../hooks/useToast';
 

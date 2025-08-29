@@ -1,0 +1,366 @@
+/* ========================================
+   Pagination - Estilos del Design System V2.0
+   ======================================== */
+
+/* Container principal */
+.pagination {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  align-items: center;
+  width: 100%;
+}
+
+/* ========================================
+   Variantes Semánticas del Sistema (Colores)
+   ======================================== */
+
+/* Variante primary */
+.pagination--primary .pagination__current {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+}
+
+.pagination--primary .pagination__current strong {
+  color: var(--color-primary);
+}
+
+/* Variante secondary */
+.pagination--secondary .pagination__current {
+  background: var(--color-secondary-light);
+  color: var(--color-secondary);
+  border: 1px solid var(--color-secondary);
+}
+
+.pagination--secondary .pagination__current strong {
+  color: var(--color-secondary);
+}
+
+/* Variante success */
+.pagination--success .pagination__current {
+  background: var(--color-success-light);
+  color: var(--color-success);
+  border: 1px solid var(--color-success);
+}
+
+.pagination--success .pagination__current strong {
+  color: var(--color-success);
+}
+
+/* Variante warning */
+.pagination--warning .pagination__current {
+  background: var(--color-warning-light);
+  color: var(--color-warning);
+  border: 1px solid var(--color-warning);
+}
+
+.pagination--warning .pagination__current strong {
+  color: var(--color-warning);
+}
+
+/* Variante danger */
+.pagination--danger .pagination__current {
+  background: var(--color-danger-light);
+  color: var(--color-danger);
+  border: 1px solid var(--color-danger);
+}
+
+.pagination--danger .pagination__current strong {
+  color: var(--color-danger);
+}
+
+/* Variante neutral (default) */
+.pagination--neutral .pagination__current {
+  background: var(--color-surface-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+}
+
+.pagination--neutral .pagination__current strong {
+  color: var(--color-primary);
+}
+
+/* Tamaños estándar */
+.pagination--sm {
+  font-size: var(--font-size-sm);
+}
+
+.pagination--md {
+  font-size: var(--font-size-md);
+}
+
+.pagination--lg {
+  font-size: var(--font-size-lg);
+}
+
+/* Estados del componente */
+.pagination--disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.pagination--loading {
+  position: relative;
+}
+
+/* ========================================
+   Información de elementos
+   ======================================== */
+
+.pagination__info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  width: 100%;
+  flex-wrap: wrap;
+  min-height: 2.5rem; /* Evitar salto de layout */
+}
+
+.pagination__info-text {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+}
+
+.pagination__size-selector {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.pagination__size-select {
+  min-width: 120px;
+}
+
+/* ========================================
+   Controles de navegación
+   ======================================== */
+
+.pagination__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pagination__button {
+  /* Estilos heredados del componente Button */
+  min-width: auto;
+  flex-shrink: 0;
+}
+
+/* Información de página actual */
+.pagination__current {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  background: var(--color-surface-secondary);
+  border-radius: var(--border-radius-md);
+  white-space: nowrap;
+  min-width: fit-content;
+}
+
+.pagination__current-compact {
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-md);
+}
+
+.pagination__current strong {
+  color: var(--color-primary-600);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+@media (max-width: 768px) {
+  .pagination {
+    gap: var(--space-sm);
+  }
+  
+  .pagination__info {
+    flex-direction: column;
+    gap: var(--space-sm);
+    text-align: center;
+  }
+  
+  .pagination__controls {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: var(--space-xs);
+    gap: var(--space-xs);
+  }
+  
+  .pagination__button {
+    min-width: 44px; /* Touch target */
+    padding: var(--space-sm);
+  }
+  
+  .pagination__current {
+    padding: var(--space-xs) var(--space-sm);
+    min-width: 60px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .pagination__info-text {
+    font-size: var(--font-size-xs);
+  }
+  
+  .pagination__controls {
+    gap: 2px;
+  }
+  
+  .pagination__button {
+    min-width: 40px;
+    padding: var(--space-xs);
+  }
+  
+  .pagination__current {
+    padding: var(--space-xs);
+    min-width: 50px;
+  }
+}
+
+/* ========================================
+   Estados de loading
+   ======================================== */
+
+.pagination__loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  z-index: 10;
+}
+
+.pagination__loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+/* Estados de botones específicos */
+.pagination__button:disabled {
+  opacity: 0.4;
+}
+
+/* Hover mejorado en desktop */
+@media (hover: hover) {
+  .pagination__button:hover:not(:disabled) {
+    background: var(--color-primary-50);
+    border-color: var(--color-primary-300);
+    color: var(--color-primary-700);
+  }
+}
+
+/* ========================================
+   Dark mode
+   ======================================== */
+
+[data-theme="dark"] .pagination__current {
+  background: var(--color-surface-tertiary);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .pagination__current strong {
+  color: var(--color-primary-400);
+}
+
+[data-theme="dark"] .pagination__info-text {
+  color: var(--color-text-tertiary);
+}
+
+@media (hover: hover) {
+  [data-theme="dark"] .pagination__button:hover:not(:disabled) {
+    background: var(--color-primary-900);
+    border-color: var(--color-primary-700);
+    color: var(--color-primary-100);
+  }
+}
+
+/* ========================================
+   Accesibilidad
+   ======================================== */
+
+/* Focus visible mejorado */
+.pagination__button:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Alto contraste */
+@media (prefers-contrast: high) {
+  .pagination__current {
+    border: 1px solid var(--color-border-strong);
+  }
+  
+  .pagination__button {
+    border-width: 2px;
+  }
+}
+
+/* Reducir animaciones si es necesario */
+@media (prefers-reduced-motion: reduce) {
+  .pagination__loading-spinner {
+    animation: none;
+  }
+}
+
+/* ========================================
+   Animaciones
+   ======================================== */
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========================================
+   Layout específico para diferentes containers
+   ======================================== */
+
+/* Cuando está dentro de un grid layout */
+.grid-container .pagination {
+  grid-column: 1 / -1; /* Ocupa todo el ancho del grid */
+  margin-top: var(--space-lg);
+}
+
+/* Cuando está dentro de un flex layout */
+.flex-container .pagination {
+  margin-top: auto; /* Push hacia abajo */
+}
+
+/* ========================================
+   Estados vacíos
+   ======================================== */
+
+.pagination--empty {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Cuando no hay suficientes elementos para paginar */
+.pagination--single-page .pagination__controls {
+  opacity: 0.6;
+}
+
+.pagination--single-page .pagination__button {
+  cursor: not-allowed;
+}

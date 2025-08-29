@@ -2,15 +2,9 @@
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '../../atoms/Button/Button';
-import { Container } from '../../atoms/Container/Container';
-import { Divider } from '../../atoms/Divider/Divider';
+import { Button, Container, Divider, EmptyState, FlexContainer, Typography, Spinner } from '../../../../design-system';
 import { DynamicForm } from '../../molecules/DynamicForm/DynamicForm';
 import { ContentCard } from '../../molecules/ContentCard/ContentCard';
-import { EmptyState } from '../../molecules/EmptyState/EmptyState';
-import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
-import { Typography } from '../../atoms/Typography/Typography';
-import { Spinner } from '../../atoms/Spinner/Spinner';
 import { tmdbService } from '../../../services/tmdb/TMDBService';
 
 /**

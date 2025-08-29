@@ -3,13 +3,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { Modal } from '../../molecules/Modal/Modal';
-import { TextInput } from '../../molecules/TextInput/TextInput';
-import { Button } from '../../atoms/Button/Button';
-import { Icon } from '../../atoms/Icon/Icon';
-import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
-import { Typography } from '../../atoms/Typography/Typography';
-import { Container } from '../../atoms/Container/Container';
+import { Modal, TextInput, Button, Icon, FlexContainer, Typography, Container } from '../../../../design-system';
 import { useEditModalProps } from '../../../hooks/useStandardProps';
 import { STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens';
 

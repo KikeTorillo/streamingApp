@@ -6,9 +6,8 @@ import { useLoginLogic } from "../../hooks/useLoginLogic";
 
 // Componentes del sistema de diseño
 import { LoginCard } from "../../components/organisms/LoginCard/LoginCard";
-import { Typography } from "../../components/atoms/Typography/Typography";
-import { FlexContainer } from "../../components/atoms/FlexContainer/FlexContainer";
-import { Container } from "../../components/atoms/Container/Container";
+
+import { Container,Typography,FlexContainer } from "../../../design-system";
 
 function Login() {
   // ✅ NUEVO: Toda la lógica viene del hook personalizado

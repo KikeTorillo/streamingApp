@@ -2,8 +2,7 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import './FileInputField.css';
-import { FileInput } from '../../atoms/FileInput/FileInput';
-import { validateStandardProps, STANDARD_PROP_TYPES } from '../../../tokens';
+import { FileInput, INTERACTIVE_PROP_TYPES, validateStandardPropsV2 } from '../../../../design-system';
 
 /**
  * FileInputField - MOLÉCULA QUE EXTIENDE EL ÁTOMO FILEINPUT
@@ -41,7 +40,7 @@ import { validateStandardProps, STANDARD_PROP_TYPES } from '../../../tokens';
  */
 function FileInputField(props) {
   // ✅ VALIDAR PROPS ESTÁNDAR - Sistema unificado con deprecation warnings
-  const validatedProps = validateStandardProps(props, 'FileInputField');
+  const validatedProps = validateStandardPropsV2(props, 'FileInputField');
   
   const {
     // ✅ PROPS ESTÁNDAR DEL SISTEMA
@@ -211,7 +210,7 @@ FileInputField.propTypes = {
   ariaDescribedBy: PropTypes.string,
   
   // Props estándar del sistema de diseño
-  ...STANDARD_PROP_TYPES,
+  ...INTERACTIVE_PROP_TYPES,
   
   // Backward compatibility - variantes legacy (con deprecation warnings)
   variant: PropTypes.oneOf([

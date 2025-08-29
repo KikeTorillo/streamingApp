@@ -1,18 +1,23 @@
 // molecules/DynamicForm/DynamicForm.jsx
 import React, { useState, useEffect, memo } from 'react';
 import PropTypes from 'prop-types';
-import { TextInput } from '../TextInput/TextInput';
-import { TextSelect } from '../TextSelect/TextSelect';
-import { Button } from '../../atoms/Button/Button';
+// ✅ DESIGN SYSTEM - LIBRERÍA REUTILIZABLE
+import { 
+  TextInput,
+  TextSelect,
+  Button,
+  Checkbox,
+  Radio,
+  TextArea,
+  Label,
+  useInteractiveProps,
+  extractDOMPropsV2,
+  INTERACTIVE_PROP_TYPES
+} from '../../../../design-system';
+
+// ✅ COMPONENTES ESPECÍFICOS STREAMING
 import { FileInputField } from '../FileInputField/FileInputField';
 import { ImageCropField } from '../ImageCropField/ImageCropField';
-import { Checkbox } from '../../atoms/Checkbox/Checkbox';
-import { Radio } from '../../atoms/Radio/Radio';
-import { TextArea } from '../../atoms/TextArea/TextArea';
-import { Label } from '../../atoms/Label/Label';
-import { useInteractiveProps } from '../../../hooks/useStandardProps-v2.jsx';
-import { extractDOMPropsV2 } from '../../../tokens/standardProps-v2.js';
-import { INTERACTIVE_PROP_TYPES } from '../../../tokens/propHelpers.js';
 import './DynamicForm.css';
 
 /**

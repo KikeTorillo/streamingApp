@@ -5,11 +5,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
-import { Button } from '../../../../components/atoms/Button/Button';
-import { Container } from '../../../../components/atoms/Container/Container';
-import { Divider } from '../../../../components/atoms/Divider/Divider';
-import { Badge } from '../../../../components/atoms/Badge/Badge';
-import { Typography } from '../../../../components/atoms/Typography/Typography';
+import { Button } from '../../../../../design-system/atoms/Button/Button';
+import { Container } from '../../../../../design-system/atoms/Container/Container';
+import { Divider } from '../../../../../design-system/atoms/Divider/Divider';
+import { Badge } from '../../../../../design-system/atoms/Badge/Badge';
+import { Typography } from '../../../../../design-system/atoms/Typography/Typography';
 
 // Context
 import { useEpisodes } from '../../../../app/context/EpisodesContext';

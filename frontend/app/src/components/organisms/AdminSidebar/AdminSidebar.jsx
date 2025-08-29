@@ -3,14 +3,7 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { Button } from '../../atoms/Button/Button';
-import { Icon } from '../../atoms/Icon/Icon';
-import { Badge } from '../../atoms/Badge/Badge';
-import { Avatar } from '../../atoms/Avatar/Avatar';
-import { useStandardProps } from '../../../hooks/useStandardProps';
-import { extractDOMProps } from '../../../tokens/standardProps';
-import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
-import { Typography } from '../../atoms/Typography/Typography';
+import { Button, Icon, Badge, Avatar, useInteractiveProps, extractDOMPropsV2, FlexContainer, Typography } from '../../../../design-system';
 import './AdminSidebar.css';
 
 /**
@@ -32,11 +25,10 @@ function AdminSidebar(props) {
     variant,
     loading,
     className
-  } = useStandardProps(props, {
-    componentType: 'sidebar',
+  } = useInteractiveProps(props, {
+    componentName: 'AdminSidebar',
     defaultSize: 'md',
-    defaultVariant: 'secondary',
-    defaultRounded: 'none'
+    defaultVariant: 'secondary'
   });
 
   // ✅ EXTRAER PROPS ESPECÍFICAS DEL SIDEBAR
@@ -69,7 +61,7 @@ function AdminSidebar(props) {
   const { style, ...propsForDOM } = restProps;
 
   // ✅ FILTRAR PROPS PARA DOM (ya sin currentPath)
-  const domProps = extractDOMProps(propsForDOM);
+  const domProps = extractDOMPropsV2(propsForDOM);
 
   // Hooks de router - siempre llamar hooks en el mismo orden
   const navigate = useNavigate();

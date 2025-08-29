@@ -4,9 +4,8 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
-import { Container } from '../../../../components/atoms/Container/Container';
 import { DynamicForm } from '../../../../components/molecules/DynamicForm/DynamicForm';
-import { Typography } from '../../../../components/atoms/Typography/Typography';
+import { Typography } from '../../../../../design-system';
 import { useUsers } from '../../../../app/context/UserContext';
 import { useSuccessRedirect } from '../../../../hooks/useSuccessRedirect';
 

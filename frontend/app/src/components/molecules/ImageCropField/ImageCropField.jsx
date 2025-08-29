@@ -3,8 +3,7 @@ import { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import './ImageCropField.css';
 import { useImageCropper } from '../../../hooks/useImageCropper';
-import { FileInput } from '../../atoms/FileInput/FileInput';
-import { Button } from '../../atoms/Button/Button';
+import { FileInput, Button } from '../../../../design-system';
 import { ImageCropperModal } from '../ImageCropperModal/ImageCropperModal';
 
 /**

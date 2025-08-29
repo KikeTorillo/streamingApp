@@ -4,14 +4,9 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { DynamicForm } from '../../../../../components/molecules/DynamicForm/DynamicForm';
-import { Container } from '../../../../../components/atoms/Container/Container';
-import { Divider } from '../../../../../components/atoms/Divider/Divider';
-import { Button } from '../../../../../components/atoms/Button/Button';
-import { Image } from '../../../../../components/atoms/Image/Image';
-import { Typography } from '../../../../../components/atoms/Typography/Typography';
+import { Container, Divider, Button, Typography, FlexContainer} from '../../../../../../design-system';
 import { filterEmptyFields } from '../../../../../utils/formUtils';
 import { getImageTypeInfo, selectFinalImage } from '../../../../../utils/imageUtils';
-import { FlexContainer } from '../../../../../components/atoms/FlexContainer/FlexContainer';
 
 /**
  * SeriesFormView - VERSIÓN REFACTORIZADA CON SISTEMA DE DISEÑO

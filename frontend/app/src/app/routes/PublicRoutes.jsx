@@ -3,15 +3,14 @@ import { ContentProviders } from "../providers/ContentProviders";
 
 // Páginas públicas
 import { Login } from "../../Pages/Login/Login";
-import { VideoPlayer } from "../../Pages/VideoPlayer/VideoPlayer";
 import { MainPage } from "../../Pages/MainPage/MainPage";
-import { SeriesDetailPage } from "../../Pages/SeriesDetailPage/SeriesDetailPage";
-import { MoviesDetailPage } from "../../Pages/MoviesDetailPage/MoviesDetailPage";
+// Páginas temporalmente comentadas para debug
+// import { VideoPlayer } from "../../Pages/VideoPlayer/VideoPlayer";
+// import { SeriesDetailPage } from "../../Pages/SeriesDetailPage/SeriesDetailPage";
+// import { MoviesDetailPage } from "../../Pages/MoviesDetailPage/MoviesDetailPage";
 
 // Componentes del sistema de diseño
-import { FlexContainer } from "../../components/atoms/FlexContainer/FlexContainer";
-import { Typography } from "../../components/atoms/Typography/Typography";
-import { Button } from "../../components/atoms/Button/Button";
+import { FlexContainer, Typography, Button } from "../../../design-system";
 
 /**
  * PublicRoutes - Configuración de todas las rutas públicas
@@ -40,6 +39,8 @@ export function PublicRoutes() {
         </ContentProviders>
       )
     },
+    // Rutas temporalmente comentadas para debug
+    /*
     {
       path: "/series/:id",
       element: (
@@ -56,16 +57,19 @@ export function PublicRoutes() {
         </ContentProviders>
       )
     },
+    */
 
     // ===== RUTAS SIMPLES (Solo CoreProviders) =====
     {
       path: "/login",
       element: <Login />
     },
+    /*
     {
       path: "/player/:movieId",
       element: <VideoPlayer />
     },
+    */
 
     // ===== RUTA DE FALLBACK =====
     {

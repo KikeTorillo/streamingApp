@@ -1,13 +1,13 @@
 import { AuthProvider } from "../context/AuthContext";
 import { AlertProvider } from "../context/AlertContext";
-import { ContextualUIProvider } from "../../providers/ContextualUIProvider";
+import { IconProvider } from "../../../design-system";
 import PropTypes from 'prop-types';
 
 /**
  * CoreProviders - Contextos esenciales que necesita toda la aplicación
  * 
  * Incluye:
- * - ContextualUIProvider: Sistema de diseño (IconProvider + ThemeProvider V2)
+ * - IconProvider: Sistema de iconos del design-system
  * - AuthProvider: Autenticación y usuario actual
  * - AlertProvider: Sistema de notificaciones
  * 
@@ -16,13 +16,13 @@ import PropTypes from 'prop-types';
  */
 export function CoreProviders({ children }) {
   return (
-    <ContextualUIProvider preset="streaming">
+    <IconProvider>
       <AuthProvider>
         <AlertProvider>
           {children}
         </AlertProvider>
       </AuthProvider>
-    </ContextualUIProvider>
+    </IconProvider>
   );
 }
 

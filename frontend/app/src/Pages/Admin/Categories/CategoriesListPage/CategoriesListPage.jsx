@@ -4,10 +4,8 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../../../../components/templates/AdminLayout/AdminLayout';
-import { DataTable } from '../../../../components/organisms/DataTable/DataTable';
-import { Button } from '../../../../components/atoms/Button/Button';
+import { DataTable, Button, Typography } from '../../../../../design-system';
 import { EditModal } from '../../../../components/organisms/EditModal/EditModal';
-import { Typography } from '../../../../components/atoms/Typography/Typography';
 import { AlertProvider, useAlertContext } from '../../../../app/context/AlertContext';
 
 // Contexto de categorías

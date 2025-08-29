@@ -5,11 +5,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { AdminSidebar } from '../../organisms/AdminSidebar/AdminSidebar';
-import { Breadcrumb } from '../../molecules/Breadcrumb/Breadcrumb';
-import { GridContainer } from '../../atoms/GridContainer/GridContainer';
-import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
-import { Container } from '../../atoms/Container/Container';
-import { Typography } from '../../atoms/Typography/Typography';
+import { Breadcrumb, GridContainer, FlexContainer, Container, Typography } from '../../../../design-system';
 import { validateStandardProps, STANDARD_PROP_TYPES, extractDOMProps } from '../../../tokens/standardProps';
 import { LAYOUT_TOKENS } from '../../../tokens/designTokens';
 

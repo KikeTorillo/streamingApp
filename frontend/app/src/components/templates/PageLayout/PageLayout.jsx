@@ -1,7 +1,7 @@
 // PageLayout.jsx - REFACTORIZADO CON SISTEMA DE DISEÑO
 import PropTypes from 'prop-types';
-import { FlexContainer } from '../../atoms/FlexContainer/FlexContainer';
-import { Container } from '../../atoms/Container/Container';
+import { FlexContainer } from '../../design-system';
+import { Container } from '../../design-system';
 
 /**
  * PageLayout - TEMPLATE SIMPLIFICADO CON CONTENEDORES PUROS

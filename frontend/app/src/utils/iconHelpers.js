@@ -2,7 +2,7 @@
 // Utilidades centralizadas para manejo de iconos en el sistema de diseño
 
 import React from 'react';
-import { Icon } from '../components/atoms/Icon/Icon';
+import { Icon } from '../../design-system';
 
 /**
  * Crea una función de renderizado de iconos personalizada para cada componente
